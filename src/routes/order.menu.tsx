@@ -1,52 +1,80 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Check } from "lucide-react";
-import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
-import { ActionRow, Card, SectionLabel } from "@/components/pos/primitives";
-import { menuModes } from "@/lib/demo-data";
+import { Barcode, Check, Tag } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { usePos } from "@/lib/pos-store";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/order/menu")({
   head: () => ({
     meta: [
-      { title: "Choose menu — EATOS Handheld" },
-      { name: "description", content: "Switch the selling mode and menu for this order." },
-      { property: "og:title", content: "Choose menu — EATOS Handheld" },
-      { property: "og:description", content: "Switch the selling mode and menu for this order." },
+      { title: "Menu — eatOS Point of Purchase" },
+      { name: "description", content: "Switch between barcode scanning and open price items." },
+      { property: "og:title", content: "Menu — eatOS Point of Purchase" },
+      {
+        property: "og:description",
+        content: "Switch between barcode scanning and open price items.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: ChooseMenu,
+  component: MenuSheet,
 });
 
-function ChooseMenu() {
+function MenuSheet() {
   const navigate = useNavigate();
   const { mode, setMode } = usePos();
 
+  const options = [
+    {
+      id: "barcode" as const,
+      label: "Barcode",
+      icon: Barcode,
+      onPick: () => {
+        setMode(mode);
+        navigate({ to: "/order/new" });
+      },
+    },
+    {
+      id: "open-price" as const,
+      label: "Open Price Items",
+      icon: Tag,
+      onPick: () => navigate({ to: "/order/custom-item" }),
+    },
+  ];
+
   return (
-    <>
-      <ScreenHeader eyebrow="Order" title="Choose menu" back />
-      <ScreenBody>
-        <SectionLabel>Selling mode</SectionLabel>
-        <Card className="overflow-hidden">
-          {menuModes.map((m) => (
-            <ActionRow
-              key={m.id}
-              title={m.name}
-              detail={m.hint}
-              right={
-                mode === m.id ? (
-                  <Check className="size-5 shrink-0 text-accent" />
-                ) : (
-                  <span className="size-5 shrink-0" />
-                )
-              }
-              onClick={() => {
-                setMode(m.id);
-                navigate({ to: "/order/new" });
-              }}
-            />
-          ))}
-        </Card>
-      </ScreenBody>
-    </>
+    <Sheet open onOpenChange={(open) => (open ? null : navigate({ to: "/order/new" }))}>
+      <SheetContent side="bottom" className="rounded-t-3xl border-0 bg-surface p-0 pb-8">
+        <SheetHeader className="px-4 pb-2 pt-5">
+          <SheetTitle className="text-center text-2xl font-extrabold text-foreground">
+            Menu
+          </SheetTitle>
+        </SheetHeader>
+        <div>
+          {options.map((o, i) => {
+            const Icon = o.icon;
+            const active = o.id === "barcode";
+            return (
+              <button
+                key={o.id}
+                type="button"
+                onClick={o.onPick}
+                className={cn(
+                  "flex w-full items-center gap-4 px-4 py-5 text-left",
+                  i % 2 === 0 ? "bg-muted/40" : "bg-surface",
+                )}
+              >
+                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-muted text-muted-foreground">
+                  <Icon className="size-6" />
+                </span>
+                <span className="min-w-0 flex-1 truncate text-xl text-foreground">{o.label}</span>
+                {active ? <Check className="size-6 shrink-0 text-success" /> : null}
+              </button>
+            );
+          })}
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
