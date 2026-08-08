@@ -154,11 +154,11 @@ export const initialTickets: Ticket[] = [
 ];
 
 export const statusMeta: Record<TicketStatus, { label: string; tone: string }> = {
-  ordering: { label: "Ordering", tone: "text-muted-foreground" },
-  preparing: { label: "Preparing", tone: "text-warning" },
-  payment: { label: "Awaiting payment", tone: "text-accent" },
+  ordering: { label: "ORDERING", tone: "text-muted-foreground" },
+  preparing: { label: "PREPARING", tone: "text-warning" },
+  payment: { label: "PAYMENT PROGRESS", tone: "text-warning" },
   paid: { label: "Paid", tone: "text-success" },
-  ready: { label: "Ready", tone: "text-success" },
+  ready: { label: "READY", tone: "text-success" },
 };
 
 export const releaseNotes = [
