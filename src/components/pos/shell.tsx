@@ -47,7 +47,6 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
 
 export function ScreenHeader({
   title,
-  eyebrow,
   back,
   right,
 }: {

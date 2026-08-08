@@ -3,7 +3,7 @@ import { ArrowDownUp, CalendarDays, XCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { BottomTabs } from "@/components/pos/shell";
+import {} from "@/components/pos/shell";
 import { money, type Ticket, type TicketStatus } from "@/lib/demo-data";
 import { boardChannels, boardColumns, type BoardChannel } from "@/lib/floor-data";
 import { usePos } from "@/lib/pos-store";
@@ -151,8 +151,6 @@ function Board() {
           })}
         </div>
       </div>
-
-      <BottomTabs />
     </div>
   );
 }

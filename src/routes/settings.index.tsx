@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { BottomTabs, ScreenBody } from "@/components/pos/shell";
+import {ScreenBody} from "@/components/pos/shell";
 import { GroupCard, IconNavRow, type TileColor } from "@/components/pos/settings-rows";
 import { EmptyState } from "@/components/pos/primitives";
 import { PinSheet } from "@/components/pos/pin-sheet";
@@ -173,8 +173,6 @@ function SettingsHub() {
           navigate({ to: "/access/clock-in" });
         }}
       />
-
-      <BottomTabs />
     </>
   );
 }

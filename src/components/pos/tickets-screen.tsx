@@ -16,7 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { BottomTabs } from "@/components/pos/shell";
+import {} from "@/components/pos/shell";
 import { AccountBar } from "@/components/pos/account-bar";
 import { EmptyState, TicketCard } from "@/components/pos/primitives";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -406,8 +406,6 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
 
         </SheetContent>
       </Sheet>
-
-      <BottomTabs />
     </div>
   );
 }

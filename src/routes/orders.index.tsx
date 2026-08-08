@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { BottomTabs, ScreenBody } from "@/components/pos/shell";
+import {ScreenBody} from "@/components/pos/shell";
 import { EmptyState, Pills, TicketCard } from "@/components/pos/primitives";
 import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
@@ -88,7 +88,6 @@ function Orders() {
           </button>
         </div>
       </ScreenBody>
-      <BottomTabs />
     </>
   );
 }

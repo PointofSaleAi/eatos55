@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { BottomTabs, ScreenBody, SubHeader } from "@/components/pos/shell";
+import {ScreenBody, SubHeader} from "@/components/pos/shell";
 import { money } from "@/lib/demo-data";
 import { rooms } from "@/lib/floor-data";
 import { usePos } from "@/lib/pos-store";
@@ -62,7 +62,6 @@ function Rooms() {
           ))}
         </div>
       </ScreenBody>
-      <BottomTabs />
     </div>
   );
 }

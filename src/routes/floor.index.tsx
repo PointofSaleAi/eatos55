@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { BottomTabs, ScreenBody } from "@/components/pos/shell";
+import {ScreenBody} from "@/components/pos/shell";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -139,8 +139,6 @@ function FloorPlan() {
           </div>
         )}
       </ScreenBody>
-
-      <BottomTabs />
     </div>
   );
 }
