@@ -116,17 +116,12 @@ const rowBase =
 
 export function IconNavRow({
   to,
-  params,
   onClick,
   ...rest
-}: RowShellProps & { to?: string; params?: Record<string, string>; onClick?: () => void }) {
+}: RowShellProps & { to?: string; onClick?: () => void }) {
   if (to) {
     return (
-      <Link
-        to={to}
-        params={params}
-        className={cn(rowBase, "transition-colors hover:bg-muted")}
-      >
+      <Link to={to} className={cn(rowBase, "transition-colors hover:bg-muted")}>
         <RowInner {...rest} chevron />
       </Link>
     );
