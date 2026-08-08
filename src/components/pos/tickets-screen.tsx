@@ -117,23 +117,23 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
       {/* Title bar */}
       <div className="shrink-0 border-b border-border bg-surface px-4 py-3">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-xl font-extrabold text-foreground">Tickets</h1>
+          <h1 className="text-2xl font-extrabold text-foreground">Tickets</h1>
           <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
               aria-label="Sort tickets"
               onClick={() => setOverlay((o) => (o === "sort" ? "none" : "sort"))}
-              className="grid size-10 place-items-center rounded-lg text-foreground transition-colors hover:bg-muted"
+              className="grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
             >
-              <ListFilter className="size-6" />
+              <ListFilter className="size-5" />
             </button>
             <button
               type="button"
               aria-label="Filter tickets"
               onClick={() => setOverlay("filter")}
-              className="grid size-10 place-items-center rounded-lg text-foreground transition-colors hover:bg-muted"
+              className="grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
             >
-              <Settings2 className="size-6" />
+              <Settings2 className="size-5" />
             </button>
           </div>
         </div>
@@ -142,13 +142,13 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
       {/* Date stepper or search field */}
       <div className="shrink-0 bg-surface px-4 pt-3">
         {overlay === "search" ? (
-          <div className="flex h-14 items-center gap-2 rounded-xl border border-foreground px-4">
+          <div className="flex h-12 items-center gap-2 rounded-2xl border border-border bg-muted px-4">
             <input
               autoFocus
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by order number..."
-              className="min-w-0 flex-1 bg-transparent text-lg text-foreground outline-none placeholder:text-muted-foreground"
+              className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
             <button
               type="button"
@@ -159,7 +159,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               }}
               className="grid size-8 shrink-0 place-items-center text-foreground"
             >
-              <X className="size-6" />
+              <X className="size-4" />
             </button>
           </div>
         ) : (
@@ -169,44 +169,44 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                 type="button"
                 aria-label="Previous day"
                 onClick={() => shiftTicketDate(-1)}
-                className="grid size-9 shrink-0 place-items-center rounded-lg text-foreground hover:bg-muted"
+                className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
               >
-                <ChevronLeft className="size-6" />
+                <ChevronLeft className="size-5" />
               </button>
-              <Calendar className="size-6 shrink-0 text-foreground" />
-              <span className="truncate text-base font-medium text-foreground">{dateLabel}</span>
+              <Calendar className="size-4 shrink-0 text-muted-foreground" />
+              <span className="truncate text-sm font-bold text-foreground">{dateLabel}</span>
               <button
                 type="button"
                 aria-label="Next day"
                 onClick={() => shiftTicketDate(1)}
-                className="grid size-9 shrink-0 place-items-center rounded-lg text-foreground hover:bg-muted"
+                className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
               >
-                <ChevronRight className="size-6" />
+                <ChevronRight className="size-5" />
               </button>
             </div>
             <button
               type="button"
               aria-label="Search tickets"
               onClick={() => setOverlay("search")}
-              className="grid size-12 shrink-0 place-items-center rounded-xl border border-border text-foreground transition-colors hover:bg-muted"
+              className="grid size-11 shrink-0 place-items-center rounded-2xl border border-border text-foreground transition-colors hover:bg-muted"
             >
-              <Search className="size-6" />
+              <Search className="size-5" />
             </button>
           </div>
         )}
 
         {/* Status chips */}
-        <div className="no-scrollbar -mx-4 mt-3 flex gap-3 overflow-x-auto px-4 pb-3">
+        <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-3">
           {tabs.map((t) => (
             <button
               key={t.id}
               type="button"
               onClick={() => setTab(t.id)}
               className={cn(
-                "min-h-[48px] shrink-0 rounded-xl px-5 text-base font-medium transition-colors",
+                "min-h-[40px] shrink-0 rounded-full px-4 text-sm font-bold transition-colors",
                 tab === t.id
                   ? "bg-primary text-primary-foreground"
-                  : "border border-border text-muted-foreground hover:bg-muted",
+                  : "bg-muted text-muted-foreground hover:bg-secondary",
               )}
             >
               {t.label}
@@ -243,9 +243,9 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
           startOrder();
           navigate({ to: "/order/new" });
         }}
-        className="absolute bottom-24 right-5 grid size-16 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
+        className="absolute bottom-24 right-5 grid size-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
       >
-        <FilePlus2 className="size-7" />
+        <FilePlus2 className="size-6" />
       </button>
 
       {/* Sort dropdown */}
@@ -257,7 +257,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
             onClick={() => setOverlay("none")}
             className="absolute inset-0 z-20 cursor-default"
           />
-          <div className="absolute left-1/2 top-[60px] z-30 w-[68%] -translate-x-1/4 rounded-md bg-surface py-2 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.45)]">
+          <div className="absolute left-1/2 top-[60px] z-30 w-[68%] -translate-x-1/4 overflow-hidden rounded-2xl border border-border bg-surface py-1 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.45)]">
             {sortOptions.map((o) => {
               const Icon = o.icon;
               const active = sortKey === o.id;
@@ -270,12 +270,12 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                     setOverlay("none");
                   }}
                   className={cn(
-                    "flex w-full items-center gap-3 px-4 py-4 text-left",
-                    active && "border border-success bg-success/10",
+                    "flex min-h-[56px] w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted",
+                    active && "bg-muted",
                   )}
                 >
-                  <Icon className={cn("size-6 shrink-0", active ? "text-success" : "text-muted-foreground")} />
-                  <span className="truncate text-lg text-foreground">
+                  <Icon className={cn("size-4 shrink-0", active ? "text-accent" : "text-muted-foreground")} />
+                  <span className="truncate text-sm text-foreground">
                     <span className="font-extrabold">{o.strong}</span> {o.rest}
                   </span>
                 </button>
@@ -290,9 +290,9 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
         open={overlay === "filter"}
         onOpenChange={(open) => setOverlay(open ? "filter" : "none")}
       >
-        <SheetContent side="bottom" className="rounded-t-3xl border-0 bg-surface p-0 pb-6">
+        <SheetContent side="bottom" className="rounded-t-3xl border-t border-border bg-surface p-0 pb-6">
           <SheetHeader className="px-4 pb-2 pt-5">
-            <SheetTitle className="text-center text-2xl font-extrabold text-foreground">
+            <SheetTitle className="text-center text-xl font-extrabold text-foreground">
               Filters
             </SheetTitle>
           </SheetHeader>
@@ -302,16 +302,16 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               const open = openFacet === f.id;
               const selected = filters[f.key] as string[];
               return (
-                <div key={f.id} className={i % 2 === 0 ? "bg-muted/40" : "bg-surface"}>
+                <div key={f.id} className="border-b border-border last:border-b-0">
                   <button
                     type="button"
                     onClick={() => setOpenFacet(open ? null : f.id)}
-                    className="flex w-full items-center gap-4 px-4 py-5 text-left"
+                    className="flex min-h-[60px] w-full items-center gap-3 px-4 py-3 text-left"
                   >
-                    <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-muted text-muted-foreground">
-                      <Icon className="size-6" />
+                    <span className="shrink-0 text-accent">
+                      <Icon className="size-5" />
                     </span>
-                    <span className="min-w-0 flex-1 truncate text-xl text-foreground">{f.label}</span>
+                    <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">{f.label}</span>
                     {selected.length ? (
                       <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">
                         {selected.length}
@@ -341,10 +341,10 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                               }))
                             }
                             className={cn(
-                              "min-h-[44px] rounded-xl px-4 text-sm font-medium transition-colors",
+                              "min-h-[40px] rounded-full px-4 text-sm font-bold transition-colors",
                               active
                                 ? "bg-primary text-primary-foreground"
-                                : "border border-border text-muted-foreground",
+                                : "bg-muted text-muted-foreground",
                             )}
                           >
                             {opt}
@@ -361,14 +361,14 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
             <button
               type="button"
               onClick={() => setFilters(emptyFilters)}
-              className="min-h-[52px] flex-1 rounded-xl border border-border text-base font-bold text-foreground"
+              className="min-h-[48px] flex-1 rounded-2xl border border-border text-sm font-bold text-foreground"
             >
               Clear all
             </button>
             <button
               type="button"
               onClick={() => setOverlay("none")}
-              className="min-h-[52px] flex-1 rounded-xl bg-primary text-base font-bold text-primary-foreground"
+              className="min-h-[48px] flex-1 rounded-2xl bg-primary text-sm font-bold text-primary-foreground"
             >
               Apply
             </button>
