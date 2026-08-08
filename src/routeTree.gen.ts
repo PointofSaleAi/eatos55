@@ -10,33 +10,453 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccessClockInRouteImport } from './routes/access.clock-in'
+import { Route as AccessCreateAccountRouteImport } from './routes/access.create-account'
+import { Route as AccessForgotPasswordRouteImport } from './routes/access.forgot-password'
+import { Route as AccessManagerPinRouteImport } from './routes/access.manager-pin'
+import { Route as AccessSelectStationRouteImport } from './routes/access.select-station'
+import { Route as OrderCustomItemRouteImport } from './routes/order.custom-item'
+import { Route as OrderMenuRouteImport } from './routes/order.menu'
+import { Route as OrderNewRouteImport } from './routes/order.new'
+import { Route as OrderReviewRouteImport } from './routes/order.review'
+import { Route as OrdersIndexRouteImport } from './routes/orders.index'
+import { Route as PaymentCardRouteImport } from './routes/payment.card'
+import { Route as PaymentCashRouteImport } from './routes/payment.cash'
+import { Route as PaymentMethodRouteImport } from './routes/payment.method'
+import { Route as SettingsIndexRouteImport } from './routes/settings.index'
+import { Route as SettingsGeneralRouteImport } from './routes/settings.general'
+import { Route as SettingsMenuRouteImport } from './routes/settings.menu'
+import { Route as SettingsMoreRouteImport } from './routes/settings.more'
+import { Route as SettingsPaymentRouteImport } from './routes/settings.payment'
+import { Route as SettingsWorkforceRouteImport } from './routes/settings.workforce'
+import { Route as SystemIndexRouteImport } from './routes/system.index'
+import { Route as SystemCustomerSupportRouteImport } from './routes/system.customer-support'
+import { Route as SystemHardwareRouteImport } from './routes/system.hardware'
+import { Route as SystemHelpCenterRouteImport } from './routes/system.help-center'
+import { Route as SystemIntegrationsRouteImport } from './routes/system.integrations'
+import { Route as SystemNetworkRouteImport } from './routes/system.network'
+import { Route as TicketsIndexRouteImport } from './routes/tickets.index'
+import { Route as TicketsTicketIdRouteImport } from './routes/tickets.$ticketId'
+import { Route as TicketsFilterRouteImport } from './routes/tickets.filter'
+import { Route as TicketsManagerControlsRouteImport } from './routes/tickets.manager-controls'
+import { Route as TicketsSearchRouteImport } from './routes/tickets.search'
+import { Route as TicketsSortRouteImport } from './routes/tickets.sort'
+import { Route as TicketsWhatsNewRouteImport } from './routes/tickets.whats-new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccessClockInRoute = AccessClockInRouteImport.update({
+  id: '/access/clock-in',
+  path: '/access/clock-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccessCreateAccountRoute = AccessCreateAccountRouteImport.update({
+  id: '/access/create-account',
+  path: '/access/create-account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccessForgotPasswordRoute = AccessForgotPasswordRouteImport.update({
+  id: '/access/forgot-password',
+  path: '/access/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccessManagerPinRoute = AccessManagerPinRouteImport.update({
+  id: '/access/manager-pin',
+  path: '/access/manager-pin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccessSelectStationRoute = AccessSelectStationRouteImport.update({
+  id: '/access/select-station',
+  path: '/access/select-station',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderCustomItemRoute = OrderCustomItemRouteImport.update({
+  id: '/order/custom-item',
+  path: '/order/custom-item',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderMenuRoute = OrderMenuRouteImport.update({
+  id: '/order/menu',
+  path: '/order/menu',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderNewRoute = OrderNewRouteImport.update({
+  id: '/order/new',
+  path: '/order/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderReviewRoute = OrderReviewRouteImport.update({
+  id: '/order/review',
+  path: '/order/review',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersIndexRoute = OrdersIndexRouteImport.update({
+  id: '/orders/',
+  path: '/orders/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentCardRoute = PaymentCardRouteImport.update({
+  id: '/payment/card',
+  path: '/payment/card',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentCashRoute = PaymentCashRouteImport.update({
+  id: '/payment/cash',
+  path: '/payment/cash',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentMethodRoute = PaymentMethodRouteImport.update({
+  id: '/payment/method',
+  path: '/payment/method',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsGeneralRoute = SettingsGeneralRouteImport.update({
+  id: '/settings/general',
+  path: '/settings/general',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsMenuRoute = SettingsMenuRouteImport.update({
+  id: '/settings/menu',
+  path: '/settings/menu',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsMoreRoute = SettingsMoreRouteImport.update({
+  id: '/settings/more',
+  path: '/settings/more',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsPaymentRoute = SettingsPaymentRouteImport.update({
+  id: '/settings/payment',
+  path: '/settings/payment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsWorkforceRoute = SettingsWorkforceRouteImport.update({
+  id: '/settings/workforce',
+  path: '/settings/workforce',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SystemIndexRoute = SystemIndexRouteImport.update({
+  id: '/system/',
+  path: '/system/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SystemCustomerSupportRoute = SystemCustomerSupportRouteImport.update({
+  id: '/system/customer-support',
+  path: '/system/customer-support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SystemHardwareRoute = SystemHardwareRouteImport.update({
+  id: '/system/hardware',
+  path: '/system/hardware',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SystemHelpCenterRoute = SystemHelpCenterRouteImport.update({
+  id: '/system/help-center',
+  path: '/system/help-center',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SystemIntegrationsRoute = SystemIntegrationsRouteImport.update({
+  id: '/system/integrations',
+  path: '/system/integrations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SystemNetworkRoute = SystemNetworkRouteImport.update({
+  id: '/system/network',
+  path: '/system/network',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TicketsIndexRoute = TicketsIndexRouteImport.update({
+  id: '/tickets/',
+  path: '/tickets/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TicketsTicketIdRoute = TicketsTicketIdRouteImport.update({
+  id: '/tickets/$ticketId',
+  path: '/tickets/$ticketId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TicketsFilterRoute = TicketsFilterRouteImport.update({
+  id: '/tickets/filter',
+  path: '/tickets/filter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TicketsManagerControlsRoute = TicketsManagerControlsRouteImport.update({
+  id: '/tickets/manager-controls',
+  path: '/tickets/manager-controls',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TicketsSearchRoute = TicketsSearchRouteImport.update({
+  id: '/tickets/search',
+  path: '/tickets/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TicketsSortRoute = TicketsSortRouteImport.update({
+  id: '/tickets/sort',
+  path: '/tickets/sort',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TicketsWhatsNewRoute = TicketsWhatsNewRouteImport.update({
+  id: '/tickets/whats-new',
+  path: '/tickets/whats-new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/access/clock-in': typeof AccessClockInRoute
+  '/access/create-account': typeof AccessCreateAccountRoute
+  '/access/forgot-password': typeof AccessForgotPasswordRoute
+  '/access/manager-pin': typeof AccessManagerPinRoute
+  '/access/select-station': typeof AccessSelectStationRoute
+  '/order/custom-item': typeof OrderCustomItemRoute
+  '/order/menu': typeof OrderMenuRoute
+  '/order/new': typeof OrderNewRoute
+  '/order/review': typeof OrderReviewRoute
+  '/payment/card': typeof PaymentCardRoute
+  '/payment/cash': typeof PaymentCashRoute
+  '/payment/method': typeof PaymentMethodRoute
+  '/settings/general': typeof SettingsGeneralRoute
+  '/settings/menu': typeof SettingsMenuRoute
+  '/settings/more': typeof SettingsMoreRoute
+  '/settings/payment': typeof SettingsPaymentRoute
+  '/settings/workforce': typeof SettingsWorkforceRoute
+  '/system/customer-support': typeof SystemCustomerSupportRoute
+  '/system/hardware': typeof SystemHardwareRoute
+  '/system/help-center': typeof SystemHelpCenterRoute
+  '/system/integrations': typeof SystemIntegrationsRoute
+  '/system/network': typeof SystemNetworkRoute
+  '/tickets/$ticketId': typeof TicketsTicketIdRoute
+  '/tickets/filter': typeof TicketsFilterRoute
+  '/tickets/manager-controls': typeof TicketsManagerControlsRoute
+  '/tickets/search': typeof TicketsSearchRoute
+  '/tickets/sort': typeof TicketsSortRoute
+  '/tickets/whats-new': typeof TicketsWhatsNewRoute
+  '/orders/': typeof OrdersIndexRoute
+  '/settings/': typeof SettingsIndexRoute
+  '/system/': typeof SystemIndexRoute
+  '/tickets/': typeof TicketsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/access/clock-in': typeof AccessClockInRoute
+  '/access/create-account': typeof AccessCreateAccountRoute
+  '/access/forgot-password': typeof AccessForgotPasswordRoute
+  '/access/manager-pin': typeof AccessManagerPinRoute
+  '/access/select-station': typeof AccessSelectStationRoute
+  '/order/custom-item': typeof OrderCustomItemRoute
+  '/order/menu': typeof OrderMenuRoute
+  '/order/new': typeof OrderNewRoute
+  '/order/review': typeof OrderReviewRoute
+  '/payment/card': typeof PaymentCardRoute
+  '/payment/cash': typeof PaymentCashRoute
+  '/payment/method': typeof PaymentMethodRoute
+  '/settings/general': typeof SettingsGeneralRoute
+  '/settings/menu': typeof SettingsMenuRoute
+  '/settings/more': typeof SettingsMoreRoute
+  '/settings/payment': typeof SettingsPaymentRoute
+  '/settings/workforce': typeof SettingsWorkforceRoute
+  '/system/customer-support': typeof SystemCustomerSupportRoute
+  '/system/hardware': typeof SystemHardwareRoute
+  '/system/help-center': typeof SystemHelpCenterRoute
+  '/system/integrations': typeof SystemIntegrationsRoute
+  '/system/network': typeof SystemNetworkRoute
+  '/tickets/$ticketId': typeof TicketsTicketIdRoute
+  '/tickets/filter': typeof TicketsFilterRoute
+  '/tickets/manager-controls': typeof TicketsManagerControlsRoute
+  '/tickets/search': typeof TicketsSearchRoute
+  '/tickets/sort': typeof TicketsSortRoute
+  '/tickets/whats-new': typeof TicketsWhatsNewRoute
+  '/orders': typeof OrdersIndexRoute
+  '/settings': typeof SettingsIndexRoute
+  '/system': typeof SystemIndexRoute
+  '/tickets': typeof TicketsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/access/clock-in': typeof AccessClockInRoute
+  '/access/create-account': typeof AccessCreateAccountRoute
+  '/access/forgot-password': typeof AccessForgotPasswordRoute
+  '/access/manager-pin': typeof AccessManagerPinRoute
+  '/access/select-station': typeof AccessSelectStationRoute
+  '/order/custom-item': typeof OrderCustomItemRoute
+  '/order/menu': typeof OrderMenuRoute
+  '/order/new': typeof OrderNewRoute
+  '/order/review': typeof OrderReviewRoute
+  '/payment/card': typeof PaymentCardRoute
+  '/payment/cash': typeof PaymentCashRoute
+  '/payment/method': typeof PaymentMethodRoute
+  '/settings/general': typeof SettingsGeneralRoute
+  '/settings/menu': typeof SettingsMenuRoute
+  '/settings/more': typeof SettingsMoreRoute
+  '/settings/payment': typeof SettingsPaymentRoute
+  '/settings/workforce': typeof SettingsWorkforceRoute
+  '/system/customer-support': typeof SystemCustomerSupportRoute
+  '/system/hardware': typeof SystemHardwareRoute
+  '/system/help-center': typeof SystemHelpCenterRoute
+  '/system/integrations': typeof SystemIntegrationsRoute
+  '/system/network': typeof SystemNetworkRoute
+  '/tickets/$ticketId': typeof TicketsTicketIdRoute
+  '/tickets/filter': typeof TicketsFilterRoute
+  '/tickets/manager-controls': typeof TicketsManagerControlsRoute
+  '/tickets/search': typeof TicketsSearchRoute
+  '/tickets/sort': typeof TicketsSortRoute
+  '/tickets/whats-new': typeof TicketsWhatsNewRoute
+  '/orders/': typeof OrdersIndexRoute
+  '/settings/': typeof SettingsIndexRoute
+  '/system/': typeof SystemIndexRoute
+  '/tickets/': typeof TicketsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/access/clock-in'
+    | '/access/create-account'
+    | '/access/forgot-password'
+    | '/access/manager-pin'
+    | '/access/select-station'
+    | '/order/custom-item'
+    | '/order/menu'
+    | '/order/new'
+    | '/order/review'
+    | '/payment/card'
+    | '/payment/cash'
+    | '/payment/method'
+    | '/settings/general'
+    | '/settings/menu'
+    | '/settings/more'
+    | '/settings/payment'
+    | '/settings/workforce'
+    | '/system/customer-support'
+    | '/system/hardware'
+    | '/system/help-center'
+    | '/system/integrations'
+    | '/system/network'
+    | '/tickets/$ticketId'
+    | '/tickets/filter'
+    | '/tickets/manager-controls'
+    | '/tickets/search'
+    | '/tickets/sort'
+    | '/tickets/whats-new'
+    | '/orders/'
+    | '/settings/'
+    | '/system/'
+    | '/tickets/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/access/clock-in'
+    | '/access/create-account'
+    | '/access/forgot-password'
+    | '/access/manager-pin'
+    | '/access/select-station'
+    | '/order/custom-item'
+    | '/order/menu'
+    | '/order/new'
+    | '/order/review'
+    | '/payment/card'
+    | '/payment/cash'
+    | '/payment/method'
+    | '/settings/general'
+    | '/settings/menu'
+    | '/settings/more'
+    | '/settings/payment'
+    | '/settings/workforce'
+    | '/system/customer-support'
+    | '/system/hardware'
+    | '/system/help-center'
+    | '/system/integrations'
+    | '/system/network'
+    | '/tickets/$ticketId'
+    | '/tickets/filter'
+    | '/tickets/manager-controls'
+    | '/tickets/search'
+    | '/tickets/sort'
+    | '/tickets/whats-new'
+    | '/orders'
+    | '/settings'
+    | '/system'
+    | '/tickets'
+  id:
+    | '__root__'
+    | '/'
+    | '/access/clock-in'
+    | '/access/create-account'
+    | '/access/forgot-password'
+    | '/access/manager-pin'
+    | '/access/select-station'
+    | '/order/custom-item'
+    | '/order/menu'
+    | '/order/new'
+    | '/order/review'
+    | '/payment/card'
+    | '/payment/cash'
+    | '/payment/method'
+    | '/settings/general'
+    | '/settings/menu'
+    | '/settings/more'
+    | '/settings/payment'
+    | '/settings/workforce'
+    | '/system/customer-support'
+    | '/system/hardware'
+    | '/system/help-center'
+    | '/system/integrations'
+    | '/system/network'
+    | '/tickets/$ticketId'
+    | '/tickets/filter'
+    | '/tickets/manager-controls'
+    | '/tickets/search'
+    | '/tickets/sort'
+    | '/tickets/whats-new'
+    | '/orders/'
+    | '/settings/'
+    | '/system/'
+    | '/tickets/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccessClockInRoute: typeof AccessClockInRoute
+  AccessCreateAccountRoute: typeof AccessCreateAccountRoute
+  AccessForgotPasswordRoute: typeof AccessForgotPasswordRoute
+  AccessManagerPinRoute: typeof AccessManagerPinRoute
+  AccessSelectStationRoute: typeof AccessSelectStationRoute
+  OrderCustomItemRoute: typeof OrderCustomItemRoute
+  OrderMenuRoute: typeof OrderMenuRoute
+  OrderNewRoute: typeof OrderNewRoute
+  OrderReviewRoute: typeof OrderReviewRoute
+  PaymentCardRoute: typeof PaymentCardRoute
+  PaymentCashRoute: typeof PaymentCashRoute
+  PaymentMethodRoute: typeof PaymentMethodRoute
+  SettingsGeneralRoute: typeof SettingsGeneralRoute
+  SettingsMenuRoute: typeof SettingsMenuRoute
+  SettingsMoreRoute: typeof SettingsMoreRoute
+  SettingsPaymentRoute: typeof SettingsPaymentRoute
+  SettingsWorkforceRoute: typeof SettingsWorkforceRoute
+  SystemCustomerSupportRoute: typeof SystemCustomerSupportRoute
+  SystemHardwareRoute: typeof SystemHardwareRoute
+  SystemHelpCenterRoute: typeof SystemHelpCenterRoute
+  SystemIntegrationsRoute: typeof SystemIntegrationsRoute
+  SystemNetworkRoute: typeof SystemNetworkRoute
+  TicketsTicketIdRoute: typeof TicketsTicketIdRoute
+  TicketsFilterRoute: typeof TicketsFilterRoute
+  TicketsManagerControlsRoute: typeof TicketsManagerControlsRoute
+  TicketsSearchRoute: typeof TicketsSearchRoute
+  TicketsSortRoute: typeof TicketsSortRoute
+  TicketsWhatsNewRoute: typeof TicketsWhatsNewRoute
+  OrdersIndexRoute: typeof OrdersIndexRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
+  SystemIndexRoute: typeof SystemIndexRoute
+  TicketsIndexRoute: typeof TicketsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +468,268 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/access/clock-in': {
+      id: '/access/clock-in'
+      path: '/access/clock-in'
+      fullPath: '/access/clock-in'
+      preLoaderRoute: typeof AccessClockInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/access/create-account': {
+      id: '/access/create-account'
+      path: '/access/create-account'
+      fullPath: '/access/create-account'
+      preLoaderRoute: typeof AccessCreateAccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/access/forgot-password': {
+      id: '/access/forgot-password'
+      path: '/access/forgot-password'
+      fullPath: '/access/forgot-password'
+      preLoaderRoute: typeof AccessForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/access/manager-pin': {
+      id: '/access/manager-pin'
+      path: '/access/manager-pin'
+      fullPath: '/access/manager-pin'
+      preLoaderRoute: typeof AccessManagerPinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/access/select-station': {
+      id: '/access/select-station'
+      path: '/access/select-station'
+      fullPath: '/access/select-station'
+      preLoaderRoute: typeof AccessSelectStationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order/custom-item': {
+      id: '/order/custom-item'
+      path: '/order/custom-item'
+      fullPath: '/order/custom-item'
+      preLoaderRoute: typeof OrderCustomItemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order/menu': {
+      id: '/order/menu'
+      path: '/order/menu'
+      fullPath: '/order/menu'
+      preLoaderRoute: typeof OrderMenuRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order/new': {
+      id: '/order/new'
+      path: '/order/new'
+      fullPath: '/order/new'
+      preLoaderRoute: typeof OrderNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order/review': {
+      id: '/order/review'
+      path: '/order/review'
+      fullPath: '/order/review'
+      preLoaderRoute: typeof OrderReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders/': {
+      id: '/orders/'
+      path: '/orders'
+      fullPath: '/orders/'
+      preLoaderRoute: typeof OrdersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/card': {
+      id: '/payment/card'
+      path: '/payment/card'
+      fullPath: '/payment/card'
+      preLoaderRoute: typeof PaymentCardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/cash': {
+      id: '/payment/cash'
+      path: '/payment/cash'
+      fullPath: '/payment/cash'
+      preLoaderRoute: typeof PaymentCashRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/method': {
+      id: '/payment/method'
+      path: '/payment/method'
+      fullPath: '/payment/method'
+      preLoaderRoute: typeof PaymentMethodRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/': {
+      id: '/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/general': {
+      id: '/settings/general'
+      path: '/settings/general'
+      fullPath: '/settings/general'
+      preLoaderRoute: typeof SettingsGeneralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/menu': {
+      id: '/settings/menu'
+      path: '/settings/menu'
+      fullPath: '/settings/menu'
+      preLoaderRoute: typeof SettingsMenuRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/more': {
+      id: '/settings/more'
+      path: '/settings/more'
+      fullPath: '/settings/more'
+      preLoaderRoute: typeof SettingsMoreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/payment': {
+      id: '/settings/payment'
+      path: '/settings/payment'
+      fullPath: '/settings/payment'
+      preLoaderRoute: typeof SettingsPaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/workforce': {
+      id: '/settings/workforce'
+      path: '/settings/workforce'
+      fullPath: '/settings/workforce'
+      preLoaderRoute: typeof SettingsWorkforceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/system/': {
+      id: '/system/'
+      path: '/system'
+      fullPath: '/system/'
+      preLoaderRoute: typeof SystemIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/system/customer-support': {
+      id: '/system/customer-support'
+      path: '/system/customer-support'
+      fullPath: '/system/customer-support'
+      preLoaderRoute: typeof SystemCustomerSupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/system/hardware': {
+      id: '/system/hardware'
+      path: '/system/hardware'
+      fullPath: '/system/hardware'
+      preLoaderRoute: typeof SystemHardwareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/system/help-center': {
+      id: '/system/help-center'
+      path: '/system/help-center'
+      fullPath: '/system/help-center'
+      preLoaderRoute: typeof SystemHelpCenterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/system/integrations': {
+      id: '/system/integrations'
+      path: '/system/integrations'
+      fullPath: '/system/integrations'
+      preLoaderRoute: typeof SystemIntegrationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/system/network': {
+      id: '/system/network'
+      path: '/system/network'
+      fullPath: '/system/network'
+      preLoaderRoute: typeof SystemNetworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tickets/': {
+      id: '/tickets/'
+      path: '/tickets'
+      fullPath: '/tickets/'
+      preLoaderRoute: typeof TicketsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tickets/$ticketId': {
+      id: '/tickets/$ticketId'
+      path: '/tickets/$ticketId'
+      fullPath: '/tickets/$ticketId'
+      preLoaderRoute: typeof TicketsTicketIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tickets/filter': {
+      id: '/tickets/filter'
+      path: '/tickets/filter'
+      fullPath: '/tickets/filter'
+      preLoaderRoute: typeof TicketsFilterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tickets/manager-controls': {
+      id: '/tickets/manager-controls'
+      path: '/tickets/manager-controls'
+      fullPath: '/tickets/manager-controls'
+      preLoaderRoute: typeof TicketsManagerControlsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tickets/search': {
+      id: '/tickets/search'
+      path: '/tickets/search'
+      fullPath: '/tickets/search'
+      preLoaderRoute: typeof TicketsSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tickets/sort': {
+      id: '/tickets/sort'
+      path: '/tickets/sort'
+      fullPath: '/tickets/sort'
+      preLoaderRoute: typeof TicketsSortRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tickets/whats-new': {
+      id: '/tickets/whats-new'
+      path: '/tickets/whats-new'
+      fullPath: '/tickets/whats-new'
+      preLoaderRoute: typeof TicketsWhatsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccessClockInRoute: AccessClockInRoute,
+  AccessCreateAccountRoute: AccessCreateAccountRoute,
+  AccessForgotPasswordRoute: AccessForgotPasswordRoute,
+  AccessManagerPinRoute: AccessManagerPinRoute,
+  AccessSelectStationRoute: AccessSelectStationRoute,
+  OrderCustomItemRoute: OrderCustomItemRoute,
+  OrderMenuRoute: OrderMenuRoute,
+  OrderNewRoute: OrderNewRoute,
+  OrderReviewRoute: OrderReviewRoute,
+  PaymentCardRoute: PaymentCardRoute,
+  PaymentCashRoute: PaymentCashRoute,
+  PaymentMethodRoute: PaymentMethodRoute,
+  SettingsGeneralRoute: SettingsGeneralRoute,
+  SettingsMenuRoute: SettingsMenuRoute,
+  SettingsMoreRoute: SettingsMoreRoute,
+  SettingsPaymentRoute: SettingsPaymentRoute,
+  SettingsWorkforceRoute: SettingsWorkforceRoute,
+  SystemCustomerSupportRoute: SystemCustomerSupportRoute,
+  SystemHardwareRoute: SystemHardwareRoute,
+  SystemHelpCenterRoute: SystemHelpCenterRoute,
+  SystemIntegrationsRoute: SystemIntegrationsRoute,
+  SystemNetworkRoute: SystemNetworkRoute,
+  TicketsTicketIdRoute: TicketsTicketIdRoute,
+  TicketsFilterRoute: TicketsFilterRoute,
+  TicketsManagerControlsRoute: TicketsManagerControlsRoute,
+  TicketsSearchRoute: TicketsSearchRoute,
+  TicketsSortRoute: TicketsSortRoute,
+  TicketsWhatsNewRoute: TicketsWhatsNewRoute,
+  OrdersIndexRoute: OrdersIndexRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
+  SystemIndexRoute: SystemIndexRoute,
+  TicketsIndexRoute: TicketsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
