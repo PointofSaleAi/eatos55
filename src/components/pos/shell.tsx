@@ -61,6 +61,35 @@ export function ScreenHeader({
   );
 }
 
+/** Back-labelled sub screen header: "< Back" on the left, centered title. */
+export function SubHeader({
+  title,
+  backLabel = "Back",
+  right,
+}: {
+  title: string;
+  backLabel?: string;
+  right?: ReactNode;
+}) {
+  const router = useRouter();
+  return (
+    <div className="shrink-0 bg-background px-2 pb-2 pt-3">
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+        <button
+          type="button"
+          onClick={() => router.history.back()}
+          className="flex min-h-[44px] items-center gap-1 justify-self-start rounded-full px-1 text-lg text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ChevronLeft className="size-6" />
+          <span className="truncate font-medium">{backLabel}</span>
+        </button>
+        <h1 className="truncate text-lg font-extrabold text-foreground">{title}</h1>
+        <div className="flex items-center justify-end gap-1">{right}</div>
+      </div>
+    </div>
+  );
+}
+
 export function ScreenBody({
   children,
   className,

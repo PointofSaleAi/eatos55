@@ -55,6 +55,16 @@ export type AppSettings = {
   offlineMode: boolean;
   darkKds: boolean;
   hapticFeedback: boolean;
+  deviceName: string;
+  deviceService: string;
+  tableService: boolean;
+  language: string;
+  taxAlias: string;
+  appVersion: string;
+  restartApp: boolean;
+  restartTime: string;
+  paymentPlatform: string;
+  clockedInAt: string;
 };
 
 const defaultSettings: AppSettings = {
@@ -72,6 +82,16 @@ const defaultSettings: AppSettings = {
   offlineMode: false,
   darkKds: true,
   hapticFeedback: true,
+  deviceName: "aurora 22",
+  deviceService: "Table Service",
+  tableService: false,
+  language: "English",
+  taxAlias: "Tax",
+  appVersion: "5.200.27",
+  restartApp: true,
+  restartTime: "02:30 PM",
+  paymentPlatform: "NA",
+  clockedInAt: "5:43 PM",
 };
 
 export type LastPayment = {
