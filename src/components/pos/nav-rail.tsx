@@ -33,7 +33,7 @@ export function NavRail() {
     <nav
       aria-label="Primary"
       className={cn(
-        "relative z-20 flex shrink-0 flex-col bg-shell transition-[width] duration-200",
+        "relative z-20 hidden shrink-0 flex-col bg-shell transition-[width] duration-200 max-md:landscape:flex",
         expanded ? "w-40" : "w-12",
       )}
     >

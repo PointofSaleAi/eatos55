@@ -3,6 +3,7 @@ import {
   DEFAULT_TICKET_DATE,
   TAX_RATE,
   initialTickets,
+  liveMenu,
   menu,
   type CartLine,
   type MenuMode,
@@ -140,12 +141,35 @@ type Store = {
   startOrder: (table?: string) => void;
   openTicket: (id: string) => void;
 
-  addItem: (menuId: string) => void;
+  addItem: (
+    menuId: string,
+    opts?: {
+      qty?: number;
+      price?: number;
+      notes?: string;
+      modifiers?: string[];
+      discountPercent?: number;
+    },
+  ) => void;
   addCustomItem: (name: string, price: number) => void;
   changeQty: (id: string, delta: number) => void;
   removeLine: (id: string) => void;
   clearCart: () => void;
-  totals: { subtotal: number; tax: number; total: number; count: number };
+  noTax: boolean;
+  setNoTax: (v: boolean) => void;
+  serviceCharge: number;
+  setServiceCharge: (v: number) => void;
+  orderDiscountPercent: number;
+  setOrderDiscountPercent: (v: number) => void;
+  totals: {
+    subtotal: number;
+    tax: number;
+    total: number;
+    count: number;
+    serviceCharge: number;
+    discount: number;
+  };
+
   commitPayment: (method: "cash" | "card", tendered: number) => string;
   lastPayment: LastPayment;
 
@@ -177,15 +201,27 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [activeTable, setActiveTable] = useState<string | null>(null);
   const [floor, setFloor] = useState<string>("Ground Floor");
   const [tableStates, setTableStates] = useState<Record<string, "ordering">>({});
+  const [noTax, setNoTax] = useState(false);
+  const [serviceCharge, setServiceCharge] = useState(0);
+  const [orderDiscountPercent, setOrderDiscountPercent] = useState(0);
 
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [managerUnlocked, setManagerUnlocked] = useState(false);
   const [lastPayment, setLastPayment] = useState<LastPayment>(null);
 
   const value = useMemo<Store>(() => {
-    const total = Math.round(cart.reduce((sum, l) => sum + l.price * l.qty, 0) * 100) / 100;
-    const subtotal = Math.round((total / (1 + TAX_RATE)) * 100) / 100;
-    const tax = Math.round((total - subtotal) * 100) / 100;
+    const round = (n: number) => Math.round(n * 100) / 100;
+    const gross = round(
+      cart.reduce(
+        (sum, l) => sum + l.price * l.qty * (1 - (l.discountPercent ?? 0) / 100),
+        0,
+      ),
+    );
+    const discount = round((gross * orderDiscountPercent) / 100);
+    const net = round(gross - discount + serviceCharge);
+    const subtotal = noTax ? net : round(net / (1 + TAX_RATE));
+    const tax = round(net - subtotal);
+    const total = net;
 
     return {
       session,
@@ -285,15 +321,23 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setCart(ticket.lines.map((l) => ({ ...l })));
         setMode(ticket.mode);
       },
-      addItem: (menuId) => {
-        const item = menu.find((m) => m.id === menuId);
+      addItem: (menuId, opts) => {
+        const item = [...menu, ...liveMenu].find((m) => m.id === menuId);
         if (!item) return;
+        const qty = opts?.qty ?? 1;
+        const price = opts?.price ?? item.price;
+        const mods = opts?.modifiers ?? [];
+        const lineId = mods.length || opts?.notes ? `${item.id}-${Date.now()}` : item.id;
         setCart((list) => {
-          const found = list.find((l) => l.id === item.id);
+          const found = list.find((l) => l.id === lineId);
           if (found) {
-            return list.map((l) => (l.id === item.id ? { ...l, qty: l.qty + 1 } : l));
+            return list.map((l) => (l.id === lineId ? { ...l, qty: l.qty + qty } : l));
           }
-          return [...list, { id: item.id, name: item.name, price: item.price, qty: 1 }];
+          const created: CartLine = { id: lineId, name: item.name, price, qty };
+          if (opts?.notes) created.notes = opts.notes;
+          if (mods.length) created.modifiers = mods;
+          if (opts?.discountPercent) created.discountPercent = opts.discountPercent;
+          return [...list, created];
         });
       },
       addCustomItem: (name, price) =>
@@ -309,12 +353,21 @@ export function PosProvider({ children }: { children: ReactNode }) {
         ),
       removeLine: (id) => setCart((list) => list.filter((l) => l.id !== id)),
       clearCart: () => setCart([]),
+      noTax,
+      setNoTax,
+      serviceCharge,
+      setServiceCharge,
+      orderDiscountPercent,
+      setOrderDiscountPercent,
       totals: {
         subtotal,
         tax,
         total,
         count: cart.reduce((n, l) => n + l.qty, 0),
+        serviceCharge,
+        discount,
       },
+
       commitPayment: (method, tendered) => {
         const change = Math.max(0, Math.round((tendered - total) * 100) / 100);
         let id = activeTicketId;
@@ -374,6 +427,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
     activeTable,
     floor,
     tableStates,
+    noTax,
+    serviceCharge,
+    orderDiscountPercent,
 
     settings,
     managerUnlocked,

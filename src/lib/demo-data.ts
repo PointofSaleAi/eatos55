@@ -16,7 +16,11 @@ export type CartLine = {
   price: number;
   qty: number;
   custom?: boolean;
+  notes?: string;
+  modifiers?: string[];
+  discountPercent?: number;
 };
+
 
 export type Ticket = {
   id: string;
@@ -265,3 +269,117 @@ export const paymentTypes = ["Card", "Cash", "QR Code", "Unpaid"];
 
 /** Quick tender denominations on the cash payment screen. */
 export const cashDenominations = [1, 5, 10, 20, 50, 100];
+
+/* ------------------------------------------------------------------ */
+/* Live-app menu browsing: menus → categories → items                  */
+/* ------------------------------------------------------------------ */
+
+export type MenuDef = { id: string; name: string; categories: string[] };
+
+export const menus: MenuDef[] = [
+  {
+    id: "bar",
+    name: "BAR MENu",
+    categories: ["BAR BITES", "COCKTAILS", "BEER", "WINE"],
+  },
+  {
+    id: "brunch",
+    name: "BRUNCH",
+    categories: ["BRUNCH SANDWICHES", "BRUNCH BEVERAGES", "BRUNCHY DRINKS", "BRUNCH COFFEE"],
+  },
+  {
+    id: "dinner",
+    name: "DINNER",
+    categories: ["STARTERS", "MAINS", "SIDES", "DESSERTS"],
+  },
+];
+
+/** Items for the live-app menus, keyed by the category chips above. */
+export const liveMenu: MenuItem[] = [
+  { id: "bs1", name: "CAPRICE SANDWICH", price: 20, category: "BRUNCH SANDWICHES" },
+  { id: "bs2", name: "CHICKEN CREPE", price: 19, category: "BRUNCH SANDWICHES" },
+  { id: "bs3", name: "CHICKEN SANDWICH (POULET)", price: 20, category: "BRUNCH SANDWICHES" },
+  { id: "bs4", name: "CROQUE MADAME", price: 21, category: "BRUNCH SANDWICHES" },
+  { id: "bs5", name: "CROQUE MONSIEUR", price: 19, category: "BRUNCH SANDWICHES" },
+  { id: "bs6", name: "FIGARO BLT", price: 20, category: "BRUNCH SANDWICHES" },
+  { id: "bs7", name: "FROMAGE FONDU", price: 16, category: "BRUNCH SANDWICHES" },
+  { id: "bs8", name: "HALF SANDWICH AND SOUP", price: 22, category: "BRUNCH SANDWICHES" },
+  { id: "bs9", name: "JAMBON (HAM) SANDWICH", price: 20, category: "BRUNCH SANDWICHES" },
+  { id: "bb1", name: "FRESH ORANGE JUICE", price: 9, category: "BRUNCH BEVERAGES" },
+  { id: "bb2", name: "GRAPEFRUIT JUICE", price: 9, category: "BRUNCH BEVERAGES" },
+  { id: "bb3", name: "SPARKLING WATER", price: 6, category: "BRUNCH BEVERAGES" },
+  { id: "bd1", name: "MIMOSA", price: 14, category: "BRUNCHY DRINKS" },
+  { id: "bd2", name: "BLOODY MARY", price: 15, category: "BRUNCHY DRINKS" },
+  { id: "bd3", name: "APEROL SPRITZ", price: 16, category: "BRUNCHY DRINKS" },
+  { id: "bc1", name: "CAFE AU LAIT", price: 7, category: "BRUNCH COFFEE" },
+  { id: "bc2", name: "CAPPUCCINO", price: 6, category: "BRUNCH COFFEE" },
+  { id: "bc3", name: "ESPRESSO DOPPIO", price: 5, category: "BRUNCH COFFEE" },
+  { id: "ba1", name: "AGENT4450-1785428867507", price: 1, category: "BAR BITES" },
+  { id: "ba2", name: "AGENT4450-FS-1785429750548", price: 1, category: "BAR BITES" },
+  { id: "ba3", name: "AGENT4450-PRE-1785428033881", price: 1, category: "BAR BITES" },
+  { id: "bk1", name: "OLIVES & ALMONDS", price: 9, category: "BAR BITES" },
+  { id: "bk2", name: "TRUFFLE FRIES", price: 12, category: "BAR BITES" },
+  { id: "ck1", name: "OLD FASHIONED", price: 18, category: "COCKTAILS" },
+  { id: "ck2", name: "NEGRONI", price: 17, category: "COCKTAILS" },
+  { id: "be1", name: "DRAFT LAGER", price: 9, category: "BEER" },
+  { id: "be2", name: "IPA BOTTLE", price: 10, category: "BEER" },
+  { id: "wn1", name: "HOUSE RED GLASS", price: 14, category: "WINE" },
+  { id: "wn2", name: "HOUSE WHITE GLASS", price: 14, category: "WINE" },
+  { id: "st1", name: "FRENCH ONION SOUP", price: 15, category: "STARTERS" },
+  { id: "st2", name: "STEAK TARTARE", price: 24, category: "STARTERS" },
+  { id: "mn1", name: "STEAK FRITES", price: 42, category: "MAINS" },
+  { id: "mn2", name: "ROASTED CHICKEN", price: 34, category: "MAINS" },
+  { id: "sd1", name: "POMMES PUREE", price: 12, category: "SIDES" },
+  { id: "sd2", name: "HARICOTS VERTS", price: 11, category: "SIDES" },
+  { id: "ds1", name: "CREME BRULEE", price: 13, category: "DESSERTS" },
+  { id: "ds2", name: "PROFITEROLES", price: 14, category: "DESSERTS" },
+];
+
+export type ModifierOption = { name: string; price: number };
+export type ModifierGroup = { name: string; options: ModifierOption[] };
+
+/** Modifier groups shown on the item sheet (Item tab). */
+export const modifierGroups: ModifierGroup[] = [
+  {
+    name: "Bread",
+    options: [
+      { name: "Baguette", price: 0 },
+      { name: "Foccacia", price: 0 },
+      { name: "Lettuce Wrap", price: 0 },
+    ],
+  },
+  {
+    name: "Sandwiches Sides",
+    options: [
+      { name: "Side Salad", price: 4 },
+      { name: "Fries", price: 5 },
+      { name: "Soup", price: 6 },
+    ],
+  },
+  {
+    name: "Sides",
+    options: [
+      { name: "Pickles", price: 1 },
+      { name: "Extra Cheese", price: 2 },
+    ],
+  },
+];
+
+/** Add-Ons tab on the item sheet. */
+export const addOnGroups: ModifierGroup[] = [
+  {
+    name: "Add-Ons",
+    options: [
+      { name: "Add Egg", price: 3 },
+      { name: "Add Bacon", price: 4 },
+      { name: "Add Avocado", price: 4 },
+      { name: "Add Truffle", price: 6 },
+    ],
+  },
+];
+
+export const discountPresets = [
+  { id: "comp-meal", name: "Comp Meal", percent: 100 },
+  { id: "employee-shift", name: "Employee Shift", percent: 50 },
+  { id: "police-fire", name: "Police & Fire", percent: 20 },
+] as const;
