@@ -64,7 +64,7 @@ export function PinSheet({
               key={k}
               type="button"
               onClick={() => push(k)}
-              className="grid min-h-[64px] place-items-center rounded-2xl bg-surface text-3xl font-bold text-muted-foreground transition-colors active:bg-muted"
+              className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]"
             >
               {k}
             </button>
@@ -73,14 +73,14 @@ export function PinSheet({
             type="button"
             aria-label="Clear PIN"
             onClick={() => setPin("")}
-            className="grid min-h-[64px] place-items-center rounded-2xl bg-surface text-3xl font-bold text-destructive transition-colors active:bg-muted"
+            className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-destructive shadow-sm transition-transform active:scale-[0.97]"
           >
             C
           </button>
           <button
             type="button"
             onClick={() => push("0")}
-            className="grid min-h-[64px] place-items-center rounded-2xl bg-surface text-3xl font-bold text-muted-foreground transition-colors active:bg-muted"
+            className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]"
           >
             0
           </button>
@@ -88,7 +88,7 @@ export function PinSheet({
             type="button"
             aria-label="Delete last digit"
             onClick={() => setPin((p) => p.slice(0, -1))}
-            className="grid min-h-[64px] place-items-center rounded-2xl bg-surface text-destructive transition-colors active:bg-muted"
+            className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-destructive shadow-sm transition-transform active:scale-[0.97]"
           >
             <Delete className="size-8" />
           </button>
