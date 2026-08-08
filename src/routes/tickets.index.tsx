@@ -62,12 +62,21 @@ function LiveTickets() {
             </button>
             <button
               type="button"
+              aria-label="Manager controls"
+              onClick={() => navigate({ to: "/tickets/manager-controls" })}
+              className="grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+            >
+              <ShieldCheck className="size-5" />
+            </button>
+            <button
+              type="button"
               aria-label="Refresh queue"
               onClick={() => toast.success("Ticket queue refreshed")}
               className="grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
             >
               <RefreshCcw className="size-5" />
             </button>
+
           </div>
         </div>
 
