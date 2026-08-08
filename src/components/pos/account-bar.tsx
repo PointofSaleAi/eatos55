@@ -1,4 +1,4 @@
-import { Bell, ChevronDown, ChevronUp, RotateCw } from "lucide-react";
+import { Bell, RotateCw } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { usePos } from "@/lib/pos-store";
