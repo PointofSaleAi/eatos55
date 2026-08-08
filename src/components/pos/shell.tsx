@@ -116,15 +116,18 @@ export function ScreenFooter({ children }: { children: ReactNode }) {
 }
 
 const tabs: { to: string; label: string; icon: LucideIcon }[] = [
+  { to: "/floor", label: "Home", icon: LayoutGrid },
+  { to: "/order/new", label: "Order", icon: PlusCircle },
   { to: "/tickets", label: "Tickets", icon: ClipboardList },
-  { to: "/orders", label: "Orders", icon: LayoutGrid },
+  { to: "/board", label: "Board", icon: Columns3 },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function BottomTabs() {
   return (
     <nav className="shrink-0 border-t border-border bg-surface">
-      <ul className="grid grid-cols-3">
+      <ul className="grid grid-cols-5">
+
         {tabs.map(({ to, label, icon: Icon }) => (
           <li key={to}>
             <Link
