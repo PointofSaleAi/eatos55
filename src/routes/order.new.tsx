@@ -198,10 +198,9 @@ function NewOrder() {
             </div>
           )
         ) : items.length === 0 ? (
-          <p className="px-4 py-24 text-center text-sm text-muted-foreground">
-            No products found for this category
-          </p>
+          <p className="px-4 py-24 text-center text-sm text-muted-foreground">No Active Menu</p>
         ) : (
+
           <div className="grid grid-cols-2 gap-3">
             {items.map((item) => (
               <button
