@@ -17,6 +17,7 @@ import { Route as AccessManagerPinRouteImport } from './routes/access.manager-pi
 import { Route as AccessSelectStationRouteImport } from './routes/access.select-station'
 import { Route as TicketsIndexRouteImport } from './routes/tickets.index'
 import { Route as TicketsFilterRouteImport } from './routes/tickets.filter'
+import { Route as TicketsSearchRouteImport } from './routes/tickets.search'
 import { Route as TicketsSortRouteImport } from './routes/tickets.sort'
 
 const IndexRoute = IndexRouteImport.update({
@@ -59,6 +60,11 @@ const TicketsFilterRoute = TicketsFilterRouteImport.update({
   path: '/tickets/filter',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TicketsSearchRoute = TicketsSearchRouteImport.update({
+  id: '/tickets/search',
+  path: '/tickets/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TicketsSortRoute = TicketsSortRouteImport.update({
   id: '/tickets/sort',
   path: '/tickets/sort',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
   '/tickets/filter': typeof TicketsFilterRoute
+  '/tickets/search': typeof TicketsSearchRoute
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/': typeof TicketsIndexRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
   '/tickets/filter': typeof TicketsFilterRoute
+  '/tickets/search': typeof TicketsSearchRoute
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets': typeof TicketsIndexRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
   '/tickets/filter': typeof TicketsFilterRoute
+  '/tickets/search': typeof TicketsSearchRoute
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/': typeof TicketsIndexRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/access/manager-pin'
     | '/access/select-station'
     | '/tickets/filter'
+    | '/tickets/search'
     | '/tickets/sort'
     | '/tickets/'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/access/manager-pin'
     | '/access/select-station'
     | '/tickets/filter'
+    | '/tickets/search'
     | '/tickets/sort'
     | '/tickets'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/access/manager-pin'
     | '/access/select-station'
     | '/tickets/filter'
+    | '/tickets/search'
     | '/tickets/sort'
     | '/tickets/'
   fileRoutesById: FileRoutesById
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   AccessManagerPinRoute: typeof AccessManagerPinRoute
   AccessSelectStationRoute: typeof AccessSelectStationRoute
   TicketsFilterRoute: typeof TicketsFilterRoute
+  TicketsSearchRoute: typeof TicketsSearchRoute
   TicketsSortRoute: typeof TicketsSortRoute
   TicketsIndexRoute: typeof TicketsIndexRoute
 }
@@ -205,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TicketsFilterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tickets/search': {
+      id: '/tickets/search'
+      path: '/tickets/search'
+      fullPath: '/tickets/search'
+      preLoaderRoute: typeof TicketsSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tickets/sort': {
       id: '/tickets/sort'
       path: '/tickets/sort'
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccessManagerPinRoute: AccessManagerPinRoute,
   AccessSelectStationRoute: AccessSelectStationRoute,
   TicketsFilterRoute: TicketsFilterRoute,
+  TicketsSearchRoute: TicketsSearchRoute,
   TicketsSortRoute: TicketsSortRoute,
   TicketsIndexRoute: TicketsIndexRoute,
 }
