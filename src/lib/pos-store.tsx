@@ -136,13 +136,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
     station: null,
   });
   const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
-  const [sortKey, setSortKey] = useState<SortKey>("newest");
-  const [filters, setFilters] = useState<TicketFilters>({
-    statuses: [],
-    modes: [],
-    mineOnly: false,
-  });
+  const [sortKey, setSortKey] = useState<SortKey>("time-early-late");
+  const [filters, setFilters] = useState<TicketFilters>(emptyFilters);
   const [search, setSearch] = useState("");
+  const [ticketDate, setTicketDate] = useState(DEFAULT_TICKET_DATE);
   const [mode, setMode] = useState<MenuMode>("dine-in");
   const [cart, setCart] = useState<CartLine[]>([]);
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
