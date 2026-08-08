@@ -227,7 +227,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               type="button"
               onClick={() => setTab(t.id)}
               className={cn(
-                "min-h-[40px] shrink-0 rounded-full px-4 text-sm font-bold transition-colors",
+                "min-h-[36px] shrink-0 rounded-full px-3.5 text-[13px] font-bold transition-colors",
                 tab === t.id
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -371,7 +371,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                               }))
                             }
                             className={cn(
-                              "min-h-[40px] rounded-full px-4 text-sm font-bold transition-colors",
+                              "min-h-[36px] rounded-full px-3.5 text-[13px] font-bold transition-colors",
                               active
                                 ? "bg-primary text-primary-foreground"
                                 : "bg-muted text-muted-foreground",

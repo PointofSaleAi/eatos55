@@ -11,7 +11,6 @@ import {
 
 import type { ReactNode } from "react";
 import { ClockPullDown } from "@/components/pos/clock-pulldown";
-import { NavRail } from "@/components/pos/nav-rail";
 import { useGlobalKeyboardAware } from "@/hooks/use-keyboard-inset";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
@@ -30,7 +29,6 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
           "lg:h-[880px] lg:w-[440px]",
         )}
       >
-        {session.signedIn ? <NavRail /> : null}
         <div className="relative flex min-w-0 flex-1 flex-col">
           {session.signedIn ? <ClockPullDown /> : null}
           {children}
@@ -155,7 +153,7 @@ const tabs: { to: string; label: string; icon: LucideIcon }[] = [
 
 export function BottomTabs() {
   return (
-    <nav className="shrink-0 border-t border-border bg-surface max-md:landscape:hidden [html[data-kb=open]_&]:hidden">
+    <nav className="shrink-0 border-t border-border bg-surface [html[data-kb=open]_&]:hidden">
       <ul className="grid grid-cols-5">
 
         {tabs.map(({ to, label, icon: Icon }) => (

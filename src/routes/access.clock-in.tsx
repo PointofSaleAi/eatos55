@@ -197,7 +197,7 @@ function ClockIn() {
                   toast.success(`Order type set to ${t}`);
                 }}
                 className={cn(
-                  "min-h-[40px] shrink-0 rounded-full px-4 text-sm font-bold transition-colors",
+                  "min-h-[36px] shrink-0 rounded-full px-3.5 text-[13px] font-bold transition-colors",
                   t === orderType
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-secondary",

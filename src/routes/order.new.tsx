@@ -70,7 +70,7 @@ function NewOrder() {
           <button
             type="button"
             onClick={() => navigate({ to: "/order/custom-item" })}
-            className="min-h-[40px] shrink-0 rounded-full border border-border px-4 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="min-h-[36px] shrink-0 rounded-full border border-border px-3.5 text-[13px] font-bold text-foreground transition-colors hover:bg-muted"
           >
             Custom Item
           </button>
@@ -131,7 +131,7 @@ function NewOrder() {
                 type="button"
                 onClick={() => setCategory(c)}
                 className={cn(
-                  "min-h-[40px] shrink-0 rounded-full px-4 text-sm font-bold transition-colors",
+                  "min-h-[36px] shrink-0 rounded-full px-3.5 text-[13px] font-bold transition-colors",
                   c === category
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-secondary",

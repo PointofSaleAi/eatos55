@@ -60,9 +60,9 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
   return (
     <>
       <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
-        <SheetContent side="bottom" className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(2rem+var(--kb-inset,0px))]">
-          <SheetHeader className="px-4 pb-2 pt-5">
-            <SheetTitle className="text-center text-xl font-extrabold text-foreground">
+        <SheetContent side="bottom" className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]">
+          <SheetHeader className="px-4 pb-1.5 pt-4">
+            <SheetTitle className="text-center text-base font-extrabold text-foreground">
               More
             </SheetTitle>
           </SheetHeader>
@@ -75,23 +75,23 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
                   type="button"
                   onClick={r.onClick}
                   className={cn(
-                    "flex w-full items-center gap-4 px-4 py-5 text-left",
+                    "flex w-full items-center gap-3 px-4 py-3.5 text-left",
                     i % 2 === 0 ? "bg-muted/40" : "bg-surface",
                   )}
                 >
-                  <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-muted text-muted-foreground">
-                    <Icon className="size-6" />
+                  <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-muted text-muted-foreground">
+                    <Icon className="size-5" />
                   </span>
-                  <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">
+                  <span className="min-w-0 flex-1 truncate text-[13px] font-bold text-foreground">
                     {r.label}
                   </span>
                   {r.value ? (
-                    <span className="shrink-0 text-sm font-bold text-muted-foreground">
+                    <span className="shrink-0 text-[13px] font-bold text-muted-foreground">
                       {r.value}
                     </span>
                   ) : null}
                   {r.id === "no-tax" && noTax ? (
-                    <Check className="size-6 shrink-0 text-success" />
+                    <Check className="size-5 shrink-0 text-success" />
                   ) : null}
                 </button>
               );
@@ -101,9 +101,9 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
       </Sheet>
 
       <Sheet open={chargeOpen} onOpenChange={(next) => (next ? null : setChargeOpen(false))}>
-        <SheetContent side="bottom" className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(2rem+var(--kb-inset,0px))]">
-          <SheetHeader className="px-4 pb-2 pt-5">
-            <SheetTitle className="text-center text-xl font-extrabold text-foreground">
+        <SheetContent side="bottom" className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]">
+          <SheetHeader className="px-4 pb-1.5 pt-4">
+            <SheetTitle className="text-center text-base font-extrabold text-foreground">
               Service Charge
             </SheetTitle>
           </SheetHeader>
@@ -116,7 +116,7 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
               onChange={(e) => setCharge(e.target.value)}
               placeholder="0.00"
               aria-label="Service charge amount"
-              className="h-14 w-full rounded-xl border border-border bg-surface px-4 text-lg font-bold text-foreground outline-none"
+              className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-base font-bold text-foreground outline-none"
             />
             <button
               type="button"
@@ -125,7 +125,7 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
                 setChargeOpen(false);
                 toast.success("Service charge updated");
               }}
-              className="mt-3 min-h-[52px] w-full rounded-full bg-primary text-base font-extrabold uppercase text-primary-foreground"
+              className="mt-3 h-11 w-full rounded-full bg-primary text-[13px] font-extrabold uppercase text-primary-foreground"
             >
               Apply
             </button>
