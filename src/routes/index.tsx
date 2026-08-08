@@ -1,19 +1,24 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Wordmark } from "@/components/pos/brand";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { APP_VERSION } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Sign in — EATOS Handheld" },
-      { name: "description", content: "Secure team access to the EATOS handheld POS." },
-      { property: "og:title", content: "Sign in — EATOS Handheld" },
-      { property: "og:description", content: "Secure team access to the EATOS handheld POS." },
+      { title: "Point of Purchase — eatOS Sign in" },
+      { name: "description", content: "Secure team access to the eatOS Point of Purchase app." },
+      { property: "og:title", content: "Point of Purchase — eatOS Sign in" },
+      {
+        property: "og:description",
+        content: "Secure team access to the eatOS Point of Purchase app.",
+      },
     ],
   }),
   component: SignInScreen,
@@ -22,69 +27,86 @@ export const Route = createFileRoute("/")({
 function SignInScreen() {
   const { signIn } = usePos();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("elizer@eatos.com");
-  const [password, setPassword] = useState("demo1234");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
 
   return (
     <div className="flex flex-1 flex-col bg-background">
-      <div className="no-scrollbar flex-1 overflow-y-auto px-6 pb-6 pt-12">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent">EATOS</p>
-        <h1 className="mt-3 text-3xl font-extrabold leading-tight text-foreground">
-          Handheld,
-          <br />
-          redesigned for the rush.
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Sign in to open your shift and take the floor.
-        </p>
+      <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto px-6 pb-6 pt-10">
+        <div className="flex flex-col items-center">
+          <Wordmark />
+          <h1 className="mt-5 text-3xl font-extrabold text-foreground">Point of Purchase</h1>
+        </div>
 
         <form
-          className="mt-8 space-y-4"
+          className="mt-10 space-y-5"
           onSubmit={(e) => {
             e.preventDefault();
             signIn();
-            toast.success("Welcome back, Elizer");
+            toast.success("Signed in");
             navigate({ to: "/access/clock-in" });
           }}
         >
-          <div className="space-y-1.5">
-            <Label htmlFor="email">Work email</Label>
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-sm font-extrabold">
+              Email Address
+            </Label>
             <Input
               id="email"
-              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
-              className="h-12 rounded-xl bg-surface"
+              placeholder="Enter Email or Phone Number"
+              className="h-14 rounded-xl bg-surface text-base"
             />
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="h-12 rounded-xl bg-surface"
-            />
+          <div className="space-y-2">
+            <Label htmlFor="password" className="text-sm font-extrabold">
+              Password
+            </Label>
+            <div className="relative">
+              <Input
+                id="password"
+                type={show ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter Password"
+                className="h-14 rounded-xl bg-surface pr-12 text-base"
+              />
+              <button
+                type="button"
+                aria-label={show ? "Hide password" : "Show password"}
+                onClick={() => setShow((s) => !s)}
+                className="absolute right-2 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-full text-muted-foreground"
+              >
+                {show ? <Eye className="size-5" /> : <EyeOff className="size-5" />}
+              </button>
+            </div>
           </div>
+
           <Button
             type="submit"
-            className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground hover:bg-accent/90"
+            className="h-14 w-full rounded-xl bg-primary text-base font-extrabold uppercase tracking-wide text-primary-foreground hover:bg-primary/90"
           >
             Sign in
           </Button>
         </form>
 
-        <div className="mt-6 flex flex-col gap-3 text-center text-sm">
-          <Link to="/access/forgot-password" className="font-bold text-foreground underline">
-            Forgot password?
-          </Link>
-          <Link to="/access/create-account" className="text-muted-foreground">
-            New restaurant? <span className="font-bold text-accent">Create an account</span>
-          </Link>
-        </div>
+        <Link
+          to="/access/forgot-password"
+          className="mt-7 text-center text-base font-extrabold text-foreground"
+        >
+          Forgot Your Password?
+        </Link>
+
+        <Link
+          to="/access/create-account"
+          className="mt-5 flex h-14 items-center justify-center rounded-xl border-2 border-foreground text-base font-extrabold uppercase tracking-wide text-foreground"
+        >
+          Create an account
+        </Link>
+
+        <p className="mt-8 text-center text-xs text-muted-foreground">{APP_VERSION}</p>
       </div>
     </div>
   );

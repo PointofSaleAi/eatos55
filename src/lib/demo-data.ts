@@ -216,3 +216,25 @@ export const helpArticles = [
 
 export const money = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+
+/** Build/version string shown on the sign-in screen. */
+export const APP_VERSION = "Version 5.200.27(+11350)   FL 3.44.2   BD 31.07.26";
+
+/** Restaurant types offered during account creation. */
+export const restaurantTypes = [
+  "Quick Service (QSR)",
+  "Full Service",
+  "Fast Casual",
+  "Cafe / Bakery",
+  "Bar / Nightclub",
+  "Food Truck",
+  "Ghost Kitchen",
+];
+
+export const countries = ["United States", "Canada", "United Kingdom", "Australia", "India"];
+
+/** Order types / device profiles shown on the clock-in keypad strip. */
+export const orderTypes = ["Main", "hbjnj", "Online Ordering"];
+
+/** Barcode-style category chips on the new order menu. */
+export const barcodeCategories = ["B", "C", "A", "TEST BARCODE"];
