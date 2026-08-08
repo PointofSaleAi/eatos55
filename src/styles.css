@@ -170,20 +170,3 @@
     display: none;
   }
 }
-
-/* Settings list icon tiles (mirrors the handheld app's tile palette). */
-@theme {
-  --color-tile-green: oklch(0.62 0.13 163);
-  --color-tile-violet: oklch(0.55 0.26 296);
-  --color-tile-orange: oklch(0.68 0.2 47);
-  --color-tile-indigo: oklch(0.48 0.27 273);
-  --color-tile-purple: oklch(0.38 0.19 328);
-  --color-tile-slate: oklch(0.46 0.02 264);
-  --color-tile-sky: oklch(0.72 0.13 236);
-  --color-tile-pink: oklch(0.72 0.17 5);
-  --color-tile-magenta: oklch(0.5 0.24 355);
-  --color-tile-yellow: oklch(0.82 0.16 84);
-  --color-tile-red: oklch(0.58 0.23 22);
-  --color-tile-blue: oklch(0.55 0.21 258);
-  --color-tile-grey: oklch(0.78 0.01 264);
-}
