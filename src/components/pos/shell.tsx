@@ -12,6 +12,7 @@ import {
 import type { ReactNode } from "react";
 import { ClockPullDown } from "@/components/pos/clock-pulldown";
 import { NavRail } from "@/components/pos/nav-rail";
+import { useGlobalKeyboardAware } from "@/hooks/use-keyboard-inset";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,7 @@ import { cn } from "@/lib/utils";
 /** Device frame: full-bleed on phones, framed handheld on tablet/desktop. */
 export function DeviceFrame({ children }: { children: ReactNode }) {
   const { session } = usePos();
+  useGlobalKeyboardAware();
   return (
     <div className="min-h-[100dvh] bg-shell md:flex md:items-center md:justify-center md:p-8">
       <div
