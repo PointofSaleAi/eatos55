@@ -1,6 +1,5 @@
-import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
-  ChevronLeft,
   CreditCard,
   Heart,
   Landmark,
@@ -10,8 +9,9 @@ import {
   Ticket as TicketIcon,
   Wallet,
 } from "lucide-react";
+import { useEffect } from "react";
 import { toast } from "sonner";
-import { EmptyState } from "@/components/pos/primitives";
+import { BackButton } from "@/components/pos/shell";
 import { TAX_RATE, money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 
@@ -37,10 +37,16 @@ export const Route = createFileRoute("/payment/method")({
 
 function PaymentMethod() {
   const navigate = useNavigate();
-  const router = useRouter();
   const { cart, totals, tickets, guest, orderType, activeTable, paidSoFar } = usePos();
   const orderNumber = tickets.length + 1;
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
+  const nothingToPay = cart.length === 0;
+
+  useEffect(() => {
+    if (!nothingToPay) return;
+    toast.info("Add items to the order before tendering");
+    navigate({ to: "/order/new" });
+  }, [nothingToPay, navigate]);
 
   const tenders = [
     { id: "card", label: "Card", icon: CreditCard, onPick: () => navigate({ to: "/payment/card" }) },
@@ -86,15 +92,7 @@ function PaymentMethod() {
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <div className="flex shrink-0 items-center gap-2 border-b border-border bg-surface px-2 py-3">
-        <button
-          type="button"
-          aria-label="Go back"
-          title="Back"
-          onClick={() => router.history.back()}
-          className="grid size-11 place-items-center rounded-full text-foreground hover:bg-muted"
-        >
-          <ChevronLeft className="size-6" />
-        </button>
+        <BackButton fallbackTo="/order/review" label="Back to order review" />
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-2xl font-extrabold text-foreground">Payment</h1>
           <p className="truncate text-xs text-muted-foreground">
@@ -144,9 +142,7 @@ function PaymentMethod() {
               ) : null}
             </div>
           </>
-        ) : (
-          <EmptyState title="Nothing to pay" detail="Add items to the order before tendering." />
-        )}
+        ) : null}
       </div>
 
       <div className="shrink-0 rounded-t-3xl border-t border-border bg-surface px-3 pb-[max(0.75rem,var(--kb-inset,0px))] pt-4">
