@@ -29,8 +29,8 @@ function ForgotPassword() {
   const [phone, setPhone] = useState("");
 
   return (
-    <div className="flex flex-1 flex-col bg-background">
-      <div className="no-scrollbar flex-1 overflow-y-auto px-6 pb-[calc(1.5rem+var(--kb-inset,0px))] pt-5">
+    <div className="flex min-h-0 flex-1 flex-col bg-background">
+      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-6 pb-[calc(1.5rem+var(--kb-inset,0px))] pt-5">
         <button
           type="button"
           aria-label="Go back"

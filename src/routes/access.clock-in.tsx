@@ -35,7 +35,7 @@ function ClockIn() {
   const digit = (d: string) => setPin((p) => (p.length >= 4 ? p : p + d));
 
   return (
-    <div className="relative flex flex-1 flex-col bg-background">
+    <div className="relative flex min-h-0 flex-1 flex-col bg-background">
       {/* Tickets screen chrome behind the keypad overlay */}
       <div className="flex shrink-0 items-center justify-between border-b border-border bg-surface px-4 pb-3 pt-4">
         <p className="text-2xl font-extrabold text-foreground">Tickets</p>
@@ -44,7 +44,7 @@ function ClockIn() {
         </span>
       </div>
 
-      <div className="no-scrollbar flex-1 overflow-y-auto px-4 py-4">
+      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4">
         <div className="rounded-2xl border border-border bg-surface px-4 py-5">
           <div className="flex items-center justify-center gap-8">
             {[0, 1, 2, 3].map((i) => (

@@ -127,7 +127,7 @@ export function ScreenBody({
   return (
     <div
       className={cn(
-        "no-scrollbar flex-1 overflow-y-auto px-4 py-4 pb-[calc(1rem+var(--kb-inset,0px))]",
+        "no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4 pb-[calc(1rem+var(--kb-inset,0px))]",
         className,
       )}
     >

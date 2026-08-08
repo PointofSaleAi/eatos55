@@ -48,7 +48,7 @@ export function ClockPullDown() {
 
       {open ? (
         <div className="absolute inset-0 z-30 flex flex-col bg-shell/80 px-3 pb-4 pt-8">
-          <div className="no-scrollbar flex-1 overflow-y-auto">
+          <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto">
             <div className="rounded-2xl border border-border bg-surface px-4 py-4">
               <div className="flex items-center justify-center gap-4">
                 {[0, 1, 2, 3].map((i) => (
