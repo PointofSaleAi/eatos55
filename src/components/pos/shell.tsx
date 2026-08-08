@@ -1,4 +1,4 @@
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import {
   ChevronLeft,
   ClipboardList,
@@ -20,6 +20,10 @@ import { cn } from "@/lib/utils";
 export function DeviceFrame({ children }: { children: ReactNode }) {
   const { session } = usePos();
   useGlobalKeyboardAware();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  // The ordering screens carry their own action footer, so the tab bar would
+  // be a second navigation there.
+  const hideTabs = pathname.startsWith("/order/new") || pathname.startsWith("/order/custom-item");
   return (
     <div className="h-[100dvh] overflow-hidden bg-shell md:flex md:h-auto md:min-h-[100dvh] md:items-center md:justify-center md:overflow-visible md:p-8">
       <div
@@ -33,6 +37,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
         <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
           {session.signedIn ? <ClockPullDown /> : null}
           {children}
+          {session.signedIn && !hideTabs ? <BottomTabs /> : null}
         </div>
       </div>
     </div>
@@ -47,6 +52,7 @@ export function ScreenHeader({
   right,
 }: {
   title: string;
+  /** Accepted for API compatibility; no longer rendered above the title. */
   eyebrow?: string;
   back?: boolean;
   right?: ReactNode;
@@ -60,6 +66,7 @@ export function ScreenHeader({
             <button
               type="button"
               aria-label="Go back"
+              title="Go back"
               onClick={() => router.history.back()}
               className="-ml-1 grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
             >
@@ -67,11 +74,6 @@ export function ScreenHeader({
             </button>
           ) : null}
           <div className="min-w-0">
-            {eyebrow ? (
-              <p className="truncate text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                {eyebrow}
-              </p>
-            ) : null}
             <h1 className="truncate text-2xl font-extrabold text-foreground">{title}</h1>
           </div>
         </div>
@@ -98,16 +100,14 @@ export function SubHeader({
         <div className="flex min-w-0 items-center gap-2">
           <button
             type="button"
-            aria-label={`Back to ${backLabel}`}
+            aria-label={backLabel ? `Back to ${backLabel}` : "Go back"}
+            title={backLabel ? `Back to ${backLabel}` : "Go back"}
             onClick={() => router.history.back()}
             className="-ml-1 grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
           >
             <ChevronLeft className="size-5" />
           </button>
           <div className="min-w-0">
-            <p className="truncate text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-              {backLabel}
-            </p>
             <h1 className="truncate text-2xl font-extrabold text-foreground">{title}</h1>
           </div>
         </div>
