@@ -58,9 +58,31 @@ function Board() {
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-2xl font-extrabold text-foreground">Order Status</h1>
-          <p className="shrink-0 text-sm font-bold text-muted-foreground">
-            {new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
-          </p>
+          <div className="flex shrink-0 items-center gap-1">
+            <button
+              type="button"
+              aria-label="Pick board date"
+              onClick={() => toast.info("Showing today's orders")}
+              className="grid size-10 place-items-center rounded-full border border-border text-foreground transition-colors hover:bg-muted"
+            >
+              <CalendarDays className="size-5" />
+            </button>
+            <button
+              type="button"
+              aria-label="Clear board filters"
+              onClick={() => {
+                setChannel("DINE IN");
+                setAsc({});
+                toast.success("Board filters cleared");
+              }}
+              className="grid size-10 place-items-center rounded-full border border-border text-foreground transition-colors hover:bg-muted"
+            >
+              <XCircle className="size-5" />
+            </button>
+            <p className="ml-1 text-sm font-bold text-muted-foreground">
+              {new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
+            </p>
+          </div>
         </div>
         <div className="mt-3 inline-flex rounded-full bg-muted p-1">
           {boardChannels.map((c) => (
@@ -78,6 +100,7 @@ function Board() {
           ))}
         </div>
       </div>
+
 
       <div className="no-scrollbar flex-1 overflow-x-auto">
         <div className="flex h-full min-w-max gap-3 px-4 py-4">
