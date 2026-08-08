@@ -15,8 +15,14 @@ import { Route as AccessCreateAccountRouteImport } from './routes/access.create-
 import { Route as AccessForgotPasswordRouteImport } from './routes/access.forgot-password'
 import { Route as AccessManagerPinRouteImport } from './routes/access.manager-pin'
 import { Route as AccessSelectStationRouteImport } from './routes/access.select-station'
+import { Route as OrderCustomItemRouteImport } from './routes/order.custom-item'
+import { Route as OrderMenuRouteImport } from './routes/order.menu'
 import { Route as OrderNewRouteImport } from './routes/order.new'
+import { Route as OrderReviewRouteImport } from './routes/order.review'
 import { Route as OrdersIndexRouteImport } from './routes/orders.index'
+import { Route as PaymentCardRouteImport } from './routes/payment.card'
+import { Route as PaymentCashRouteImport } from './routes/payment.cash'
+import { Route as PaymentMethodRouteImport } from './routes/payment.method'
 import { Route as TicketsIndexRouteImport } from './routes/tickets.index'
 import { Route as TicketsTicketIdRouteImport } from './routes/tickets.$ticketId'
 import { Route as TicketsFilterRouteImport } from './routes/tickets.filter'
@@ -55,14 +61,44 @@ const AccessSelectStationRoute = AccessSelectStationRouteImport.update({
   path: '/access/select-station',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrderCustomItemRoute = OrderCustomItemRouteImport.update({
+  id: '/order/custom-item',
+  path: '/order/custom-item',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderMenuRoute = OrderMenuRouteImport.update({
+  id: '/order/menu',
+  path: '/order/menu',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OrderNewRoute = OrderNewRouteImport.update({
   id: '/order/new',
   path: '/order/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrderReviewRoute = OrderReviewRouteImport.update({
+  id: '/order/review',
+  path: '/order/review',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OrdersIndexRoute = OrdersIndexRouteImport.update({
   id: '/orders/',
   path: '/orders/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentCardRoute = PaymentCardRouteImport.update({
+  id: '/payment/card',
+  path: '/payment/card',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentCashRoute = PaymentCashRouteImport.update({
+  id: '/payment/cash',
+  path: '/payment/cash',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentMethodRoute = PaymentMethodRouteImport.update({
+  id: '/payment/method',
+  path: '/payment/method',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TicketsIndexRoute = TicketsIndexRouteImport.update({
@@ -108,7 +144,13 @@ export interface FileRoutesByFullPath {
   '/access/forgot-password': typeof AccessForgotPasswordRoute
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
+  '/order/custom-item': typeof OrderCustomItemRoute
+  '/order/menu': typeof OrderMenuRoute
   '/order/new': typeof OrderNewRoute
+  '/order/review': typeof OrderReviewRoute
+  '/payment/card': typeof PaymentCardRoute
+  '/payment/cash': typeof PaymentCashRoute
+  '/payment/method': typeof PaymentMethodRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -125,7 +167,13 @@ export interface FileRoutesByTo {
   '/access/forgot-password': typeof AccessForgotPasswordRoute
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
+  '/order/custom-item': typeof OrderCustomItemRoute
+  '/order/menu': typeof OrderMenuRoute
   '/order/new': typeof OrderNewRoute
+  '/order/review': typeof OrderReviewRoute
+  '/payment/card': typeof PaymentCardRoute
+  '/payment/cash': typeof PaymentCashRoute
+  '/payment/method': typeof PaymentMethodRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -143,7 +191,13 @@ export interface FileRoutesById {
   '/access/forgot-password': typeof AccessForgotPasswordRoute
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
+  '/order/custom-item': typeof OrderCustomItemRoute
+  '/order/menu': typeof OrderMenuRoute
   '/order/new': typeof OrderNewRoute
+  '/order/review': typeof OrderReviewRoute
+  '/payment/card': typeof PaymentCardRoute
+  '/payment/cash': typeof PaymentCashRoute
+  '/payment/method': typeof PaymentMethodRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -162,7 +216,13 @@ export interface FileRouteTypes {
     | '/access/forgot-password'
     | '/access/manager-pin'
     | '/access/select-station'
+    | '/order/custom-item'
+    | '/order/menu'
     | '/order/new'
+    | '/order/review'
+    | '/payment/card'
+    | '/payment/cash'
+    | '/payment/method'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -179,7 +239,13 @@ export interface FileRouteTypes {
     | '/access/forgot-password'
     | '/access/manager-pin'
     | '/access/select-station'
+    | '/order/custom-item'
+    | '/order/menu'
     | '/order/new'
+    | '/order/review'
+    | '/payment/card'
+    | '/payment/cash'
+    | '/payment/method'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -196,7 +262,13 @@ export interface FileRouteTypes {
     | '/access/forgot-password'
     | '/access/manager-pin'
     | '/access/select-station'
+    | '/order/custom-item'
+    | '/order/menu'
     | '/order/new'
+    | '/order/review'
+    | '/payment/card'
+    | '/payment/cash'
+    | '/payment/method'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -214,7 +286,13 @@ export interface RootRouteChildren {
   AccessForgotPasswordRoute: typeof AccessForgotPasswordRoute
   AccessManagerPinRoute: typeof AccessManagerPinRoute
   AccessSelectStationRoute: typeof AccessSelectStationRoute
+  OrderCustomItemRoute: typeof OrderCustomItemRoute
+  OrderMenuRoute: typeof OrderMenuRoute
   OrderNewRoute: typeof OrderNewRoute
+  OrderReviewRoute: typeof OrderReviewRoute
+  PaymentCardRoute: typeof PaymentCardRoute
+  PaymentCashRoute: typeof PaymentCashRoute
+  PaymentMethodRoute: typeof PaymentMethodRoute
   TicketsTicketIdRoute: typeof TicketsTicketIdRoute
   TicketsFilterRoute: typeof TicketsFilterRoute
   TicketsManagerControlsRoute: typeof TicketsManagerControlsRoute
@@ -269,6 +347,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccessSelectStationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/order/custom-item': {
+      id: '/order/custom-item'
+      path: '/order/custom-item'
+      fullPath: '/order/custom-item'
+      preLoaderRoute: typeof OrderCustomItemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order/menu': {
+      id: '/order/menu'
+      path: '/order/menu'
+      fullPath: '/order/menu'
+      preLoaderRoute: typeof OrderMenuRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/order/new': {
       id: '/order/new'
       path: '/order/new'
@@ -276,11 +368,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrderNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/order/review': {
+      id: '/order/review'
+      path: '/order/review'
+      fullPath: '/order/review'
+      preLoaderRoute: typeof OrderReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/orders/': {
       id: '/orders/'
       path: '/orders'
       fullPath: '/orders/'
       preLoaderRoute: typeof OrdersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/card': {
+      id: '/payment/card'
+      path: '/payment/card'
+      fullPath: '/payment/card'
+      preLoaderRoute: typeof PaymentCardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/cash': {
+      id: '/payment/cash'
+      path: '/payment/cash'
+      fullPath: '/payment/cash'
+      preLoaderRoute: typeof PaymentCashRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/method': {
+      id: '/payment/method'
+      path: '/payment/method'
+      fullPath: '/payment/method'
+      preLoaderRoute: typeof PaymentMethodRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tickets/': {
@@ -342,7 +462,13 @@ const rootRouteChildren: RootRouteChildren = {
   AccessForgotPasswordRoute: AccessForgotPasswordRoute,
   AccessManagerPinRoute: AccessManagerPinRoute,
   AccessSelectStationRoute: AccessSelectStationRoute,
+  OrderCustomItemRoute: OrderCustomItemRoute,
+  OrderMenuRoute: OrderMenuRoute,
   OrderNewRoute: OrderNewRoute,
+  OrderReviewRoute: OrderReviewRoute,
+  PaymentCardRoute: PaymentCardRoute,
+  PaymentCashRoute: PaymentCashRoute,
+  PaymentMethodRoute: PaymentMethodRoute,
   TicketsTicketIdRoute: TicketsTicketIdRoute,
   TicketsFilterRoute: TicketsFilterRoute,
   TicketsManagerControlsRoute: TicketsManagerControlsRoute,
