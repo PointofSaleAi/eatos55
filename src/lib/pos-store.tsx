@@ -270,11 +270,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
       totals: {
         subtotal,
         tax,
-        total: Math.round((subtotal + tax) * 100) / 100,
+        total,
         count: cart.reduce((n, l) => n + l.qty, 0),
       },
       commitPayment: (method, tendered) => {
-        const total = Math.round((subtotal + tax) * 100) / 100;
         const change = Math.max(0, Math.round((tendered - total) * 100) / 100);
         let id = activeTicketId;
         if (id) {
@@ -290,10 +289,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
           id = `t-${1047 + tickets.length}`;
           const created: Ticket = {
             id,
-            number: cart.reduce((n, l) => n + l.qty, 0),
-            label: "Guest order",
+            number: tickets.length + 1,
+            label: "Guest",
             seats: 1,
             total,
+            date: ticketDate,
             arrivedAt: new Date().toLocaleTimeString("en-US", {
               hour: "numeric",
               minute: "2-digit",
@@ -325,6 +325,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     sortKey,
     filters,
     search,
+    ticketDate,
     mode,
     cart,
     activeTicketId,
