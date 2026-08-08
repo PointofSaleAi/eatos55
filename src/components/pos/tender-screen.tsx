@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useRouter } from "@tanstack/react-router";
 import { BackButton } from "@/components/pos/shell";
 import { NumPad } from "@/components/pos/numpad";
 import { cashDenominations, money } from "@/lib/demo-data";
@@ -24,7 +23,6 @@ export function TenderScreen({
   actionLabel?: (amount: number) => string;
   onCommit: (amount: number) => void;
 }) {
-  const router = useRouter();
   const [amount, setAmount] = useState(initialAmount);
   const entered = Number(amount || "0");
   const change = Math.round((entered - due) * 100) / 100;

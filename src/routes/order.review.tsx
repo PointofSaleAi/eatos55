@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Minus, Plus, Printer } from "lucide-react";
 import { BackButton } from "@/components/pos/shell";
@@ -28,7 +28,6 @@ export const Route = createFileRoute("/order/review")({
 
 function OrderReview() {
   const navigate = useNavigate();
-  const router = useRouter();
   const { cart, changeQty, totals, tickets } = usePos();
   const orderNumber = tickets.length + 1;
   const [guestOpen, setGuestOpen] = useState(false);
