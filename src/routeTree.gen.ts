@@ -26,6 +26,7 @@ import { Route as PaymentMethodRouteImport } from './routes/payment.method'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SettingsControlCenterRouteImport } from './routes/settings.control-center'
 import { Route as SettingsGeneralRouteImport } from './routes/settings.general'
+import { Route as SettingsHardwareRouteImport } from './routes/settings.hardware'
 import { Route as SettingsMenuRouteImport } from './routes/settings.menu'
 import { Route as SettingsMoreRouteImport } from './routes/settings.more'
 import { Route as SettingsNetworkRouteImport } from './routes/settings.network'
@@ -129,6 +130,11 @@ const SettingsControlCenterRoute = SettingsControlCenterRouteImport.update({
 const SettingsGeneralRoute = SettingsGeneralRouteImport.update({
   id: '/settings/general',
   path: '/settings/general',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsHardwareRoute = SettingsHardwareRouteImport.update({
+  id: '/settings/hardware',
+  path: '/settings/hardware',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsMenuRoute = SettingsMenuRouteImport.update({
@@ -243,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/payment/method': typeof PaymentMethodRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
+  '/settings/hardware': typeof SettingsHardwareRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/network': typeof SettingsNetworkRoute
@@ -281,6 +288,7 @@ export interface FileRoutesByTo {
   '/payment/method': typeof PaymentMethodRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
+  '/settings/hardware': typeof SettingsHardwareRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/network': typeof SettingsNetworkRoute
@@ -320,6 +328,7 @@ export interface FileRoutesById {
   '/payment/method': typeof PaymentMethodRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
+  '/settings/hardware': typeof SettingsHardwareRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/network': typeof SettingsNetworkRoute
@@ -360,6 +369,7 @@ export interface FileRouteTypes {
     | '/payment/method'
     | '/settings/control-center'
     | '/settings/general'
+    | '/settings/hardware'
     | '/settings/menu'
     | '/settings/more'
     | '/settings/network'
@@ -398,6 +408,7 @@ export interface FileRouteTypes {
     | '/payment/method'
     | '/settings/control-center'
     | '/settings/general'
+    | '/settings/hardware'
     | '/settings/menu'
     | '/settings/more'
     | '/settings/network'
@@ -436,6 +447,7 @@ export interface FileRouteTypes {
     | '/payment/method'
     | '/settings/control-center'
     | '/settings/general'
+    | '/settings/hardware'
     | '/settings/menu'
     | '/settings/more'
     | '/settings/network'
@@ -475,6 +487,7 @@ export interface RootRouteChildren {
   PaymentMethodRoute: typeof PaymentMethodRoute
   SettingsControlCenterRoute: typeof SettingsControlCenterRoute
   SettingsGeneralRoute: typeof SettingsGeneralRoute
+  SettingsHardwareRoute: typeof SettingsHardwareRoute
   SettingsMenuRoute: typeof SettingsMenuRoute
   SettingsMoreRoute: typeof SettingsMoreRoute
   SettingsNetworkRoute: typeof SettingsNetworkRoute
@@ -617,6 +630,13 @@ declare module '@tanstack/react-router' {
       path: '/settings/general'
       fullPath: '/settings/general'
       preLoaderRoute: typeof SettingsGeneralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/hardware': {
+      id: '/settings/hardware'
+      path: '/settings/hardware'
+      fullPath: '/settings/hardware'
+      preLoaderRoute: typeof SettingsHardwareRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings/menu': {
@@ -771,6 +791,7 @@ const rootRouteChildren: RootRouteChildren = {
   PaymentMethodRoute: PaymentMethodRoute,
   SettingsControlCenterRoute: SettingsControlCenterRoute,
   SettingsGeneralRoute: SettingsGeneralRoute,
+  SettingsHardwareRoute: SettingsHardwareRoute,
   SettingsMenuRoute: SettingsMenuRoute,
   SettingsMoreRoute: SettingsMoreRoute,
   SettingsNetworkRoute: SettingsNetworkRoute,
