@@ -26,7 +26,8 @@ export function useNavDrawer() {
 /** Burger button that opens the full app navigation drawer. */
 export function MenuButton({ className }: { className?: string }) {
   const drawer = useNavDrawer();
-  if (!drawer) return null;
+  const appChrome = useAppChrome();
+  if (!drawer || !appChrome) return null;
   return (
     <button
       type="button"
