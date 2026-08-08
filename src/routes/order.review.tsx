@@ -139,6 +139,7 @@ function OrderReview() {
           Charge {money(totals.total)}
         </button>
       </div>
+      <GuestSheet open={guestOpen} onClose={() => setGuestOpen(false)} />
     </div>
   );
 }
@@ -148,7 +149,6 @@ function Row({ label, value }: { label: string; value: string }) {
     <div className="flex items-center justify-between text-muted-foreground">
       <span>{label}</span>
       <span className="tabular-nums">{value}</span>
-      <GuestSheet open={guestOpen} onClose={() => setGuestOpen(false)} />
     </div>
   );
 }
