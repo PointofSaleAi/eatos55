@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccessClockInRouteImport } from './routes/access.clock-in'
 import { Route as AccessCreateAccountRouteImport } from './routes/access.create-account'
 import { Route as AccessForgotPasswordRouteImport } from './routes/access.forgot-password'
+import { Route as AccessManagerPinRouteImport } from './routes/access.manager-pin'
 import { Route as AccessSelectStationRouteImport } from './routes/access.select-station'
 
 const IndexRoute = IndexRouteImport.update({
@@ -35,6 +36,11 @@ const AccessForgotPasswordRoute = AccessForgotPasswordRouteImport.update({
   path: '/access/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccessManagerPinRoute = AccessManagerPinRouteImport.update({
+  id: '/access/manager-pin',
+  path: '/access/manager-pin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AccessSelectStationRoute = AccessSelectStationRouteImport.update({
   id: '/access/select-station',
   path: '/access/select-station',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/access/clock-in': typeof AccessClockInRoute
   '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
+  '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/access/clock-in': typeof AccessClockInRoute
   '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
+  '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
 }
 export interface FileRoutesById {
@@ -61,6 +69,7 @@ export interface FileRoutesById {
   '/access/clock-in': typeof AccessClockInRoute
   '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
+  '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
 }
 export interface FileRouteTypes {
@@ -70,6 +79,7 @@ export interface FileRouteTypes {
     | '/access/clock-in'
     | '/access/create-account'
     | '/access/forgot-password'
+    | '/access/manager-pin'
     | '/access/select-station'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -77,6 +87,7 @@ export interface FileRouteTypes {
     | '/access/clock-in'
     | '/access/create-account'
     | '/access/forgot-password'
+    | '/access/manager-pin'
     | '/access/select-station'
   id:
     | '__root__'
@@ -84,6 +95,7 @@ export interface FileRouteTypes {
     | '/access/clock-in'
     | '/access/create-account'
     | '/access/forgot-password'
+    | '/access/manager-pin'
     | '/access/select-station'
   fileRoutesById: FileRoutesById
 }
@@ -92,6 +104,7 @@ export interface RootRouteChildren {
   AccessClockInRoute: typeof AccessClockInRoute
   AccessCreateAccountRoute: typeof AccessCreateAccountRoute
   AccessForgotPasswordRoute: typeof AccessForgotPasswordRoute
+  AccessManagerPinRoute: typeof AccessManagerPinRoute
   AccessSelectStationRoute: typeof AccessSelectStationRoute
 }
 
@@ -125,6 +138,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccessForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/access/manager-pin': {
+      id: '/access/manager-pin'
+      path: '/access/manager-pin'
+      fullPath: '/access/manager-pin'
+      preLoaderRoute: typeof AccessManagerPinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/access/select-station': {
       id: '/access/select-station'
       path: '/access/select-station'
@@ -140,6 +160,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccessClockInRoute: AccessClockInRoute,
   AccessCreateAccountRoute: AccessCreateAccountRoute,
   AccessForgotPasswordRoute: AccessForgotPasswordRoute,
+  AccessManagerPinRoute: AccessManagerPinRoute,
   AccessSelectStationRoute: AccessSelectStationRoute,
 }
 export const routeTree = rootRouteImport
