@@ -23,11 +23,13 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { usePos, emptyFilters, type SortKey } from "@/lib/pos-store";
 import {
   employees,
+  money,
   paymentTypes,
   revenueCenters,
   ticketOrderTypes,
   type TicketStatus,
 } from "@/lib/demo-data";
+
 import { cn } from "@/lib/utils";
 
 export type TicketsOverlay = "none" | "sort" | "filter" | "search";
