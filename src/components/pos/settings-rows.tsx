@@ -132,7 +132,7 @@ export function IconValueRow(props: RowShellProps & { onClick?: () => void; topi
         params={{ topic }}
         className={cn(rowBase, "transition-colors hover:bg-muted")}
       >
-        <RowInner {...rest} />
+        <RowInner {...rest} chevron />
       </Link>
     );
   }
