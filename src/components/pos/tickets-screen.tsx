@@ -37,7 +37,10 @@ export type TicketsOverlay = "none" | "sort" | "filter" | "search";
 type Tab =
   | "all"
   | "unpaid"
+  | "open"
+  | "closed"
   | Extract<TicketStatus, "ordering" | "payment" | "ready" | "preparing" | "paid">;
+
 
 const tabs: { id: Tab; label: string }[] = [
   { id: "all", label: "All" },
