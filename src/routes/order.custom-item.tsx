@@ -49,7 +49,7 @@ function CustomItem() {
         >
           <ChevronLeft className="size-6" />
         </button>
-        <h1 className="truncate text-xl font-extrabold text-foreground">Custom Item</h1>
+        <h1 className="truncate text-2xl font-extrabold text-foreground">Custom Item</h1>
       </div>
       <GuestHeader />
 
@@ -59,11 +59,11 @@ function CustomItem() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Item Name"
-            className="h-14 w-full rounded-xl border border-border bg-surface px-4 text-lg text-foreground outline-none focus:border-foreground placeholder:text-muted-foreground"
+            className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-sm text-foreground outline-none focus:border-accent placeholder:text-muted-foreground"
           />
         </div>
         <div className="rounded-xl border border-border bg-surface px-4 py-5 text-center">
-          <p className="text-4xl font-extrabold tabular-nums text-foreground">
+          <p className="text-3xl font-extrabold tabular-nums text-foreground">
             {amount ? money(price) : money(0)}
           </p>
         </div>
@@ -91,7 +91,7 @@ function CustomItem() {
             addLine();
             navigate({ to: "/order/review" });
           }}
-          className="min-h-[56px] w-full rounded-xl bg-primary text-base font-extrabold uppercase tracking-wide text-primary-foreground disabled:opacity-40"
+          className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
         >
           Add to order
         </button>

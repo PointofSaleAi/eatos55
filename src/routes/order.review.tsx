@@ -40,7 +40,7 @@ function OrderReview() {
         >
           <ChevronLeft className="size-6" />
         </button>
-        <h1 className="truncate text-xl font-extrabold text-foreground">
+        <h1 className="truncate text-2xl font-extrabold text-foreground">
           Order Number {orderNumber}
         </h1>
       </div>
@@ -63,7 +63,7 @@ function OrderReview() {
             {cart.map((line) => (
               <div key={line.id} className="flex items-center gap-3 py-4">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-lg font-bold text-foreground">{line.name}</p>
+                  <p className="truncate text-sm font-bold text-foreground">{line.name}</p>
                   <p className="text-sm text-muted-foreground">{money(line.price)} each</p>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
@@ -75,7 +75,7 @@ function OrderReview() {
                   >
                     <Minus className="size-4" />
                   </button>
-                  <span className="w-6 text-center text-lg font-bold tabular-nums text-foreground">
+                  <span className="w-6 text-center text-sm font-bold tabular-nums text-foreground">
                     {line.qty}
                   </span>
                   <button
@@ -87,7 +87,7 @@ function OrderReview() {
                     <Plus className="size-4" />
                   </button>
                 </div>
-                <span className="w-20 shrink-0 text-right text-lg font-extrabold tabular-nums text-foreground">
+                <span className="w-20 shrink-0 text-right text-sm font-extrabold tabular-nums text-foreground">
                   {money(line.price * line.qty)}
                 </span>
               </div>
@@ -98,10 +98,10 @@ function OrderReview() {
         )}
 
         {cart.length ? (
-          <div className="mt-4 space-y-2 border-t border-border pt-4 text-base">
+          <div className="mt-4 space-y-2 border-t border-border pt-4 text-sm">
             <Row label="Subtotal" value={money(totals.subtotal)} />
             <Row label={`Tax (${Math.round(TAX_RATE * 100)}%)`} value={money(totals.tax)} />
-            <div className="flex items-center justify-between pt-2 text-xl font-extrabold text-foreground">
+            <div className="flex items-center justify-between pt-2 text-lg font-extrabold text-foreground">
               <span>Total</span>
               <span className="tabular-nums">{money(totals.total)}</span>
             </div>
@@ -114,14 +114,14 @@ function OrderReview() {
           <button
             type="button"
             onClick={() => navigate({ to: "/order/new" })}
-            className="min-h-[52px] flex-1 rounded-xl border border-border text-base font-bold text-foreground"
+            className="min-h-[48px] flex-1 rounded-2xl border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             Add More
           </button>
           <button
             type="button"
             onClick={() => toast.success("Receipt printed")}
-            className="min-h-[52px] flex-1 rounded-xl border border-border text-base font-bold text-foreground"
+            className="min-h-[48px] flex-1 rounded-2xl border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             Print
           </button>
@@ -130,7 +130,7 @@ function OrderReview() {
           type="button"
           disabled={!cart.length}
           onClick={() => navigate({ to: "/payment/method" })}
-          className="min-h-[56px] w-full rounded-xl bg-primary text-base font-extrabold uppercase tracking-wide text-primary-foreground disabled:opacity-40"
+          className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
         >
           Charge {money(totals.total)}
         </button>

@@ -39,15 +39,15 @@ function PayByCash() {
         >
           <ChevronLeft className="size-6" />
         </button>
-        <h1 className="truncate text-xl font-extrabold text-foreground">Pay by Cash</h1>
+        <h1 className="truncate text-2xl font-extrabold text-foreground">Pay by Cash</h1>
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4">
         <div className="text-center">
-          <p className="text-4xl font-extrabold tabular-nums text-foreground">
+          <p className="text-3xl font-extrabold tabular-nums text-foreground">
             {money(received)}
           </p>
-          <p className="mt-1 text-base text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground">
             Due {money(totals.total)}
             {amount ? (
               change >= 0 ? (
@@ -68,7 +68,7 @@ function PayByCash() {
               key={d}
               type="button"
               onClick={() => setAmount(String(Math.round((received + d) * 100) / 100))}
-              className="min-h-[48px] rounded-xl border border-border bg-surface text-base font-bold text-foreground active:bg-muted"
+              className="min-h-[44px] rounded-2xl border border-border bg-surface text-sm font-bold text-foreground transition-colors hover:bg-muted"
             >
               ${d}
             </button>
@@ -99,7 +99,7 @@ function PayByCash() {
             );
             navigate({ to: "/tickets" });
           }}
-          className="min-h-[56px] w-full rounded-xl bg-primary text-base font-extrabold uppercase tracking-wide text-primary-foreground disabled:opacity-40"
+          className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
         >
           Charge {money(totals.total)}
         </button>
