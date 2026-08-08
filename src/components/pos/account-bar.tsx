@@ -55,8 +55,8 @@ export function AccountBar() {
           >
             <RotateCw className="size-4" />
           </button>
-        </div>
-      ) : null}
+      </div>
+
 
 
       {news ? (
