@@ -1,9 +1,7 @@
-import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
-import { ChevronLeft } from "lucide-react";
-import { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { NumPad } from "@/components/pos/numpad";
-import { cashDenominations, money } from "@/lib/demo-data";
+import { TenderScreen } from "@/components/pos/tender-screen";
+import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/payment/cash")({
@@ -22,88 +20,27 @@ export const Route = createFileRoute("/payment/cash")({
 
 function PayByCash() {
   const navigate = useNavigate();
-  const router = useRouter();
-  const { totals, commitPayment } = usePos();
-  const [amount, setAmount] = useState("");
-  const received = Number(amount || "0");
-  const change = Math.round((received - totals.total) * 100) / 100;
+  const { totals, paidSoFar, commitPayment } = usePos();
+  const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-background">
-      <div className="flex shrink-0 items-center gap-2 border-b border-border bg-surface px-2 py-3">
-        <button
-          type="button"
-          aria-label="Go back"
-          onClick={() => router.history.back()}
-          className="grid size-11 place-items-center rounded-full text-foreground hover:bg-muted"
-        >
-          <ChevronLeft className="size-6" />
-        </button>
-        <h1 className="truncate text-2xl font-extrabold text-foreground">Pay by Cash</h1>
-      </div>
-
-      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4">
-        <div className="text-center">
-          <p className="text-3xl font-extrabold tabular-nums text-foreground">
-            {money(received)}
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Due {money(totals.total)}
-            {amount ? (
-              change >= 0 ? (
-                <span className="font-bold text-success"> · Change {money(change)}</span>
-              ) : (
-                <span className="font-bold text-destructive">
-                  {" "}
-                  · Short {money(Math.abs(change))}
-                </span>
-              )
-            ) : null}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-3 gap-2">
-          {cashDenominations.map((d) => (
-            <button
-              key={d}
-              type="button"
-              onClick={() => setAmount(String(Math.round((received + d) * 100) / 100))}
-              className="min-h-[44px] rounded-2xl border border-border bg-surface text-sm font-bold text-foreground transition-colors hover:bg-muted"
-            >
-              ${d}
-            </button>
-          ))}
-        </div>
-
-        <NumPad
-          className="mt-auto"
-          onDigit={(d) =>
-            setAmount((cur) => {
-              if (d === "." && cur.includes(".")) return cur;
-              const next = `${cur}${d}`;
-              return next.length > 9 ? cur : next;
-            })
-          }
-          onBackspace={() => setAmount((cur) => cur.slice(0, -1))}
-        />
-      </div>
-
-      <div className="shrink-0 border-t border-border bg-surface p-4">
-        <button
-          type="button"
-          disabled={received < totals.total}
-          onClick={() => {
-            commitPayment("cash", received);
-            toast.success(
-              change > 0 ? `Paid · change due ${money(change)}` : "Paid in full with cash",
-            );
-            navigate({ to: "/tickets" });
-          }}
-          className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
-        >
-          Charge {money(totals.total)}
-        </button>
-      </div>
-    </div>
+    <TenderScreen
+      title="Pay by Cash"
+      due={due}
+      denominations
+      actionLabel={(amount) => `Charge ${money(amount || due)}`}
+      onCommit={(amount) => {
+        if (amount < due) {
+          toast.error(`Short ${money(due - amount)} — enter the full amount`);
+          return;
+        }
+        commitPayment("cash", amount);
+        const change = Math.round((amount - due) * 100) / 100;
+        toast.success(
+          change > 0 ? `Paid · change due ${money(change)}` : "Paid in full with cash",
+        );
+        navigate({ to: "/tickets" });
+      }}
+    />
   );
 }

@@ -100,9 +100,19 @@ const defaultSettings: AppSettings = {
   livePin: "F179488",
 };
 
+export type TenderMethod =
+  | "cash"
+  | "card"
+  | "gift"
+  | "house"
+  | "split"
+  | "loyalty"
+  | "qr"
+  | "other";
+
 export type LastPayment = {
   ticketId: string;
-  method: "cash" | "card";
+  method: TenderMethod;
   total: number;
   tendered: number;
   change: number;
@@ -173,8 +183,12 @@ type Store = {
     discount: number;
   };
 
-  commitPayment: (method: "cash" | "card", tendered: number) => string;
+  commitPayment: (method: TenderMethod, tendered: number) => string;
   lastPayment: LastPayment;
+  /** Amount already tendered on the current order through split payments. */
+  paidSoFar: number;
+  addPartialPayment: (amount: number) => void;
+  resetPayments: () => void;
 
   settings: AppSettings;
   updateSettings: (patch: Partial<AppSettings>) => void;
@@ -215,6 +229,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [managerUnlocked, setManagerUnlocked] = useState(false);
   const [lastPayment, setLastPayment] = useState<LastPayment>(null);
+  const [paidSoFar, setPaidSoFar] = useState(0);
 
   const value = useMemo<Store>(() => {
     const round = (n: number) => Math.round(n * 100) / 100;
@@ -413,11 +428,16 @@ export function PosProvider({ children }: { children: ReactNode }) {
           setTickets((list) => [created, ...list]);
         }
         setLastPayment({ ticketId: id, method, total, tendered, change });
+        setPaidSoFar(0);
         setCart([]);
         setActiveTicketId(null);
         return id;
       },
       lastPayment,
+      paidSoFar,
+      addPartialPayment: (amount) =>
+        setPaidSoFar((p) => Math.round((p + amount) * 100) / 100),
+      resetPayments: () => setPaidSoFar(0),
 
       settings,
       updateSettings: (patch) => setSettings((s) => ({ ...s, ...patch })),
@@ -447,6 +467,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     settings,
     managerUnlocked,
     lastPayment,
+    paidSoFar,
   ]);
 
   return <PosContext.Provider value={value}>{children}</PosContext.Provider>;

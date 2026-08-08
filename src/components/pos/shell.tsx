@@ -22,7 +22,11 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   // The ordering screens carry their own action footer, so the tab bar would
   // be a second navigation there.
-  const hideTabs = pathname.startsWith("/order/new") || pathname.startsWith("/order/custom-item");
+  const hideTabs =
+    pathname.startsWith("/order/new") ||
+    pathname.startsWith("/order/custom-item") ||
+    pathname.startsWith("/payment");
+
   return (
     <div className="h-[100dvh] overflow-hidden bg-shell md:flex md:h-auto md:min-h-[100dvh] md:items-center md:justify-center md:overflow-visible md:p-8">
       <div

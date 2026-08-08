@@ -18,7 +18,7 @@ function Key({
       aria-label={label}
       onClick={onPress}
       className={cn(
-        "grid h-full min-h-[38px] place-items-center rounded-2xl bg-surface text-lg font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
+        "grid h-full min-h-[44px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
         className,
       )}
     >
@@ -87,7 +87,7 @@ export function NumPad({
 
 
   return (
-    <div className={cn("grid grid-cols-3 gap-2", className)}>
+    <div className={cn("grid auto-rows-fr grid-cols-3 grid-rows-4 gap-2", className)}>
       {digits.map((d) => (
         <Key key={d} onPress={() => onDigit(d)}>
           {d}

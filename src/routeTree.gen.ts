@@ -52,6 +52,7 @@ import { Route as TicketsManagerControlsRouteImport } from './routes/tickets.man
 import { Route as TicketsSearchRouteImport } from './routes/tickets.search'
 import { Route as TicketsSortRouteImport } from './routes/tickets.sort'
 import { Route as TicketsWhatsNewRouteImport } from './routes/tickets.whats-new'
+import { Route as PaymentTenderKindRouteImport } from './routes/payment.tender.$kind'
 import { Route as SettingsDetailTopicRouteImport } from './routes/settings.detail.$topic'
 import { Route as SettingsHardwareIntegrationsRouteImport } from './routes/settings.hardware.integrations'
 
@@ -270,6 +271,11 @@ const TicketsWhatsNewRoute = TicketsWhatsNewRouteImport.update({
   path: '/tickets/whats-new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaymentTenderKindRoute = PaymentTenderKindRouteImport.update({
+  id: '/payment/tender/$kind',
+  path: '/payment/tender/$kind',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsDetailTopicRoute = SettingsDetailTopicRouteImport.update({
   id: '/settings/detail/$topic',
   path: '/settings/detail/$topic',
@@ -326,6 +332,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof SettingsIndexRoute
   '/system/': typeof SystemIndexRoute
   '/tickets/': typeof TicketsIndexRoute
+  '/payment/tender/$kind': typeof PaymentTenderKindRoute
   '/settings/detail/$topic': typeof SettingsDetailTopicRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
 }
@@ -373,6 +380,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsIndexRoute
   '/system': typeof SystemIndexRoute
   '/tickets': typeof TicketsIndexRoute
+  '/payment/tender/$kind': typeof PaymentTenderKindRoute
   '/settings/detail/$topic': typeof SettingsDetailTopicRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
 }
@@ -421,6 +429,7 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/system/': typeof SystemIndexRoute
   '/tickets/': typeof TicketsIndexRoute
+  '/payment/tender/$kind': typeof PaymentTenderKindRoute
   '/settings/detail/$topic': typeof SettingsDetailTopicRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
 }
@@ -470,6 +479,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/system/'
     | '/tickets/'
+    | '/payment/tender/$kind'
     | '/settings/detail/$topic'
     | '/settings/hardware/integrations'
   fileRoutesByTo: FileRoutesByTo
@@ -517,6 +527,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/system'
     | '/tickets'
+    | '/payment/tender/$kind'
     | '/settings/detail/$topic'
     | '/settings/hardware/integrations'
   id:
@@ -564,6 +575,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/system/'
     | '/tickets/'
+    | '/payment/tender/$kind'
     | '/settings/detail/$topic'
     | '/settings/hardware/integrations'
   fileRoutesById: FileRoutesById
@@ -612,6 +624,7 @@ export interface RootRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   SystemIndexRoute: typeof SystemIndexRoute
   TicketsIndexRoute: typeof TicketsIndexRoute
+  PaymentTenderKindRoute: typeof PaymentTenderKindRoute
   SettingsDetailTopicRoute: typeof SettingsDetailTopicRoute
 }
 
@@ -918,6 +931,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TicketsWhatsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/payment/tender/$kind': {
+      id: '/payment/tender/$kind'
+      path: '/payment/tender/$kind'
+      fullPath: '/payment/tender/$kind'
+      preLoaderRoute: typeof PaymentTenderKindRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/detail/$topic': {
       id: '/settings/detail/$topic'
       path: '/settings/detail/$topic'
@@ -990,18 +1010,9 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   SystemIndexRoute: SystemIndexRoute,
   TicketsIndexRoute: TicketsIndexRoute,
+  PaymentTenderKindRoute: PaymentTenderKindRoute,
   SettingsDetailTopicRoute: SettingsDetailTopicRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

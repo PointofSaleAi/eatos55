@@ -1,19 +1,32 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { CreditCard, Heart, QrCode, Wallet } from "lucide-react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { money } from "@/lib/demo-data";
-import { usePos } from "@/lib/pos-store";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import {
+  ChevronLeft,
+  CreditCard,
+  Heart,
+  Landmark,
+  MoreHorizontal,
+  QrCode,
+  Split,
+  Ticket as TicketIcon,
+  Wallet,
+} from "lucide-react";
 import { toast } from "sonner";
+import { EmptyState } from "@/components/pos/primitives";
+import { TAX_RATE, money } from "@/lib/demo-data";
+import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/payment/method")({
   head: () => ({
     meta: [
       { title: "Select Payment Method — eatOS Point of Purchase" },
-      { name: "description", content: "Choose card, cash, loyalty or QR code to settle the order." },
+      {
+        name: "description",
+        content: "Review the order and choose card, cash, gift card, loyalty, QR or split payment.",
+      },
       { property: "og:title", content: "Select Payment Method — eatOS Point of Purchase" },
       {
         property: "og:description",
-        content: "Choose card, cash, loyalty or QR code to settle the order.",
+        content: "Review the order and choose card, cash, gift card, loyalty, QR or split payment.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -24,7 +37,10 @@ export const Route = createFileRoute("/payment/method")({
 
 function PaymentMethod() {
   const navigate = useNavigate();
-  const { totals } = usePos();
+  const router = useRouter();
+  const { cart, totals, tickets, guest, orderType, activeTable, paidSoFar } = usePos();
+  const orderNumber = tickets.length + 1;
+  const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
 
   const tenders = [
     { id: "card", label: "Card", icon: CreditCard, onPick: () => navigate({ to: "/payment/card" }) },
@@ -41,38 +57,132 @@ function PaymentMethod() {
       icon: QrCode,
       onPick: () => toast.info("QR code shown on the guest display"),
     },
+    {
+      id: "gift",
+      label: "Gift Card",
+      icon: TicketIcon,
+      onPick: () => navigate({ to: "/payment/tender/$kind", params: { kind: "gift" } }),
+    },
+    {
+      id: "split",
+      label: "Split",
+      icon: Split,
+      onPick: () => navigate({ to: "/payment/tender/$kind", params: { kind: "split" } }),
+    },
+    {
+      id: "house",
+      label: "House",
+      icon: Landmark,
+      onPick: () => navigate({ to: "/payment/tender/$kind", params: { kind: "house" } }),
+    },
+    {
+      id: "other",
+      label: "Other",
+      icon: MoreHorizontal,
+      onPick: () => navigate({ to: "/payment/tender/$kind", params: { kind: "other" } }),
+    },
   ];
 
   return (
-    <Sheet open onOpenChange={(open) => (open ? null : navigate({ to: "/order/review" }))}>
-      <SheetContent side="bottom" className="rounded-t-3xl border-0 bg-surface p-0 pb-8">
-        <SheetHeader className="px-4 pb-1 pt-5">
-          <SheetTitle className="text-center text-xl font-extrabold text-foreground">
-            Select Payment Method
-          </SheetTitle>
-        </SheetHeader>
-        <p className="pb-5 text-center text-sm text-muted-foreground">
-          Total due <span className="font-extrabold text-foreground">{money(totals.total)}</span>
+    <div className="flex min-h-0 flex-1 flex-col bg-background">
+      <div className="flex shrink-0 items-center gap-2 border-b border-border bg-surface px-2 py-3">
+        <button
+          type="button"
+          aria-label="Go back"
+          title="Back"
+          onClick={() => router.history.back()}
+          className="grid size-11 place-items-center rounded-full text-foreground hover:bg-muted"
+        >
+          <ChevronLeft className="size-6" />
+        </button>
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate text-2xl font-extrabold text-foreground">Payment</h1>
+          <p className="truncate text-xs text-muted-foreground">
+            Order {orderNumber} · {guest.name || activeTable || "Guest"} · {orderType}
+          </p>
+        </div>
+      </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+        {cart.length ? (
+          <>
+            <div className="divide-y divide-border">
+              {cart.map((line) => (
+                <div key={line.id} className="flex items-center gap-3 py-3">
+                  <span className="w-7 shrink-0 text-sm font-extrabold tabular-nums text-muted-foreground">
+                    {line.qty}×
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-bold text-foreground">{line.name}</p>
+                    <p className="text-xs text-muted-foreground">{money(line.price)} each</p>
+                  </div>
+                  <span className="shrink-0 text-sm font-extrabold tabular-nums text-foreground">
+                    {money(line.price * line.qty)}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 space-y-1.5 border-t border-border pt-3 text-sm">
+              <Row label="Subtotal" value={money(totals.subtotal)} />
+              <Row label={`Tax (${Math.round(TAX_RATE * 100)}%)`} value={money(totals.tax)} />
+              {totals.serviceCharge ? (
+                <Row label="Service charge" value={money(totals.serviceCharge)} />
+              ) : null}
+              {totals.discount ? <Row label="Discount" value={`-${money(totals.discount)}`} /> : null}
+              <div className="flex items-center justify-between pt-1.5 text-base font-extrabold text-foreground">
+                <span>Total</span>
+                <span className="tabular-nums">{money(totals.total)}</span>
+              </div>
+              {paidSoFar > 0 ? (
+                <>
+                  <Row label="Paid so far" value={money(paidSoFar)} />
+                  <div className="flex items-center justify-between text-base font-extrabold text-accent">
+                    <span>Balance due</span>
+                    <span className="tabular-nums">{money(due)}</span>
+                  </div>
+                </>
+              ) : null}
+            </div>
+          </>
+        ) : (
+          <EmptyState title="Nothing to pay" detail="Add items to the order before tendering." />
+        )}
+      </div>
+
+      <div className="shrink-0 rounded-t-3xl border-t border-border bg-surface px-3 pb-[max(0.75rem,var(--kb-inset,0px))] pt-4">
+        <p className="text-center text-lg font-extrabold text-foreground">Select Payment Method</p>
+        <p className="pb-3 text-center text-sm text-muted-foreground">
+          Total due <span className="font-extrabold text-foreground">{money(due)}</span>
         </p>
-        <div className="grid grid-cols-4 gap-2 px-3 pb-2">
+        <div className="grid grid-cols-4 gap-x-2 gap-y-3">
           {tenders.map((t) => {
             const Icon = t.icon;
             return (
               <button
                 key={t.id}
                 type="button"
+                disabled={!cart.length}
                 onClick={t.onPick}
-                className="flex flex-col items-center gap-2"
+                className="flex flex-col items-center gap-1.5 disabled:opacity-40"
               >
-                <span className="grid size-16 place-items-center rounded-full border border-border bg-muted/50 text-foreground transition-colors active:bg-muted">
-                  <Icon className="size-7" />
+                <span className="grid size-14 place-items-center rounded-full border border-border bg-muted/50 text-foreground transition-colors active:bg-muted">
+                  <Icon className="size-6" />
                 </span>
-                <span className="text-center text-sm font-medium text-foreground">{t.label}</span>
+                <span className="text-center text-xs font-medium text-foreground">{t.label}</span>
               </button>
             );
           })}
         </div>
-      </SheetContent>
-    </Sheet>
+      </div>
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between text-muted-foreground">
+      <span>{label}</span>
+      <span className="tabular-nums">{value}</span>
+    </div>
   );
 }
