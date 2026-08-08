@@ -59,7 +59,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
       >
         <SheetContent
           side="bottom"
-          className="mx-auto max-h-[85dvh] w-full max-w-[420px] overflow-y-auto rounded-t-3xl border-0 bg-surface p-0"
+          className="mx-auto max-h-[85dvh] w-full max-w-[420px] overflow-y-auto rounded-t-3xl border-0 bg-surface p-0 pb-[var(--kb-inset,0px)]"
         >
           {item ? (
             <>

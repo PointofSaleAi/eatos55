@@ -12,6 +12,7 @@ import {
 import type { ReactNode } from "react";
 import { ClockPullDown } from "@/components/pos/clock-pulldown";
 import { NavRail } from "@/components/pos/nav-rail";
+import { useGlobalKeyboardAware } from "@/hooks/use-keyboard-inset";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,7 @@ import { cn } from "@/lib/utils";
 /** Device frame: full-bleed on phones, framed handheld on tablet/desktop. */
 export function DeviceFrame({ children }: { children: ReactNode }) {
   const { session } = usePos();
+  useGlobalKeyboardAware();
   return (
     <div className="min-h-[100dvh] bg-shell md:flex md:items-center md:justify-center md:p-8">
       <div
@@ -124,13 +126,22 @@ export function ScreenBody({
   className?: string;
 }) {
   return (
-    <div className={cn("no-scrollbar flex-1 overflow-y-auto px-4 py-4", className)}>{children}</div>
+    <div
+      className={cn(
+        "no-scrollbar flex-1 overflow-y-auto px-4 py-4 pb-[calc(1rem+var(--kb-inset,0px))]",
+        className,
+      )}
+    >
+      {children}
+    </div>
   );
 }
 
 export function ScreenFooter({ children }: { children: ReactNode }) {
   return (
-    <div className="shrink-0 border-t border-border bg-surface px-4 pb-5 pt-3">{children}</div>
+    <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1.25rem+var(--kb-inset,0px))] pt-3">
+      {children}
+    </div>
   );
 }
 
@@ -144,7 +155,7 @@ const tabs: { to: string; label: string; icon: LucideIcon }[] = [
 
 export function BottomTabs() {
   return (
-    <nav className="shrink-0 border-t border-border bg-surface max-md:landscape:hidden">
+    <nav className="shrink-0 border-t border-border bg-surface max-md:landscape:hidden [html[data-kb=open]_&]:hidden">
       <ul className="grid grid-cols-5">
 
         {tabs.map(({ to, label, icon: Icon }) => (

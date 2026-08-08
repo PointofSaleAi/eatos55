@@ -17,7 +17,7 @@ export function DiscountSheet({
 }) {
   return (
     <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
-      <SheetContent side="bottom" className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-8">
+      <SheetContent side="bottom" className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(2rem+var(--kb-inset,0px))]">
         <SheetHeader className="px-4 pb-2 pt-5">
           <SheetTitle className="text-center text-xl font-extrabold text-foreground">
             Discount

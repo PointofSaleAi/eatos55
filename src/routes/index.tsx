@@ -3,7 +3,6 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Wordmark } from "@/components/pos/brand";
-import { useKeyboardInset, scrollFieldIntoView } from "@/hooks/use-keyboard-inset";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,15 +30,11 @@ function SignInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
-  const kb = useKeyboardInset();
 
   return (
     <div className="flex flex-1 flex-col bg-background">
-      <div
-        className={`no-scrollbar flex flex-1 flex-col overflow-y-auto px-6 py-8 ${kb ? "justify-start" : "justify-center"}`}
-        style={{ paddingBottom: kb ? kb + 16 : undefined }}
-      >
-        <div className={kb ? "w-full" : "my-auto w-full"}>
+      <div className="no-scrollbar flex flex-1 flex-col justify-center overflow-y-auto px-6 pb-[calc(2rem+var(--kb-inset,0px))] pt-8 [html[data-kb=open]_&]:justify-start">
+        <div className="my-auto w-full [html[data-kb=open]_&]:my-0">
         <div className="flex flex-col items-center">
           <Wordmark />
           <h1 className="mt-5 text-3xl font-extrabold leading-tight text-foreground">Point of Purchase</h1>
@@ -62,7 +57,6 @@ function SignInScreen() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              onFocus={scrollFieldIntoView}
               placeholder="Enter Email or Phone Number"
               className="h-12 rounded-xl bg-surface"
             />
@@ -77,7 +71,6 @@ function SignInScreen() {
                 type={show ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onFocus={scrollFieldIntoView}
                 placeholder="Enter Password"
                 className="h-12 rounded-xl bg-surface pr-12"
               />
