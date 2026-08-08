@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   DEFAULT_TICKET_DATE,
   TAX_RATE,
@@ -209,6 +209,24 @@ export function PosProvider({ children }: { children: ReactNode }) {
     role: "Supervisor",
     station: null,
   });
+
+  // Keep the shift/session across page reloads so navigation never disappears.
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("eatos.pos.session");
+      if (raw) setSession((s) => ({ ...s, ...(JSON.parse(raw) as Partial<Session>) }));
+    } catch {
+      /* ignore unreadable storage */
+    }
+  }, []);
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("eatos.pos.session", JSON.stringify(session));
+    } catch {
+      /* ignore unwritable storage */
+    }
+  }, [session]);
+
   const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
   const [sortKey, setSortKey] = useState<SortKey>("time-early-late");
   const [filters, setFilters] = useState<TicketFilters>(emptyFilters);

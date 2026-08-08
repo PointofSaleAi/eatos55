@@ -8,6 +8,14 @@ export type MenuItem = {
   price: number;
   category: string;
   note?: string;
+  /** Tracked inventory count, when the item counts stock. */
+  stock?: number;
+  /** Threshold at or below which the stock badge switches to low-stock style. */
+  lowStockAt?: number;
+  /** 86'd item: cannot be added without a manager override. */
+  outOfStock?: boolean;
+  /** Price is entered by the server at order time. */
+  openPrice?: boolean;
 };
 
 export type CartLine = {
@@ -307,19 +315,19 @@ export const menus: MenuDef[] = [
 /** Items for the live-app menus, keyed by the category chips above. */
 export const liveMenu: MenuItem[] = [
   { id: "bs1", name: "CAPRICE SANDWICH", price: 20, category: "BRUNCH SANDWICHES" },
-  { id: "bs2", name: "CHICKEN CREPE", price: 19, category: "BRUNCH SANDWICHES" },
+  { id: "bs2", name: "CHICKEN CREPE", price: 19, category: "BRUNCH SANDWICHES", stock: 12 },
   { id: "bs3", name: "CHICKEN SANDWICH (POULET)", price: 20, category: "BRUNCH SANDWICHES" },
-  { id: "bs4", name: "CROQUE MADAME", price: 21, category: "BRUNCH SANDWICHES" },
-  { id: "bs5", name: "CROQUE MONSIEUR", price: 19, category: "BRUNCH SANDWICHES" },
+  { id: "bs4", name: "CROQUE MADAME", price: 21, category: "BRUNCH SANDWICHES", stock: 5, lowStockAt: 5 },
+  { id: "bs5", name: "CROQUE MONSIEUR", price: 19, category: "BRUNCH SANDWICHES", stock: 0, outOfStock: true },
   { id: "bs6", name: "FIGARO BLT", price: 20, category: "BRUNCH SANDWICHES" },
-  { id: "bs7", name: "FROMAGE FONDU", price: 16, category: "BRUNCH SANDWICHES" },
+  { id: "bs7", name: "FROMAGE FONDU", price: 16, category: "BRUNCH SANDWICHES", openPrice: true },
   { id: "bs8", name: "HALF SANDWICH AND SOUP", price: 22, category: "BRUNCH SANDWICHES" },
   { id: "bs9", name: "JAMBON (HAM) SANDWICH", price: 20, category: "BRUNCH SANDWICHES" },
   { id: "bb1", name: "FRESH ORANGE JUICE", price: 9, category: "BRUNCH BEVERAGES" },
   { id: "bb2", name: "GRAPEFRUIT JUICE", price: 9, category: "BRUNCH BEVERAGES" },
-  { id: "bb3", name: "SPARKLING WATER", price: 6, category: "BRUNCH BEVERAGES" },
+  { id: "bb3", name: "SPARKLING WATER", price: 6, category: "BRUNCH BEVERAGES", stock: 24 },
   { id: "bd1", name: "MIMOSA", price: 14, category: "BRUNCHY DRINKS" },
-  { id: "bd2", name: "BLOODY MARY", price: 15, category: "BRUNCHY DRINKS" },
+  { id: "bd2", name: "BLOODY MARY", price: 15, category: "BRUNCHY DRINKS", stock: 3, lowStockAt: 4 },
   { id: "bd3", name: "APEROL SPRITZ", price: 16, category: "BRUNCHY DRINKS" },
   { id: "bc1", name: "CAFE AU LAIT", price: 7, category: "BRUNCH COFFEE" },
   { id: "bc2", name: "CAPPUCCINO", price: 6, category: "BRUNCH COFFEE" },
@@ -330,15 +338,15 @@ export const liveMenu: MenuItem[] = [
   { id: "bk1", name: "OLIVES & ALMONDS", price: 9, category: "BAR BITES" },
   { id: "bk2", name: "TRUFFLE FRIES", price: 12, category: "BAR BITES" },
   { id: "ck1", name: "OLD FASHIONED", price: 18, category: "COCKTAILS" },
-  { id: "ck2", name: "NEGRONI", price: 17, category: "COCKTAILS" },
+  { id: "ck2", name: "NEGRONI", price: 17, category: "COCKTAILS", stock: 0, outOfStock: true },
   { id: "be1", name: "DRAFT LAGER", price: 9, category: "BEER" },
   { id: "be2", name: "IPA BOTTLE", price: 10, category: "BEER" },
-  { id: "wn1", name: "HOUSE RED GLASS", price: 14, category: "WINE" },
+  { id: "wn1", name: "HOUSE RED GLASS", price: 14, category: "WINE", openPrice: true },
   { id: "wn2", name: "HOUSE WHITE GLASS", price: 14, category: "WINE" },
   { id: "st1", name: "FRENCH ONION SOUP", price: 15, category: "STARTERS" },
-  { id: "st2", name: "STEAK TARTARE", price: 24, category: "STARTERS" },
-  { id: "mn1", name: "STEAK FRITES", price: 42, category: "MAINS" },
-  { id: "mn2", name: "ROASTED CHICKEN", price: 34, category: "MAINS" },
+  { id: "st2", name: "STEAK TARTARE", price: 24, category: "STARTERS", stock: 6 },
+  { id: "mn1", name: "STEAK FRITES", price: 42, category: "MAINS", stock: 8 },
+  { id: "mn2", name: "ROASTED CHICKEN", price: 34, category: "MAINS", stock: 2, lowStockAt: 3 },
   { id: "sd1", name: "POMMES PUREE", price: 12, category: "SIDES" },
   { id: "sd2", name: "HARICOTS VERTS", price: 11, category: "SIDES" },
   { id: "ds1", name: "CREME BRULEE", price: 13, category: "DESSERTS" },
@@ -346,31 +354,90 @@ export const liveMenu: MenuItem[] = [
 ];
 
 export type ModifierOption = { name: string; price: number };
-export type ModifierGroup = { name: string; options: ModifierOption[] };
+export type ModifierGroup = {
+  name: string;
+  options: ModifierOption[];
+  /** "single" groups behave like radios, "multi" like checkboxes. */
+  select?: "single" | "multi";
+  /** Required groups must have a selection before the item can be added. */
+  required?: boolean;
+};
 
 /** Modifier groups shown on the item sheet (Item tab). */
 export const modifierGroups: ModifierGroup[] = [
   {
     name: "Bread",
+    select: "single",
     options: [
       { name: "Baguette", price: 0 },
       { name: "Foccacia", price: 0 },
       { name: "Lettuce Wrap", price: 0 },
+      { name: "Sourdough", price: 1 },
+      { name: "Gluten Free Bun", price: 2 },
+    ],
+  },
+  {
+    name: "Course",
+    select: "single",
+    required: true,
+    options: [
+      { name: "Appetizer", price: 0 },
+      { name: "Main", price: 0 },
+      { name: "Dessert", price: 0 },
+      { name: "Hold", price: 0 },
+    ],
+  },
+  {
+    name: "Temperature",
+    select: "single",
+    options: [
+      { name: "Rare", price: 0 },
+      { name: "Medium Rare", price: 0 },
+      { name: "Medium", price: 0 },
+      { name: "Medium Well", price: 0 },
+      { name: "Well Done", price: 0 },
+    ],
+  },
+  {
+    name: "Preparation",
+    select: "multi",
+    options: [
+      { name: "No Onion", price: 0 },
+      { name: "No Mayo", price: 0 },
+      { name: "Extra Sauce", price: 1 },
+      { name: "Sauce on Side", price: 0 },
+      { name: "Well Toasted", price: 0 },
+      { name: "Cut in Half", price: 0 },
+    ],
+  },
+  {
+    name: "Allergy",
+    select: "multi",
+    options: [
+      { name: "Gluten Free", price: 0 },
+      { name: "Dairy Free", price: 0 },
+      { name: "Nut Allergy", price: 0 },
+      { name: "Shellfish Allergy", price: 0 },
     ],
   },
   {
     name: "Sandwiches Sides",
+    select: "single",
     options: [
       { name: "Side Salad", price: 4 },
       { name: "Fries", price: 5 },
       { name: "Soup", price: 6 },
+      { name: "Fruit Cup", price: 5 },
     ],
   },
   {
     name: "Sides",
+    select: "multi",
     options: [
       { name: "Pickles", price: 1 },
       { name: "Extra Cheese", price: 2 },
+      { name: "Avocado", price: 4 },
+      { name: "Bacon", price: 4 },
     ],
   },
 ];
@@ -379,11 +446,23 @@ export const modifierGroups: ModifierGroup[] = [
 export const addOnGroups: ModifierGroup[] = [
   {
     name: "Add-Ons",
+    select: "multi",
     options: [
       { name: "Add Egg", price: 3 },
       { name: "Add Bacon", price: 4 },
       { name: "Add Avocado", price: 4 },
       { name: "Add Truffle", price: 6 },
+      { name: "Add Chicken", price: 7 },
+      { name: "Add Salmon", price: 9 },
+    ],
+  },
+  {
+    name: "Beverage",
+    select: "single",
+    options: [
+      { name: "Coffee", price: 5 },
+      { name: "Fresh Juice", price: 8 },
+      { name: "Sparkling Water", price: 6 },
     ],
   },
 ];

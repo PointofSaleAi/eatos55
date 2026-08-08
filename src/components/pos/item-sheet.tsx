@@ -30,7 +30,9 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
   });
 
   useEffect(() => {
-    if (item) setPrice(item.price);
+    if (!item) return;
+    setPrice(item.openPrice ? 0 : item.price);
+    setEditingPrice(Boolean(item.openPrice));
   }, [item]);
 
   const groups = tab === "item" ? modifierGroups : addOnGroups;
@@ -42,6 +44,13 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
   );
   const lineTotal =
     (price + modifierTotal) * qty * (1 - (discount?.percent ?? 0) / 100);
+
+  const requiredMissing = modifierGroups
+    .filter((g) => g.required)
+    .filter((g) => !Object.keys(selected).some((k) => k.startsWith(`${g.name} · `)))
+    .map((g) => g.name);
+  const openPriceMissing = Boolean(item?.openPrice) && price <= 0;
+  const selectedList = Object.keys(selected).map((k) => k.split(" · ")[1] ?? k);
 
   const reset = () => {
     setQty(1);
@@ -167,6 +176,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                       )}
                     >
                       {g.name}
+                      {g.required ? <span className="text-accent"> *</span> : null}
                     </button>
                   ))}
                 </div>
@@ -183,8 +193,16 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                         onClick={() =>
                           setSelected((s) => {
                             const next = { ...s };
-                            if (on) delete next[key];
-                            else next[key] = o.price;
+                            if (on) {
+                              delete next[key];
+                              return next;
+                            }
+                            if ((activeGroup.select ?? "multi") === "single") {
+                              for (const existing of Object.keys(next)) {
+                                if (existing.startsWith(`${activeGroup.name} · `)) delete next[existing];
+                              }
+                            }
+                            next[key] = o.price;
                             return next;
                           })
                         }
@@ -207,7 +225,17 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                 </div>
               </div>
 
-              <div className="shrink-0 flex items-center gap-2 border-t border-border bg-surface px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-2.5">
+              <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-2.5">
+                {selectedList.length || requiredMissing.length || openPriceMissing ? (
+                  <p className="pb-1.5 text-[11px] font-bold text-muted-foreground">
+                    {openPriceMissing
+                      ? "Enter a price for this open-price item"
+                      : requiredMissing.length
+                        ? `Select ${requiredMissing.join(", ")}`
+                        : selectedList.join(" · ")}
+                  </p>
+                ) : null}
+                <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setDiscountOpen(true)}
@@ -223,6 +251,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                 </button>
                 <button
                   type="button"
+                  disabled={openPriceMissing || requiredMissing.length > 0}
                   onClick={() => {
                     addItem(item.id, {
                       qty,
@@ -235,10 +264,11 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                     reset();
                     onClose();
                   }}
-                  className="h-11 flex-1 rounded-full bg-primary text-[13px] font-extrabold uppercase tracking-[0.06em] text-primary-foreground"
+                  className="h-11 flex-1 rounded-full bg-primary text-[13px] font-extrabold uppercase tracking-[0.06em] text-primary-foreground disabled:opacity-40"
                 >
                   Add · {money(lineTotal)}
                 </button>
+                </div>
               </div>
             </>
           ) : null}
