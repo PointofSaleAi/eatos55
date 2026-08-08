@@ -17,7 +17,6 @@ const whatsNew = [
  */
 export function AccountBar() {
   const { session, settings } = usePos();
-  const [expanded, setExpanded] = useState(false);
   const [news, setNews] = useState(false);
 
   const initials = session.name
@@ -26,8 +25,9 @@ export function AccountBar() {
     .join("");
 
   return (
-    <div className="relative z-30 shrink-0 bg-background px-3 pt-2">
-      {expanded ? (
+    <div className="relative z-20 shrink-0 bg-background px-3 pt-2">
+      {true ? (
+
         <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface px-3 py-3">
           <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-muted text-sm font-extrabold text-foreground">
             {initials}
