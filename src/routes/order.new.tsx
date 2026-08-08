@@ -3,12 +3,6 @@ import { BookOpen, Calculator, ChevronDown, MoreVertical, Plus, Search, Wifi } f
 import { useState } from "react";
 import { BottomTabs } from "@/components/pos/shell";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { MoreSheet } from "@/components/pos/more-sheet";
 import { liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
