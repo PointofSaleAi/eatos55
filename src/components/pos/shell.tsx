@@ -19,13 +19,6 @@ import { cn } from "@/lib/utils";
 export function DeviceFrame({ children }: { children: ReactNode }) {
   const { session } = usePos();
   useGlobalKeyboardAware();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  // The ordering screens carry their own action footer, so the tab bar would
-  // be a second navigation there.
-  const hideTabs =
-    pathname.startsWith("/order/new") ||
-    pathname.startsWith("/order/custom-item") ||
-    pathname.startsWith("/payment");
 
   return (
     <div className="h-[100dvh] overflow-hidden bg-shell md:flex md:h-auto md:min-h-[100dvh] md:items-center md:justify-center md:overflow-visible md:p-8">
@@ -39,40 +32,60 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
         <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
           {session.signedIn ? <ClockPullDown /> : null}
           {children}
-          {session.signedIn && !hideTabs ? <BottomTabs /> : null}
+          {session.signedIn ? <BottomTabs /> : null}
         </div>
       </div>
     </div>
   );
 }
 
+/** Back chevron that falls back to a parent route when there is no history. */
+export function BackButton({
+  fallbackTo,
+  label = "Go back",
+}: {
+  fallbackTo?: string;
+  label?: string;
+}) {
+  const router = useRouter();
+  const onClick = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.history.back();
+      return;
+    }
+    router.navigate({ to: fallbackTo ?? "/floor" });
+  };
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      onClick={onClick}
+      className="-ml-1 grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+    >
+      <ChevronLeft className="size-5" />
+    </button>
+  );
+}
+
 export function ScreenHeader({
   title,
   back,
+  backTo,
   right,
 }: {
   title: string;
   /** Accepted for API compatibility; no longer rendered above the title. */
   eyebrow?: string;
   back?: boolean;
+  backTo?: string;
   right?: ReactNode;
 }) {
-  const router = useRouter();
   return (
     <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <div className="flex min-w-0 items-center gap-2">
-          {back ? (
-            <button
-              type="button"
-              aria-label="Go back"
-              title="Go back"
-              onClick={() => router.history.back()}
-              className="-ml-1 grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
-            >
-              <ChevronLeft className="size-5" />
-            </button>
-          ) : null}
+          {back ? <BackButton fallbackTo={backTo} /> : null}
           <div className="min-w-0">
             <h1 className="truncate text-2xl font-extrabold text-foreground">{title}</h1>
           </div>
@@ -87,26 +100,22 @@ export function ScreenHeader({
 export function SubHeader({
   title,
   backLabel = "Back",
+  backTo,
   right,
 }: {
   title: string;
   backLabel?: string;
+  backTo?: string;
   right?: ReactNode;
 }) {
-  const router = useRouter();
   return (
     <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <div className="flex min-w-0 items-center gap-2">
-          <button
-            type="button"
-            aria-label={backLabel ? `Back to ${backLabel}` : "Go back"}
-            title={backLabel ? `Back to ${backLabel}` : "Go back"}
-            onClick={() => router.history.back()}
-            className="-ml-1 grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
-          >
-            <ChevronLeft className="size-5" />
-          </button>
+          <BackButton
+            fallbackTo={backTo}
+            label={backLabel ? `Back to ${backLabel}` : "Go back"}
+          />
           <div className="min-w-0">
             <h1 className="truncate text-2xl font-extrabold text-foreground">{title}</h1>
           </div>
@@ -116,6 +125,7 @@ export function SubHeader({
     </div>
   );
 }
+
 
 export function ScreenBody({ children, className }: { children: ReactNode; className?: string }) {
   return (
