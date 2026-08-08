@@ -1,18 +1,23 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Minus, Plus, Trash2 } from "lucide-react";
-import { ScreenBody, ScreenFooter, ScreenHeader } from "@/components/pos/shell";
-import { Card, EmptyState, SectionLabel } from "@/components/pos/primitives";
-import { Button } from "@/components/ui/button";
-import { money } from "@/lib/demo-data";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import { ChevronLeft, Minus, Plus, Printer } from "lucide-react";
+import { GuestHeader } from "@/components/pos/numpad";
+import { EmptyState } from "@/components/pos/primitives";
+import { TAX_RATE, money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/order/review")({
   head: () => ({
     meta: [
-      { title: "Order review — EATOS Handheld" },
-      { name: "description", content: "Review the cart, adjust quantities and send to payment." },
-      { property: "og:title", content: "Order review — EATOS Handheld" },
-      { property: "og:description", content: "Review the cart, adjust quantities and send to payment." },
+      { title: "Order Review — eatOS Point of Purchase" },
+      { name: "description", content: "Review the guest order, adjust quantities and charge." },
+      { property: "og:title", content: "Order Review — eatOS Point of Purchase" },
+      {
+        property: "og:description",
+        content: "Review the guest order, adjust quantities and charge.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: OrderReview,
@@ -20,99 +25,125 @@ export const Route = createFileRoute("/order/review")({
 
 function OrderReview() {
   const navigate = useNavigate();
-  const { cart, changeQty, removeLine, totals } = usePos();
+  const router = useRouter();
+  const { cart, changeQty, totals, tickets } = usePos();
+  const orderNumber = tickets.length + 1;
 
   return (
-    <>
-      <ScreenHeader eyebrow="Order" title="Order review" back />
-      <ScreenBody>
-        {cart.length === 0 ? (
-          <EmptyState title="Cart is empty" detail="Add items from the menu to continue." />
-        ) : (
-          <>
-            <SectionLabel>Items</SectionLabel>
-            <Card className="overflow-hidden">
-              {cart.map((l) => (
-                <div key={l.id} className="border-b border-border p-3 last:border-b-0">
-                  <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-extrabold text-foreground">{l.name}</p>
-                      <p className="text-xs text-muted-foreground">{money(l.price)} each</p>
-                    </div>
-                    <p className="shrink-0 text-sm font-extrabold text-foreground">
-                      {money(l.price * l.qty)}
-                    </p>
-                  </div>
-                  <div className="mt-2 flex items-center gap-2">
-                    <button
-                      type="button"
-                      aria-label="Decrease quantity"
-                      onClick={() => changeQty(l.id, -1)}
-                      className="grid size-9 shrink-0 place-items-center rounded-full bg-muted"
-                    >
-                      <Minus className="size-4" />
-                    </button>
-                    <span className="w-8 text-center text-sm font-extrabold tabular-nums">
-                      {l.qty}
-                    </span>
-                    <button
-                      type="button"
-                      aria-label="Increase quantity"
-                      onClick={() => changeQty(l.id, 1)}
-                      className="grid size-9 shrink-0 place-items-center rounded-full bg-muted"
-                    >
-                      <Plus className="size-4" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="Remove item"
-                      onClick={() => removeLine(l.id)}
-                      className="ml-auto grid size-9 shrink-0 place-items-center rounded-full bg-muted text-destructive"
-                    >
-                      <Trash2 className="size-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </Card>
+    <div className="flex min-h-0 flex-1 flex-col bg-background">
+      <div className="flex shrink-0 items-center gap-2 bg-surface px-2 pt-3">
+        <button
+          type="button"
+          aria-label="Go back"
+          onClick={() => router.history.back()}
+          className="grid size-11 place-items-center rounded-full text-foreground hover:bg-muted"
+        >
+          <ChevronLeft className="size-6" />
+        </button>
+        <h1 className="truncate text-xl font-extrabold text-foreground">
+          Order Number {orderNumber}
+        </h1>
+      </div>
+      <GuestHeader
+        right={
+          <button
+            type="button"
+            aria-label="Print order"
+            onClick={() => toast.success("Order ticket sent to printer")}
+            className="grid size-11 place-items-center rounded-full text-foreground hover:bg-muted"
+          >
+            <Printer className="size-6" />
+          </button>
+        }
+      />
 
-            <SectionLabel>Totals</SectionLabel>
-            <Card className="space-y-2 p-4 text-sm">
-              <Row label="Subtotal" value={money(totals.subtotal)} />
-              <Row label="Tax" value={money(totals.tax)} />
-              <div className="border-t border-border pt-2">
-                <Row label="Total due" value={money(totals.total)} strong />
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+        {cart.length ? (
+          <div className="divide-y divide-border">
+            {cart.map((line) => (
+              <div key={line.id} className="flex items-center gap-3 py-4">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-lg font-bold text-foreground">{line.name}</p>
+                  <p className="text-sm text-muted-foreground">{money(line.price)} each</p>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  <button
+                    type="button"
+                    aria-label={`Remove one ${line.name}`}
+                    onClick={() => changeQty(line.id, -1)}
+                    className="grid size-9 place-items-center rounded-lg border border-border text-foreground"
+                  >
+                    <Minus className="size-4" />
+                  </button>
+                  <span className="w-6 text-center text-lg font-bold tabular-nums text-foreground">
+                    {line.qty}
+                  </span>
+                  <button
+                    type="button"
+                    aria-label={`Add one ${line.name}`}
+                    onClick={() => changeQty(line.id, 1)}
+                    className="grid size-9 place-items-center rounded-lg border border-border text-foreground"
+                  >
+                    <Plus className="size-4" />
+                  </button>
+                </div>
+                <span className="w-20 shrink-0 text-right text-lg font-extrabold tabular-nums text-foreground">
+                  {money(line.price * line.qty)}
+                </span>
               </div>
-            </Card>
-          </>
+            ))}
+          </div>
+        ) : (
+          <EmptyState title="No items yet" detail="Add products or a custom item to continue." />
         )}
-      </ScreenBody>
-      <ScreenFooter>
-        <Button
-          disabled={cart.length === 0}
-          className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground hover:bg-accent/90 disabled:opacity-40"
+
+        {cart.length ? (
+          <div className="mt-4 space-y-2 border-t border-border pt-4 text-base">
+            <Row label="Subtotal" value={money(totals.subtotal)} />
+            <Row label={`Tax (${Math.round(TAX_RATE * 100)}%)`} value={money(totals.tax)} />
+            <div className="flex items-center justify-between pt-2 text-xl font-extrabold text-foreground">
+              <span>Total</span>
+              <span className="tabular-nums">{money(totals.total)}</span>
+            </div>
+          </div>
+        ) : null}
+      </div>
+
+      <div className="shrink-0 space-y-3 border-t border-border bg-surface p-4">
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/order/new" })}
+            className="min-h-[52px] flex-1 rounded-xl border border-border text-base font-bold text-foreground"
+          >
+            Add More
+          </button>
+          <button
+            type="button"
+            onClick={() => toast.success("Receipt printed")}
+            className="min-h-[52px] flex-1 rounded-xl border border-border text-base font-bold text-foreground"
+          >
+            Print
+          </button>
+        </div>
+        <button
+          type="button"
+          disabled={!cart.length}
           onClick={() => navigate({ to: "/payment/method" })}
+          className="min-h-[56px] w-full rounded-xl bg-primary text-base font-extrabold uppercase tracking-wide text-primary-foreground disabled:opacity-40"
         >
           Charge {money(totals.total)}
-        </Button>
-      </ScreenFooter>
-    </>
+        </button>
+      </div>
+    </div>
   );
 }
 
-function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
+function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between">
-      <span className={strong ? "font-extrabold text-foreground" : "text-muted-foreground"}>
-        {label}
-      </span>
-      <span
-        className={
-          strong ? "text-lg font-extrabold text-foreground" : "font-bold text-foreground"
-        }
-      >
-        {value}
-      </span>
+    <div className="flex items-center justify-between text-muted-foreground">
+      <span>{label}</span>
+      <span className="tabular-nums">{value}</span>
     </div>
   );
 }
