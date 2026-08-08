@@ -25,7 +25,7 @@ export type TileColor =
   | "grey"
   | "black";
 
-export function IconTile({ icon: Icon }: { icon: LucideIcon; color?: TileColor }) {
+export function IconTile({ icon: Icon }: { icon: LucideIcon; color?: TileColor | undefined }) {
   return (
     <span className="shrink-0 text-accent">
       <Icon className="size-5" strokeWidth={2} />
