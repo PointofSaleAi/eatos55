@@ -29,6 +29,7 @@ import { Route as SettingsGeneralRouteImport } from './routes/settings.general'
 import { Route as SettingsMenuRouteImport } from './routes/settings.menu'
 import { Route as SettingsMoreRouteImport } from './routes/settings.more'
 import { Route as SettingsPaymentRouteImport } from './routes/settings.payment'
+import { Route as SettingsPaymentsRouteImport } from './routes/settings.payments'
 import { Route as SettingsWorkforceRouteImport } from './routes/settings.workforce'
 import { Route as SystemIndexRouteImport } from './routes/system.index'
 import { Route as SystemCustomerSupportRouteImport } from './routes/system.customer-support'
@@ -144,6 +145,11 @@ const SettingsPaymentRoute = SettingsPaymentRouteImport.update({
   path: '/settings/payment',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsPaymentsRoute = SettingsPaymentsRouteImport.update({
+  id: '/settings/payments',
+  path: '/settings/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsWorkforceRoute = SettingsWorkforceRouteImport.update({
   id: '/settings/workforce',
   path: '/settings/workforce',
@@ -234,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/payment': typeof SettingsPaymentRoute
+  '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
   '/system/hardware': typeof SystemHardwareRoute
@@ -270,6 +277,7 @@ export interface FileRoutesByTo {
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/payment': typeof SettingsPaymentRoute
+  '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
   '/system/hardware': typeof SystemHardwareRoute
@@ -307,6 +315,7 @@ export interface FileRoutesById {
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/payment': typeof SettingsPaymentRoute
+  '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
   '/system/hardware': typeof SystemHardwareRoute
@@ -345,6 +354,7 @@ export interface FileRouteTypes {
     | '/settings/menu'
     | '/settings/more'
     | '/settings/payment'
+    | '/settings/payments'
     | '/settings/workforce'
     | '/system/customer-support'
     | '/system/hardware'
@@ -381,6 +391,7 @@ export interface FileRouteTypes {
     | '/settings/menu'
     | '/settings/more'
     | '/settings/payment'
+    | '/settings/payments'
     | '/settings/workforce'
     | '/system/customer-support'
     | '/system/hardware'
@@ -417,6 +428,7 @@ export interface FileRouteTypes {
     | '/settings/menu'
     | '/settings/more'
     | '/settings/payment'
+    | '/settings/payments'
     | '/settings/workforce'
     | '/system/customer-support'
     | '/system/hardware'
@@ -454,6 +466,7 @@ export interface RootRouteChildren {
   SettingsMenuRoute: typeof SettingsMenuRoute
   SettingsMoreRoute: typeof SettingsMoreRoute
   SettingsPaymentRoute: typeof SettingsPaymentRoute
+  SettingsPaymentsRoute: typeof SettingsPaymentsRoute
   SettingsWorkforceRoute: typeof SettingsWorkforceRoute
   SystemCustomerSupportRoute: typeof SystemCustomerSupportRoute
   SystemHardwareRoute: typeof SystemHardwareRoute
@@ -614,6 +627,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsPaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/payments': {
+      id: '/settings/payments'
+      path: '/settings/payments'
+      fullPath: '/settings/payments'
+      preLoaderRoute: typeof SettingsPaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/workforce': {
       id: '/settings/workforce'
       path: '/settings/workforce'
@@ -734,6 +754,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsMenuRoute: SettingsMenuRoute,
   SettingsMoreRoute: SettingsMoreRoute,
   SettingsPaymentRoute: SettingsPaymentRoute,
+  SettingsPaymentsRoute: SettingsPaymentsRoute,
   SettingsWorkforceRoute: SettingsWorkforceRoute,
   SystemCustomerSupportRoute: SystemCustomerSupportRoute,
   SystemHardwareRoute: SystemHardwareRoute,

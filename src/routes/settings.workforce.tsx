@@ -1,58 +1,61 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { BriefcaseBusiness, Users } from "lucide-react";
 import { toast } from "sonner";
-import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
-import { ActionRow, Card, SectionLabel } from "@/components/pos/primitives";
-import { employees } from "@/lib/demo-data";
-import { usePos } from "@/lib/pos-store";
+import { ScreenBody, SubHeader } from "@/components/pos/shell";
+import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
 
 export const Route = createFileRoute("/settings/workforce")({
   head: () => ({
     meta: [
-      { title: "Workforce — EATOS Handheld" },
-      { name: "description", content: "Employees, roles and clock status for the current shift." },
-      { property: "og:title", content: "Workforce — EATOS Handheld" },
+      { title: "Workforce — EATOS Handheld settings" },
+      {
+        name: "description",
+        content: "Track employee clock-in and clock-out times from the handheld.",
+      },
+      { property: "og:title", content: "Workforce — EATOS Handheld settings" },
       {
         property: "og:description",
-        content: "Employees, roles and clock status for the current shift.",
+        content: "Track employee clock-in and clock-out times from the handheld.",
       },
     ],
   }),
-  component: Workforce,
+  component: WorkforceSettings,
 });
 
-function Workforce() {
-  const navigate = useNavigate();
-  const { session } = usePos();
-
+function WorkforceSettings() {
   return (
     <>
-      <ScreenHeader eyebrow="Settings" title="Workforce" back />
-      <ScreenBody>
-        <SectionLabel>On shift</SectionLabel>
-        <Card className="overflow-hidden">
-          {employees.map((e) => (
-            <ActionRow
-              key={e.id}
-              title={`${e.name}${e.name === session.name ? " (you)" : ""}`}
-              detail={`${e.role} · ${e.state}`}
-              onClick={() => toast.info(`${e.name} · ${e.state}`)}
+      <SubHeader title="Workforce" />
+      <ScreenBody className="py-2">
+        <GroupCard>
+          <div className="px-6 pb-4 pt-6 text-center">
+            <BriefcaseBusiness className="mx-auto size-14 text-foreground" strokeWidth={1.75} />
+            <p className="mt-3 text-2xl font-medium text-foreground">Workforce</p>
+            <p className="mt-4 text-lg leading-snug text-foreground">
+              The ultimate tool for efficient workforce management. Access and track employee
+              clock-in and clock-out times,…{" "}
+              <button
+                type="button"
+                onClick={() =>
+                  toast.info(
+                    "Access and track employee clock-in and clock-out times, manage breaks and review shift totals from Back Office.",
+                  )
+                }
+                className="font-extrabold text-foreground underline-offset-4 hover:underline"
+              >
+                Learn more
+              </button>
+            </p>
+          </div>
+          <div className="border-t border-border">
+            <IconNavRow
+              title="Employee"
+              icon={Users}
+              color="indigo"
+              onClick={() => toast.info("Employee list syncs from Back Office")}
             />
-          ))}
-        </Card>
-
-        <SectionLabel>Time clock</SectionLabel>
-        <Card className="overflow-hidden">
-          <ActionRow
-            title="Clock in a teammate"
-            detail="Opens the PIN pad"
-            onClick={() => navigate({ to: "/access/clock-in" })}
-          />
-          <ActionRow
-            title="Export timesheets"
-            detail="Send this week to payroll"
-            onClick={() => toast.success("Timesheets exported")}
-          />
-        </Card>
+          </div>
+        </GroupCard>
       </ScreenBody>
     </>
   );
