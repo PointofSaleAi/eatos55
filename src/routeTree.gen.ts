@@ -30,6 +30,7 @@ import { Route as SettingsHardwareRouteImport } from './routes/settings.hardware
 import { Route as SettingsMenuRouteImport } from './routes/settings.menu'
 import { Route as SettingsMoreRouteImport } from './routes/settings.more'
 import { Route as SettingsNetworkRouteImport } from './routes/settings.network'
+import { Route as SettingsNotificationsRouteImport } from './routes/settings.notifications'
 import { Route as SettingsPaymentRouteImport } from './routes/settings.payment'
 import { Route as SettingsPaymentsRouteImport } from './routes/settings.payments'
 import { Route as SettingsWorkforceRouteImport } from './routes/settings.workforce'
@@ -153,6 +154,11 @@ const SettingsNetworkRoute = SettingsNetworkRouteImport.update({
   path: '/settings/network',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsNotificationsRoute = SettingsNotificationsRouteImport.update({
+  id: '/settings/notifications',
+  path: '/settings/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsPaymentRoute = SettingsPaymentRouteImport.update({
   id: '/settings/payment',
   path: '/settings/payment',
@@ -260,6 +266,7 @@ export interface FileRoutesByFullPath {
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/network': typeof SettingsNetworkRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
@@ -300,6 +307,7 @@ export interface FileRoutesByTo {
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/network': typeof SettingsNetworkRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
@@ -341,6 +349,7 @@ export interface FileRoutesById {
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/network': typeof SettingsNetworkRoute
+  '/settings/notifications': typeof SettingsNotificationsRoute
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
@@ -383,6 +392,7 @@ export interface FileRouteTypes {
     | '/settings/menu'
     | '/settings/more'
     | '/settings/network'
+    | '/settings/notifications'
     | '/settings/payment'
     | '/settings/payments'
     | '/settings/workforce'
@@ -423,6 +433,7 @@ export interface FileRouteTypes {
     | '/settings/menu'
     | '/settings/more'
     | '/settings/network'
+    | '/settings/notifications'
     | '/settings/payment'
     | '/settings/payments'
     | '/settings/workforce'
@@ -463,6 +474,7 @@ export interface FileRouteTypes {
     | '/settings/menu'
     | '/settings/more'
     | '/settings/network'
+    | '/settings/notifications'
     | '/settings/payment'
     | '/settings/payments'
     | '/settings/workforce'
@@ -504,6 +516,7 @@ export interface RootRouteChildren {
   SettingsMenuRoute: typeof SettingsMenuRoute
   SettingsMoreRoute: typeof SettingsMoreRoute
   SettingsNetworkRoute: typeof SettingsNetworkRoute
+  SettingsNotificationsRoute: typeof SettingsNotificationsRoute
   SettingsPaymentRoute: typeof SettingsPaymentRoute
   SettingsPaymentsRoute: typeof SettingsPaymentsRoute
   SettingsWorkforceRoute: typeof SettingsWorkforceRoute
@@ -673,6 +686,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsNetworkRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/notifications': {
+      id: '/settings/notifications'
+      path: '/settings/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof SettingsNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/payment': {
       id: '/settings/payment'
       path: '/settings/payment'
@@ -826,6 +846,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsMenuRoute: SettingsMenuRoute,
   SettingsMoreRoute: SettingsMoreRoute,
   SettingsNetworkRoute: SettingsNetworkRoute,
+  SettingsNotificationsRoute: SettingsNotificationsRoute,
   SettingsPaymentRoute: SettingsPaymentRoute,
   SettingsPaymentsRoute: SettingsPaymentsRoute,
   SettingsWorkforceRoute: SettingsWorkforceRoute,
