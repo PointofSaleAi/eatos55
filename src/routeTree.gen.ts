@@ -17,6 +17,7 @@ import { Route as AccessManagerPinRouteImport } from './routes/access.manager-pi
 import { Route as AccessSelectStationRouteImport } from './routes/access.select-station'
 import { Route as TicketsIndexRouteImport } from './routes/tickets.index'
 import { Route as TicketsFilterRouteImport } from './routes/tickets.filter'
+import { Route as TicketsManagerControlsRouteImport } from './routes/tickets.manager-controls'
 import { Route as TicketsSearchRouteImport } from './routes/tickets.search'
 import { Route as TicketsSortRouteImport } from './routes/tickets.sort'
 
@@ -60,6 +61,11 @@ const TicketsFilterRoute = TicketsFilterRouteImport.update({
   path: '/tickets/filter',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TicketsManagerControlsRoute = TicketsManagerControlsRouteImport.update({
+  id: '/tickets/manager-controls',
+  path: '/tickets/manager-controls',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TicketsSearchRoute = TicketsSearchRouteImport.update({
   id: '/tickets/search',
   path: '/tickets/search',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
   '/tickets/filter': typeof TicketsFilterRoute
+  '/tickets/manager-controls': typeof TicketsManagerControlsRoute
   '/tickets/search': typeof TicketsSearchRoute
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/': typeof TicketsIndexRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
   '/tickets/filter': typeof TicketsFilterRoute
+  '/tickets/manager-controls': typeof TicketsManagerControlsRoute
   '/tickets/search': typeof TicketsSearchRoute
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets': typeof TicketsIndexRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
   '/tickets/filter': typeof TicketsFilterRoute
+  '/tickets/manager-controls': typeof TicketsManagerControlsRoute
   '/tickets/search': typeof TicketsSearchRoute
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/': typeof TicketsIndexRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/access/manager-pin'
     | '/access/select-station'
     | '/tickets/filter'
+    | '/tickets/manager-controls'
     | '/tickets/search'
     | '/tickets/sort'
     | '/tickets/'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/access/manager-pin'
     | '/access/select-station'
     | '/tickets/filter'
+    | '/tickets/manager-controls'
     | '/tickets/search'
     | '/tickets/sort'
     | '/tickets'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/access/manager-pin'
     | '/access/select-station'
     | '/tickets/filter'
+    | '/tickets/manager-controls'
     | '/tickets/search'
     | '/tickets/sort'
     | '/tickets/'
@@ -155,6 +167,7 @@ export interface RootRouteChildren {
   AccessManagerPinRoute: typeof AccessManagerPinRoute
   AccessSelectStationRoute: typeof AccessSelectStationRoute
   TicketsFilterRoute: typeof TicketsFilterRoute
+  TicketsManagerControlsRoute: typeof TicketsManagerControlsRoute
   TicketsSearchRoute: typeof TicketsSearchRoute
   TicketsSortRoute: typeof TicketsSortRoute
   TicketsIndexRoute: typeof TicketsIndexRoute
@@ -218,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TicketsFilterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tickets/manager-controls': {
+      id: '/tickets/manager-controls'
+      path: '/tickets/manager-controls'
+      fullPath: '/tickets/manager-controls'
+      preLoaderRoute: typeof TicketsManagerControlsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tickets/search': {
       id: '/tickets/search'
       path: '/tickets/search'
@@ -243,6 +263,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccessManagerPinRoute: AccessManagerPinRoute,
   AccessSelectStationRoute: AccessSelectStationRoute,
   TicketsFilterRoute: TicketsFilterRoute,
+  TicketsManagerControlsRoute: TicketsManagerControlsRoute,
   TicketsSearchRoute: TicketsSearchRoute,
   TicketsSortRoute: TicketsSortRoute,
   TicketsIndexRoute: TicketsIndexRoute,
