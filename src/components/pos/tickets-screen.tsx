@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { BottomTabs } from "@/components/pos/shell";
+import { AccountBar } from "@/components/pos/account-bar";
 import { EmptyState, TicketCard } from "@/components/pos/primitives";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { usePos, emptyFilters, type SortKey } from "@/lib/pos-store";
@@ -111,6 +112,8 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col bg-background">
+      <AccountBar />
+
       {/* Title bar */}
       <div className="shrink-0 border-b border-border bg-surface px-4 py-3">
         <div className="flex items-center justify-between gap-3">
