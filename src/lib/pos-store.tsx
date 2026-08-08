@@ -1,5 +1,6 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
 import {
+  DEFAULT_TICKET_DATE,
   TAX_RATE,
   initialTickets,
   menu,
@@ -9,12 +10,26 @@ import {
   type TicketStatus,
 } from "./demo-data";
 
-export type SortKey = "newest" | "oldest" | "highest" | "lowest";
+export type SortKey = "time-late-early" | "time-early-late" | "orders-z-a" | "orders-a-z";
 
 export type TicketFilters = {
   statuses: TicketStatus[];
   modes: MenuMode[];
+  revenueCenters: string[];
+  employees: string[];
+  orderTypes: string[];
+  payments: string[];
   mineOnly: boolean;
+};
+
+export const emptyFilters: TicketFilters = {
+  statuses: [],
+  modes: [],
+  revenueCenters: [],
+  employees: [],
+  orderTypes: [],
+  payments: [],
+  mineOnly: false,
 };
 
 export type Session = {
