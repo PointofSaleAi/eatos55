@@ -24,8 +24,9 @@ export type Ticket = {
   label: string;
   seats: number;
   total: number;
+  /** ISO day the ticket belongs to (drives the ticket-list date stepper). */
+  date: string;
   arrivedAt: string;
-  arrivedMinutesAgo: number;
   status: TicketStatus;
   mode: MenuMode;
   lines: CartLine[];
