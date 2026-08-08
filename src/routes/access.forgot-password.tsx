@@ -1,8 +1,8 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter, Link } from "@tanstack/react-router";
+import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { ScreenBody, ScreenFooter, ScreenHeader } from "@/components/pos/shell";
-import { Pills } from "@/components/pos/primitives";
+import { Wordmark } from "@/components/pos/brand";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,10 +10,13 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/access/forgot-password")({
   head: () => ({
     meta: [
-      { title: "Forgot password — EATOS Handheld" },
-      { name: "description", content: "Recover handheld access by email or mobile number." },
-      { property: "og:title", content: "Forgot password — EATOS Handheld" },
-      { property: "og:description", content: "Recover handheld access by email or mobile number." },
+      { title: "Forgot Password — eatOS Point of Purchase" },
+      { name: "description", content: "Recover access by email or mobile number with an OTP." },
+      { property: "og:title", content: "Forgot Password — eatOS Point of Purchase" },
+      {
+        property: "og:description",
+        content: "Recover access by email or mobile number with an OTP.",
+      },
     ],
   }),
   component: ForgotPassword,
@@ -21,50 +24,83 @@ export const Route = createFileRoute("/access/forgot-password")({
 
 function ForgotPassword() {
   const navigate = useNavigate();
-  const [method, setMethod] = useState<"email" | "mobile">("email");
-  const [value, setValue] = useState("elizer@eatos.com");
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   return (
-    <>
-      <ScreenHeader eyebrow="Access" title="Forgot password" back />
-      <ScreenBody>
-        <p className="text-sm text-muted-foreground">
-          Choose how you want to receive a one-time recovery code.
+    <div className="flex flex-1 flex-col bg-background">
+      <div className="no-scrollbar flex-1 overflow-y-auto px-6 pb-6 pt-5">
+        <button
+          type="button"
+          aria-label="Go back"
+          onClick={() => router.history.back()}
+          className="-ml-2 grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+        >
+          <ChevronLeft className="size-6" />
+        </button>
+
+        <div className="flex flex-col items-center">
+          <Wordmark />
+          <h1 className="mt-4 text-3xl font-extrabold text-foreground">Point of Purchase</h1>
+        </div>
+
+        <h2 className="mt-3 text-2xl font-extrabold text-foreground">Forgot Password</h2>
+        <p className="mt-1 text-base text-muted-foreground">
+          Please select an option to change password
         </p>
-        <div className="mt-4">
-          <Pills
-            value={method}
-            onChange={(m) => {
-              setMethod(m);
-              setValue(m === "email" ? "elizer@eatos.com" : "+1 (415) 555-0132");
-            }}
-            options={[
-              { id: "email", label: "Email" },
-              { id: "mobile", label: "Mobile" },
-            ]}
-          />
-        </div>
-        <div className="mt-5 space-y-1.5">
-          <Label htmlFor="recovery">{method === "email" ? "Work email" : "Mobile number"}</Label>
+
+        <div className="mt-7 space-y-2">
+          <Label htmlFor="fp-email" className="text-sm font-extrabold">
+            Email Address
+          </Label>
           <Input
-            id="recovery"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            className="h-12 rounded-xl bg-surface"
+            id="fp-email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter Your Email"
+            className="h-14 rounded-xl bg-surface text-base"
           />
         </div>
-      </ScreenBody>
-      <ScreenFooter>
+
+        <p className="py-4 text-center text-base font-extrabold text-foreground">Or</p>
+
+        <div className="space-y-2">
+          <Label htmlFor="fp-phone" className="text-sm font-extrabold">
+            Mobile Number
+          </Label>
+          <div className="flex h-14 items-center overflow-hidden rounded-xl border border-input bg-surface">
+            <span className="flex h-full shrink-0 items-center gap-2 border-r border-input px-3 text-base font-bold text-foreground">
+              <span aria-hidden>🇺🇸</span> +1
+            </span>
+            <input
+              id="fp-phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="(XXX) XXX-XXXX"
+              inputMode="tel"
+              className="h-full min-w-0 flex-1 bg-transparent px-3 text-base text-foreground outline-none placeholder:text-muted-foreground"
+            />
+          </div>
+        </div>
+
         <Button
-          className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground hover:bg-accent/90"
+          className="mt-8 h-14 w-full rounded-xl bg-primary text-base font-extrabold uppercase tracking-wide text-primary-foreground hover:bg-primary/90"
           onClick={() => {
-            toast.success(`Recovery code sent by ${method}`);
+            toast.success(email ? "OTP sent by email" : "OTP sent by SMS");
             navigate({ to: "/" });
           }}
         >
-          Send recovery code
+          Send OTP
         </Button>
-      </ScreenFooter>
-    </>
+
+        <p className="mt-6 text-center text-base text-muted-foreground">
+          Got your password?{" "}
+          <Link to="/" className="font-extrabold text-foreground">
+            Sign In
+          </Link>
+        </p>
+      </div>
+    </div>
   );
 }
