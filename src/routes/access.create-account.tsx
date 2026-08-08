@@ -32,7 +32,7 @@ function CreateAccount() {
     { label: "Owner", hint: "Who runs the account?" },
     { label: "Login", hint: "Where should we send access?" },
   ];
-  const current = steps[step];
+  const current = steps[step] ?? steps[0]!;
 
   return (
     <>

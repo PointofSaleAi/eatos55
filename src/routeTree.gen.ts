@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccessCreateAccountRouteImport } from './routes/access.create-account'
 import { Route as AccessForgotPasswordRouteImport } from './routes/access.forgot-password'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccessCreateAccountRoute = AccessCreateAccountRouteImport.update({
+  id: '/access/create-account',
+  path: '/access/create-account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccessForgotPasswordRoute = AccessForgotPasswordRouteImport.update({
@@ -25,27 +31,31 @@ const AccessForgotPasswordRoute = AccessForgotPasswordRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/access/forgot-password'
+  fullPaths: '/' | '/access/create-account' | '/access/forgot-password'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/access/forgot-password'
-  id: '__root__' | '/' | '/access/forgot-password'
+  to: '/' | '/access/create-account' | '/access/forgot-password'
+  id: '__root__' | '/' | '/access/create-account' | '/access/forgot-password'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccessCreateAccountRoute: typeof AccessCreateAccountRoute
   AccessForgotPasswordRoute: typeof AccessForgotPasswordRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/access/create-account': {
+      id: '/access/create-account'
+      path: '/access/create-account'
+      fullPath: '/access/create-account'
+      preLoaderRoute: typeof AccessCreateAccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/access/forgot-password': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccessCreateAccountRoute: AccessCreateAccountRoute,
   AccessForgotPasswordRoute: AccessForgotPasswordRoute,
 }
 export const routeTree = rootRouteImport
