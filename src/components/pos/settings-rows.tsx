@@ -17,7 +17,8 @@ export type TileColor =
   | "yellow"
   | "red"
   | "blue"
-  | "grey";
+  | "grey"
+  | "black";
 
 const tileBg: Record<TileColor, string> = {
   green: "bg-tile-green",
@@ -33,6 +34,7 @@ const tileBg: Record<TileColor, string> = {
   red: "bg-tile-red",
   blue: "bg-tile-blue",
   grey: "bg-tile-grey",
+  black: "bg-foreground",
 };
 
 export function IconTile({ icon: Icon, color }: { icon: LucideIcon; color: TileColor }) {
