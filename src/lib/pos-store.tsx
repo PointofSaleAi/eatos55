@@ -97,7 +97,10 @@ type Store = {
   setFilters: (f: TicketFilters) => void;
   search: string;
   setSearch: (s: string) => void;
-  visibleTickets: (tab: TicketStatus | "all") => Ticket[];
+  ticketDate: string;
+  setTicketDate: (d: string) => void;
+  shiftTicketDate: (days: number) => void;
+  visibleTickets: (tab: TicketStatus | "all", opts?: { ignoreDate?: boolean }) => Ticket[];
   setTicketStatus: (id: string, status: TicketStatus) => void;
 
   mode: MenuMode;
