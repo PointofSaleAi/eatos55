@@ -6,6 +6,7 @@ import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { addOnGroups, modifierGroups, money, type MenuItem } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
+import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
 
 /**
@@ -14,6 +15,7 @@ import { cn } from "@/lib/utils";
  * Compact portrait-phone scale: pinned header + footer, single scroll area.
  */
 export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: () => void }) {
+  useBackDismiss(!!item, onClose);
   const { addItem } = usePos();
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState(item?.price ?? 0);

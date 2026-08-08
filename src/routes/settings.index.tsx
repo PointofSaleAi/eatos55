@@ -21,6 +21,8 @@ import { ScreenBody } from "@/components/pos/shell";
 import { GroupCard, IconNavRow, type TileColor } from "@/components/pos/settings-rows";
 import { EmptyState } from "@/components/pos/primitives";
 import { PinSheet } from "@/components/pos/pin-sheet";
+import { cn } from "@/lib/utils";
+import { SearchDock } from "@/components/pos/search-dock";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/settings/")({
@@ -53,6 +55,7 @@ function SettingsHub() {
   const navigate = useNavigate();
   const { session, settings, signOut, startOrder } = usePos();
   const [query, setQuery] = useState("");
+  const [searching, setSearching] = useState(false);
   const [pinOpen, setPinOpen] = useState(false);
 
   const groups = useMemo<Row[][]>(
@@ -110,16 +113,30 @@ function SettingsHub() {
       <ScreenBody className="pt-5">
         <h1 className="px-1 text-2xl font-extrabold text-foreground">Settings</h1>
 
-        <label className="mt-4 flex min-h-[48px] items-center gap-3 rounded-full border border-border bg-surface px-4">
+        <button
+          type="button"
+          onClick={() => setSearching(true)}
+          className="mt-4 flex min-h-[48px] w-full items-center gap-3 rounded-full border border-border bg-surface px-4 text-left transition-colors hover:bg-muted"
+        >
           <Search className="size-6 shrink-0 text-muted-foreground" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search"
-            className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
-          />
+          <span
+            className={cn(
+              "min-w-0 flex-1 truncate text-sm",
+              query ? "text-foreground" : "text-muted-foreground",
+            )}
+          >
+            {query || "Search"}
+          </span>
           <Mic className="size-6 shrink-0 text-muted-foreground" />
-        </label>
+        </button>
+
+        <SearchDock
+          open={searching}
+          value={query}
+          onChange={setQuery}
+          onClose={() => setSearching(false)}
+          placeholder="Search settings"
+        />
 
         <GroupCard className="mt-6">
           <div className="flex items-center gap-4 px-4 py-4">

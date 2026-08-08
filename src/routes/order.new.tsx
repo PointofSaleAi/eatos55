@@ -10,6 +10,7 @@ import { MoreSheet } from "@/components/pos/more-sheet";
 import { liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 import { toast } from "sonner";
+import { SearchDock } from "@/components/pos/search-dock";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/order/new")({
@@ -59,7 +60,7 @@ function NewOrder() {
               title="Search products"
               onClick={() => setSearching((s) => !s)}
               className={cn(
-                "grid size-9 shrink-0 place-items-center rounded-full transition-colors hover:bg-muted",
+                "grid size-10 shrink-0 place-items-center rounded-full transition-colors hover:bg-muted",
                 searching ? "bg-muted text-accent" : "text-foreground",
               )}
             >
@@ -70,7 +71,7 @@ function NewOrder() {
               aria-label="Add custom item"
               title="Custom item"
               onClick={() => navigate({ to: "/order/custom-item" })}
-              className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+              className="grid size-10 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
             >
               <Tag className="size-5" />
             </button>
@@ -79,22 +80,12 @@ function NewOrder() {
               aria-label="More options"
               title="More options"
               onClick={() => setMoreOpen(true)}
-              className="-mr-2 grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+              className="-mr-2 grid size-10 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
             >
               <MoreVertical className="size-5" />
             </button>
           </div>
         </div>
-
-        {searching ? (
-          <input
-            autoFocus
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search products"
-            className="mt-3 h-12 w-full rounded-xl border border-border bg-surface px-3 text-sm text-foreground outline-none"
-          />
-        ) : null}
 
         <div className="mt-3 grid grid-cols-2 gap-2">
           {(["menu", "order"] as const).map((t) => (
@@ -103,7 +94,7 @@ function NewOrder() {
               type="button"
               onClick={() => setTab(t)}
               className={cn(
-                "min-h-[40px] rounded-full text-sm font-extrabold uppercase transition-colors",
+                "min-h-[44px] rounded-full text-sm font-extrabold uppercase transition-colors",
                 t === tab
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -141,7 +132,7 @@ function NewOrder() {
                 type="button"
                 onClick={() => setCategory(c)}
                 className={cn(
-                  "min-h-[36px] shrink-0 rounded-full px-3.5 text-[13px] font-bold transition-colors",
+                  "min-h-[40px] shrink-0 rounded-full px-3.5 text-[13px] font-bold transition-colors",
                   c === category
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -154,7 +145,14 @@ function NewOrder() {
         ) : null}
       </div>
 
-      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-3">
+      <div
+        className={cn(
+          "no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pt-3",
+          searching
+            ? "pb-[calc(5rem+var(--kb-inset,0px))]"
+            : "pb-[calc(1rem+var(--kb-inset,0px))]",
+        )}
+      >
         {tab === "order" ? (
           cart.length === 0 ? (
             <p className="px-4 py-24 text-center text-sm text-muted-foreground">
@@ -296,6 +294,17 @@ function NewOrder() {
           </Button>
         </div>
       ) : null}
+
+      <SearchDock
+        open={searching}
+        value={query}
+        onChange={setQuery}
+        onClose={() => {
+          setQuery("");
+          setSearching(false);
+        }}
+        placeholder="Search products"
+      />
 
       <ItemSheet item={sheetItem} onClose={() => setSheetItem(null)} />
       <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />

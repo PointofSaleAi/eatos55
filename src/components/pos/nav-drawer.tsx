@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { LogOut, ShieldCheck, X } from "lucide-react";
 import { usePos } from "@/lib/pos-store";
+import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
 
 type NavLink = { to: string; label: string };
@@ -63,6 +64,8 @@ const groups: { title: string; links: NavLink[] }[] = [
 export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { clockOut } = usePos();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useBackDismiss(open, onClose);
 
   if (!open) return null;
 

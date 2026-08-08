@@ -146,8 +146,59 @@
     border-color: var(--color-border);
   }
 
+  :root {
+    /* Device safe areas (notch / home indicator / gesture bar). */
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+  }
+
   html {
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* Native-feeling scrolling: momentum, no page-level rubber banding. */
+  html,
+  body {
+    overscroll-behavior-y: none;
+  }
+
+  .no-scrollbar,
+  [class*="overflow-y-auto"],
+  [class*="overflow-x-auto"] {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* iOS Safari zooms on focus when a field is under 16px. */
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+
+  button,
+  [role="button"],
+  a {
+    -webkit-touch-callout: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 
   body {
