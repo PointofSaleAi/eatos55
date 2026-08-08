@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useKeyboardInset, scrollFieldIntoView } from "@/hooks/use-keyboard-inset";
 import { countries, restaurantTypes } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 
@@ -47,6 +48,7 @@ function CreateAccount() {
   const router = useRouter();
   const { signIn } = usePos();
   const [show, setShow] = useState(false);
+  const kb = useKeyboardInset();
   const [agree, setAgree] = useState(false);
   const [form, setForm] = useState({
     first: "",
@@ -74,7 +76,11 @@ function CreateAccount() {
         <h1 className="text-2xl font-extrabold text-foreground">Create an Account</h1>
       </div>
 
-      <div className="no-scrollbar flex-1 space-y-6 overflow-y-auto px-5 pb-6 pt-6">
+      <div
+        className="no-scrollbar flex-1 space-y-6 overflow-y-auto px-5 pb-6 pt-6"
+        style={{ paddingBottom: kb ? kb + 16 : undefined }}
+        onFocusCapture={(e) => scrollFieldIntoView({ currentTarget: e.target as HTMLElement })}
+      >
         <Field label="First Name">
           <input
             className={inputClass}
