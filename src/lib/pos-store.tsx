@@ -308,15 +308,30 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setCart(ticket.lines.map((l) => ({ ...l })));
         setMode(ticket.mode);
       },
-      addItem: (menuId) => {
-        const item = menu.find((m) => m.id === menuId);
+      addItem: (menuId, opts) => {
+        const item = [...menu, ...liveMenu].find((m) => m.id === menuId);
         if (!item) return;
+        const qty = opts?.qty ?? 1;
+        const price = opts?.price ?? item.price;
+        const mods = opts?.modifiers ?? [];
+        const lineId = mods.length || opts?.notes ? `${item.id}-${Date.now()}` : item.id;
         setCart((list) => {
-          const found = list.find((l) => l.id === item.id);
+          const found = list.find((l) => l.id === lineId);
           if (found) {
-            return list.map((l) => (l.id === item.id ? { ...l, qty: l.qty + 1 } : l));
+            return list.map((l) => (l.id === lineId ? { ...l, qty: l.qty + qty } : l));
           }
-          return [...list, { id: item.id, name: item.name, price: item.price, qty: 1 }];
+          return [
+            ...list,
+            {
+              id: lineId,
+              name: item.name,
+              price,
+              qty,
+              notes: opts?.notes,
+              modifiers: mods.length ? mods : undefined,
+              discountPercent: opts?.discountPercent,
+            },
+          ];
         });
       },
       addCustomItem: (name, price) =>
@@ -332,12 +347,21 @@ export function PosProvider({ children }: { children: ReactNode }) {
         ),
       removeLine: (id) => setCart((list) => list.filter((l) => l.id !== id)),
       clearCart: () => setCart([]),
+      noTax,
+      setNoTax,
+      serviceCharge,
+      setServiceCharge,
+      orderDiscountPercent,
+      setOrderDiscountPercent,
       totals: {
         subtotal,
         tax,
         total,
         count: cart.reduce((n, l) => n + l.qty, 0),
+        serviceCharge,
+        discount,
       },
+
       commitPayment: (method, tendered) => {
         const change = Math.max(0, Math.round((tendered - total) * 100) / 100);
         let id = activeTicketId;
