@@ -3,7 +3,6 @@ import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Wordmark } from "@/components/pos/brand";
-import { useKeyboardInset, scrollFieldIntoView } from "@/hooks/use-keyboard-inset";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,15 +27,10 @@ function ForgotPassword() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const kb = useKeyboardInset();
 
   return (
     <div className="flex flex-1 flex-col bg-background">
-      <div
-        className="no-scrollbar flex-1 overflow-y-auto px-6 pb-6 pt-5"
-        style={{ paddingBottom: kb ? kb + 16 : undefined }}
-        onFocusCapture={(e) => scrollFieldIntoView({ currentTarget: e.target as HTMLElement })}
-      >
+      <div className="no-scrollbar flex-1 overflow-y-auto px-6 pb-[calc(1.5rem+var(--kb-inset,0px))] pt-5">
         <button
           type="button"
           aria-label="Go back"
