@@ -59,7 +59,8 @@ export function SearchDock({
               if (e.key === "Enter") onSubmit?.(value);
               if (e.key === "Escape") onClose();
             }}
-            type="search"
+            type="text"
+            inputMode="search"
             enterKeyHint="search"
             autoComplete="off"
             placeholder={placeholder}
