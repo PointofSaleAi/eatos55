@@ -371,6 +371,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
     mode,
     cart,
     activeTicketId,
+    activeTable,
+    floor,
+    tableStates,
+
     settings,
     managerUnlocked,
     lastPayment,
