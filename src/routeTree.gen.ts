@@ -33,6 +33,7 @@ import { Route as SettingsNetworkRouteImport } from './routes/settings.network'
 import { Route as SettingsNotificationsRouteImport } from './routes/settings.notifications'
 import { Route as SettingsPaymentRouteImport } from './routes/settings.payment'
 import { Route as SettingsPaymentsRouteImport } from './routes/settings.payments'
+import { Route as SettingsSalesSummaryRouteImport } from './routes/settings.sales-summary'
 import { Route as SettingsWorkforceRouteImport } from './routes/settings.workforce'
 import { Route as SystemIndexRouteImport } from './routes/system.index'
 import { Route as SystemCustomerSupportRouteImport } from './routes/system.customer-support'
@@ -169,6 +170,11 @@ const SettingsPaymentsRoute = SettingsPaymentsRouteImport.update({
   path: '/settings/payments',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsSalesSummaryRoute = SettingsSalesSummaryRouteImport.update({
+  id: '/settings/sales-summary',
+  path: '/settings/sales-summary',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsWorkforceRoute = SettingsWorkforceRouteImport.update({
   id: '/settings/workforce',
   path: '/settings/workforce',
@@ -269,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/settings/notifications': typeof SettingsNotificationsRoute
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/payments': typeof SettingsPaymentsRoute
+  '/settings/sales-summary': typeof SettingsSalesSummaryRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
   '/system/hardware': typeof SystemHardwareRoute
@@ -310,6 +317,7 @@ export interface FileRoutesByTo {
   '/settings/notifications': typeof SettingsNotificationsRoute
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/payments': typeof SettingsPaymentsRoute
+  '/settings/sales-summary': typeof SettingsSalesSummaryRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
   '/system/hardware': typeof SystemHardwareRoute
@@ -352,6 +360,7 @@ export interface FileRoutesById {
   '/settings/notifications': typeof SettingsNotificationsRoute
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/payments': typeof SettingsPaymentsRoute
+  '/settings/sales-summary': typeof SettingsSalesSummaryRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
   '/system/hardware': typeof SystemHardwareRoute
@@ -395,6 +404,7 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/settings/payment'
     | '/settings/payments'
+    | '/settings/sales-summary'
     | '/settings/workforce'
     | '/system/customer-support'
     | '/system/hardware'
@@ -436,6 +446,7 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/settings/payment'
     | '/settings/payments'
+    | '/settings/sales-summary'
     | '/settings/workforce'
     | '/system/customer-support'
     | '/system/hardware'
@@ -477,6 +488,7 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/settings/payment'
     | '/settings/payments'
+    | '/settings/sales-summary'
     | '/settings/workforce'
     | '/system/customer-support'
     | '/system/hardware'
@@ -519,6 +531,7 @@ export interface RootRouteChildren {
   SettingsNotificationsRoute: typeof SettingsNotificationsRoute
   SettingsPaymentRoute: typeof SettingsPaymentRoute
   SettingsPaymentsRoute: typeof SettingsPaymentsRoute
+  SettingsSalesSummaryRoute: typeof SettingsSalesSummaryRoute
   SettingsWorkforceRoute: typeof SettingsWorkforceRoute
   SystemCustomerSupportRoute: typeof SystemCustomerSupportRoute
   SystemHardwareRoute: typeof SystemHardwareRoute
@@ -707,6 +720,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsPaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/sales-summary': {
+      id: '/settings/sales-summary'
+      path: '/settings/sales-summary'
+      fullPath: '/settings/sales-summary'
+      preLoaderRoute: typeof SettingsSalesSummaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/workforce': {
       id: '/settings/workforce'
       path: '/settings/workforce'
@@ -849,6 +869,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsNotificationsRoute: SettingsNotificationsRoute,
   SettingsPaymentRoute: SettingsPaymentRoute,
   SettingsPaymentsRoute: SettingsPaymentsRoute,
+  SettingsSalesSummaryRoute: SettingsSalesSummaryRoute,
   SettingsWorkforceRoute: SettingsWorkforceRoute,
   SystemCustomerSupportRoute: SystemCustomerSupportRoute,
   SystemHardwareRoute: SystemHardwareRoute,
