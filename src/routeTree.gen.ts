@@ -15,6 +15,7 @@ import { Route as AccessCreateAccountRouteImport } from './routes/access.create-
 import { Route as AccessForgotPasswordRouteImport } from './routes/access.forgot-password'
 import { Route as AccessManagerPinRouteImport } from './routes/access.manager-pin'
 import { Route as AccessSelectStationRouteImport } from './routes/access.select-station'
+import { Route as OrdersIndexRouteImport } from './routes/orders.index'
 import { Route as TicketsIndexRouteImport } from './routes/tickets.index'
 import { Route as TicketsTicketIdRouteImport } from './routes/tickets.$ticketId'
 import { Route as TicketsFilterRouteImport } from './routes/tickets.filter'
@@ -51,6 +52,11 @@ const AccessManagerPinRoute = AccessManagerPinRouteImport.update({
 const AccessSelectStationRoute = AccessSelectStationRouteImport.update({
   id: '/access/select-station',
   path: '/access/select-station',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersIndexRoute = OrdersIndexRouteImport.update({
+  id: '/orders/',
+  path: '/orders/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TicketsIndexRoute = TicketsIndexRouteImport.update({
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/tickets/search': typeof TicketsSearchRoute
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
+  '/orders/': typeof OrdersIndexRoute
   '/tickets/': typeof TicketsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/tickets/search': typeof TicketsSearchRoute
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
+  '/orders': typeof OrdersIndexRoute
   '/tickets': typeof TicketsIndexRoute
 }
 export interface FileRoutesById {
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/tickets/search': typeof TicketsSearchRoute
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
+  '/orders/': typeof OrdersIndexRoute
   '/tickets/': typeof TicketsIndexRoute
 }
 export interface FileRouteTypes {
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/tickets/search'
     | '/tickets/sort'
     | '/tickets/whats-new'
+    | '/orders/'
     | '/tickets/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/tickets/search'
     | '/tickets/sort'
     | '/tickets/whats-new'
+    | '/orders'
     | '/tickets'
   id:
     | '__root__'
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
     | '/tickets/search'
     | '/tickets/sort'
     | '/tickets/whats-new'
+    | '/orders/'
     | '/tickets/'
   fileRoutesById: FileRoutesById
 }
@@ -196,6 +208,7 @@ export interface RootRouteChildren {
   TicketsSearchRoute: typeof TicketsSearchRoute
   TicketsSortRoute: typeof TicketsSortRoute
   TicketsWhatsNewRoute: typeof TicketsWhatsNewRoute
+  OrdersIndexRoute: typeof OrdersIndexRoute
   TicketsIndexRoute: typeof TicketsIndexRoute
 }
 
@@ -241,6 +254,13 @@ declare module '@tanstack/react-router' {
       path: '/access/select-station'
       fullPath: '/access/select-station'
       preLoaderRoute: typeof AccessSelectStationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders/': {
+      id: '/orders/'
+      path: '/orders'
+      fullPath: '/orders/'
+      preLoaderRoute: typeof OrdersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tickets/': {
@@ -308,6 +328,7 @@ const rootRouteChildren: RootRouteChildren = {
   TicketsSearchRoute: TicketsSearchRoute,
   TicketsSortRoute: TicketsSortRoute,
   TicketsWhatsNewRoute: TicketsWhatsNewRoute,
+  OrdersIndexRoute: OrdersIndexRoute,
   TicketsIndexRoute: TicketsIndexRoute,
 }
 export const routeTree = rootRouteImport
