@@ -38,7 +38,7 @@ function ContactUs() {
   return (
     <>
       <SubHeader title="Customer Support" backLabel="" />
-      <div className="no-scrollbar flex-1 overflow-y-auto">
+      <div className="no-scrollbar flex-1 overflow-y-auto pb-[var(--kb-inset,0px)]">
         <div className="bg-shell px-5 pb-7 pt-5">
           <div className="flex items-start justify-between gap-3">
             <Wordmark invert className="h-12" />
