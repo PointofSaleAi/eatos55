@@ -16,7 +16,11 @@ export type CartLine = {
   price: number;
   qty: number;
   custom?: boolean;
+  notes?: string;
+  modifiers?: string[];
+  discountPercent?: number;
 };
+
 
 export type Ticket = {
   id: string;
