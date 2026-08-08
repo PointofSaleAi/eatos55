@@ -13,6 +13,7 @@ import {
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { ClockPullDown } from "@/components/pos/clock-pulldown";
 import { NavDrawer } from "@/components/pos/nav-drawer";
+import { OfflineBanner } from "@/components/pos/offline-banner";
 import { useGlobalKeyboardAware } from "@/hooks/use-keyboard-inset";
 import { cn } from "@/lib/utils";
 
@@ -70,11 +71,17 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
         )}
       >
         <NavDrawerContext.Provider value={{ open: () => setNavOpen(true) }}>
-          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
+          <div
+            className="relative flex min-h-0 min-w-0 flex-1 flex-col pt-[var(--sat,0px)]"
+            style={{ ["--tabs-h" as string]: appChrome ? "56px" : "0px" }}
+          >
             {appChrome ? <ClockPullDown /> : null}
+            <OfflineBanner />
             {children}
             {appChrome ? <BottomTabs /> : null}
             {appChrome ? <NavDrawer open={navOpen} onClose={() => setNavOpen(false)} /> : null}
+            {/* Portal host for keyboard-docked UI (search bar). */}
+            <div id="pos-dock-root" className="pointer-events-none absolute inset-0 z-40" />
           </div>
         </NavDrawerContext.Provider>
       </div>
@@ -186,7 +193,7 @@ export function ScreenBody({ children, className }: { children: ReactNode; class
 
 export function ScreenFooter({ children }: { children: ReactNode }) {
   return (
-    <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1.25rem+var(--kb-inset,0px))] pt-3">
+    <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1.25rem+var(--kb-inset,0px)+var(--sab,0px))] pt-3">
       {children}
     </div>
   );
@@ -202,12 +209,13 @@ const tabs: { to: string; label: string; icon: LucideIcon }[] = [
 
 export function BottomTabs() {
   return (
-    <nav className="shrink-0 border-t border-border bg-surface [html[data-kb=open]_&]:hidden">
+    <nav className="shrink-0 border-t border-border bg-surface pb-[var(--sab,0px)] [html[data-kb=open]_&]:hidden">
       <ul className="grid grid-cols-5">
         {tabs.map(({ to, label, icon: Icon }) => (
           <li key={to}>
             <Link
               to={to}
+              preload="intent"
               className="group relative flex min-h-[56px] flex-col items-center justify-center gap-1 py-2 text-muted-foreground transition-colors data-[status=active]:text-accent"
             >
               <span className="absolute inset-x-6 top-0 h-[3px] rounded-full bg-transparent group-data-[status=active]:bg-accent" />
