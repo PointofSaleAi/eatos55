@@ -88,39 +88,53 @@ const line = (id: string, qty = 1): CartLine => {
   return { id: item.id, name: item.name, price: item.price, qty };
 };
 
+/** The business day the ticket list opens on. */
+export const DEFAULT_TICKET_DATE = "2026-07-31";
+
+const custom = (price: number): CartLine => ({
+  id: `custom-${price}`,
+  name: "Custom Item",
+  price,
+  qty: 1,
+  custom: true,
+});
+
 export const initialTickets: Ticket[] = [
   {
     id: "t-1042",
     number: 2,
-    label: "Guest order",
+    label: "Guest",
     seats: 2,
     total: 11.0,
+    date: DEFAULT_TICKET_DATE,
     arrivedAt: "4:34 PM",
     arrivedMinutesAgo: 71,
     status: "preparing",
     mode: "dine-in",
-    lines: [line("m1")],
+    lines: [custom(11.0)],
     server: "Elizer Cruz",
   },
   {
     id: "t-1043",
     number: 1,
-    label: "Guest order",
+    label: "Guest",
     seats: 1,
     total: 5.76,
+    date: DEFAULT_TICKET_DATE,
     arrivedAt: "5:45 PM",
     arrivedMinutesAgo: 20,
     status: "paid",
     mode: "takeaway",
-    lines: [line("m14"), line("m18")],
+    lines: [custom(5.76)],
     server: "Elizer Cruz",
   },
   {
     id: "t-1044",
     number: 4,
-    label: "Patio 12",
+    label: "Guest",
     seats: 4,
     total: 42.75,
+    date: "2026-08-01",
     arrivedAt: "5:52 PM",
     arrivedMinutesAgo: 13,
     status: "ordering",
@@ -131,9 +145,10 @@ export const initialTickets: Ticket[] = [
   {
     id: "t-1045",
     number: 3,
-    label: "Bar tab",
+    label: "Guest",
     seats: 3,
     total: 21.0,
+    date: "2026-08-01",
     arrivedAt: "6:01 PM",
     arrivedMinutesAgo: 4,
     status: "payment",
@@ -144,9 +159,10 @@ export const initialTickets: Ticket[] = [
   {
     id: "t-1046",
     number: 1,
-    label: "Pickup · Ana R.",
+    label: "Guest",
     seats: 1,
     total: 16.5,
+    date: "2026-08-01",
     arrivedAt: "6:04 PM",
     arrivedMinutesAgo: 1,
     status: "ready",
