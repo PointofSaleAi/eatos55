@@ -26,9 +26,8 @@ export function AccountBar() {
 
   return (
     <div className="relative z-20 shrink-0 bg-background px-3 pt-2">
-      {true ? (
+      <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface px-3 py-3">
 
-        <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface px-3 py-3">
           <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-muted text-sm font-extrabold text-foreground">
             {initials}
           </span>
