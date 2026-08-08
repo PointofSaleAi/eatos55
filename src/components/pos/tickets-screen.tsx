@@ -113,11 +113,18 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
   const [overlay, setOverlay] = useState<TicketsOverlay>(initialOverlay);
   const [openFacet, setOpenFacet] = useState<string | null>(null);
 
-  const baseList = visibleTickets(tab === "all" || tab === "unpaid" ? "all" : tab, {
+  const aggregate = tab === "all" || tab === "unpaid" || tab === "open" || tab === "closed";
+  const baseList = visibleTickets(aggregate ? "all" : tab, {
     ignoreDate: overlay === "search" && search.trim().length > 0,
   });
-  const list = tab === "unpaid" ? baseList.filter((t) => t.status !== "paid") : baseList;
+  const list =
+    tab === "unpaid" || tab === "open"
+      ? baseList.filter((t) => t.status !== "paid")
+      : tab === "closed"
+        ? baseList.filter((t) => t.status === "paid")
+        : baseList;
   const amountDue = list.filter((t) => t.status !== "paid").reduce((s, t) => s + t.total, 0);
+
 
 
   const dateLabel = new Date(`${ticketDate}T12:00:00`).toLocaleDateString("en-GB", {
