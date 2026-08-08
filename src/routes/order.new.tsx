@@ -32,11 +32,12 @@ const chips = [...barcodeCategories, ...categories];
 
 function NewOrder() {
   const navigate = useNavigate();
-  const { addItem, totals } = usePos();
+  const { addItem, totals, activeTable, cart, changeQty } = usePos();
   const [category, setCategory] = useState<string>(chips[0]!);
   const [scanMode, setScanMode] = useState("Barcode");
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
+  const [tab, setTab] = useState<"menu" | "order">("menu");
 
   const base =
     category === "Popular"
@@ -50,9 +51,12 @@ function NewOrder() {
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
         <div className="flex items-center gap-2">
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-bold text-foreground">Guest Name</p>
+            <p className="truncate text-sm font-bold text-foreground">
+              {activeTable ?? "Guest Name"}
+            </p>
             <p className="truncate text-xs text-muted-foreground">(XXX) XXX-XXXX</p>
           </div>
+
           <button
             type="button"
             aria-label="Search products"
