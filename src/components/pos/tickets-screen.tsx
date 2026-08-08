@@ -32,7 +32,10 @@ import { cn } from "@/lib/utils";
 
 export type TicketsOverlay = "none" | "sort" | "filter" | "search";
 
-type Tab = "all" | Extract<TicketStatus, "ordering" | "payment" | "ready" | "preparing" | "paid">;
+type Tab =
+  | "all"
+  | "unpaid"
+  | Extract<TicketStatus, "ordering" | "payment" | "ready" | "preparing" | "paid">;
 
 const tabs: { id: Tab; label: string }[] = [
   { id: "all", label: "All" },
@@ -41,7 +44,9 @@ const tabs: { id: Tab; label: string }[] = [
   { id: "ready", label: "Ready" },
   { id: "preparing", label: "Preparing" },
   { id: "paid", label: "Paid" },
+  { id: "unpaid", label: "Unpaid" },
 ];
+
 
 const sortOptions: { id: SortKey; icon: typeof Clock; strong: string; rest: string }[] = [
   { id: "time-late-early", icon: Clock, strong: "Time", rest: "Late → Early" },
