@@ -142,7 +142,7 @@ function NewOrder() {
         ) : null}
       </div>
 
-      <div className="no-scrollbar flex-1 overflow-y-auto px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-4">
+      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-3">
         {tab === "order" ? (
           cart.length === 0 ? (
             <p className="px-4 py-24 text-center text-sm text-muted-foreground">
