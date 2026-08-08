@@ -181,23 +181,22 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-start gap-3 rounded-2xl border border-border bg-surface px-4 py-4 text-left transition-colors hover:bg-muted"
+      className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface px-3 py-3 text-left transition-colors hover:bg-muted"
     >
+      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-muted text-sm font-extrabold text-foreground">
+        {ticket.seats}
+      </span>
       <span className="min-w-0 flex-1">
-        <span className="flex items-center gap-2">
-          <Utensils className="size-4 shrink-0 text-muted-foreground" />
-          <span className="text-sm font-bold text-muted-foreground">{ticket.seats}</span>
-          <span className="truncate text-lg font-extrabold text-foreground">{ticket.label}</span>
+        <span className="block truncate text-sm font-extrabold text-foreground">
+          {ticket.label}
         </span>
-        <span className="mt-1 block truncate text-sm text-muted-foreground">
+        <span className="block truncate text-xs text-muted-foreground">
           Arrived {ticket.arrivedAt} · {ticket.arrivedMinutesAgo} min ago
         </span>
       </span>
       <span className="shrink-0 text-right">
-        <span className="block text-lg font-extrabold text-foreground">{money(ticket.total)}</span>
-        <span className={cn("mt-1 block text-xs font-extrabold uppercase tracking-wide", meta.tone)}>
-          {meta.label}
-        </span>
+        <span className="block text-sm font-extrabold text-foreground">{money(ticket.total)}</span>
+        <span className={cn("block text-xs font-bold", meta.tone)}>{meta.label}</span>
       </span>
     </button>
   );
