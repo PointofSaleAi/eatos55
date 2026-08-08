@@ -2,6 +2,7 @@ import { BadgePercent, Check, Percent, Receipt, Wallet } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
+import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";

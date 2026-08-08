@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { discountPresets } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
