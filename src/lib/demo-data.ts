@@ -241,7 +241,7 @@ export const money = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 
 /** Build/version string shown on the sign-in screen. */
-export const APP_VERSION = "Version 5.200.27(+11350)   FL 3.44.2   BD 31.07.26";
+export const APP_VERSION = "5.200.27(+11350) / 3.44.2/31.07.26";
 
 /** Restaurant types offered during account creation. */
 export const restaurantTypes = [
