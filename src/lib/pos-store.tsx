@@ -152,7 +152,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     signedIn: false,
     clockedIn: false,
     name: "Elizer Cruz",
-    role: "Manager",
+    role: "Supervisor",
     station: null,
   });
   const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
@@ -180,7 +180,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
           signedIn: false,
           clockedIn: false,
           name: "Elizer Cruz",
-          role: "Manager",
+          role: "Supervisor",
           station: null,
         }),
       clockIn: () => setSession((s) => ({ ...s, signedIn: true, clockedIn: true })),
