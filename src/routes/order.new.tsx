@@ -60,7 +60,7 @@ function NewOrder() {
               title="Search products"
               onClick={() => setSearching((s) => !s)}
               className={cn(
-                "grid size-9 shrink-0 place-items-center rounded-full transition-colors hover:bg-muted",
+                "grid size-10 shrink-0 place-items-center rounded-full transition-colors hover:bg-muted",
                 searching ? "bg-muted text-accent" : "text-foreground",
               )}
             >
@@ -71,7 +71,7 @@ function NewOrder() {
               aria-label="Add custom item"
               title="Custom item"
               onClick={() => navigate({ to: "/order/custom-item" })}
-              className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+              className="grid size-10 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
             >
               <Tag className="size-5" />
             </button>
@@ -80,7 +80,7 @@ function NewOrder() {
               aria-label="More options"
               title="More options"
               onClick={() => setMoreOpen(true)}
-              className="-mr-2 grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+              className="-mr-2 grid size-10 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
             >
               <MoreVertical className="size-5" />
             </button>
@@ -94,7 +94,7 @@ function NewOrder() {
               type="button"
               onClick={() => setTab(t)}
               className={cn(
-                "min-h-[40px] rounded-full text-sm font-extrabold uppercase transition-colors",
+                "min-h-[44px] rounded-full text-sm font-extrabold uppercase transition-colors",
                 t === tab
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -132,7 +132,7 @@ function NewOrder() {
                 type="button"
                 onClick={() => setCategory(c)}
                 className={cn(
-                  "min-h-[36px] shrink-0 rounded-full px-3.5 text-[13px] font-bold transition-colors",
+                  "min-h-[40px] shrink-0 rounded-full px-3.5 text-[13px] font-bold transition-colors",
                   c === category
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-secondary",
