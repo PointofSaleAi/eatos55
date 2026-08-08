@@ -56,28 +56,9 @@ export function AccountBar() {
           >
             <RotateCw className="size-4" />
           </button>
-          <button
-            type="button"
-            aria-label="Collapse account bar"
-            onClick={() => {
-              setNews(false);
-              setExpanded(false);
-            }}
-            className="grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted"
-          >
-            <ChevronUp className="size-4" />
-          </button>
         </div>
-      ) : (
-        <button
-          type="button"
-          aria-label="Expand account bar"
-          onClick={() => setExpanded(true)}
-          className="mx-auto flex h-6 w-32 items-center justify-center rounded-b-xl border border-t-0 border-border bg-surface text-muted-foreground"
-        >
-          <ChevronDown className="size-4" />
-        </button>
-      )}
+      ) : null}
+
 
       {news ? (
         <>
