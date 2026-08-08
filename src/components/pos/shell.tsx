@@ -1,6 +1,7 @@
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import {
   ChevronLeft,
+  Menu as MenuIcon,
   ClipboardList,
   Columns3,
   LayoutGrid,
@@ -9,31 +10,66 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import type { ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 import { ClockPullDown } from "@/components/pos/clock-pulldown";
+import { NavDrawer } from "@/components/pos/nav-drawer";
 import { useGlobalKeyboardAware } from "@/hooks/use-keyboard-inset";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
+const NavDrawerContext = createContext<{ open: () => void } | null>(null);
+
+/** Opens the global navigation drawer from any header. */
+export function useNavDrawer() {
+  return useContext(NavDrawerContext);
+}
+
+/** Burger button that opens the full app navigation drawer. */
+export function MenuButton({ className }: { className?: string }) {
+  const drawer = useNavDrawer();
+  if (!drawer) return null;
+  return (
+    <button
+      type="button"
+      aria-label="Open navigation"
+      title="Navigation"
+      onClick={drawer.open}
+      className={cn(
+        "grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted",
+        className,
+      )}
+    >
+      <MenuIcon className="size-6" />
+    </button>
+  );
+}
+
 /** Device frame: full-bleed on phones, framed handheld on tablet/desktop. */
 export function DeviceFrame({ children }: { children: ReactNode }) {
   const { session } = usePos();
+  const [navOpen, setNavOpen] = useState(false);
   useGlobalKeyboardAware();
 
   return (
     <div className="h-[100dvh] overflow-hidden bg-shell md:flex md:h-auto md:min-h-[100dvh] md:items-center md:justify-center md:overflow-visible md:p-8">
       <div
+        data-navopen={navOpen ? "1" : "0"}
         className={cn(
           "relative flex h-full max-h-[100dvh] w-full overflow-hidden bg-background",
           "md:h-[860px] md:max-h-none md:w-[420px] md:rounded-[2.75rem] md:border-[10px] md:border-shell md:shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)]",
           "lg:h-[880px] lg:w-[440px]",
         )}
       >
-        <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
-          {session.signedIn ? <ClockPullDown /> : null}
-          {children}
-          {session.signedIn ? <BottomTabs /> : null}
-        </div>
+        <NavDrawerContext.Provider value={{ open: () => setNavOpen(true) }}>
+          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
+            {session.signedIn ? <ClockPullDown /> : null}
+            {children}
+            {session.signedIn ? <BottomTabs /> : null}
+            {session.signedIn ? (
+              <NavDrawer open={navOpen} onClose={() => setNavOpen(false)} />
+            ) : null}
+          </div>
+        </NavDrawerContext.Provider>
       </div>
     </div>
   );
@@ -85,7 +121,7 @@ export function ScreenHeader({
     <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <div className="flex min-w-0 items-center gap-2">
-          {back ? <BackButton fallbackTo={backTo} /> : null}
+          {back ? <BackButton fallbackTo={backTo} /> : <MenuButton className="-ml-1" />}
           <div className="min-w-0">
             <h1 className="truncate text-2xl font-extrabold text-foreground">{title}</h1>
           </div>
@@ -116,6 +152,7 @@ export function SubHeader({
             fallbackTo={backTo}
             label={backLabel ? `Back to ${backLabel}` : "Go back"}
           />
+          <MenuButton className="-ml-2" />
           <div className="min-w-0">
             <h1 className="truncate text-2xl font-extrabold text-foreground">{title}</h1>
           </div>

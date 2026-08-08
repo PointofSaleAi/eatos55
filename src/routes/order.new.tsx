@@ -1,13 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, MoreVertical, Plus, Search, Wifi } from "lucide-react";
+import { Ban, ChevronDown, MoreVertical, Plus, Search, Tag, Wifi } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GuestBlock } from "@/components/pos/guest-block";
+import { MenuButton } from "@/components/pos/shell";
 import { GuestSheet } from "@/components/pos/guest-sheet";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { MoreSheet } from "@/components/pos/more-sheet";
 import { liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/order/new")({
@@ -47,36 +49,37 @@ function NewOrder() {
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
         <div className="flex items-center gap-2">
+          <MenuButton className="-ml-2 size-9" />
           <GuestBlock onEdit={() => setGuestOpen(true)} />
 
           <button
             type="button"
             aria-label="Search products"
             onClick={() => setSearching((s) => !s)}
-            className="grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+            className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
           >
-            <Search className="size-6" />
+            <Search className="size-5" />
           </button>
           <button
             type="button"
             aria-label="More options"
             onClick={() => setMoreOpen(true)}
-            className="grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+            className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
           >
-            <MoreVertical className="size-6" />
+            <MoreVertical className="size-5" />
           </button>
           <button
             type="button"
             onClick={() => navigate({ to: "/order/custom-item" })}
-            className="min-h-[36px] shrink-0 rounded-full border border-border px-3.5 text-[13px] font-bold text-foreground transition-colors hover:bg-muted"
+            className="min-h-[32px] shrink-0 rounded-full border border-border px-2.5 text-[12px] font-bold text-foreground transition-colors hover:bg-muted"
           >
             Custom Item
           </button>
           <span
             title="Server connected"
-            className="grid size-9 shrink-0 place-items-center rounded-full text-sky-600"
+            className="grid size-7 shrink-0 place-items-center rounded-full text-sky-600"
           >
-            <Wifi className="size-5" />
+            <Wifi className="size-4" />
           </span>
         </div>
 
@@ -195,26 +198,86 @@ function NewOrder() {
         ) : (
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {items.map((item) => (
+            {items.map((item) => {
+              const low =
+                typeof item.stock === "number" &&
+                !item.outOfStock &&
+                item.stock <= (item.lowStockAt ?? 0);
+              return (
               <button
                 key={item.id}
                 type="button"
-                onClick={() => setSheetItem(item)}
-                className="flex min-h-[92px] flex-col justify-between rounded-2xl border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]"
+                onClick={() => {
+                  if (item.outOfStock) {
+                    toast.error(`${item.name} is out of stock`, {
+                      action: {
+                        label: "Override",
+                        onClick: () => navigate({ to: "/access/manager-pin" }),
+                      },
+                    });
+                    return;
+                  }
+                  setSheetItem(item);
+                }}
+                className={cn(
+                  "relative flex min-h-[92px] flex-col justify-between rounded-2xl border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
+                  item.outOfStock && "opacity-50",
+                )}
               >
-                <span className="text-sm font-extrabold leading-tight text-foreground">
-                  {item.name}
+                <span className="flex items-start gap-1.5">
+                  <span className="min-w-0 flex-1 text-sm font-extrabold leading-tight text-foreground">
+                    {item.name}
+                  </span>
+                  {item.outOfStock ? (
+                    <span
+                      title="Out of stock"
+                      className="grid size-5 shrink-0 place-items-center rounded-full bg-destructive/10 text-destructive"
+                    >
+                      <Ban className="size-3.5" />
+                    </span>
+                  ) : item.openPrice ? (
+                    <span
+                      title="Open price"
+                      className="grid size-5 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground"
+                    >
+                      <Tag className="size-3.5" />
+                    </span>
+                  ) : typeof item.stock === "number" ? (
+                    <span
+                      title={`${item.stock} in stock`}
+                      className={cn(
+                        "shrink-0 rounded-full px-1.5 text-[11px] font-extrabold leading-5",
+                        low
+                          ? "bg-destructive/10 text-destructive"
+                          : "bg-muted text-muted-foreground",
+                      )}
+                    >
+                      {low ? `- ${item.stock}` : item.stock}
+                    </span>
+                  ) : null}
                 </span>
                 <span className="mt-2 flex items-center justify-between">
                   <span className="text-sm font-bold text-muted-foreground">
-                    {money(item.price)}
+                    {item.outOfStock
+                      ? "Out of stock"
+                      : item.openPrice
+                        ? "Open price"
+                        : money(item.price)}
                   </span>
-                  <span className="grid size-7 place-items-center rounded-full bg-accent text-accent-foreground">
-                    <Plus className="size-4" />
+                  <span
+                    className={cn(
+                      "grid size-7 place-items-center rounded-full",
+                      item.outOfStock
+                        ? "bg-muted text-muted-foreground"
+                        : "bg-accent text-accent-foreground",
+                    )}
+                  >
+                    {item.outOfStock ? <Ban className="size-4" /> : <Plus className="size-4" />}
                   </span>
                 </span>
               </button>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
