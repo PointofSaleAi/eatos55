@@ -29,6 +29,12 @@ import { Route as SettingsMenuRouteImport } from './routes/settings.menu'
 import { Route as SettingsMoreRouteImport } from './routes/settings.more'
 import { Route as SettingsPaymentRouteImport } from './routes/settings.payment'
 import { Route as SettingsWorkforceRouteImport } from './routes/settings.workforce'
+import { Route as SystemIndexRouteImport } from './routes/system.index'
+import { Route as SystemCustomerSupportRouteImport } from './routes/system.customer-support'
+import { Route as SystemHardwareRouteImport } from './routes/system.hardware'
+import { Route as SystemHelpCenterRouteImport } from './routes/system.help-center'
+import { Route as SystemIntegrationsRouteImport } from './routes/system.integrations'
+import { Route as SystemNetworkRouteImport } from './routes/system.network'
 import { Route as TicketsIndexRouteImport } from './routes/tickets.index'
 import { Route as TicketsTicketIdRouteImport } from './routes/tickets.$ticketId'
 import { Route as TicketsFilterRouteImport } from './routes/tickets.filter'
@@ -137,6 +143,36 @@ const SettingsWorkforceRoute = SettingsWorkforceRouteImport.update({
   path: '/settings/workforce',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SystemIndexRoute = SystemIndexRouteImport.update({
+  id: '/system/',
+  path: '/system/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SystemCustomerSupportRoute = SystemCustomerSupportRouteImport.update({
+  id: '/system/customer-support',
+  path: '/system/customer-support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SystemHardwareRoute = SystemHardwareRouteImport.update({
+  id: '/system/hardware',
+  path: '/system/hardware',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SystemHelpCenterRoute = SystemHelpCenterRouteImport.update({
+  id: '/system/help-center',
+  path: '/system/help-center',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SystemIntegrationsRoute = SystemIntegrationsRouteImport.update({
+  id: '/system/integrations',
+  path: '/system/integrations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SystemNetworkRoute = SystemNetworkRouteImport.update({
+  id: '/system/network',
+  path: '/system/network',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TicketsIndexRoute = TicketsIndexRouteImport.update({
   id: '/tickets/',
   path: '/tickets/',
@@ -192,6 +228,11 @@ export interface FileRoutesByFullPath {
   '/settings/more': typeof SettingsMoreRoute
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
+  '/system/customer-support': typeof SystemCustomerSupportRoute
+  '/system/hardware': typeof SystemHardwareRoute
+  '/system/help-center': typeof SystemHelpCenterRoute
+  '/system/integrations': typeof SystemIntegrationsRoute
+  '/system/network': typeof SystemNetworkRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -200,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
   '/orders/': typeof OrdersIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/system/': typeof SystemIndexRoute
   '/tickets/': typeof TicketsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -221,6 +263,11 @@ export interface FileRoutesByTo {
   '/settings/more': typeof SettingsMoreRoute
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
+  '/system/customer-support': typeof SystemCustomerSupportRoute
+  '/system/hardware': typeof SystemHardwareRoute
+  '/system/help-center': typeof SystemHelpCenterRoute
+  '/system/integrations': typeof SystemIntegrationsRoute
+  '/system/network': typeof SystemNetworkRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -229,6 +276,7 @@ export interface FileRoutesByTo {
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
   '/orders': typeof OrdersIndexRoute
   '/settings': typeof SettingsIndexRoute
+  '/system': typeof SystemIndexRoute
   '/tickets': typeof TicketsIndexRoute
 }
 export interface FileRoutesById {
@@ -251,6 +299,11 @@ export interface FileRoutesById {
   '/settings/more': typeof SettingsMoreRoute
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
+  '/system/customer-support': typeof SystemCustomerSupportRoute
+  '/system/hardware': typeof SystemHardwareRoute
+  '/system/help-center': typeof SystemHelpCenterRoute
+  '/system/integrations': typeof SystemIntegrationsRoute
+  '/system/network': typeof SystemNetworkRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -259,6 +312,7 @@ export interface FileRoutesById {
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
   '/orders/': typeof OrdersIndexRoute
   '/settings/': typeof SettingsIndexRoute
+  '/system/': typeof SystemIndexRoute
   '/tickets/': typeof TicketsIndexRoute
 }
 export interface FileRouteTypes {
@@ -282,6 +336,11 @@ export interface FileRouteTypes {
     | '/settings/more'
     | '/settings/payment'
     | '/settings/workforce'
+    | '/system/customer-support'
+    | '/system/hardware'
+    | '/system/help-center'
+    | '/system/integrations'
+    | '/system/network'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -290,6 +349,7 @@ export interface FileRouteTypes {
     | '/tickets/whats-new'
     | '/orders/'
     | '/settings/'
+    | '/system/'
     | '/tickets/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -311,6 +371,11 @@ export interface FileRouteTypes {
     | '/settings/more'
     | '/settings/payment'
     | '/settings/workforce'
+    | '/system/customer-support'
+    | '/system/hardware'
+    | '/system/help-center'
+    | '/system/integrations'
+    | '/system/network'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -319,6 +384,7 @@ export interface FileRouteTypes {
     | '/tickets/whats-new'
     | '/orders'
     | '/settings'
+    | '/system'
     | '/tickets'
   id:
     | '__root__'
@@ -340,6 +406,11 @@ export interface FileRouteTypes {
     | '/settings/more'
     | '/settings/payment'
     | '/settings/workforce'
+    | '/system/customer-support'
+    | '/system/hardware'
+    | '/system/help-center'
+    | '/system/integrations'
+    | '/system/network'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -348,6 +419,7 @@ export interface FileRouteTypes {
     | '/tickets/whats-new'
     | '/orders/'
     | '/settings/'
+    | '/system/'
     | '/tickets/'
   fileRoutesById: FileRoutesById
 }
@@ -370,6 +442,11 @@ export interface RootRouteChildren {
   SettingsMoreRoute: typeof SettingsMoreRoute
   SettingsPaymentRoute: typeof SettingsPaymentRoute
   SettingsWorkforceRoute: typeof SettingsWorkforceRoute
+  SystemCustomerSupportRoute: typeof SystemCustomerSupportRoute
+  SystemHardwareRoute: typeof SystemHardwareRoute
+  SystemHelpCenterRoute: typeof SystemHelpCenterRoute
+  SystemIntegrationsRoute: typeof SystemIntegrationsRoute
+  SystemNetworkRoute: typeof SystemNetworkRoute
   TicketsTicketIdRoute: typeof TicketsTicketIdRoute
   TicketsFilterRoute: typeof TicketsFilterRoute
   TicketsManagerControlsRoute: typeof TicketsManagerControlsRoute
@@ -378,6 +455,7 @@ export interface RootRouteChildren {
   TicketsWhatsNewRoute: typeof TicketsWhatsNewRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
+  SystemIndexRoute: typeof SystemIndexRoute
   TicketsIndexRoute: typeof TicketsIndexRoute
 }
 
@@ -523,6 +601,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsWorkforceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/system/': {
+      id: '/system/'
+      path: '/system'
+      fullPath: '/system/'
+      preLoaderRoute: typeof SystemIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/system/customer-support': {
+      id: '/system/customer-support'
+      path: '/system/customer-support'
+      fullPath: '/system/customer-support'
+      preLoaderRoute: typeof SystemCustomerSupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/system/hardware': {
+      id: '/system/hardware'
+      path: '/system/hardware'
+      fullPath: '/system/hardware'
+      preLoaderRoute: typeof SystemHardwareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/system/help-center': {
+      id: '/system/help-center'
+      path: '/system/help-center'
+      fullPath: '/system/help-center'
+      preLoaderRoute: typeof SystemHelpCenterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/system/integrations': {
+      id: '/system/integrations'
+      path: '/system/integrations'
+      fullPath: '/system/integrations'
+      preLoaderRoute: typeof SystemIntegrationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/system/network': {
+      id: '/system/network'
+      path: '/system/network'
+      fullPath: '/system/network'
+      preLoaderRoute: typeof SystemNetworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tickets/': {
       id: '/tickets/'
       path: '/tickets'
@@ -594,6 +714,11 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsMoreRoute: SettingsMoreRoute,
   SettingsPaymentRoute: SettingsPaymentRoute,
   SettingsWorkforceRoute: SettingsWorkforceRoute,
+  SystemCustomerSupportRoute: SystemCustomerSupportRoute,
+  SystemHardwareRoute: SystemHardwareRoute,
+  SystemHelpCenterRoute: SystemHelpCenterRoute,
+  SystemIntegrationsRoute: SystemIntegrationsRoute,
+  SystemNetworkRoute: SystemNetworkRoute,
   TicketsTicketIdRoute: TicketsTicketIdRoute,
   TicketsFilterRoute: TicketsFilterRoute,
   TicketsManagerControlsRoute: TicketsManagerControlsRoute,
@@ -602,6 +727,7 @@ const rootRouteChildren: RootRouteChildren = {
   TicketsWhatsNewRoute: TicketsWhatsNewRoute,
   OrdersIndexRoute: OrdersIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
+  SystemIndexRoute: SystemIndexRoute,
   TicketsIndexRoute: TicketsIndexRoute,
 }
 export const routeTree = rootRouteImport

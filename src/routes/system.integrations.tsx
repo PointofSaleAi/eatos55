@@ -40,7 +40,7 @@ function Integrations() {
               key={p.id}
               title={p.name}
               detail={p.detail}
-              checked={state[p.id]}
+              checked={state[p.id] ?? false}
               onChange={(v) => {
                 setState((s) => ({ ...s, [p.id]: v }));
                 toast.success(`${p.name} ${v ? "connected" : "disconnected"}`);
