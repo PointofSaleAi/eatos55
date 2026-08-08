@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ScreenBody } from "@/components/pos/shell";
 import { EmptyState, Pills, TicketCard } from "@/components/pos/primitives";
 import { money } from "@/lib/demo-data";
+import { BackButton } from "@/components/pos/shell";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/orders/")({
@@ -36,7 +37,8 @@ function Orders() {
   return (
     <>
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
+        <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-end gap-2">
+          <BackButton fallbackTo="/floor" />
           <div className="min-w-0">
             <p className="truncate text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               This shift
