@@ -1,5 +1,6 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
 import {
+  DEFAULT_TICKET_DATE,
   TAX_RATE,
   initialTickets,
   menu,
@@ -9,12 +10,26 @@ import {
   type TicketStatus,
 } from "./demo-data";
 
-export type SortKey = "newest" | "oldest" | "highest" | "lowest";
+export type SortKey = "time-late-early" | "time-early-late" | "orders-z-a" | "orders-a-z";
 
 export type TicketFilters = {
   statuses: TicketStatus[];
   modes: MenuMode[];
+  revenueCenters: string[];
+  employees: string[];
+  orderTypes: string[];
+  payments: string[];
   mineOnly: boolean;
+};
+
+export const emptyFilters: TicketFilters = {
+  statuses: [],
+  modes: [],
+  revenueCenters: [],
+  employees: [],
+  orderTypes: [],
+  payments: [],
+  mineOnly: false,
 };
 
 export type Session = {
@@ -79,10 +94,13 @@ type Store = {
   sortKey: SortKey;
   setSortKey: (k: SortKey) => void;
   filters: TicketFilters;
-  setFilters: (f: TicketFilters) => void;
+  setFilters: React.Dispatch<React.SetStateAction<TicketFilters>>;
   search: string;
   setSearch: (s: string) => void;
-  visibleTickets: (tab: TicketStatus | "all") => Ticket[];
+  ticketDate: string;
+  setTicketDate: (d: string) => void;
+  shiftTicketDate: (days: number) => void;
+  visibleTickets: (tab: TicketStatus | "all", opts?: { ignoreDate?: boolean }) => Ticket[];
   setTicketStatus: (id: string, status: TicketStatus) => void;
 
   mode: MenuMode;
@@ -118,13 +136,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
     station: null,
   });
   const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
-  const [sortKey, setSortKey] = useState<SortKey>("newest");
-  const [filters, setFilters] = useState<TicketFilters>({
-    statuses: [],
-    modes: [],
-    mineOnly: false,
-  });
+  const [sortKey, setSortKey] = useState<SortKey>("time-early-late");
+  const [filters, setFilters] = useState<TicketFilters>(emptyFilters);
   const [search, setSearch] = useState("");
+  const [ticketDate, setTicketDate] = useState(DEFAULT_TICKET_DATE);
   const [mode, setMode] = useState<MenuMode>("dine-in");
   const [cart, setCart] = useState<CartLine[]>([]);
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
@@ -133,8 +148,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [lastPayment, setLastPayment] = useState<LastPayment>(null);
 
   const value = useMemo<Store>(() => {
-    const subtotal = cart.reduce((sum, l) => sum + l.price * l.qty, 0);
-    const tax = Math.round(subtotal * TAX_RATE * 100) / 100;
+    const total = Math.round(cart.reduce((sum, l) => sum + l.price * l.qty, 0) * 100) / 100;
+    const subtotal = Math.round((total / (1 + TAX_RATE)) * 100) / 100;
+    const tax = Math.round((total - subtotal) * 100) / 100;
 
     return {
       session,
@@ -158,19 +174,35 @@ export function PosProvider({ children }: { children: ReactNode }) {
       setFilters,
       search,
       setSearch,
-      visibleTickets: (tab) => {
+      ticketDate,
+      setTicketDate,
+      shiftTicketDate: (days) =>
+        setTicketDate((d) => {
+          const next = new Date(`${d}T12:00:00`);
+          next.setDate(next.getDate() + days);
+          return next.toISOString().slice(0, 10);
+        }),
+      visibleTickets: (tab, opts) => {
         let list = [...tickets];
+        if (!opts?.ignoreDate) {
+          list = list.filter((t) => t.date === ticketDate);
+        }
         if (tab !== "all") {
-          list =
-            tab === "payment"
-              ? list.filter((t) => t.status === "payment")
-              : list.filter((t) => t.status === tab);
+          list = list.filter((t) => t.status === tab);
         }
         if (filters.statuses.length) {
           list = list.filter((t) => filters.statuses.includes(t.status));
         }
         if (filters.modes.length) {
           list = list.filter((t) => filters.modes.includes(t.mode));
+        }
+        if (filters.employees.length) {
+          list = list.filter((t) => filters.employees.includes(t.server));
+        }
+        if (filters.payments.length) {
+          list = list.filter((t) =>
+            filters.payments.includes(t.status === "paid" ? "Card" : "Unpaid"),
+          );
         }
         if (filters.mineOnly) {
           list = list.filter((t) => t.server === session.name);
@@ -180,15 +212,16 @@ export function PosProvider({ children }: { children: ReactNode }) {
           list = list.filter(
             (t) =>
               t.label.toLowerCase().includes(q) ||
+              String(t.number).includes(q) ||
               t.id.toLowerCase().includes(q) ||
               t.id.replace("t-", "").includes(q),
           );
         }
         list.sort((a, b) => {
-          if (sortKey === "newest") return a.arrivedMinutesAgo - b.arrivedMinutesAgo;
-          if (sortKey === "oldest") return b.arrivedMinutesAgo - a.arrivedMinutesAgo;
-          if (sortKey === "highest") return b.total - a.total;
-          return a.total - b.total;
+          if (sortKey === "time-late-early") return a.arrivedMinutesAgo - b.arrivedMinutesAgo;
+          if (sortKey === "time-early-late") return b.arrivedMinutesAgo - a.arrivedMinutesAgo;
+          if (sortKey === "orders-z-a") return b.number - a.number;
+          return a.number - b.number;
         });
         return list;
       },
@@ -237,11 +270,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
       totals: {
         subtotal,
         tax,
-        total: Math.round((subtotal + tax) * 100) / 100,
+        total,
         count: cart.reduce((n, l) => n + l.qty, 0),
       },
       commitPayment: (method, tendered) => {
-        const total = Math.round((subtotal + tax) * 100) / 100;
         const change = Math.max(0, Math.round((tendered - total) * 100) / 100);
         let id = activeTicketId;
         if (id) {
@@ -257,10 +289,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
           id = `t-${1047 + tickets.length}`;
           const created: Ticket = {
             id,
-            number: cart.reduce((n, l) => n + l.qty, 0),
-            label: "Guest order",
+            number: tickets.length + 1,
+            label: "Guest",
             seats: 1,
             total,
+            date: ticketDate,
             arrivedAt: new Date().toLocaleTimeString("en-US", {
               hour: "numeric",
               minute: "2-digit",
@@ -292,6 +325,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     sortKey,
     filters,
     search,
+    ticketDate,
     mode,
     cart,
     activeTicketId,

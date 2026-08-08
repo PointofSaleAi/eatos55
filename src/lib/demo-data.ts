@@ -24,6 +24,8 @@ export type Ticket = {
   label: string;
   seats: number;
   total: number;
+  /** ISO day the ticket belongs to (drives the ticket-list date stepper). */
+  date: string;
   arrivedAt: string;
   arrivedMinutesAgo: number;
   status: TicketStatus;
@@ -32,7 +34,8 @@ export type Ticket = {
   server: string;
 };
 
-export const TAX_RATE = 0.0875;
+/** Tax is inclusive in the guest-facing totals (20%). */
+export const TAX_RATE = 0.2;
 
 export const categories = [
   "Popular",
@@ -85,39 +88,53 @@ const line = (id: string, qty = 1): CartLine => {
   return { id: item.id, name: item.name, price: item.price, qty };
 };
 
+/** The business day the ticket list opens on. */
+export const DEFAULT_TICKET_DATE = "2026-07-31";
+
+const custom = (price: number): CartLine => ({
+  id: `custom-${price}`,
+  name: "Custom Item",
+  price,
+  qty: 1,
+  custom: true,
+});
+
 export const initialTickets: Ticket[] = [
   {
     id: "t-1042",
     number: 2,
-    label: "Guest order",
+    label: "Guest",
     seats: 2,
     total: 11.0,
+    date: DEFAULT_TICKET_DATE,
     arrivedAt: "4:34 PM",
     arrivedMinutesAgo: 71,
     status: "preparing",
     mode: "dine-in",
-    lines: [line("m1")],
+    lines: [custom(11.0)],
     server: "Elizer Cruz",
   },
   {
     id: "t-1043",
     number: 1,
-    label: "Guest order",
+    label: "Guest",
     seats: 1,
     total: 5.76,
+    date: DEFAULT_TICKET_DATE,
     arrivedAt: "5:45 PM",
     arrivedMinutesAgo: 20,
     status: "paid",
     mode: "takeaway",
-    lines: [line("m14"), line("m18")],
+    lines: [custom(5.76)],
     server: "Elizer Cruz",
   },
   {
     id: "t-1044",
     number: 4,
-    label: "Patio 12",
+    label: "Guest",
     seats: 4,
     total: 42.75,
+    date: "2026-08-01",
     arrivedAt: "5:52 PM",
     arrivedMinutesAgo: 13,
     status: "ordering",
@@ -128,9 +145,10 @@ export const initialTickets: Ticket[] = [
   {
     id: "t-1045",
     number: 3,
-    label: "Bar tab",
+    label: "Guest",
     seats: 3,
     total: 21.0,
+    date: "2026-08-01",
     arrivedAt: "6:01 PM",
     arrivedMinutesAgo: 4,
     status: "payment",
@@ -141,9 +159,10 @@ export const initialTickets: Ticket[] = [
   {
     id: "t-1046",
     number: 1,
-    label: "Pickup · Ana R.",
+    label: "Guest",
     seats: 1,
     total: 16.5,
+    date: "2026-08-01",
     arrivedAt: "6:04 PM",
     arrivedMinutesAgo: 1,
     status: "ready",
@@ -154,11 +173,11 @@ export const initialTickets: Ticket[] = [
 ];
 
 export const statusMeta: Record<TicketStatus, { label: string; tone: string }> = {
-  ordering: { label: "Ordering", tone: "text-muted-foreground" },
-  preparing: { label: "Preparing", tone: "text-warning" },
-  payment: { label: "Awaiting payment", tone: "text-accent" },
+  ordering: { label: "ORDERING", tone: "text-muted-foreground" },
+  preparing: { label: "PREPARING", tone: "text-warning" },
+  payment: { label: "PAYMENT PROGRESS", tone: "text-warning" },
   paid: { label: "Paid", tone: "text-success" },
-  ready: { label: "Ready", tone: "text-success" },
+  ready: { label: "READY", tone: "text-success" },
 };
 
 export const releaseNotes = [
@@ -238,3 +257,11 @@ export const orderTypes = ["Main", "hbjnj", "Online Ordering"];
 
 /** Barcode-style category chips on the new order menu. */
 export const barcodeCategories = ["B", "C", "A", "TEST BARCODE"];
+
+/** Filter sheet facets on the ticket list. */
+export const revenueCenters = ["Main dining", "Patio", "Bar", "Counter pickup"];
+export const ticketOrderTypes = orderTypes;
+export const paymentTypes = ["Card", "Cash", "QR Code", "Unpaid"];
+
+/** Quick tender denominations on the cash payment screen. */
+export const cashDenominations = [1, 5, 10, 20, 50, 100];
