@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Fingerprint, ScanFace, ChevronDown, ReceiptText } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { BottomTabs } from "@/components/pos/shell";
+import {} from "@/components/pos/shell";
 import { orderTypes } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
@@ -213,8 +213,6 @@ function ClockIn() {
           <ChevronDown className="size-4" />
         </div>
       </div>
-
-      <BottomTabs />
     </div>
   );
 }

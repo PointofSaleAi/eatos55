@@ -3,7 +3,7 @@ import { ArrowDownUp, CalendarDays, XCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { BottomTabs } from "@/components/pos/shell";
+import {} from "@/components/pos/shell";
 import { money, type Ticket, type TicketStatus } from "@/lib/demo-data";
 import { boardChannels, boardColumns, type BoardChannel } from "@/lib/floor-data";
 import { usePos } from "@/lib/pos-store";
@@ -51,7 +51,9 @@ function Board() {
         (channel === "DINE IN" ? t.mode === "dine-in" : t.mode !== "dine-in"),
     );
     return [...list].sort((a, b) =>
-      asc[id] ? a.arrivedMinutesAgo - b.arrivedMinutesAgo : b.arrivedMinutesAgo - a.arrivedMinutesAgo,
+      asc[id]
+        ? a.arrivedMinutesAgo - b.arrivedMinutesAgo
+        : b.arrivedMinutesAgo - a.arrivedMinutesAgo,
     );
   };
 
@@ -103,7 +105,6 @@ function Board() {
         </div>
       </div>
 
-
       <div className="no-scrollbar flex-1 overflow-x-auto">
         <div className="flex h-full min-w-max gap-3 px-4 py-4">
           {boardColumns.map((col) => {
@@ -151,8 +152,6 @@ function Board() {
           })}
         </div>
       </div>
-
-      <BottomTabs />
     </div>
   );
 }

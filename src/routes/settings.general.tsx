@@ -16,8 +16,8 @@ import {
   GroupCard,
   GroupLabel,
   IconNavRow,
-  IconToggleRow,
   IconValueRow,
+  SegmentRow,
 } from "@/components/pos/settings-rows";
 import { usePos } from "@/lib/pos-store";
 
@@ -49,13 +49,13 @@ function GeneralSettings() {
         <GroupLabel>Device Service</GroupLabel>
         <GroupCard>
           <IconValueRow title="Device Name" value={settings.deviceName} />
-          <IconToggleRow
+          <SegmentRow
             title="Device Service"
+            options={["Table Service", "Quick Service"]}
             value={settings.deviceService}
-            checked={settings.tableService}
             onChange={(v) => {
-              updateSettings({ tableService: v });
-              toast.success(v ? "Table Service enabled" : "Table Service disabled");
+              updateSettings({ deviceService: v as typeof settings.deviceService });
+              toast.success(`${v} selected`);
             }}
           />
         </GroupCard>
@@ -65,35 +65,34 @@ function GeneralSettings() {
             title="Restaurant Information"
             icon={Store}
             color="slate"
-            onClick={() => toast.info(settings.restaurantName)}
+            topic="restaurant-information"
           />
           <IconNavRow
             title="Restaurant Settings"
             icon={SettingsIcon}
             color="violet"
-            onClick={() => toast.info("Restaurant settings are managed in Back Office")}
+            topic="restaurant-settings"
           />
           <IconValueRow
             title="Language"
             value={settings.language}
             icon={Globe}
             color="pink"
-            onClick={() => toast.info("English is the only installed language")}
+            topic="language"
           />
           <IconNavRow
             title="Currency"
+            value={settings.currency}
             icon={CircleDollarSign}
             color="green"
-            onClick={() => toast.info(`Currency: ${settings.currency}`)}
+            topic="currency"
           />
           <IconValueRow
             title="Tax Alias"
             value={settings.taxAlias}
             icon={Percent}
             color="sky"
-            onClick={() =>
-              updateSettings({ taxAlias: settings.taxAlias === "Tax" ? "VAT" : "Tax" })
-            }
+            topic="tax-alias"
           />
         </GroupCard>
 
@@ -108,14 +107,9 @@ function GeneralSettings() {
             title="Schedule Info"
             icon={CalendarClock}
             color="violet"
-            onClick={() => toast.info("Shift schedule syncs from Back Office")}
+            topic="schedule-info"
           />
-          <IconNavRow
-            title="Timed Pricing"
-            icon={Timer}
-            color="purple"
-            onClick={() => toast.info("No timed pricing rules on this device")}
-          />
+          <IconNavRow title="Timed Pricing" icon={Timer} color="purple" topic="timed-pricing" />
         </GroupCard>
 
         <GroupCard className="mt-6">
@@ -125,7 +119,7 @@ function GeneralSettings() {
             icon={Info}
             color="blue"
             chevron
-            onClick={() => toast.info(`Handheld ${settings.appVersion}`)}
+            topic="about"
           />
         </GroupCard>
         <div className="h-6" />

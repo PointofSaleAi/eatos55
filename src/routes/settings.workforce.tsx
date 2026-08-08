@@ -50,12 +50,7 @@ function WorkforceSettings() {
             </p>
           </div>
           <div className="border-t border-border">
-            <IconNavRow
-              title="Employee"
-              icon={Users}
-              color="indigo"
-              onClick={() => toast.info("Employee list syncs from Back Office")}
-            />
+            <IconNavRow title="Employee" icon={Users} color="indigo" topic="employee" />
           </div>
         </GroupCard>
       </ScreenBody>

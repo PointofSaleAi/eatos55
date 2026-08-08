@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CreditCard, Inbox, Printer, ScanLine, Tablet } from "lucide-react";
-import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
 
@@ -32,35 +31,20 @@ function HardwareSettings() {
           and card readers for electronic card processing.
         </p>
         <GroupCard>
-          <IconNavRow
-            title="Printer"
-            icon={Printer}
-            color="magenta"
-            onClick={() => toast.info("Kitchen printer connected over Wi-Fi")}
-          />
-          <IconNavRow
-            title="Card Reader"
-            icon={Tablet}
-            color="violet"
-            onClick={() => toast.info("Built-in reader ready")}
-          />
+          <IconNavRow title="Printer" icon={Printer} color="magenta" topic="printer" />
+          <IconNavRow title="Card Reader" icon={Tablet} color="violet" topic="card-reader" />
           <IconNavRow
             title="Integrations"
             icon={ScanLine}
             color="yellow"
             to="/settings/hardware/integrations"
           />
-          <IconNavRow
-            title="Cash Drawer"
-            icon={Inbox}
-            color="yellow"
-            onClick={() => toast.info("No cash drawer paired with this handheld")}
-          />
+          <IconNavRow title="Cash Drawer" icon={Inbox} color="yellow" topic="cash-drawer" />
           <IconNavRow
             title="Hardware Emulators"
             icon={CreditCard}
             color="blue"
-            onClick={() => toast.info("Emulators are enabled for demo mode")}
+            topic="hardware-emulators"
           />
         </GroupCard>
       </ScreenBody>

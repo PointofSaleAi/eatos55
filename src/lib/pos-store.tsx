@@ -58,8 +58,7 @@ export type AppSettings = {
   darkKds: boolean;
   hapticFeedback: boolean;
   deviceName: string;
-  deviceService: string;
-  tableService: boolean;
+  deviceService: "Table Service" | "Quick Service";
   language: string;
   taxAlias: string;
   appVersion: string;
@@ -89,7 +88,6 @@ const defaultSettings: AppSettings = {
   hapticFeedback: true,
   deviceName: "aurora 22",
   deviceService: "Table Service",
-  tableService: false,
   language: "English",
   taxAlias: "Tax",
   appVersion: "5.200.27",

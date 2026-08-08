@@ -9,7 +9,6 @@ import {
   ScrollText,
   UtensilsCrossed,
 } from "lucide-react";
-import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
 
@@ -38,48 +37,18 @@ function MenuSettings() {
       <ScreenBody className="py-2">
         <GroupCard>
           <IconNavRow title="Menu" icon={ScrollText} color="magenta" to="/order/menu" />
-          <IconNavRow
-            title="Categories"
-            icon={LayoutList}
-            color="violet"
-            onClick={() => toast.info("4 categories synced from Back Office")}
-          />
-          <IconNavRow
-            title="Modifiers"
-            icon={CircleDot}
-            color="yellow"
-            onClick={() => toast.info("No modifier groups on this device")}
-          />
-          <IconNavRow
-            title="Add-Ons"
-            icon={Grid2x2}
-            color="pink"
-            onClick={() => toast.info("No add-ons configured")}
-          />
-          <IconNavRow
-            title="Products"
-            icon={UtensilsCrossed}
-            color="magenta"
-            to="/order/new"
-          />
-          <IconNavRow
-            title="Inventory"
-            icon={PencilRuler}
-            color="sky"
-            onClick={() => toast.info("Inventory tracking is on for this venue")}
-          />
+          <IconNavRow title="Categories" icon={LayoutList} color="violet" topic="categories" />
+          <IconNavRow title="Modifiers" icon={CircleDot} color="yellow" topic="modifiers" />
+          <IconNavRow title="Add-Ons" icon={Grid2x2} color="pink" topic="add-ons" />
+          <IconNavRow title="Products" icon={UtensilsCrossed} color="magenta" to="/order/new" />
+          <IconNavRow title="Inventory" icon={PencilRuler} color="sky" topic="inventory" />
           <IconNavRow
             title="Default Modifiers"
             icon={Boxes}
             color="indigo"
-            onClick={() => toast.info("No default modifiers set")}
+            topic="default-modifiers"
           />
-          <IconNavRow
-            title="Groups"
-            icon={Layers}
-            color="slate"
-            onClick={() => toast.info("No product groups on this device")}
-          />
+          <IconNavRow title="Groups" icon={Layers} color="slate" topic="groups" />
         </GroupCard>
       </ScreenBody>
     </>

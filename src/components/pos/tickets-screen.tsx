@@ -16,7 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { BottomTabs } from "@/components/pos/shell";
+import {} from "@/components/pos/shell";
 import { AccountBar } from "@/components/pos/account-bar";
 import { EmptyState, TicketCard } from "@/components/pos/primitives";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -41,7 +41,6 @@ type Tab =
   | "closed"
   | Extract<TicketStatus, "ordering" | "payment" | "ready" | "preparing" | "paid">;
 
-
 const tabs: { id: Tab; label: string }[] = [
   { id: "all", label: "All" },
   { id: "ordering", label: "Ordering" },
@@ -53,8 +52,6 @@ const tabs: { id: Tab; label: string }[] = [
   { id: "open", label: "Open" },
   { id: "closed", label: "Closed" },
 ];
-
-
 
 const sortOptions: { id: SortKey; icon: typeof Clock; strong: string; rest: string }[] = [
   { id: "time-late-early", icon: Clock, strong: "Time", rest: "Late → Early" },
@@ -125,8 +122,6 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
         : baseList;
   const amountDue = list.filter((t) => t.status !== "paid").reduce((s, t) => s + t.total, 0);
 
-
-
   const dateLabel = new Date(`${ticketDate}T12:00:00`).toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "short",
@@ -136,7 +131,6 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
   return (
     <div className="relative flex min-h-0 flex-1 flex-col bg-background">
       <AccountBar />
-
 
       {/* Title bar */}
       <div className="shrink-0 border-b border-border bg-surface px-4 py-3">
@@ -242,7 +236,6 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
           <p className="text-sm font-bold text-muted-foreground">Amount Due</p>
           <p className="text-sm font-extrabold text-accent">{money(amountDue)}</p>
         </div>
-
       </div>
 
       {/* List */}
@@ -304,7 +297,12 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                     active && "bg-muted",
                   )}
                 >
-                  <Icon className={cn("size-4 shrink-0", active ? "text-accent" : "text-muted-foreground")} />
+                  <Icon
+                    className={cn(
+                      "size-4 shrink-0",
+                      active ? "text-accent" : "text-muted-foreground",
+                    )}
+                  />
                   <span className="truncate text-sm text-foreground">
                     <span className="font-extrabold">{o.strong}</span> {o.rest}
                   </span>
@@ -320,7 +318,10 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
         open={overlay === "filter"}
         onOpenChange={(open) => setOverlay(open ? "filter" : "none")}
       >
-        <SheetContent side="bottom" className="rounded-t-3xl border-t border-border bg-surface p-0 pb-6">
+        <SheetContent
+          side="bottom"
+          className="rounded-t-3xl border-t border-border bg-surface p-0 pb-6"
+        >
           <SheetHeader className="px-4 pb-2 pt-5">
             <SheetTitle className="text-center text-xl font-extrabold text-foreground">
               Filters
@@ -341,7 +342,9 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                     <span className="shrink-0 text-accent">
                       <Icon className="size-5" />
                     </span>
-                    <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">{f.label}</span>
+                    <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">
+                      {f.label}
+                    </span>
                     {selected.length ? (
                       <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">
                         {selected.length}
@@ -403,11 +406,8 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               Apply
             </button>
           </div>
-
         </SheetContent>
       </Sheet>
-
-      <BottomTabs />
     </div>
   );
 }
