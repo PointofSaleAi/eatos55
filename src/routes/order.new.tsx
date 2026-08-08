@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Ban, ChevronDown, MoreVertical, Plus, Search, Tag, Wifi } from "lucide-react";
+import { Ban, ChevronDown, MoreVertical, Plus, Search, Tag } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GuestBlock } from "@/components/pos/guest-block";
@@ -48,39 +48,42 @@ function NewOrder() {
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <MenuButton className="-ml-2 size-9" />
           <GuestBlock onEdit={() => setGuestOpen(true)} />
 
-          <button
-            type="button"
-            aria-label="Search products"
-            onClick={() => setSearching((s) => !s)}
-            className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
-          >
-            <Search className="size-5" />
-          </button>
-          <button
-            type="button"
-            aria-label="More options"
-            onClick={() => setMoreOpen(true)}
-            className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
-          >
-            <MoreVertical className="size-5" />
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate({ to: "/order/custom-item" })}
-            className="min-h-[32px] shrink-0 rounded-full border border-border px-2.5 text-[12px] font-bold text-foreground transition-colors hover:bg-muted"
-          >
-            Custom Item
-          </button>
-          <span
-            title="Server connected"
-            className="grid size-7 shrink-0 place-items-center rounded-full text-sky-600"
-          >
-            <Wifi className="size-4" />
-          </span>
+          <div className="ml-auto flex shrink-0 items-center gap-0.5">
+            <button
+              type="button"
+              aria-label="Search products"
+              title="Search products"
+              onClick={() => setSearching((s) => !s)}
+              className={cn(
+                "grid size-9 shrink-0 place-items-center rounded-full transition-colors hover:bg-muted",
+                searching ? "bg-muted text-accent" : "text-foreground",
+              )}
+            >
+              <Search className="size-5" />
+            </button>
+            <button
+              type="button"
+              aria-label="Add custom item"
+              title="Custom item"
+              onClick={() => navigate({ to: "/order/custom-item" })}
+              className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+            >
+              <Tag className="size-5" />
+            </button>
+            <button
+              type="button"
+              aria-label="More options"
+              title="More options"
+              onClick={() => setMoreOpen(true)}
+              className="-mr-2 grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+            >
+              <MoreVertical className="size-5" />
+            </button>
+          </div>
         </div>
 
         {searching ? (

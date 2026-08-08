@@ -14,7 +14,6 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 import { ClockPullDown } from "@/components/pos/clock-pulldown";
 import { NavDrawer } from "@/components/pos/nav-drawer";
 import { useGlobalKeyboardAware } from "@/hooks/use-keyboard-inset";
-import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
 const NavDrawerContext = createContext<{ open: () => void } | null>(null);
@@ -27,7 +26,8 @@ export function useNavDrawer() {
 /** Burger button that opens the full app navigation drawer. */
 export function MenuButton({ className }: { className?: string }) {
   const drawer = useNavDrawer();
-  if (!drawer) return null;
+  const appChrome = useAppChrome();
+  if (!drawer || !appChrome) return null;
   return (
     <button
       type="button"
@@ -44,10 +44,20 @@ export function MenuButton({ className }: { className?: string }) {
   );
 }
 
+/** Pre-login screens: no app chrome (drawer, tabs, clock pulldown). */
+const publicPaths = ["/", "/access/create-account", "/access/forgot-password"];
+
+/** True when the current route is an in-app screen that gets full navigation. */
+export function useAppChrome() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const p = pathname.replace(/\/+$/, "") || "/";
+  return !publicPaths.includes(p);
+}
+
 /** Device frame: full-bleed on phones, framed handheld on tablet/desktop. */
 export function DeviceFrame({ children }: { children: ReactNode }) {
-  const { session } = usePos();
   const [navOpen, setNavOpen] = useState(false);
+  const appChrome = useAppChrome();
   useGlobalKeyboardAware();
 
   return (
@@ -61,12 +71,10 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
       >
         <NavDrawerContext.Provider value={{ open: () => setNavOpen(true) }}>
           <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
-            {session.signedIn ? <ClockPullDown /> : null}
+            {appChrome ? <ClockPullDown /> : null}
             {children}
-            {session.signedIn ? <BottomTabs /> : null}
-            {session.signedIn ? (
-              <NavDrawer open={navOpen} onClose={() => setNavOpen(false)} />
-            ) : null}
+            {appChrome ? <BottomTabs /> : null}
+            {appChrome ? <NavDrawer open={navOpen} onClose={() => setNavOpen(false)} /> : null}
           </div>
         </NavDrawerContext.Provider>
       </div>
