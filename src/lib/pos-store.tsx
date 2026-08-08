@@ -133,8 +133,13 @@ type Store = {
   setMode: (m: MenuMode) => void;
   cart: CartLine[];
   activeTicketId: string | null;
-  startOrder: () => void;
+  activeTable: string | null;
+  floor: string;
+  setFloor: (f: string) => void;
+  tableStates: Record<string, "ordering">;
+  startOrder: (table?: string) => void;
   openTicket: (id: string) => void;
+
   addItem: (menuId: string) => void;
   addCustomItem: (name: string, price: number) => void;
   changeQty: (id: string, delta: number) => void;
