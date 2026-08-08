@@ -148,8 +148,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [lastPayment, setLastPayment] = useState<LastPayment>(null);
 
   const value = useMemo<Store>(() => {
-    const subtotal = cart.reduce((sum, l) => sum + l.price * l.qty, 0);
-    const tax = Math.round(subtotal * TAX_RATE * 100) / 100;
+    const total = Math.round(cart.reduce((sum, l) => sum + l.price * l.qty, 0) * 100) / 100;
+    const subtotal = Math.round((total / (1 + TAX_RATE)) * 100) / 100;
+    const tax = Math.round((total - subtotal) * 100) / 100;
 
     return {
       session,
@@ -173,19 +174,35 @@ export function PosProvider({ children }: { children: ReactNode }) {
       setFilters,
       search,
       setSearch,
-      visibleTickets: (tab) => {
+      ticketDate,
+      setTicketDate,
+      shiftTicketDate: (days) =>
+        setTicketDate((d) => {
+          const next = new Date(`${d}T12:00:00`);
+          next.setDate(next.getDate() + days);
+          return next.toISOString().slice(0, 10);
+        }),
+      visibleTickets: (tab, opts) => {
         let list = [...tickets];
+        if (!opts?.ignoreDate) {
+          list = list.filter((t) => t.date === ticketDate);
+        }
         if (tab !== "all") {
-          list =
-            tab === "payment"
-              ? list.filter((t) => t.status === "payment")
-              : list.filter((t) => t.status === tab);
+          list = list.filter((t) => t.status === tab);
         }
         if (filters.statuses.length) {
           list = list.filter((t) => filters.statuses.includes(t.status));
         }
         if (filters.modes.length) {
           list = list.filter((t) => filters.modes.includes(t.mode));
+        }
+        if (filters.employees.length) {
+          list = list.filter((t) => filters.employees.includes(t.server));
+        }
+        if (filters.payments.length) {
+          list = list.filter((t) =>
+            filters.payments.includes(t.status === "paid" ? "Card" : "Unpaid"),
+          );
         }
         if (filters.mineOnly) {
           list = list.filter((t) => t.server === session.name);
@@ -195,15 +212,16 @@ export function PosProvider({ children }: { children: ReactNode }) {
           list = list.filter(
             (t) =>
               t.label.toLowerCase().includes(q) ||
+              String(t.number).includes(q) ||
               t.id.toLowerCase().includes(q) ||
               t.id.replace("t-", "").includes(q),
           );
         }
         list.sort((a, b) => {
-          if (sortKey === "newest") return a.arrivedMinutesAgo - b.arrivedMinutesAgo;
-          if (sortKey === "oldest") return b.arrivedMinutesAgo - a.arrivedMinutesAgo;
-          if (sortKey === "highest") return b.total - a.total;
-          return a.total - b.total;
+          if (sortKey === "time-late-early") return a.arrivedMinutesAgo - b.arrivedMinutesAgo;
+          if (sortKey === "time-early-late") return b.arrivedMinutesAgo - a.arrivedMinutesAgo;
+          if (sortKey === "orders-z-a") return b.number - a.number;
+          return a.number - b.number;
         });
         return list;
       },
