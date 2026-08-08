@@ -47,7 +47,10 @@ const tabs: { id: Tab; label: string }[] = [
   { id: "preparing", label: "Preparing" },
   { id: "paid", label: "Paid" },
   { id: "unpaid", label: "Unpaid" },
+  { id: "open", label: "Open" },
+  { id: "closed", label: "Closed" },
 ];
+
 
 
 const sortOptions: { id: SortKey; icon: typeof Clock; strong: string; rest: string }[] = [
@@ -248,7 +251,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
             ))}
           </div>
         ) : (
-          <EmptyState title="No tickets here" detail="Adjust the date, filters or search." />
+          <EmptyState title="No Tickets Found" detail="Let's create an order." />
         )}
       </div>
 
