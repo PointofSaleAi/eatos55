@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { BookOpen, Calculator, ChevronDown, MoreVertical, Plus, Search, Wifi } from "lucide-react";
+import { ChevronDown, MoreVertical, Plus, Search, Wifi } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GuestBlock } from "@/components/pos/guest-block";
@@ -72,6 +72,12 @@ function NewOrder() {
           >
             Custom Item
           </button>
+          <span
+            title="Server connected"
+            className="grid size-9 shrink-0 place-items-center rounded-full text-sky-600"
+          >
+            <Wifi className="size-5" />
+          </span>
         </div>
 
         {searching ? (
@@ -224,32 +230,6 @@ function NewOrder() {
           </Button>
         </div>
       ) : null}
-
-      <div className="shrink-0 border-t border-border bg-surface px-3 py-1.5">
-        <div className="grid grid-cols-3 items-center rounded-2xl border border-border bg-surface">
-          <button
-            type="button"
-            onClick={() => navigate({ to: "/order/custom-item" })}
-            className="flex min-h-[46px] flex-col items-center justify-center gap-0.5 text-foreground"
-          >
-            <Calculator className="size-5" />
-            <span className="text-[11px] font-bold">Custom Item</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate({ to: "/order/menu" })}
-            className="flex min-h-[46px] flex-col items-center justify-center gap-0.5 text-accent"
-          >
-            <BookOpen className="size-5" />
-            <span className="text-[11px] font-bold">Menu</span>
-          </button>
-          <span className="flex min-h-[46px] flex-col items-center justify-center gap-0.5 text-sky-600">
-            <Wifi className="size-5" />
-            <span className="text-[11px] font-bold">Server Connected</span>
-          </span>
-        </div>
-      </div>
-
 
       <ItemSheet item={sheetItem} onClose={() => setSheetItem(null)} />
       <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
