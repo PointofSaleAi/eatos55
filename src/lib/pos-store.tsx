@@ -65,6 +65,9 @@ export type AppSettings = {
   restartTime: string;
   paymentPlatform: string;
   clockedInAt: string;
+  sentry: boolean;
+  instabug: boolean;
+  livePin: string;
 };
 
 const defaultSettings: AppSettings = {
@@ -92,6 +95,9 @@ const defaultSettings: AppSettings = {
   restartTime: "02:30 PM",
   paymentPlatform: "NA",
   clockedInAt: "5:43 PM",
+  sentry: false,
+  instabug: true,
+  livePin: "F179488",
 };
 
 export type LastPayment = {

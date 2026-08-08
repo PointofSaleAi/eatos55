@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { BottomTabs, ScreenBody } from "@/components/pos/shell";
 import { GroupCard, IconNavRow, type TileColor } from "@/components/pos/settings-rows";
 import { EmptyState } from "@/components/pos/primitives";
+import { PinSheet } from "@/components/pos/pin-sheet";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/settings/")({
@@ -52,6 +53,7 @@ function SettingsHub() {
   const navigate = useNavigate();
   const { session, settings, signOut, startOrder } = usePos();
   const [query, setQuery] = useState("");
+  const [pinOpen, setPinOpen] = useState(false);
 
   const groups = useMemo<Row[][]>(
     () => [
@@ -81,15 +83,11 @@ function SettingsHub() {
           title: "Switch User",
           icon: Settings2,
           color: "slate",
-          onClick: () => {
-            signOut();
-            toast.success("Signed out — switch user");
-            navigate({ to: "/access/clock-in" });
-          },
+          onClick: () => setPinOpen(true),
         },
       ],
     ],
-    [navigate, signOut],
+    [],
   );
 
   const q = query.trim().toLowerCase();
@@ -164,6 +162,17 @@ function SettingsHub() {
       >
         <SquarePen className="size-7" />
       </button>
+
+      <PinSheet
+        open={pinOpen}
+        onOpenChange={setPinOpen}
+        onSubmit={() => {
+          setPinOpen(false);
+          signOut();
+          toast.success("Signed out — switch user");
+          navigate({ to: "/access/clock-in" });
+        }}
+      />
 
       <BottomTabs />
     </>
