@@ -144,7 +144,7 @@ const tabs: { to: string; label: string; icon: LucideIcon }[] = [
 
 export function BottomTabs() {
   return (
-    <nav className="shrink-0 border-t border-border bg-surface md:hidden">
+    <nav className="shrink-0 border-t border-border bg-surface max-md:landscape:hidden">
       <ul className="grid grid-cols-5">
 
         {tabs.map(({ to, label, icon: Icon }) => (
