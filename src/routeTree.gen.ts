@@ -28,6 +28,7 @@ import { Route as SettingsControlCenterRouteImport } from './routes/settings.con
 import { Route as SettingsGeneralRouteImport } from './routes/settings.general'
 import { Route as SettingsMenuRouteImport } from './routes/settings.menu'
 import { Route as SettingsMoreRouteImport } from './routes/settings.more'
+import { Route as SettingsNetworkRouteImport } from './routes/settings.network'
 import { Route as SettingsPaymentRouteImport } from './routes/settings.payment'
 import { Route as SettingsPaymentsRouteImport } from './routes/settings.payments'
 import { Route as SettingsWorkforceRouteImport } from './routes/settings.workforce'
@@ -140,6 +141,11 @@ const SettingsMoreRoute = SettingsMoreRouteImport.update({
   path: '/settings/more',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsNetworkRoute = SettingsNetworkRouteImport.update({
+  id: '/settings/network',
+  path: '/settings/network',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsPaymentRoute = SettingsPaymentRouteImport.update({
   id: '/settings/payment',
   path: '/settings/payment',
@@ -239,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
+  '/settings/network': typeof SettingsNetworkRoute
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
@@ -276,6 +283,7 @@ export interface FileRoutesByTo {
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
+  '/settings/network': typeof SettingsNetworkRoute
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
@@ -314,6 +322,7 @@ export interface FileRoutesById {
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
+  '/settings/network': typeof SettingsNetworkRoute
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
@@ -353,6 +362,7 @@ export interface FileRouteTypes {
     | '/settings/general'
     | '/settings/menu'
     | '/settings/more'
+    | '/settings/network'
     | '/settings/payment'
     | '/settings/payments'
     | '/settings/workforce'
@@ -390,6 +400,7 @@ export interface FileRouteTypes {
     | '/settings/general'
     | '/settings/menu'
     | '/settings/more'
+    | '/settings/network'
     | '/settings/payment'
     | '/settings/payments'
     | '/settings/workforce'
@@ -427,6 +438,7 @@ export interface FileRouteTypes {
     | '/settings/general'
     | '/settings/menu'
     | '/settings/more'
+    | '/settings/network'
     | '/settings/payment'
     | '/settings/payments'
     | '/settings/workforce'
@@ -465,6 +477,7 @@ export interface RootRouteChildren {
   SettingsGeneralRoute: typeof SettingsGeneralRoute
   SettingsMenuRoute: typeof SettingsMenuRoute
   SettingsMoreRoute: typeof SettingsMoreRoute
+  SettingsNetworkRoute: typeof SettingsNetworkRoute
   SettingsPaymentRoute: typeof SettingsPaymentRoute
   SettingsPaymentsRoute: typeof SettingsPaymentsRoute
   SettingsWorkforceRoute: typeof SettingsWorkforceRoute
@@ -620,6 +633,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsMoreRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/network': {
+      id: '/settings/network'
+      path: '/settings/network'
+      fullPath: '/settings/network'
+      preLoaderRoute: typeof SettingsNetworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/payment': {
       id: '/settings/payment'
       path: '/settings/payment'
@@ -753,6 +773,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsGeneralRoute: SettingsGeneralRoute,
   SettingsMenuRoute: SettingsMenuRoute,
   SettingsMoreRoute: SettingsMoreRoute,
+  SettingsNetworkRoute: SettingsNetworkRoute,
   SettingsPaymentRoute: SettingsPaymentRoute,
   SettingsPaymentsRoute: SettingsPaymentsRoute,
   SettingsWorkforceRoute: SettingsWorkforceRoute,
