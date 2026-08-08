@@ -31,30 +31,15 @@ function HardwareSettings() {
           and card readers for electronic card processing.
         </p>
         <GroupCard>
-          <IconNavRow
-            title="Printer"
-            icon={Printer}
-            color="magenta"
-            topic="printer"
-          />
-          <IconNavRow
-            title="Card Reader"
-            icon={Tablet}
-            color="violet"
-            topic="card-reader"
-          />
+          <IconNavRow title="Printer" icon={Printer} color="magenta" topic="printer" />
+          <IconNavRow title="Card Reader" icon={Tablet} color="violet" topic="card-reader" />
           <IconNavRow
             title="Integrations"
             icon={ScanLine}
             color="yellow"
             to="/settings/hardware/integrations"
           />
-          <IconNavRow
-            title="Cash Drawer"
-            icon={Inbox}
-            color="yellow"
-            topic="cash-drawer"
-          />
+          <IconNavRow title="Cash Drawer" icon={Inbox} color="yellow" topic="cash-drawer" />
           <IconNavRow
             title="Hardware Emulators"
             icon={CreditCard}

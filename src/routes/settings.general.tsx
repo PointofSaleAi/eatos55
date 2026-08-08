@@ -109,12 +109,7 @@ function GeneralSettings() {
             color="violet"
             topic="schedule-info"
           />
-          <IconNavRow
-            title="Timed Pricing"
-            icon={Timer}
-            color="purple"
-            topic="timed-pricing"
-          />
+          <IconNavRow title="Timed Pricing" icon={Timer} color="purple" topic="timed-pricing" />
         </GroupCard>
 
         <GroupCard className="mt-6">

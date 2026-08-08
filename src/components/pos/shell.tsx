@@ -15,7 +15,6 @@ import { useGlobalKeyboardAware } from "@/hooks/use-keyboard-inset";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
-
 /** Device frame: full-bleed on phones, framed handheld on tablet/desktop. */
 export function DeviceFrame({ children }: { children: ReactNode }) {
   const { session } = usePos();
@@ -33,7 +32,6 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
           "lg:h-[880px] lg:w-[440px]",
         )}
       >
-
         <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
           {session.signedIn ? <ClockPullDown /> : null}
           {children}
@@ -43,7 +41,6 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
     </div>
   );
 }
-
 
 export function ScreenHeader({
   title,
@@ -116,13 +113,7 @@ export function SubHeader({
   );
 }
 
-export function ScreenBody({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+export function ScreenBody({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div
       className={cn(
@@ -155,7 +146,6 @@ export function BottomTabs() {
   return (
     <nav className="shrink-0 border-t border-border bg-surface [html[data-kb=open]_&]:hidden">
       <ul className="grid grid-cols-5">
-
         {tabs.map(({ to, label, icon: Icon }) => (
           <li key={to}>
             <Link

@@ -50,12 +50,7 @@ function WorkforceSettings() {
             </p>
           </div>
           <div className="border-t border-border">
-            <IconNavRow
-              title="Employee"
-              icon={Users}
-              color="indigo"
-              topic="employee"
-            />
+            <IconNavRow title="Employee" icon={Users} color="indigo" topic="employee" />
           </div>
         </GroupCard>
       </ScreenBody>

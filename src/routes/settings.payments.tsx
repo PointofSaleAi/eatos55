@@ -38,24 +38,9 @@ function PaymentsSettings() {
       <SubHeader title="Payments" />
       <ScreenBody className="py-2">
         <GroupCard>
-          <IconNavRow
-            title="Gratuity"
-            icon={HandCoins}
-            color="magenta"
-            topic="gratuity"
-          />
-          <IconNavRow
-            title="Taxes"
-            icon={ScrollText}
-            color="violet"
-            topic="taxes"
-          />
-          <IconNavRow
-            title="Discounts"
-            icon={BadgePercent}
-            color="sky"
-            topic="discounts"
-          />
+          <IconNavRow title="Gratuity" icon={HandCoins} color="magenta" topic="gratuity" />
+          <IconNavRow title="Taxes" icon={ScrollText} color="violet" topic="taxes" />
+          <IconNavRow title="Discounts" icon={BadgePercent} color="sky" topic="discounts" />
           <IconNavRow
             title="Service Charge"
             icon={ReceiptText}
@@ -68,12 +53,7 @@ function PaymentsSettings() {
             color="magenta"
             topic="cash-management"
           />
-          <IconNavRow
-            title="Receipts"
-            icon={Receipt}
-            color="blue"
-            topic="receipts"
-          />
+          <IconNavRow title="Receipts" icon={Receipt} color="blue" topic="receipts" />
         </GroupCard>
 
         <GroupCard className="mt-6">

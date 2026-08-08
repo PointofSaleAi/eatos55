@@ -79,7 +79,11 @@ function SettingsDetail() {
         {screen.rows?.length ? (
           <GroupCard {...(screen.choice ? { className: "mt-6" } : {})}>
             {screen.rows.map((row) => (
-              <IconValueRow key={row.label} title={row.label} {...(row.value ? { value: row.value } : {})} />
+              <IconValueRow
+                key={row.label}
+                title={row.label}
+                {...(row.value ? { value: row.value } : {})}
+              />
             ))}
           </GroupCard>
         ) : null}

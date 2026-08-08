@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import {ScreenBody} from "@/components/pos/shell";
+import { ScreenBody } from "@/components/pos/shell";
 import { GroupCard, IconNavRow, type TileColor } from "@/components/pos/settings-rows";
 import { EmptyState } from "@/components/pos/primitives";
 import { PinSheet } from "@/components/pos/pin-sheet";
@@ -59,7 +59,12 @@ function SettingsHub() {
     () => [
       [
         { title: "General", icon: UserRoundCog, color: "green", to: "/settings/general" },
-        { title: "Control Center", icon: SmartphoneNfc, color: "violet", to: "/settings/control-center" },
+        {
+          title: "Control Center",
+          icon: SmartphoneNfc,
+          color: "violet",
+          to: "/settings/control-center",
+        },
         { title: "Menu", icon: Utensils, color: "orange", to: "/settings/menu" },
         { title: "Payments", icon: Wallet, color: "indigo", to: "/settings/payments" },
         { title: "Workforce", icon: Briefcase, color: "purple", to: "/settings/workforce" },

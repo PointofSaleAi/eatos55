@@ -33,17 +33,9 @@ export function IconTile({ icon: Icon }: { icon: LucideIcon; color?: TileColor |
   );
 }
 
-export function GroupCard({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+export function GroupCard({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div
-      className={cn("overflow-hidden rounded-2xl border border-border bg-surface", className)}
-    >
+    <div className={cn("overflow-hidden rounded-2xl border border-border bg-surface", className)}>
       {children}
     </div>
   );
@@ -131,9 +123,7 @@ export function IconNavRow({
   );
 }
 
-export function IconValueRow(
-  props: RowShellProps & { onClick?: () => void; topic?: string },
-) {
+export function IconValueRow(props: RowShellProps & { onClick?: () => void; topic?: string }) {
   const { onClick, topic, ...rest } = props;
   if (topic) {
     return (
