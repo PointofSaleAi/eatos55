@@ -5,10 +5,12 @@ import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { usePos } from "@/lib/pos-store";
+import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
 
 /** Order "More" sheet: Service Charge, No Tax, Discount, Open Register. */
 export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+  useBackDismiss(open, onClose);
   const {
     noTax,
     setNoTax,

@@ -5,6 +5,7 @@ import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { serviceOrderTypes, type ServiceOrderType } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
+import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
 
 /** Format raw digits as (XXX) XXX-XXXX while typing. */
@@ -23,6 +24,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
   const [party, setParty] = useState(guest.partySize);
   const [type, setType] = useState<ServiceOrderType>(orderType);
   const { dragStyle, handleProps } = useSheetDrag(onClose);
+  useBackDismiss(open, onClose);
 
   useEffect(() => {
     if (open) {
