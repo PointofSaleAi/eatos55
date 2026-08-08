@@ -49,27 +49,42 @@ export function NumPad({
   if (variant === "order") {
     return (
       <div className={cn("grid grid-cols-4 grid-rows-4 gap-2", className)}>
-        {digits.map((d) => (
-          <Key key={d} onPress={() => onDigit(d)}>
+        {digits.map((d, i) => (
+          <Key
+            key={d}
+            onPress={() => onDigit(d)}
+            className={cn(i % 3 === 0 && "col-start-1")}
+          >
             {d}
           </Key>
         ))}
-        <Key onPress={onBackspace} label="Backspace" className="row-span-2">
+        <Key onPress={() => onDigit(".")} className="col-start-1 row-start-4">
+          .
+        </Key>
+        <Key onPress={() => onDigit("0")} className="col-start-2 row-start-4">
+          0
+        </Key>
+        <Key onPress={() => onDigit("00")} className="col-start-3 row-start-4">
+          00
+        </Key>
+        <Key
+          onPress={onBackspace}
+          label="Backspace"
+          className="col-start-4 row-start-1 row-span-2"
+        >
           <Delete className="size-6" />
         </Key>
-        <Key onPress={() => onDigit(".")}>.</Key>
-        <Key onPress={() => onDigit("0")}>0</Key>
-        <Key onPress={() => onDigit("00")}>00</Key>
         <Key
           onPress={() => onPlus?.()}
           label="Add another"
-          className="row-span-2 bg-primary text-primary-foreground"
+          className="col-start-4 row-start-3 row-span-2 bg-primary text-primary-foreground"
         >
           <Plus className="size-6" />
         </Key>
       </div>
     );
   }
+
 
   return (
     <div className={cn("grid grid-cols-3 gap-2", className)}>
