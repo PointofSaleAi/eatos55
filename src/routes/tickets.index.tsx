@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Bell, RefreshCcw, Search, SlidersHorizontal, ListFilter, Plus } from "lucide-react";
+import { Bell, RefreshCcw, Search, ShieldCheck, SlidersHorizontal, ListFilter, Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { BottomTabs, ScreenBody } from "@/components/pos/shell";
