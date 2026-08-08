@@ -251,27 +251,84 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               Filters
             </SheetTitle>
           </SheetHeader>
-          <div>
+          <div className="max-h-[60vh] overflow-y-auto">
             {filterFacets.map((f, i) => {
               const Icon = f.icon;
+              const open = openFacet === f.id;
+              const selected = filters[f.key] as string[];
               return (
-                <button
-                  key={f.id}
-                  type="button"
-                  onClick={() => navigate({ to: "/tickets/filter-options", search: { facet: f.id } })}
-                  className={cn(
-                    "flex w-full items-center gap-4 px-4 py-5 text-left",
-                    i % 2 === 0 ? "bg-muted/50" : "bg-surface",
-                  )}
-                >
-                  <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-muted text-muted-foreground">
-                    <Icon className="size-6" />
-                  </span>
-                  <span className="truncate text-xl text-foreground">{f.label}</span>
-                </button>
+                <div key={f.id} className={i % 2 === 0 ? "bg-muted/40" : "bg-surface"}>
+                  <button
+                    type="button"
+                    onClick={() => setOpenFacet(open ? null : f.id)}
+                    className="flex w-full items-center gap-4 px-4 py-5 text-left"
+                  >
+                    <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-muted text-muted-foreground">
+                      <Icon className="size-6" />
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-xl text-foreground">{f.label}</span>
+                    {selected.length ? (
+                      <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">
+                        {selected.length}
+                      </span>
+                    ) : null}
+                    <ChevronRight
+                      className={cn(
+                        "size-5 shrink-0 text-muted-foreground transition-transform",
+                        open && "rotate-90",
+                      )}
+                    />
+                  </button>
+                  {open ? (
+                    <div className="flex flex-wrap gap-2 px-4 pb-5">
+                      {f.options.map((opt) => {
+                        const active = selected.includes(opt);
+                        return (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() =>
+                              setFilters((prev) => ({
+                                ...prev,
+                                [f.key]: active
+                                  ? selected.filter((s) => s !== opt)
+                                  : [...selected, opt],
+                              }))
+                            }
+                            className={cn(
+                              "min-h-[44px] rounded-xl px-4 text-sm font-medium transition-colors",
+                              active
+                                ? "bg-primary text-primary-foreground"
+                                : "border border-border text-muted-foreground",
+                            )}
+                          >
+                            {opt}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+                </div>
               );
             })}
           </div>
+          <div className="flex gap-3 px-4 pt-4">
+            <button
+              type="button"
+              onClick={() => setFilters(emptyTicketFilters)}
+              className="min-h-[52px] flex-1 rounded-xl border border-border text-base font-bold text-foreground"
+            >
+              Clear all
+            </button>
+            <button
+              type="button"
+              onClick={() => setOverlay("none")}
+              className="min-h-[52px] flex-1 rounded-xl bg-primary text-base font-bold text-primary-foreground"
+            >
+              Apply
+            </button>
+          </div>
+
         </SheetContent>
       </Sheet>
 
