@@ -23,7 +23,7 @@ export const Route = createFileRoute("/access/clock-in")({
 });
 
 const keyBase =
-  "grid min-h-[58px] place-items-center rounded-md text-2xl font-extrabold transition-transform active:scale-[0.98]";
+  "grid min-h-[56px] place-items-center rounded-2xl text-xl font-extrabold shadow-sm transition-transform active:scale-[0.97]";
 
 function ClockIn() {
   const navigate = useNavigate();
@@ -35,23 +35,23 @@ function ClockIn() {
   const digit = (d: string) => setPin((p) => (p.length >= 4 ? p : p + d));
 
   return (
-    <div className="relative flex flex-1 flex-col bg-shell/70">
+    <div className="relative flex flex-1 flex-col bg-background">
       {/* Tickets screen chrome behind the keypad overlay */}
-      <div className="flex shrink-0 items-center justify-between px-4 pb-2 pt-4 opacity-60">
-        <p className="text-xl font-extrabold text-primary-foreground">Tickets</p>
-        <span className="text-xs font-bold uppercase tracking-widest text-primary-foreground/70">
+      <div className="flex shrink-0 items-center justify-between border-b border-border bg-surface px-4 pb-3 pt-4">
+        <p className="text-2xl font-extrabold text-foreground">Tickets</p>
+        <span className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
           {session.station ?? orderType}
         </span>
       </div>
 
-      <div className="no-scrollbar flex-1 overflow-y-auto px-3 pb-4">
-        <div className="rounded-lg bg-surface px-4 py-5">
+      <div className="no-scrollbar flex-1 overflow-y-auto px-4 py-4">
+        <div className="rounded-2xl border border-border bg-surface px-4 py-5">
           <div className="flex items-center justify-center gap-8">
             {[0, 1, 2, 3].map((i) => (
               <span
                 key={i}
                 className={cn(
-                  "text-4xl font-black leading-none",
+                  "text-2xl font-extrabold leading-none",
                   pin.length > i ? "text-foreground" : "text-foreground/25",
                 )}
               >
@@ -61,7 +61,7 @@ function ClockIn() {
           </div>
         </div>
 
-        <div className="mt-2 grid grid-cols-3 gap-1.5">
+        <div className="mt-3 grid grid-cols-3 gap-2">
           {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((k) => (
             <button
               key={k}
@@ -93,7 +93,7 @@ function ClockIn() {
               toast.success("PIN accepted");
               navigate({ to: "/tickets" });
             }}
-            className={cn(keyBase, "bg-primary text-lg text-primary-foreground")}
+            className={cn(keyBase, "bg-accent text-sm text-accent-foreground")}
           >
             ENTER
           </button>
@@ -105,14 +105,14 @@ function ClockIn() {
               toast.success("Clocked out");
               setPin("");
             }}
-            className={cn(keyBase, "bg-destructive text-lg text-destructive-foreground")}
+            className={cn(keyBase, "bg-destructive text-sm text-destructive-foreground")}
           >
             Clock Out
           </button>
           <button
             type="button"
             onClick={() => toast.success("Break started")}
-            className={cn(keyBase, "bg-surface text-lg text-foreground")}
+            className={cn(keyBase, "bg-surface text-sm text-foreground")}
           >
             Break
           </button>
@@ -123,7 +123,7 @@ function ClockIn() {
               toast.success("Clocked in");
               navigate({ to: "/tickets" });
             }}
-            className={cn(keyBase, "bg-success text-lg text-success-foreground")}
+            className={cn(keyBase, "bg-success text-sm text-success-foreground")}
           >
             Clock In
           </button>
@@ -138,12 +138,12 @@ function ClockIn() {
             }}
             className={cn(keyBase, "bg-primary text-primary-foreground")}
           >
-            <Fingerprint className="size-7" />
+            <Fingerprint className="size-5" />
           </button>
           <button
             type="button"
             onClick={() => setShowTypes((s) => !s)}
-            className={cn(keyBase, "bg-surface text-base text-foreground")}
+            className={cn(keyBase, "bg-surface text-sm text-foreground")}
           >
             {orderType}
           </button>
@@ -157,7 +157,7 @@ function ClockIn() {
             }}
             className={cn(keyBase, "bg-primary text-primary-foreground")}
           >
-            <ScanFace className="size-7" />
+            <ScanFace className="size-5" />
           </button>
         </div>
 
@@ -168,7 +168,7 @@ function ClockIn() {
               signOut();
               navigate({ to: "/" });
             }}
-            className="h-14 w-full rounded-xl border-2 border-primary-foreground/70 text-base font-extrabold uppercase tracking-wide text-primary-foreground"
+            className="h-12 w-full rounded-full border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             Log out
           </button>
@@ -177,15 +177,15 @@ function ClockIn() {
               type="button"
               aria-label="New ticket"
               onClick={() => navigate({ to: "/order/new" })}
-              className="absolute -top-1 right-2 grid size-14 place-items-center rounded-full bg-shell text-primary-foreground shadow-lg"
+              className="absolute -top-1 right-2 grid size-12 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg"
             >
-              <ReceiptText className="size-6" />
+              <ReceiptText className="size-5" />
             </button>
           ) : null}
         </div>
 
         {showTypes ? (
-          <div className="no-scrollbar mt-3 flex gap-3 overflow-x-auto rounded-xl border border-primary-foreground/25 bg-shell/60 p-3">
+          <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto rounded-2xl border border-border bg-surface p-3">
             {orderTypes.map((t) => (
               <button
                 key={t}
@@ -197,10 +197,10 @@ function ClockIn() {
                   toast.success(`Order type set to ${t}`);
                 }}
                 className={cn(
-                  "min-h-[56px] shrink-0 rounded-md px-6 text-2xl font-extrabold",
+                  "min-h-[40px] shrink-0 rounded-full px-4 text-sm font-bold transition-colors",
                   t === orderType
-                    ? "bg-muted text-foreground"
-                    : "bg-shell text-primary-foreground/60",
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:bg-secondary",
                 )}
               >
                 {t}
@@ -209,8 +209,8 @@ function ClockIn() {
           </div>
         ) : null}
 
-        <div className="mt-3 flex justify-center text-primary-foreground/50">
-          <ChevronDown className="size-5" />
+        <div className="mt-3 flex justify-center text-muted-foreground">
+          <ChevronDown className="size-4" />
         </div>
       </div>
 
