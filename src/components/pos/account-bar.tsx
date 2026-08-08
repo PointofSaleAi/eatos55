@@ -1,4 +1,4 @@
-import { Bell, ChevronDown, ChevronUp, RotateCw } from "lucide-react";
+import { Bell, RotateCw } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { usePos } from "@/lib/pos-store";
@@ -17,7 +17,6 @@ const whatsNew = [
  */
 export function AccountBar() {
   const { session, settings } = usePos();
-  const [expanded, setExpanded] = useState(false);
   const [news, setNews] = useState(false);
 
   const initials = session.name
@@ -26,9 +25,9 @@ export function AccountBar() {
     .join("");
 
   return (
-    <div className="relative z-30 shrink-0 bg-background px-3 pt-2">
-      {expanded ? (
-        <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface px-3 py-3">
+    <div className="relative z-20 shrink-0 bg-background px-3 pt-2">
+      <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface px-3 py-3">
+
           <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-muted text-sm font-extrabold text-foreground">
             {initials}
           </span>
@@ -56,28 +55,9 @@ export function AccountBar() {
           >
             <RotateCw className="size-4" />
           </button>
-          <button
-            type="button"
-            aria-label="Collapse account bar"
-            onClick={() => {
-              setNews(false);
-              setExpanded(false);
-            }}
-            className="grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted"
-          >
-            <ChevronUp className="size-4" />
-          </button>
-        </div>
-      ) : (
-        <button
-          type="button"
-          aria-label="Expand account bar"
-          onClick={() => setExpanded(true)}
-          className="mx-auto flex h-6 w-32 items-center justify-center rounded-b-xl border border-t-0 border-border bg-surface text-muted-foreground"
-        >
-          <ChevronDown className="size-4" />
-        </button>
-      )}
+      </div>
+
+
 
       {news ? (
         <>

@@ -37,7 +37,10 @@ export type TicketsOverlay = "none" | "sort" | "filter" | "search";
 type Tab =
   | "all"
   | "unpaid"
+  | "open"
+  | "closed"
   | Extract<TicketStatus, "ordering" | "payment" | "ready" | "preparing" | "paid">;
+
 
 const tabs: { id: Tab; label: string }[] = [
   { id: "all", label: "All" },
@@ -47,7 +50,10 @@ const tabs: { id: Tab; label: string }[] = [
   { id: "preparing", label: "Preparing" },
   { id: "paid", label: "Paid" },
   { id: "unpaid", label: "Unpaid" },
+  { id: "open", label: "Open" },
+  { id: "closed", label: "Closed" },
 ];
+
 
 
 const sortOptions: { id: SortKey; icon: typeof Clock; strong: string; rest: string }[] = [
@@ -107,11 +113,18 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
   const [overlay, setOverlay] = useState<TicketsOverlay>(initialOverlay);
   const [openFacet, setOpenFacet] = useState<string | null>(null);
 
-  const baseList = visibleTickets(tab === "all" || tab === "unpaid" ? "all" : tab, {
+  const aggregate = tab === "all" || tab === "unpaid" || tab === "open" || tab === "closed";
+  const baseList = visibleTickets(aggregate ? "all" : tab, {
     ignoreDate: overlay === "search" && search.trim().length > 0,
   });
-  const list = tab === "unpaid" ? baseList.filter((t) => t.status !== "paid") : baseList;
+  const list =
+    tab === "unpaid" || tab === "open"
+      ? baseList.filter((t) => t.status !== "paid")
+      : tab === "closed"
+        ? baseList.filter((t) => t.status === "paid")
+        : baseList;
   const amountDue = list.filter((t) => t.status !== "paid").reduce((s, t) => s + t.total, 0);
+
 
 
   const dateLabel = new Date(`${ticketDate}T12:00:00`).toLocaleDateString("en-GB", {
@@ -123,6 +136,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
   return (
     <div className="relative flex min-h-0 flex-1 flex-col bg-background">
       <AccountBar />
+
 
       {/* Title bar */}
       <div className="shrink-0 border-b border-border bg-surface px-4 py-3">
@@ -247,7 +261,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
             ))}
           </div>
         ) : (
-          <EmptyState title="No tickets here" detail="Adjust the date, filters or search." />
+          <EmptyState title="No Tickets Found" detail="Let's create an order." />
         )}
       </div>
 

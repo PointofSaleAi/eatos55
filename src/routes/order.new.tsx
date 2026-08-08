@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, MoreVertical, Plus, Search } from "lucide-react";
+import { BookOpen, Calculator, ChevronDown, MoreVertical, Plus, Search, Wifi } from "lucide-react";
 import { useState } from "react";
 import { BottomTabs } from "@/components/pos/shell";
 import { Button } from "@/components/ui/button";
@@ -198,10 +198,9 @@ function NewOrder() {
             </div>
           )
         ) : items.length === 0 ? (
-          <p className="px-4 py-24 text-center text-sm text-muted-foreground">
-            No products found for this category
-          </p>
+          <p className="px-4 py-24 text-center text-sm text-muted-foreground">No Active Menu</p>
         ) : (
+
           <div className="grid grid-cols-2 gap-3">
             {items.map((item) => (
               <button
@@ -225,6 +224,31 @@ function NewOrder() {
             ))}
           </div>
         )}
+      </div>
+
+      <div className="shrink-0 border-t border-border bg-surface px-3 py-2">
+        <div className="grid grid-cols-3 items-center rounded-2xl border border-border bg-surface">
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/order/custom-item" })}
+            className="flex min-h-[52px] flex-col items-center justify-center gap-1 text-foreground"
+          >
+            <Calculator className="size-5" />
+            <span className="text-[11px] font-bold">Custom Item</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/order/menu" })}
+            className="flex min-h-[52px] flex-col items-center justify-center gap-1 text-accent"
+          >
+            <BookOpen className="size-5" />
+            <span className="text-[11px] font-bold">Menu</span>
+          </button>
+          <span className="flex min-h-[52px] flex-col items-center justify-center gap-1 text-sky-600">
+            <Wifi className="size-5" />
+            <span className="text-[11px] font-bold">Server Connected</span>
+          </span>
+        </div>
       </div>
 
 
