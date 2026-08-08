@@ -23,6 +23,12 @@ import { Route as OrdersIndexRouteImport } from './routes/orders.index'
 import { Route as PaymentCardRouteImport } from './routes/payment.card'
 import { Route as PaymentCashRouteImport } from './routes/payment.cash'
 import { Route as PaymentMethodRouteImport } from './routes/payment.method'
+import { Route as SettingsIndexRouteImport } from './routes/settings.index'
+import { Route as SettingsGeneralRouteImport } from './routes/settings.general'
+import { Route as SettingsMenuRouteImport } from './routes/settings.menu'
+import { Route as SettingsMoreRouteImport } from './routes/settings.more'
+import { Route as SettingsPaymentRouteImport } from './routes/settings.payment'
+import { Route as SettingsWorkforceRouteImport } from './routes/settings.workforce'
 import { Route as TicketsIndexRouteImport } from './routes/tickets.index'
 import { Route as TicketsTicketIdRouteImport } from './routes/tickets.$ticketId'
 import { Route as TicketsFilterRouteImport } from './routes/tickets.filter'
@@ -101,6 +107,36 @@ const PaymentMethodRoute = PaymentMethodRouteImport.update({
   path: '/payment/method',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsGeneralRoute = SettingsGeneralRouteImport.update({
+  id: '/settings/general',
+  path: '/settings/general',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsMenuRoute = SettingsMenuRouteImport.update({
+  id: '/settings/menu',
+  path: '/settings/menu',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsMoreRoute = SettingsMoreRouteImport.update({
+  id: '/settings/more',
+  path: '/settings/more',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsPaymentRoute = SettingsPaymentRouteImport.update({
+  id: '/settings/payment',
+  path: '/settings/payment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsWorkforceRoute = SettingsWorkforceRouteImport.update({
+  id: '/settings/workforce',
+  path: '/settings/workforce',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TicketsIndexRoute = TicketsIndexRouteImport.update({
   id: '/tickets/',
   path: '/tickets/',
@@ -151,6 +187,11 @@ export interface FileRoutesByFullPath {
   '/payment/card': typeof PaymentCardRoute
   '/payment/cash': typeof PaymentCashRoute
   '/payment/method': typeof PaymentMethodRoute
+  '/settings/general': typeof SettingsGeneralRoute
+  '/settings/menu': typeof SettingsMenuRoute
+  '/settings/more': typeof SettingsMoreRoute
+  '/settings/payment': typeof SettingsPaymentRoute
+  '/settings/workforce': typeof SettingsWorkforceRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -158,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
   '/orders/': typeof OrdersIndexRoute
+  '/settings/': typeof SettingsIndexRoute
   '/tickets/': typeof TicketsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -174,6 +216,11 @@ export interface FileRoutesByTo {
   '/payment/card': typeof PaymentCardRoute
   '/payment/cash': typeof PaymentCashRoute
   '/payment/method': typeof PaymentMethodRoute
+  '/settings/general': typeof SettingsGeneralRoute
+  '/settings/menu': typeof SettingsMenuRoute
+  '/settings/more': typeof SettingsMoreRoute
+  '/settings/payment': typeof SettingsPaymentRoute
+  '/settings/workforce': typeof SettingsWorkforceRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -181,6 +228,7 @@ export interface FileRoutesByTo {
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
   '/orders': typeof OrdersIndexRoute
+  '/settings': typeof SettingsIndexRoute
   '/tickets': typeof TicketsIndexRoute
 }
 export interface FileRoutesById {
@@ -198,6 +246,11 @@ export interface FileRoutesById {
   '/payment/card': typeof PaymentCardRoute
   '/payment/cash': typeof PaymentCashRoute
   '/payment/method': typeof PaymentMethodRoute
+  '/settings/general': typeof SettingsGeneralRoute
+  '/settings/menu': typeof SettingsMenuRoute
+  '/settings/more': typeof SettingsMoreRoute
+  '/settings/payment': typeof SettingsPaymentRoute
+  '/settings/workforce': typeof SettingsWorkforceRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -205,6 +258,7 @@ export interface FileRoutesById {
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
   '/orders/': typeof OrdersIndexRoute
+  '/settings/': typeof SettingsIndexRoute
   '/tickets/': typeof TicketsIndexRoute
 }
 export interface FileRouteTypes {
@@ -223,6 +277,11 @@ export interface FileRouteTypes {
     | '/payment/card'
     | '/payment/cash'
     | '/payment/method'
+    | '/settings/general'
+    | '/settings/menu'
+    | '/settings/more'
+    | '/settings/payment'
+    | '/settings/workforce'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -230,6 +289,7 @@ export interface FileRouteTypes {
     | '/tickets/sort'
     | '/tickets/whats-new'
     | '/orders/'
+    | '/settings/'
     | '/tickets/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -246,6 +306,11 @@ export interface FileRouteTypes {
     | '/payment/card'
     | '/payment/cash'
     | '/payment/method'
+    | '/settings/general'
+    | '/settings/menu'
+    | '/settings/more'
+    | '/settings/payment'
+    | '/settings/workforce'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -253,6 +318,7 @@ export interface FileRouteTypes {
     | '/tickets/sort'
     | '/tickets/whats-new'
     | '/orders'
+    | '/settings'
     | '/tickets'
   id:
     | '__root__'
@@ -269,6 +335,11 @@ export interface FileRouteTypes {
     | '/payment/card'
     | '/payment/cash'
     | '/payment/method'
+    | '/settings/general'
+    | '/settings/menu'
+    | '/settings/more'
+    | '/settings/payment'
+    | '/settings/workforce'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -276,6 +347,7 @@ export interface FileRouteTypes {
     | '/tickets/sort'
     | '/tickets/whats-new'
     | '/orders/'
+    | '/settings/'
     | '/tickets/'
   fileRoutesById: FileRoutesById
 }
@@ -293,6 +365,11 @@ export interface RootRouteChildren {
   PaymentCardRoute: typeof PaymentCardRoute
   PaymentCashRoute: typeof PaymentCashRoute
   PaymentMethodRoute: typeof PaymentMethodRoute
+  SettingsGeneralRoute: typeof SettingsGeneralRoute
+  SettingsMenuRoute: typeof SettingsMenuRoute
+  SettingsMoreRoute: typeof SettingsMoreRoute
+  SettingsPaymentRoute: typeof SettingsPaymentRoute
+  SettingsWorkforceRoute: typeof SettingsWorkforceRoute
   TicketsTicketIdRoute: typeof TicketsTicketIdRoute
   TicketsFilterRoute: typeof TicketsFilterRoute
   TicketsManagerControlsRoute: typeof TicketsManagerControlsRoute
@@ -300,6 +377,7 @@ export interface RootRouteChildren {
   TicketsSortRoute: typeof TicketsSortRoute
   TicketsWhatsNewRoute: typeof TicketsWhatsNewRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
   TicketsIndexRoute: typeof TicketsIndexRoute
 }
 
@@ -403,6 +481,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaymentMethodRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/': {
+      id: '/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/general': {
+      id: '/settings/general'
+      path: '/settings/general'
+      fullPath: '/settings/general'
+      preLoaderRoute: typeof SettingsGeneralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/menu': {
+      id: '/settings/menu'
+      path: '/settings/menu'
+      fullPath: '/settings/menu'
+      preLoaderRoute: typeof SettingsMenuRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/more': {
+      id: '/settings/more'
+      path: '/settings/more'
+      fullPath: '/settings/more'
+      preLoaderRoute: typeof SettingsMoreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/payment': {
+      id: '/settings/payment'
+      path: '/settings/payment'
+      fullPath: '/settings/payment'
+      preLoaderRoute: typeof SettingsPaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/workforce': {
+      id: '/settings/workforce'
+      path: '/settings/workforce'
+      fullPath: '/settings/workforce'
+      preLoaderRoute: typeof SettingsWorkforceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tickets/': {
       id: '/tickets/'
       path: '/tickets'
@@ -469,6 +589,11 @@ const rootRouteChildren: RootRouteChildren = {
   PaymentCardRoute: PaymentCardRoute,
   PaymentCashRoute: PaymentCashRoute,
   PaymentMethodRoute: PaymentMethodRoute,
+  SettingsGeneralRoute: SettingsGeneralRoute,
+  SettingsMenuRoute: SettingsMenuRoute,
+  SettingsMoreRoute: SettingsMoreRoute,
+  SettingsPaymentRoute: SettingsPaymentRoute,
+  SettingsWorkforceRoute: SettingsWorkforceRoute,
   TicketsTicketIdRoute: TicketsTicketIdRoute,
   TicketsFilterRoute: TicketsFilterRoute,
   TicketsManagerControlsRoute: TicketsManagerControlsRoute,
@@ -476,6 +601,7 @@ const rootRouteChildren: RootRouteChildren = {
   TicketsSortRoute: TicketsSortRoute,
   TicketsWhatsNewRoute: TicketsWhatsNewRoute,
   OrdersIndexRoute: OrdersIndexRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
   TicketsIndexRoute: TicketsIndexRoute,
 }
 export const routeTree = rootRouteImport
