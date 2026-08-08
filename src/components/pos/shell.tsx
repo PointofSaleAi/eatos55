@@ -44,8 +44,8 @@ export function BackButton({
   fallbackTo,
   label = "Go back",
 }: {
-  fallbackTo?: string;
-  label?: string;
+  fallbackTo?: string | undefined;
+  label?: string | undefined;
 }) {
   const router = useRouter();
   const onClick = () => {
@@ -78,7 +78,7 @@ export function ScreenHeader({
   /** Accepted for API compatibility; no longer rendered above the title. */
   eyebrow?: string;
   back?: boolean;
-  backTo?: string;
+  backTo?: string | undefined;
   right?: ReactNode;
 }) {
   return (
@@ -104,8 +104,8 @@ export function SubHeader({
   right,
 }: {
   title: string;
-  backLabel?: string;
-  backTo?: string;
+  backLabel?: string | undefined;
+  backTo?: string | undefined;
   right?: ReactNode;
 }) {
   return (
