@@ -42,11 +42,11 @@ function ForgotPassword() {
 
         <div className="flex flex-col items-center">
           <Wordmark />
-          <h1 className="mt-4 text-3xl font-extrabold text-foreground">Point of Purchase</h1>
+          <h1 className="mt-4 text-3xl font-extrabold leading-tight text-foreground">Point of Purchase</h1>
         </div>
 
-        <h2 className="mt-3 text-2xl font-extrabold text-foreground">Forgot Password</h2>
-        <p className="mt-1 text-base text-muted-foreground">
+        <h2 className="mt-3 text-xl font-extrabold text-foreground">Forgot Password</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
           Please select an option to change password
         </p>
 
@@ -59,18 +59,18 @@ function ForgotPassword() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter Your Email"
-            className="h-14 rounded-xl bg-surface text-base"
+            className="h-12 rounded-xl bg-surface"
           />
         </div>
 
-        <p className="py-4 text-center text-base font-extrabold text-foreground">Or</p>
+        <p className="py-4 text-center text-sm font-bold text-muted-foreground">Or</p>
 
         <div className="space-y-2">
           <Label htmlFor="fp-phone" className="text-sm font-extrabold">
             Mobile Number
           </Label>
-          <div className="flex h-14 items-center overflow-hidden rounded-xl border border-input bg-surface">
-            <span className="flex h-full shrink-0 items-center gap-2 border-r border-input px-3 text-base font-bold text-foreground">
+          <div className="flex h-12 items-center overflow-hidden rounded-xl border border-input bg-surface">
+            <span className="flex h-full shrink-0 items-center gap-2 border-r border-input px-3 text-sm font-bold text-foreground">
               <span aria-hidden>🇺🇸</span> +1
             </span>
             <input
@@ -79,13 +79,13 @@ function ForgotPassword() {
               onChange={(e) => setPhone(e.target.value)}
               placeholder="(XXX) XXX-XXXX"
               inputMode="tel"
-              className="h-full min-w-0 flex-1 bg-transparent px-3 text-base text-foreground outline-none placeholder:text-muted-foreground"
+              className="h-full min-w-0 flex-1 bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
           </div>
         </div>
 
         <Button
-          className="mt-8 h-14 w-full rounded-xl bg-primary text-base font-extrabold uppercase tracking-wide text-primary-foreground hover:bg-primary/90"
+          className="mt-8 h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground hover:bg-accent/90"
           onClick={() => {
             toast.success(email ? "OTP sent by email" : "OTP sent by SMS");
             navigate({ to: "/" });
@@ -94,7 +94,7 @@ function ForgotPassword() {
           Send OTP
         </Button>
 
-        <p className="mt-6 text-center text-base text-muted-foreground">
+        <p className="mt-6 text-center text-sm text-muted-foreground">
           Got your password?{" "}
           <Link to="/" className="font-extrabold text-foreground">
             Sign In

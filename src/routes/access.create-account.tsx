@@ -40,7 +40,7 @@ function Field({
 }
 
 const inputClass =
-  "h-14 w-full rounded-xl bg-transparent px-3 text-base text-foreground outline-none placeholder:text-muted-foreground";
+  "h-12 w-full rounded-xl bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
 
 function CreateAccount() {
   const navigate = useNavigate();
@@ -101,12 +101,12 @@ function CreateAccount() {
           />
         </Field>
         <Field label="Phone Number">
-          <div className="flex h-14 items-center">
-            <span className="flex h-8 shrink-0 items-center gap-2 border-r border-input px-3 text-base font-bold text-foreground">
+          <div className="flex h-12 items-center">
+            <span className="flex h-8 shrink-0 items-center gap-2 border-r border-input px-3 text-sm font-bold text-foreground">
               <span aria-hidden>🇺🇸</span> +1
             </span>
             <input
-              className="h-full min-w-0 flex-1 bg-transparent px-3 text-base text-foreground outline-none placeholder:text-muted-foreground"
+              className="h-full min-w-0 flex-1 bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
               inputMode="tel"
               placeholder="(123) 456 7890"
               value={form.phone}
@@ -193,7 +193,7 @@ function CreateAccount() {
       <div className="shrink-0 border-t border-border bg-surface px-5 pb-5 pt-3">
         <Button
           disabled={!agree}
-          className="h-14 w-full rounded-xl bg-primary text-base font-extrabold uppercase tracking-wide text-primary-foreground hover:bg-primary/90 disabled:opacity-40"
+          className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground hover:bg-accent/90 disabled:opacity-40"
           onClick={() => {
             signIn();
             toast.success("Account created — welcome to eatOS");
