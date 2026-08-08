@@ -68,7 +68,7 @@ function FloorPlan() {
           </DropdownMenu>
           <Link
             to="/rooms"
-            className="min-h-[40px] shrink-0 rounded-full border border-border px-4 text-sm font-bold leading-[38px] text-foreground transition-colors hover:bg-muted"
+            className="min-h-[36px] shrink-0 rounded-full border border-border px-3.5 text-[13px] font-bold leading-[34px] text-foreground transition-colors hover:bg-muted"
           >
             Rooms
           </Link>
@@ -81,7 +81,7 @@ function FloorPlan() {
               type="button"
               onClick={() => setTab(s.id)}
               className={cn(
-                "min-h-[40px] shrink-0 rounded-full px-4 text-sm font-bold transition-colors",
+                "min-h-[36px] shrink-0 rounded-full px-3.5 text-[13px] font-bold transition-colors",
                 s.id === tab
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-secondary",

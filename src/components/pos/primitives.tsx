@@ -162,7 +162,7 @@ export function Pills<T extends string>({
           type="button"
           onClick={() => onChange(o.id)}
           className={cn(
-            "min-h-[40px] shrink-0 rounded-full px-4 text-sm font-bold transition-colors",
+            "min-h-[36px] shrink-0 rounded-full px-3.5 text-[13px] font-bold transition-colors",
             value === o.id
               ? "bg-primary text-primary-foreground"
               : "bg-muted text-muted-foreground hover:bg-secondary",
