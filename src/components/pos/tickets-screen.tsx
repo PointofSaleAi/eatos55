@@ -19,8 +19,14 @@ import { useState } from "react";
 import { BottomTabs } from "@/components/pos/shell";
 import { EmptyState, TicketCard } from "@/components/pos/primitives";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { usePos, type SortKey } from "@/lib/pos-store";
-import type { TicketStatus } from "@/lib/demo-data";
+import { usePos, emptyFilters, type SortKey } from "@/lib/pos-store";
+import {
+  employees,
+  paymentTypes,
+  revenueCenters,
+  ticketOrderTypes,
+  type TicketStatus,
+} from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 
 export type TicketsOverlay = "none" | "sort" | "filter" | "search";
