@@ -20,7 +20,7 @@ export const Route = createFileRoute("/order/review")({
 
 function OrderReview() {
   const navigate = useNavigate();
-  const { cart, setQty, removeLine, totals } = usePos();
+  const { cart, changeQty, removeLine, totals } = usePos();
 
   return (
     <>
@@ -47,7 +47,7 @@ function OrderReview() {
                     <button
                       type="button"
                       aria-label="Decrease quantity"
-                      onClick={() => setQty(l.id, l.qty - 1)}
+                      onClick={() => changeQty(l.id, -1)}
                       className="grid size-9 shrink-0 place-items-center rounded-full bg-muted"
                     >
                       <Minus className="size-4" />
@@ -58,7 +58,7 @@ function OrderReview() {
                     <button
                       type="button"
                       aria-label="Increase quantity"
-                      onClick={() => setQty(l.id, l.qty + 1)}
+                      onClick={() => changeQty(l.id, 1)}
                       className="grid size-9 shrink-0 place-items-center rounded-full bg-muted"
                     >
                       <Plus className="size-4" />

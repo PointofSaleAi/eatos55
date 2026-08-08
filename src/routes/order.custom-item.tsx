@@ -51,9 +51,8 @@ function CustomItem() {
         </Card>
         <div className="mt-3">
           <Keypad
-            onPress={(k) =>
-              setDigits((d) => (k === "back" ? d.slice(0, -1) : (d + k).replace(/^0+/, "").slice(0, 7)))
-            }
+            onDigit={(d) => setDigits((cur) => (cur + d).replace(/^0+/, "").slice(0, 7))}
+            onBackspace={() => setDigits((cur) => cur.slice(0, -1))}
           />
         </div>
       </ScreenBody>

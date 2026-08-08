@@ -21,7 +21,7 @@ export const Route = createFileRoute("/payment/cash")({
 
 function PayByCash() {
   const navigate = useNavigate();
-  const { totals, completePayment } = usePos();
+  const { totals, commitPayment } = usePos();
   const [digits, setDigits] = useState("");
   const received = Number(digits || "0") / 100;
   const change = received - totals.total;
@@ -65,11 +65,8 @@ function PayByCash() {
 
         <div className="mt-3">
           <Keypad
-            onPress={(k) =>
-              setDigits((d) =>
-                k === "back" ? d.slice(0, -1) : (d + k).replace(/^0+/, "").slice(0, 7),
-              )
-            }
+            onDigit={(d) => setDigits((cur) => (cur + d).replace(/^0+/, "").slice(0, 7))}
+            onBackspace={() => setDigits((cur) => cur.slice(0, -1))}
           />
         </div>
       </ScreenBody>
@@ -78,7 +75,7 @@ function PayByCash() {
           disabled={change < 0}
           className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground hover:bg-accent/90 disabled:opacity-40"
           onClick={() => {
-            completePayment("cash");
+            commitPayment("cash", received);
             toast.success(
               change > 0 ? `Paid · change due ${money(change)}` : "Paid in full with cash",
             );

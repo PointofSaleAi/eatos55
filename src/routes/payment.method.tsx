@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Banknote, CreditCard, Link2, QrCode } from "lucide-react";
+
 import { toast } from "sonner";
 import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
 import { ActionRow, Card, SectionLabel } from "@/components/pos/primitives";
@@ -38,25 +38,21 @@ function PaymentMethod() {
         <SectionLabel>Tender</SectionLabel>
         <Card className="overflow-hidden">
           <ActionRow
-            icon={CreditCard}
             title="Card"
             detail="Tap, chip or swipe on the handheld reader"
             onClick={() => navigate({ to: "/payment/card" })}
           />
           <ActionRow
-            icon={Banknote}
             title="Cash"
             detail="Enter the amount received"
             onClick={() => navigate({ to: "/payment/cash" })}
           />
           <ActionRow
-            icon={QrCode}
             title="Scan to pay"
             detail="Show a QR code to the guest"
             onClick={() => toast.info("QR code shown on the guest display")}
           />
           <ActionRow
-            icon={Link2}
             title="Send payment link"
             detail="Text or email a secure link"
             onClick={() => toast.success("Payment link sent to the guest")}

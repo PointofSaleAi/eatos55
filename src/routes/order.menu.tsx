@@ -31,7 +31,7 @@ function ChooseMenu() {
             <ActionRow
               key={m.id}
               title={m.name}
-              detail={m.detail}
+              detail={m.hint}
               right={
                 mode === m.id ? (
                   <Check className="size-5 shrink-0 text-accent" />

@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { CheckCircle2, Contactless, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, Nfc } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ScreenBody, ScreenFooter, ScreenHeader } from "@/components/pos/shell";
@@ -27,17 +27,17 @@ type Stage = "waiting" | "processing" | "approved";
 
 function PayByCard() {
   const navigate = useNavigate();
-  const { totals, completePayment } = usePos();
+  const { totals, commitPayment } = usePos();
   const [stage, setStage] = useState<Stage>("waiting");
 
   useEffect(() => {
     if (stage !== "processing") return;
     const timer = setTimeout(() => {
       setStage("approved");
-      completePayment("card");
+      commitPayment("card", totals.total);
     }, 1600);
     return () => clearTimeout(timer);
-  }, [stage, completePayment]);
+  }, [stage, commitPayment, totals.total]);
 
   return (
     <>
@@ -45,7 +45,7 @@ function PayByCard() {
       <ScreenBody>
         <Card className="p-8 text-center">
           {stage === "waiting" && (
-            <Contactless className="mx-auto size-10 text-accent" />
+            <Nfc className="mx-auto size-10 text-accent" />
           )}
           {stage === "processing" && (
             <Loader2 className="mx-auto size-10 animate-spin text-accent" />
