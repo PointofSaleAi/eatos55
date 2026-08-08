@@ -1,18 +1,38 @@
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  BarChart3,
+  CalendarClock,
+  CircleDollarSign,
+  Globe,
+  Info,
+  Percent,
+  Store,
+  Timer,
+  Settings as SettingsIcon,
+} from "lucide-react";
 import { toast } from "sonner";
-import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
-import { Card, SectionLabel, ToggleRow, ValueRow } from "@/components/pos/primitives";
+import { ScreenBody, SubHeader } from "@/components/pos/shell";
+import {
+  GroupCard,
+  GroupLabel,
+  IconNavRow,
+  IconToggleRow,
+  IconValueRow,
+} from "@/components/pos/settings-rows";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/settings/general")({
   head: () => ({
     meta: [
-      { title: "General settings — EATOS Handheld" },
-      { name: "description", content: "Venue name, timezone, currency and tax configuration." },
-      { property: "og:title", content: "General settings — EATOS Handheld" },
+      { title: "General — EATOS Handheld settings" },
+      {
+        name: "description",
+        content: "Device service, restaurant information, language, currency and tax alias.",
+      },
+      { property: "og:title", content: "General — EATOS Handheld settings" },
       {
         property: "og:description",
-        content: "Venue name, timezone, currency and tax configuration.",
+        content: "Device service, restaurant information, language, currency and tax alias.",
       },
     ],
   }),
@@ -24,40 +44,91 @@ function GeneralSettings() {
 
   return (
     <>
-      <ScreenHeader eyebrow="Settings" title="General" back />
-      <ScreenBody>
-        <SectionLabel>Venue</SectionLabel>
-        <Card className="overflow-hidden">
-          <ValueRow title="Restaurant" value={settings.restaurantName} />
-          <ValueRow title="Timezone" value={settings.timezone} />
-          <ValueRow title="Currency" value={settings.currency} />
-          <ValueRow title="Tax rate" value={settings.taxRate} />
-        </Card>
+      <SubHeader title="General" />
+      <ScreenBody className="py-2">
+        <GroupLabel>Device Service</GroupLabel>
+        <GroupCard>
+          <IconValueRow title="Device Name" value={settings.deviceName} />
+          <IconToggleRow
+            title="Device Service"
+            value={settings.deviceService}
+            checked={settings.tableService}
+            onChange={(v) => {
+              updateSettings({ tableService: v });
+              toast.success(v ? "Table Service enabled" : "Table Service disabled");
+            }}
+          />
+        </GroupCard>
 
-        <SectionLabel>Operations</SectionLabel>
-        <Card className="overflow-hidden">
-          <ToggleRow
-            title="Require manager for voids"
-            detail="Ask for a PIN before removing items"
-            checked={settings.requireManagerVoid}
-            onChange={(v) => updateSettings({ requireManagerVoid: v })}
+        <GroupCard className="mt-6">
+          <IconNavRow
+            title="Restaurant Information"
+            icon={Store}
+            color="slate"
+            onClick={() => toast.info(settings.restaurantName)}
           />
-          <ToggleRow
-            title="Track inventory"
-            detail="Decrement stock as items are sold"
-            checked={settings.trackInventory}
-            onChange={(v) => updateSettings({ trackInventory: v })}
+          <IconNavRow
+            title="Restaurant Settings"
+            icon={SettingsIcon}
+            color="violet"
+            onClick={() => toast.info("Restaurant settings are managed in Back Office")}
           />
-        </Card>
+          <IconValueRow
+            title="Language"
+            value={settings.language}
+            icon={Globe}
+            color="pink"
+            onClick={() => toast.info("English is the only installed language")}
+          />
+          <IconNavRow
+            title="Currency"
+            icon={CircleDollarSign}
+            color="green"
+            onClick={() => toast.info(`Currency: ${settings.currency}`)}
+          />
+          <IconValueRow
+            title="Tax Alias"
+            value={settings.taxAlias}
+            icon={Percent}
+            color="sky"
+            onClick={() =>
+              updateSettings({ taxAlias: settings.taxAlias === "Tax" ? "VAT" : "Tax" })
+            }
+          />
+        </GroupCard>
 
-        <SectionLabel>Data</SectionLabel>
-        <Card className="overflow-hidden">
-          <ValueRow
-            title="Export sales report"
-            value="CSV"
-            onClick={() => toast.success("Report emailed to the venue owner")}
+        <GroupCard className="mt-6">
+          <IconNavRow
+            title="End Of Day"
+            icon={BarChart3}
+            color="orange"
+            to="/settings/sales-summary"
           />
-        </Card>
+          <IconNavRow
+            title="Schedule Info"
+            icon={CalendarClock}
+            color="violet"
+            onClick={() => toast.info("Shift schedule syncs from Back Office")}
+          />
+          <IconNavRow
+            title="Timed Pricing"
+            icon={Timer}
+            color="purple"
+            onClick={() => toast.info("No timed pricing rules on this device")}
+          />
+        </GroupCard>
+
+        <GroupCard className="mt-6">
+          <IconValueRow
+            title="About"
+            value={settings.appVersion}
+            icon={Info}
+            color="blue"
+            chevron
+            onClick={() => toast.info(`Handheld ${settings.appVersion}`)}
+          />
+        </GroupCard>
+        <div className="h-6" />
       </ScreenBody>
     </>
   );
