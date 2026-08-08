@@ -33,7 +33,9 @@ function WorkforceSettings() {
             <p className="mt-3 text-2xl font-medium text-foreground">Workforce</p>
             <p className="mt-4 text-lg leading-snug text-foreground">
               The ultimate tool for efficient workforce management. Access and track employee
-              clock-in and clock-out times,…{" "}
+              clock-in and clock-out times,…
+            </p>
+            <p className="text-lg leading-snug">
               <button
                 type="button"
                 onClick={() =>
