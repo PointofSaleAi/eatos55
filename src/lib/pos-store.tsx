@@ -174,6 +174,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<MenuMode>("dine-in");
   const [cart, setCart] = useState<CartLine[]>([]);
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
+  const [activeTable, setActiveTable] = useState<string | null>(null);
+  const [floor, setFloor] = useState<string>("Ground Floor");
+  const [tableStates, setTableStates] = useState<Record<string, "ordering">>({});
+
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [managerUnlocked, setManagerUnlocked] = useState(false);
   const [lastPayment, setLastPayment] = useState<LastPayment>(null);
