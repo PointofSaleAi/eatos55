@@ -9,7 +9,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { barcodeCategories, categories, menu, money, popularIds } from "@/lib/demo-data";
+import { ItemSheet } from "@/components/pos/item-sheet";
+import { MoreSheet } from "@/components/pos/more-sheet";
+import { liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
@@ -28,21 +30,20 @@ export const Route = createFileRoute("/order/new")({
   component: NewOrder,
 });
 
-const chips = [...barcodeCategories, ...categories];
-
 function NewOrder() {
   const navigate = useNavigate();
-  const { addItem, totals, activeTable, cart, changeQty } = usePos();
-  const [category, setCategory] = useState<string>(chips[0]!);
-  const [scanMode, setScanMode] = useState("Barcode");
+  const { totals, activeTable, cart, changeQty } = usePos();
+  const [activeMenu, setActiveMenu] = useState(menus[1]!.id);
+  const [category, setCategory] = useState<string>(menus[1]!.categories[0]!);
+  const [sheetItem, setSheetItem] = useState<MenuItem | null>(null);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [tab, setTab] = useState<"menu" | "order">("menu");
 
-  const base =
-    category === "Popular"
-      ? popularIds.map((id) => menu.find((m) => m.id === id)!)
-      : menu.filter((m) => m.category === category);
+  const currentMenu = menus.find((m) => m.id === activeMenu) ?? menus[0]!;
+  const chips = currentMenu.categories;
+  const base = liveMenu.filter((m) => m.category === category);
   const q = query.trim().toLowerCase();
   const items = q ? base.filter((i) => i.name.toLowerCase().includes(q)) : base;
 
@@ -65,25 +66,14 @@ function NewOrder() {
           >
             <Search className="size-6" />
           </button>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              aria-label="More options"
-              className="grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
-            >
-              <MoreVertical className="size-6" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => navigate({ to: "/order/menu" })}>
-                Change menu
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate({ to: "/order/review" })}>
-                Review order
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate({ to: "/tickets" })}>
-                Back to tickets
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <button
+            type="button"
+            aria-label="More options"
+            onClick={() => setMoreOpen(true)}
+            className="grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+          >
+            <MoreVertical className="size-6" />
+          </button>
           <button
             type="button"
             onClick={() => navigate({ to: "/order/custom-item" })}
@@ -125,14 +115,20 @@ function NewOrder() {
           <div className="no-scrollbar -mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4">
             <div className="relative shrink-0">
               <select
-                aria-label="Scan mode"
-                value={scanMode}
-                onChange={(e) => setScanMode(e.target.value)}
-                className="h-11 appearance-none rounded-xl border border-border bg-surface pl-3 pr-8 text-sm text-foreground outline-none"
+                aria-label="Menu"
+                value={activeMenu}
+                onChange={(e) => {
+                  const next = menus.find((m) => m.id === e.target.value)!;
+                  setActiveMenu(next.id);
+                  setCategory(next.categories[0]!);
+                }}
+                className="h-11 appearance-none rounded-xl border border-border bg-surface pl-3 pr-8 text-sm font-bold text-foreground outline-none"
               >
-                <option value="Barcode">Barcode</option>
-                <option value="SKU">SKU</option>
-                <option value="PLU">PLU</option>
+                {menus.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name}
+                  </option>
+                ))}
               </select>
               <ChevronDown className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             </div>
@@ -206,7 +202,7 @@ function NewOrder() {
               <button
                 key={item.id}
                 type="button"
-                onClick={() => addItem(item.id)}
+                onClick={() => setSheetItem(item)}
                 className="flex min-h-[92px] flex-col justify-between rounded-2xl border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]"
               >
                 <span className="text-sm font-extrabold leading-tight text-foreground">
@@ -265,6 +261,9 @@ function NewOrder() {
       ) : null}
 
       <BottomTabs />
+
+      <ItemSheet item={sheetItem} onClose={() => setSheetItem(null)} />
+      <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
     </div>
   );
 }
