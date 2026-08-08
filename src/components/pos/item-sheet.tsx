@@ -1,5 +1,5 @@
 import { NotebookPen, Pencil, Percent } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -22,6 +22,10 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [discount, setDiscount] = useState<{ name: string; percent: number } | null>(null);
   const [discountOpen, setDiscountOpen] = useState(false);
+
+  useEffect(() => {
+    if (item) setPrice(item.price);
+  }, [item]);
 
   const groups = tab === "item" ? modifierGroups : addOnGroups;
   const activeGroup = groups.find((g) => g.name === group) ?? groups[0]!;
