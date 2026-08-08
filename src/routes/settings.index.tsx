@@ -144,7 +144,7 @@ function SettingsHub() {
                   title={row.title}
                   icon={row.icon}
                   color={row.color}
-                  {...(row.to ? { to: row.to } : { onClick: row.onClick })}
+                  {...(row.to ? { to: row.to } : { onClick: row.onClick ?? (() => {}) })}
                 />
               ))}
             </GroupCard>
