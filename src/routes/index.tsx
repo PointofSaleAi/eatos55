@@ -77,6 +77,7 @@ function SignInScreen() {
                 type={show ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onFocus={scrollFieldIntoView}
                 placeholder="Enter Password"
                 className="h-12 rounded-xl bg-surface pr-12"
               />
