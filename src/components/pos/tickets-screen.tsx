@@ -13,7 +13,6 @@ import {
   User,
   ReceiptText,
   RefreshCcwDot,
-  X,
 } from "lucide-react";
 import { useState } from "react";
 import {} from "@/components/pos/shell";
