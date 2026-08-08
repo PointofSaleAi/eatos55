@@ -46,7 +46,7 @@ function ContactUs() {
               <button
                 type="button"
                 onClick={() => toast.info("Region: United States")}
-                className="flex min-h-[44px] items-center gap-1 rounded-lg bg-surface px-3 text-lg"
+                className="flex min-h-[40px] items-center gap-1 rounded-full bg-surface px-3 text-sm font-bold"
                 aria-label="Choose region"
               >
                 <span aria-hidden>🇺🇸</span>
@@ -63,22 +63,22 @@ function ContactUs() {
             </div>
           </div>
 
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-surface">
+          <h2 className="mt-6 text-center text-2xl font-extrabold text-surface">
             How can we help you?
           </h2>
-          <label className="mt-4 flex min-h-[56px] items-center gap-3 rounded-xl bg-surface px-4">
+          <label className="mt-4 flex min-h-[48px] items-center gap-3 rounded-full bg-surface px-4">
             <Search className="size-6 shrink-0 text-foreground" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search our help center..."
-              className="min-w-0 flex-1 bg-transparent text-center text-lg text-foreground outline-none placeholder:text-muted-foreground"
+              className="min-w-0 flex-1 bg-transparent text-center text-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
           </label>
         </div>
 
         <ScreenBody className="flex-none overflow-visible py-6">
-          <h3 className="text-center text-2xl font-extrabold text-foreground">
+          <h3 className="text-center text-lg font-extrabold text-foreground">
             Browse All Categories
           </h3>
           <div className="mt-5 space-y-4">
@@ -90,13 +90,13 @@ function ContactUs() {
                 className="flex w-full items-center gap-5 rounded-2xl bg-surface px-5 py-6 text-left transition-colors hover:bg-muted"
               >
                 <Icon className="size-12 shrink-0 text-foreground" strokeWidth={1.75} />
-                <span className="min-w-0 flex-1 rounded-sm bg-foreground px-3 py-2 text-lg font-extrabold text-surface">
+                <span className="min-w-0 flex-1 rounded-xl bg-foreground px-3 py-2 text-sm font-extrabold text-surface">
                   {label}
                 </span>
               </button>
             ))}
             {list.length === 0 ? (
-              <p className="py-8 text-center text-lg text-muted-foreground">
+              <p className="py-8 text-center text-sm text-muted-foreground">
                 No help articles match “{query}”.
               </p>
             ) : null}

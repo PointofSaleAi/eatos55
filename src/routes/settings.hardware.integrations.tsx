@@ -21,7 +21,7 @@ function HardwareIntegrations() {
     <>
       <SubHeader title="Integrations" backLabel="Hardware" />
       <ScreenBody className="grid place-items-center">
-        <p className="max-w-[18rem] text-center text-lg leading-snug text-foreground">
+        <p className="max-w-[18rem] text-center text-sm leading-relaxed text-muted-foreground">
           Manage third-party integrations on the Handheld app.
         </p>
       </ScreenBody>

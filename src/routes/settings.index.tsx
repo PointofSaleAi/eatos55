@@ -103,31 +103,31 @@ function SettingsHub() {
   return (
     <>
       <ScreenBody className="pt-5">
-        <h1 className="px-1 text-4xl font-extrabold tracking-tight text-foreground">Settings</h1>
+        <h1 className="px-1 text-2xl font-extrabold text-foreground">Settings</h1>
 
-        <label className="mt-4 flex min-h-[56px] items-center gap-3 rounded-xl bg-secondary px-4">
+        <label className="mt-4 flex min-h-[48px] items-center gap-3 rounded-full border border-border bg-surface px-4">
           <Search className="size-6 shrink-0 text-muted-foreground" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search"
-            className="min-w-0 flex-1 bg-transparent text-lg text-foreground outline-none placeholder:text-muted-foreground"
+            className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
           />
           <Mic className="size-6 shrink-0 text-muted-foreground" />
         </label>
 
         <GroupCard className="mt-6">
           <div className="flex items-center gap-4 px-4 py-4">
-            <span className="grid size-16 shrink-0 place-items-center rounded-full bg-secondary text-xl font-medium text-foreground">
+            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-muted text-sm font-extrabold text-foreground">
               {initials}
             </span>
             <div className="min-w-0">
-              <p className="truncate text-2xl font-extrabold text-foreground">{session.name}</p>
-              <p className="truncate text-lg text-muted-foreground">{session.role}</p>
+              <p className="truncate text-base font-extrabold text-foreground">{session.name}</p>
+              <p className="truncate text-xs text-muted-foreground">{session.role}</p>
             </div>
           </div>
           <div className="border-t border-border px-4 py-3">
-            <p className="text-lg text-foreground">Clocked in at {settings.clockedInAt}</p>
+            <p className="text-xs text-muted-foreground">Clocked in at {settings.clockedInAt}</p>
           </div>
         </GroupCard>
 

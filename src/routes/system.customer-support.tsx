@@ -96,7 +96,7 @@ function CustomerSupport() {
               >
                 <RotateCw className="size-5" />
               </button>
-              <span className="shrink-0 text-lg font-bold text-foreground">{settings.livePin}</span>
+              <span className="shrink-0 text-sm font-bold text-foreground">{settings.livePin}</span>
               </>
             }
           />
