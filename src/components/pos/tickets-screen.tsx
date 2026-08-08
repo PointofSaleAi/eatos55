@@ -44,19 +44,55 @@ const sortOptions: { id: SortKey; icon: typeof Clock; strong: string; rest: stri
 ];
 
 const filterFacets = [
-  { id: "revenue", label: "Revenue Center", icon: RefreshCcwDot },
-  { id: "employee", label: "Employee", icon: User },
-  { id: "order-type", label: "Order Type", icon: ReceiptText },
-  { id: "payment", label: "Payment", icon: CreditCard },
-] as const;
+  {
+    id: "revenue",
+    key: "revenueCenters",
+    label: "Revenue Center",
+    icon: RefreshCcwDot,
+    options: revenueCenters,
+  },
+  {
+    id: "employee",
+    key: "employees",
+    label: "Employee",
+    icon: User,
+    options: employees.map((e) => e.name),
+  },
+  {
+    id: "order-type",
+    key: "orderTypes",
+    label: "Order Type",
+    icon: ReceiptText,
+    options: ticketOrderTypes,
+  },
+  { id: "payment", key: "payments", label: "Payment", icon: CreditCard, options: paymentTypes },
+] as const satisfies readonly {
+  id: string;
+  key: "revenueCenters" | "employees" | "orderTypes" | "payments";
+  label: string;
+  icon: typeof User;
+  options: readonly string[];
+}[];
 
 export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: TicketsOverlay }) {
   const navigate = useNavigate();
-  const { visibleTickets, openTicket, startOrder, sortKey, setSortKey, search, setSearch } =
-    usePos();
-  const { ticketDate, shiftTicketDate } = usePos();
+  const {
+    visibleTickets,
+    openTicket,
+    startOrder,
+    sortKey,
+    setSortKey,
+    search,
+    setSearch,
+    filters,
+    setFilters,
+    ticketDate,
+    shiftTicketDate,
+  } = usePos();
   const [tab, setTab] = useState<Tab>("all");
   const [overlay, setOverlay] = useState<TicketsOverlay>(initialOverlay);
+  const [openFacet, setOpenFacet] = useState<string | null>(null);
+
   const list = visibleTickets(tab === "all" ? "all" : tab, {
     ignoreDate: overlay === "search" && search.trim().length > 0,
   });
