@@ -52,6 +52,7 @@ import { Route as TicketsManagerControlsRouteImport } from './routes/tickets.man
 import { Route as TicketsSearchRouteImport } from './routes/tickets.search'
 import { Route as TicketsSortRouteImport } from './routes/tickets.sort'
 import { Route as TicketsWhatsNewRouteImport } from './routes/tickets.whats-new'
+import { Route as SettingsDetailTopicRouteImport } from './routes/settings.detail.$topic'
 import { Route as SettingsHardwareIntegrationsRouteImport } from './routes/settings.hardware.integrations'
 
 const IndexRoute = IndexRouteImport.update({
@@ -269,6 +270,11 @@ const TicketsWhatsNewRoute = TicketsWhatsNewRouteImport.update({
   path: '/tickets/whats-new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsDetailTopicRoute = SettingsDetailTopicRouteImport.update({
+  id: '/settings/detail/$topic',
+  path: '/settings/detail/$topic',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsHardwareIntegrationsRoute =
   SettingsHardwareIntegrationsRouteImport.update({
     id: '/integrations',
@@ -320,6 +326,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof SettingsIndexRoute
   '/system/': typeof SystemIndexRoute
   '/tickets/': typeof TicketsIndexRoute
+  '/settings/detail/$topic': typeof SettingsDetailTopicRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
 }
 export interface FileRoutesByTo {
@@ -366,6 +373,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsIndexRoute
   '/system': typeof SystemIndexRoute
   '/tickets': typeof TicketsIndexRoute
+  '/settings/detail/$topic': typeof SettingsDetailTopicRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
 }
 export interface FileRoutesById {
@@ -413,6 +421,7 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/system/': typeof SystemIndexRoute
   '/tickets/': typeof TicketsIndexRoute
+  '/settings/detail/$topic': typeof SettingsDetailTopicRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
 }
 export interface FileRouteTypes {
@@ -461,6 +470,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/system/'
     | '/tickets/'
+    | '/settings/detail/$topic'
     | '/settings/hardware/integrations'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -507,6 +517,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/system'
     | '/tickets'
+    | '/settings/detail/$topic'
     | '/settings/hardware/integrations'
   id:
     | '__root__'
@@ -553,6 +564,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/system/'
     | '/tickets/'
+    | '/settings/detail/$topic'
     | '/settings/hardware/integrations'
   fileRoutesById: FileRoutesById
 }
@@ -600,6 +612,7 @@ export interface RootRouteChildren {
   SettingsIndexRoute: typeof SettingsIndexRoute
   SystemIndexRoute: typeof SystemIndexRoute
   TicketsIndexRoute: typeof TicketsIndexRoute
+  SettingsDetailTopicRoute: typeof SettingsDetailTopicRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -905,6 +918,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TicketsWhatsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/detail/$topic': {
+      id: '/settings/detail/$topic'
+      path: '/settings/detail/$topic'
+      fullPath: '/settings/detail/$topic'
+      preLoaderRoute: typeof SettingsDetailTopicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/hardware/integrations': {
       id: '/settings/hardware/integrations'
       path: '/integrations'
@@ -970,6 +990,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   SystemIndexRoute: SystemIndexRoute,
   TicketsIndexRoute: TicketsIndexRoute,
+  SettingsDetailTopicRoute: SettingsDetailTopicRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

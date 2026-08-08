@@ -77,7 +77,7 @@ function SettingsDetail() {
         ) : null}
 
         {screen.rows?.length ? (
-          <GroupCard className={screen.choice ? "mt-6" : undefined}>
+          <GroupCard {...(screen.choice ? { className: "mt-6" } : {})}>
             {screen.rows.map((row) => (
               <IconValueRow key={row.label} title={row.label} {...(row.value ? { value: row.value } : {})} />
             ))}
