@@ -427,6 +427,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
     activeTable,
     floor,
     tableStates,
+    noTax,
+    serviceCharge,
+    orderDiscountPercent,
 
     settings,
     managerUnlocked,
