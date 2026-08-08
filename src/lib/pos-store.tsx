@@ -267,10 +267,17 @@ export function PosProvider({ children }: { children: ReactNode }) {
       setMode,
       cart,
       activeTicketId,
-      startOrder: () => {
+      activeTable,
+      floor,
+      setFloor,
+      tableStates,
+      startOrder: (table) => {
         setCart([]);
         setActiveTicketId(null);
+        setActiveTable(table ?? null);
+        if (table) setTableStates((s) => ({ ...s, [table]: "ordering" }));
       },
+
       openTicket: (id) => {
         const ticket = tickets.find((t) => t.id === id);
         if (!ticket) return;
