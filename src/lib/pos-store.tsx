@@ -140,12 +140,35 @@ type Store = {
   startOrder: (table?: string) => void;
   openTicket: (id: string) => void;
 
-  addItem: (menuId: string) => void;
+  addItem: (
+    menuId: string,
+    opts?: {
+      qty?: number;
+      price?: number;
+      notes?: string;
+      modifiers?: string[];
+      discountPercent?: number;
+    },
+  ) => void;
   addCustomItem: (name: string, price: number) => void;
   changeQty: (id: string, delta: number) => void;
   removeLine: (id: string) => void;
   clearCart: () => void;
-  totals: { subtotal: number; tax: number; total: number; count: number };
+  noTax: boolean;
+  setNoTax: (v: boolean) => void;
+  serviceCharge: number;
+  setServiceCharge: (v: number) => void;
+  orderDiscountPercent: number;
+  setOrderDiscountPercent: (v: number) => void;
+  totals: {
+    subtotal: number;
+    tax: number;
+    total: number;
+    count: number;
+    serviceCharge: number;
+    discount: number;
+  };
+
   commitPayment: (method: "cash" | "card", tendered: number) => string;
   lastPayment: LastPayment;
 
