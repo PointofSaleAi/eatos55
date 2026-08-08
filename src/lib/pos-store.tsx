@@ -7,6 +7,7 @@ import {
   menu,
   type CartLine,
   type MenuMode,
+  type ServiceOrderType,
   type Ticket,
   type TicketStatus,
 } from "./demo-data";
