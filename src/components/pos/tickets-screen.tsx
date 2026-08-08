@@ -30,6 +30,7 @@ import {
   type TicketStatus,
 } from "@/lib/demo-data";
 
+import { SearchDock } from "@/components/pos/search-dock";
 import { cn } from "@/lib/utils";
 
 export type TicketsOverlay = "none" | "sort" | "filter" | "search";
@@ -160,26 +161,16 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
       {/* Date stepper or search field */}
       <div className="shrink-0 bg-surface px-4 pt-3">
         {overlay === "search" ? (
-          <div className="flex h-12 items-center gap-2 rounded-2xl border border-border bg-muted px-4">
-            <input
-              autoFocus
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by order number..."
-              className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
-            />
-            <button
-              type="button"
-              aria-label="Close search"
-              onClick={() => {
-                setSearch("");
-                setOverlay("none");
-              }}
-              className="grid size-8 shrink-0 place-items-center text-foreground"
-            >
-              <X className="size-4" />
-            </button>
-          </div>
+          <SearchDock
+            open
+            value={search}
+            onChange={setSearch}
+            onClose={() => {
+              setSearch("");
+              setOverlay("none");
+            }}
+            placeholder="Search by order number..."
+          />
         ) : (
           <div className="flex items-center justify-between gap-2">
             <div className="flex min-w-0 items-center gap-2">
@@ -239,7 +230,12 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
       </div>
 
       {/* List */}
-      <div className="no-scrollbar relative min-h-0 flex-1 overflow-y-auto bg-background px-4 pb-[calc(0.75rem+var(--kb-inset,0px))] pt-3">
+      <div className={cn(
+          "no-scrollbar relative min-h-0 flex-1 overflow-y-auto bg-background px-4 pt-3",
+          overlay === "search"
+            ? "pb-[calc(5rem+var(--kb-inset,0px))]"
+            : "pb-[calc(0.75rem+var(--kb-inset,0px))]",
+        )}>
         {list.length ? (
           <div className="space-y-3">
             {list.map((t) => (
