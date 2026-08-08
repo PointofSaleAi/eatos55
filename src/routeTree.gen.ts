@@ -15,6 +15,7 @@ import { Route as AccessCreateAccountRouteImport } from './routes/access.create-
 import { Route as AccessForgotPasswordRouteImport } from './routes/access.forgot-password'
 import { Route as AccessManagerPinRouteImport } from './routes/access.manager-pin'
 import { Route as AccessSelectStationRouteImport } from './routes/access.select-station'
+import { Route as OrderNewRouteImport } from './routes/order.new'
 import { Route as OrdersIndexRouteImport } from './routes/orders.index'
 import { Route as TicketsIndexRouteImport } from './routes/tickets.index'
 import { Route as TicketsTicketIdRouteImport } from './routes/tickets.$ticketId'
@@ -52,6 +53,11 @@ const AccessManagerPinRoute = AccessManagerPinRouteImport.update({
 const AccessSelectStationRoute = AccessSelectStationRouteImport.update({
   id: '/access/select-station',
   path: '/access/select-station',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderNewRoute = OrderNewRouteImport.update({
+  id: '/order/new',
+  path: '/order/new',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrdersIndexRoute = OrdersIndexRouteImport.update({
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/access/forgot-password': typeof AccessForgotPasswordRoute
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
+  '/order/new': typeof OrderNewRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/access/forgot-password': typeof AccessForgotPasswordRoute
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
+  '/order/new': typeof OrderNewRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/access/forgot-password': typeof AccessForgotPasswordRoute
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
+  '/order/new': typeof OrderNewRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -153,6 +162,7 @@ export interface FileRouteTypes {
     | '/access/forgot-password'
     | '/access/manager-pin'
     | '/access/select-station'
+    | '/order/new'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -169,6 +179,7 @@ export interface FileRouteTypes {
     | '/access/forgot-password'
     | '/access/manager-pin'
     | '/access/select-station'
+    | '/order/new'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -185,6 +196,7 @@ export interface FileRouteTypes {
     | '/access/forgot-password'
     | '/access/manager-pin'
     | '/access/select-station'
+    | '/order/new'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -202,6 +214,7 @@ export interface RootRouteChildren {
   AccessForgotPasswordRoute: typeof AccessForgotPasswordRoute
   AccessManagerPinRoute: typeof AccessManagerPinRoute
   AccessSelectStationRoute: typeof AccessSelectStationRoute
+  OrderNewRoute: typeof OrderNewRoute
   TicketsTicketIdRoute: typeof TicketsTicketIdRoute
   TicketsFilterRoute: typeof TicketsFilterRoute
   TicketsManagerControlsRoute: typeof TicketsManagerControlsRoute
@@ -254,6 +267,13 @@ declare module '@tanstack/react-router' {
       path: '/access/select-station'
       fullPath: '/access/select-station'
       preLoaderRoute: typeof AccessSelectStationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/order/new': {
+      id: '/order/new'
+      path: '/order/new'
+      fullPath: '/order/new'
+      preLoaderRoute: typeof OrderNewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/orders/': {
@@ -322,6 +342,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccessForgotPasswordRoute: AccessForgotPasswordRoute,
   AccessManagerPinRoute: AccessManagerPinRoute,
   AccessSelectStationRoute: AccessSelectStationRoute,
+  OrderNewRoute: OrderNewRoute,
   TicketsTicketIdRoute: TicketsTicketIdRoute,
   TicketsFilterRoute: TicketsFilterRoute,
   TicketsManagerControlsRoute: TicketsManagerControlsRoute,
