@@ -46,6 +46,7 @@ import { Route as TicketsManagerControlsRouteImport } from './routes/tickets.man
 import { Route as TicketsSearchRouteImport } from './routes/tickets.search'
 import { Route as TicketsSortRouteImport } from './routes/tickets.sort'
 import { Route as TicketsWhatsNewRouteImport } from './routes/tickets.whats-new'
+import { Route as SettingsHardwareIntegrationsRouteImport } from './routes/settings.hardware.integrations'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -232,6 +233,12 @@ const TicketsWhatsNewRoute = TicketsWhatsNewRouteImport.update({
   path: '/tickets/whats-new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsHardwareIntegrationsRoute =
+  SettingsHardwareIntegrationsRouteImport.update({
+    id: '/integrations',
+    path: '/integrations',
+    getParentRoute: () => SettingsHardwareRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -249,7 +256,7 @@ export interface FileRoutesByFullPath {
   '/payment/method': typeof PaymentMethodRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
-  '/settings/hardware': typeof SettingsHardwareRoute
+  '/settings/hardware': typeof SettingsHardwareRouteWithChildren
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/network': typeof SettingsNetworkRoute
@@ -271,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof SettingsIndexRoute
   '/system/': typeof SystemIndexRoute
   '/tickets/': typeof TicketsIndexRoute
+  '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -288,7 +296,7 @@ export interface FileRoutesByTo {
   '/payment/method': typeof PaymentMethodRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
-  '/settings/hardware': typeof SettingsHardwareRoute
+  '/settings/hardware': typeof SettingsHardwareRouteWithChildren
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/network': typeof SettingsNetworkRoute
@@ -310,6 +318,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsIndexRoute
   '/system': typeof SystemIndexRoute
   '/tickets': typeof TicketsIndexRoute
+  '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -328,7 +337,7 @@ export interface FileRoutesById {
   '/payment/method': typeof PaymentMethodRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
-  '/settings/hardware': typeof SettingsHardwareRoute
+  '/settings/hardware': typeof SettingsHardwareRouteWithChildren
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/network': typeof SettingsNetworkRoute
@@ -350,6 +359,7 @@ export interface FileRoutesById {
   '/settings/': typeof SettingsIndexRoute
   '/system/': typeof SystemIndexRoute
   '/tickets/': typeof TicketsIndexRoute
+  '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -391,6 +401,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/system/'
     | '/tickets/'
+    | '/settings/hardware/integrations'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -430,6 +441,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/system'
     | '/tickets'
+    | '/settings/hardware/integrations'
   id:
     | '__root__'
     | '/'
@@ -469,6 +481,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/system/'
     | '/tickets/'
+    | '/settings/hardware/integrations'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -487,7 +500,7 @@ export interface RootRouteChildren {
   PaymentMethodRoute: typeof PaymentMethodRoute
   SettingsControlCenterRoute: typeof SettingsControlCenterRoute
   SettingsGeneralRoute: typeof SettingsGeneralRoute
-  SettingsHardwareRoute: typeof SettingsHardwareRoute
+  SettingsHardwareRoute: typeof SettingsHardwareRouteWithChildren
   SettingsMenuRoute: typeof SettingsMenuRoute
   SettingsMoreRoute: typeof SettingsMoreRoute
   SettingsNetworkRoute: typeof SettingsNetworkRoute
@@ -772,8 +785,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TicketsWhatsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/hardware/integrations': {
+      id: '/settings/hardware/integrations'
+      path: '/integrations'
+      fullPath: '/settings/hardware/integrations'
+      preLoaderRoute: typeof SettingsHardwareIntegrationsRouteImport
+      parentRoute: typeof SettingsHardwareRoute
+    }
   }
 }
+
+interface SettingsHardwareRouteChildren {
+  SettingsHardwareIntegrationsRoute: typeof SettingsHardwareIntegrationsRoute
+}
+
+const SettingsHardwareRouteChildren: SettingsHardwareRouteChildren = {
+  SettingsHardwareIntegrationsRoute: SettingsHardwareIntegrationsRoute,
+}
+
+const SettingsHardwareRouteWithChildren =
+  SettingsHardwareRoute._addFileChildren(SettingsHardwareRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -791,7 +822,7 @@ const rootRouteChildren: RootRouteChildren = {
   PaymentMethodRoute: PaymentMethodRoute,
   SettingsControlCenterRoute: SettingsControlCenterRoute,
   SettingsGeneralRoute: SettingsGeneralRoute,
-  SettingsHardwareRoute: SettingsHardwareRoute,
+  SettingsHardwareRoute: SettingsHardwareRouteWithChildren,
   SettingsMenuRoute: SettingsMenuRoute,
   SettingsMoreRoute: SettingsMoreRoute,
   SettingsNetworkRoute: SettingsNetworkRoute,
