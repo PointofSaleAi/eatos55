@@ -221,6 +221,12 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
             </button>
           ))}
         </div>
+
+        <div className="flex items-center justify-between gap-3 border-t border-border py-3">
+          <p className="text-sm font-bold text-muted-foreground">Amount Due</p>
+          <p className="text-sm font-extrabold text-accent">{money(amountDue)}</p>
+        </div>
+
       </div>
 
       {/* List */}
