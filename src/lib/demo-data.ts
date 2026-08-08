@@ -257,3 +257,11 @@ export const orderTypes = ["Main", "hbjnj", "Online Ordering"];
 
 /** Barcode-style category chips on the new order menu. */
 export const barcodeCategories = ["B", "C", "A", "TEST BARCODE"];
+
+/** Filter sheet facets on the ticket list. */
+export const revenueCenters = ["Main dining", "Patio", "Bar", "Counter pickup"];
+export const ticketOrderTypes = orderTypes;
+export const paymentTypes = ["Card", "Cash", "QR Code", "Unpaid"];
+
+/** Quick tender denominations on the cash payment screen. */
+export const cashDenominations = [1, 5, 10, 20, 50, 100];
