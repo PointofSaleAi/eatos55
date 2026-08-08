@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
-import { ChevronLeft, Minus, Plus, Printer } from "lucide-react";
+import { Minus, Plus, Printer } from "lucide-react";
+import { BackButton } from "@/components/pos/shell";
 import { GuestBlock } from "@/components/pos/guest-block";
 import { GuestSheet } from "@/components/pos/guest-sheet";
 import { EmptyState } from "@/components/pos/primitives";
@@ -35,14 +36,7 @@ function OrderReview() {
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <div className="flex shrink-0 items-center gap-2 bg-surface px-2 pt-3">
-        <button
-          type="button"
-          aria-label="Go back"
-          onClick={() => router.history.back()}
-          className="grid size-11 place-items-center rounded-full text-foreground hover:bg-muted"
-        >
-          <ChevronLeft className="size-6" />
-        </button>
+        <BackButton fallbackTo="/order/new" label="Back to order" />
         <h1 className="truncate text-2xl font-extrabold text-foreground">
           Order Number {orderNumber}
         </h1>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "@tanstack/react-router";
-import { ChevronLeft } from "lucide-react";
+import { BackButton } from "@/components/pos/shell";
 import { NumPad } from "@/components/pos/numpad";
 import { cashDenominations, money } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
@@ -32,15 +32,7 @@ export function TenderScreen({
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <div className="flex shrink-0 items-center gap-2 border-b border-border bg-surface px-2 py-3">
-        <button
-          type="button"
-          aria-label="Go back"
-          title="Back"
-          onClick={() => router.history.back()}
-          className="grid size-11 place-items-center rounded-full text-foreground hover:bg-muted"
-        >
-          <ChevronLeft className="size-6" />
-        </button>
+        <BackButton fallbackTo="/payment/method" label="Back to payment methods" />
         <h1 className="truncate text-2xl font-extrabold text-foreground">{title}</h1>
       </div>
 
@@ -69,7 +61,7 @@ export function TenderScreen({
                 key={d}
                 type="button"
                 onClick={() => setAmount(String(Math.round((entered + d) * 100) / 100))}
-                className="min-h-[52px] rounded-full border border-border bg-surface text-base font-extrabold text-foreground shadow-sm transition-colors hover:bg-muted active:scale-[0.97]"
+                className="min-h-[44px] rounded-full border border-border bg-surface text-base font-extrabold text-foreground shadow-sm transition-colors hover:bg-muted active:scale-[0.97]"
               >
                 ${d}
               </button>
