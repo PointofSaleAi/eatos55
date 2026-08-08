@@ -94,7 +94,7 @@ type Store = {
   sortKey: SortKey;
   setSortKey: (k: SortKey) => void;
   filters: TicketFilters;
-  setFilters: (f: TicketFilters) => void;
+  setFilters: React.Dispatch<React.SetStateAction<TicketFilters>>;
   search: string;
   setSearch: (s: string) => void;
   ticketDate: string;
