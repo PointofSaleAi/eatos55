@@ -15,6 +15,7 @@ import { Route as AccessCreateAccountRouteImport } from './routes/access.create-
 import { Route as AccessForgotPasswordRouteImport } from './routes/access.forgot-password'
 import { Route as AccessManagerPinRouteImport } from './routes/access.manager-pin'
 import { Route as AccessSelectStationRouteImport } from './routes/access.select-station'
+import { Route as TicketsIndexRouteImport } from './routes/tickets.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const AccessSelectStationRoute = AccessSelectStationRouteImport.update({
   path: '/access/select-station',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TicketsIndexRoute = TicketsIndexRouteImport.update({
+  id: '/tickets/',
+  path: '/tickets/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/access/forgot-password': typeof AccessForgotPasswordRoute
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
+  '/tickets/': typeof TicketsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/access/forgot-password': typeof AccessForgotPasswordRoute
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
+  '/tickets': typeof TicketsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/access/forgot-password': typeof AccessForgotPasswordRoute
   '/access/manager-pin': typeof AccessManagerPinRoute
   '/access/select-station': typeof AccessSelectStationRoute
+  '/tickets/': typeof TicketsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/access/forgot-password'
     | '/access/manager-pin'
     | '/access/select-station'
+    | '/tickets/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/access/forgot-password'
     | '/access/manager-pin'
     | '/access/select-station'
+    | '/tickets'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/access/forgot-password'
     | '/access/manager-pin'
     | '/access/select-station'
+    | '/tickets/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   AccessForgotPasswordRoute: typeof AccessForgotPasswordRoute
   AccessManagerPinRoute: typeof AccessManagerPinRoute
   AccessSelectStationRoute: typeof AccessSelectStationRoute
+  TicketsIndexRoute: typeof TicketsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -152,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccessSelectStationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tickets/': {
+      id: '/tickets/'
+      path: '/tickets'
+      fullPath: '/tickets/'
+      preLoaderRoute: typeof TicketsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccessForgotPasswordRoute: AccessForgotPasswordRoute,
   AccessManagerPinRoute: AccessManagerPinRoute,
   AccessSelectStationRoute: AccessSelectStationRoute,
+  TicketsIndexRoute: TicketsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
