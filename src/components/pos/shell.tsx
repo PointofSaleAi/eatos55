@@ -15,7 +15,6 @@ import { ClockPullDown } from "@/components/pos/clock-pulldown";
 import { NavDrawer } from "@/components/pos/nav-drawer";
 import { useGlobalKeyboardAware } from "@/hooks/use-keyboard-inset";
 import { cn } from "@/lib/utils";
-import { cn } from "@/lib/utils";
 
 const NavDrawerContext = createContext<{ open: () => void } | null>(null);
 
