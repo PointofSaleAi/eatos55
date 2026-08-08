@@ -18,7 +18,7 @@ function Key({
       aria-label={label}
       onClick={onPress}
       className={cn(
-        "grid min-h-[56px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
+        "grid h-full min-h-[52px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
         className,
       )}
     >
@@ -48,7 +48,7 @@ export function NumPad({
 
   if (variant === "order") {
     return (
-      <div className={cn("grid grid-cols-4 grid-rows-4 gap-2", className)}>
+      <div className={cn("grid min-h-0 flex-1 grid-cols-4 grid-rows-4 auto-rows-fr gap-2", className)}>
         {digits.map((d, i) => (
           <Key
             key={d}

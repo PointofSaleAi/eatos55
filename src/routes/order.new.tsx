@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { BookOpen, Calculator, ChevronDown, MoreVertical, Plus, Search, Wifi } from "lucide-react";
 import { useState } from "react";
-import { BottomTabs } from "@/components/pos/shell";
 import { Button } from "@/components/ui/button";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { MoreSheet } from "@/components/pos/more-sheet";
@@ -253,8 +252,6 @@ function NewOrder() {
           </Button>
         </div>
       ) : null}
-
-      <BottomTabs />
 
       <ItemSheet item={sheetItem} onClose={() => setSheetItem(null)} />
       <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
