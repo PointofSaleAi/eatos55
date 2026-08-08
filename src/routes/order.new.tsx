@@ -191,7 +191,7 @@ function NewOrder() {
           <p className="px-4 py-24 text-center text-sm text-muted-foreground">No Active Menu</p>
         ) : (
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {items.map((item) => (
               <button
                 key={item.id}
