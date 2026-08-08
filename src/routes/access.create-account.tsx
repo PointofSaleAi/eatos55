@@ -1,109 +1,208 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import { ArrowLeft, ChevronDown, Eye, EyeOff } from "lucide-react";
+import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
-import { ScreenBody, ScreenFooter, ScreenHeader } from "@/components/pos/shell";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { countries, restaurantTypes } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/access/create-account")({
   head: () => ({
     meta: [
-      { title: "Create account — EATOS Handheld" },
-      { name: "description", content: "Onboard a restaurant onto the EATOS handheld POS." },
-      { property: "og:title", content: "Create account — EATOS Handheld" },
-      { property: "og:description", content: "Onboard a restaurant onto the EATOS handheld POS." },
+      { title: "Create an Account — eatOS Point of Purchase" },
+      { name: "description", content: "Onboard a restaurant onto the eatOS Point of Purchase app." },
+      { property: "og:title", content: "Create an Account — eatOS Point of Purchase" },
+      {
+        property: "og:description",
+        content: "Onboard a restaurant onto the eatOS Point of Purchase app.",
+      },
     ],
   }),
   component: CreateAccount,
 });
 
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="relative rounded-xl border border-input bg-surface">
+      <span className="absolute -top-2 left-3 bg-surface px-1 text-xs font-extrabold text-foreground">
+        {label}
+      </span>
+      {children}
+    </div>
+  );
+}
+
+const inputClass =
+  "h-14 w-full rounded-xl bg-transparent px-3 text-base text-foreground outline-none placeholder:text-muted-foreground";
+
 function CreateAccount() {
   const navigate = useNavigate();
+  const router = useRouter();
   const { signIn } = usePos();
-  const [step, setStep] = useState(0);
-  const [restaurant, setRestaurant] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-
-  const steps = [
-    { label: "Restaurant", hint: "What is the business called?" },
-    { label: "Owner", hint: "Who runs the account?" },
-    { label: "Login", hint: "Where should we send access?" },
-  ];
-  const current = steps[step] ?? steps[0]!;
+  const [show, setShow] = useState(false);
+  const [agree, setAgree] = useState(false);
+  const [form, setForm] = useState({
+    first: "",
+    last: "",
+    email: "",
+    phone: "",
+    password: "",
+    country: countries[0]!,
+    restaurant: "",
+    type: "",
+  });
+  const set = (k: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   return (
-    <>
-      <ScreenHeader eyebrow={`Step ${step + 1} of 3`} title="Create account" back />
-      <ScreenBody>
-        <div className="flex gap-1.5">
-          {steps.map((s, i) => (
-            <span
-              key={s.label}
-              className={`h-1.5 flex-1 rounded-full ${i <= step ? "bg-accent" : "bg-muted"}`}
-            />
-          ))}
-        </div>
-        <p className="mt-5 text-sm text-muted-foreground">{current.hint}</p>
+    <div className="flex flex-1 flex-col bg-background">
+      <div className="flex shrink-0 items-center gap-3 px-4 pb-2 pt-5">
+        <button
+          type="button"
+          aria-label="Go back"
+          onClick={() => router.history.back()}
+          className="grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+        >
+          <ArrowLeft className="size-6" />
+        </button>
+        <h1 className="text-2xl font-extrabold text-foreground">Create an Account</h1>
+      </div>
 
-        <div className="mt-4 space-y-4">
-          {step === 0 ? (
-            <div className="space-y-1.5">
-              <Label htmlFor="restaurant">Restaurant name</Label>
-              <Input
-                id="restaurant"
-                value={restaurant}
-                onChange={(e) => setRestaurant(e.target.value)}
-                placeholder="EATOS Kitchen"
-                className="h-12 rounded-xl bg-surface"
-              />
-            </div>
-          ) : null}
-          {step === 1 ? (
-            <div className="space-y-1.5">
-              <Label htmlFor="owner">Owner full name</Label>
-              <Input
-                id="owner"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Elizer Cruz"
-                className="h-12 rounded-xl bg-surface"
-              />
-            </div>
-          ) : null}
-          {step === 2 ? (
-            <div className="space-y-1.5">
-              <Label htmlFor="owner-email">Work email</Label>
-              <Input
-                id="owner-email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="owner@restaurant.com"
-                className="h-12 rounded-xl bg-surface"
-              />
-            </div>
-          ) : null}
-        </div>
-      </ScreenBody>
-      <ScreenFooter>
+      <div className="no-scrollbar flex-1 space-y-6 overflow-y-auto px-5 pb-6 pt-6">
+        <Field label="First Name">
+          <input
+            className={inputClass}
+            placeholder="Enter First Name"
+            value={form.first}
+            onChange={(e) => set("first")(e.target.value)}
+          />
+        </Field>
+        <Field label="Last Name">
+          <input
+            className={inputClass}
+            placeholder="Enter Last Name"
+            value={form.last}
+            onChange={(e) => set("last")(e.target.value)}
+          />
+        </Field>
+        <Field label="Email Address">
+          <input
+            className={inputClass}
+            type="email"
+            placeholder="Enter  Email Address"
+            value={form.email}
+            onChange={(e) => set("email")(e.target.value)}
+          />
+        </Field>
+        <Field label="Phone Number">
+          <div className="flex h-14 items-center">
+            <span className="flex h-8 shrink-0 items-center gap-2 border-r border-input px-3 text-base font-bold text-foreground">
+              <span aria-hidden>🇺🇸</span> +1
+            </span>
+            <input
+              className="h-full min-w-0 flex-1 bg-transparent px-3 text-base text-foreground outline-none placeholder:text-muted-foreground"
+              inputMode="tel"
+              placeholder="(123) 456 7890"
+              value={form.phone}
+              onChange={(e) => set("phone")(e.target.value)}
+            />
+          </div>
+        </Field>
+        <Field label="Password">
+          <div className="relative">
+            <input
+              className={`${inputClass} pr-12`}
+              type={show ? "text" : "password"}
+              placeholder="Enter Password"
+              value={form.password}
+              onChange={(e) => set("password")(e.target.value)}
+            />
+            <button
+              type="button"
+              aria-label={show ? "Hide password" : "Show password"}
+              onClick={() => setShow((s) => !s)}
+              className="absolute right-2 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-full text-muted-foreground"
+            >
+              {show ? <Eye className="size-5" /> : <EyeOff className="size-5" />}
+            </button>
+          </div>
+        </Field>
+        <Field label="Country">
+          <div className="relative">
+            <select
+              aria-label="Country"
+              className={`${inputClass} appearance-none pr-10 font-bold`}
+              value={form.country}
+              onChange={(e) => set("country")(e.target.value)}
+            >
+              {countries.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+          </div>
+        </Field>
+        <Field label="Restaurant Name">
+          <input
+            className={inputClass}
+            placeholder="Enter Restaurant Name"
+            value={form.restaurant}
+            onChange={(e) => set("restaurant")(e.target.value)}
+          />
+        </Field>
+        <Field label="Restaurant Type">
+          <div className="relative">
+            <select
+              aria-label="Restaurant Type"
+              className={`${inputClass} appearance-none pr-10`}
+              value={form.type}
+              onChange={(e) => set("type")(e.target.value)}
+            >
+              <option value="">Select Restaurant Type</option>
+              {restaurantTypes.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+          </div>
+        </Field>
+
+        <label className="flex items-start gap-3 pt-1 text-sm text-foreground">
+          <Checkbox
+            checked={agree}
+            onCheckedChange={(v) => setAgree(v === true)}
+            className="mt-0.5 size-6 rounded-none"
+          />
+          <span>
+            eatOS's <span className="font-extrabold">Seller Agreement</span> and{" "}
+            <span className="font-extrabold">e-Sign Consent</span>
+          </span>
+        </label>
+      </div>
+
+      <div className="shrink-0 border-t border-border bg-surface px-5 pb-5 pt-3">
         <Button
-          className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground hover:bg-accent/90"
+          disabled={!agree}
+          className="h-14 w-full rounded-xl bg-primary text-base font-extrabold uppercase tracking-wide text-primary-foreground hover:bg-primary/90 disabled:opacity-40"
           onClick={() => {
-            if (step < 2) {
-              setStep(step + 1);
-              return;
-            }
             signIn();
-            toast.success("Account created — welcome to EATOS");
+            toast.success("Account created — welcome to eatOS");
             navigate({ to: "/access/clock-in" });
           }}
         >
-          {step < 2 ? "Continue" : "Create account"}
+          Create Account
         </Button>
-      </ScreenFooter>
-    </>
+      </div>
+    </div>
   );
 }
