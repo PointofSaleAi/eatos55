@@ -33,7 +33,8 @@ function SignInScreen() {
 
   return (
     <div className="flex flex-1 flex-col bg-background">
-      <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto px-6 pb-6 pt-10">
+      <div className="no-scrollbar flex flex-1 flex-col justify-center overflow-y-auto px-6 py-8">
+        <div className="my-auto w-full">
         <div className="flex flex-col items-center">
           <Wordmark />
           <h1 className="mt-5 text-3xl font-extrabold leading-tight text-foreground">Point of Purchase</h1>
@@ -94,19 +95,20 @@ function SignInScreen() {
 
         <Link
           to="/access/forgot-password"
-          className="mt-6 text-center text-sm font-bold text-foreground underline"
+          className="mt-6 block text-center text-sm font-bold text-foreground transition-colors hover:text-accent active:text-accent focus-visible:text-accent"
         >
           Forgot Your Password?
         </Link>
 
         <Link
           to="/access/create-account"
-          className="mt-4 flex h-12 items-center justify-center rounded-full border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted"
+          className="mt-4 flex h-12 items-center justify-center rounded-full border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted hover:text-accent active:text-accent focus-visible:text-accent"
         >
           Create an account
         </Link>
 
-        <p className="mt-8 text-center text-xs text-muted-foreground">{APP_VERSION}</p>
+        <p className="mt-6 text-center text-[11px] text-muted-foreground">{APP_VERSION}</p>
+        </div>
       </div>
     </div>
   );
