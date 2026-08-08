@@ -9,7 +9,6 @@ import {
   ScrollText,
   UtensilsCrossed,
 } from "lucide-react";
-import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
 
@@ -42,19 +41,19 @@ function MenuSettings() {
             title="Categories"
             icon={LayoutList}
             color="violet"
-            onClick={() => toast.info("4 categories synced from Back Office")}
+            topic="categories"
           />
           <IconNavRow
             title="Modifiers"
             icon={CircleDot}
             color="yellow"
-            onClick={() => toast.info("No modifier groups on this device")}
+            topic="modifiers"
           />
           <IconNavRow
             title="Add-Ons"
             icon={Grid2x2}
             color="pink"
-            onClick={() => toast.info("No add-ons configured")}
+            topic="add-ons"
           />
           <IconNavRow
             title="Products"
@@ -66,19 +65,19 @@ function MenuSettings() {
             title="Inventory"
             icon={PencilRuler}
             color="sky"
-            onClick={() => toast.info("Inventory tracking is on for this venue")}
+            topic="inventory"
           />
           <IconNavRow
             title="Default Modifiers"
             icon={Boxes}
             color="indigo"
-            onClick={() => toast.info("No default modifiers set")}
+            topic="default-modifiers"
           />
           <IconNavRow
             title="Groups"
             icon={Layers}
             color="slate"
-            onClick={() => toast.info("No product groups on this device")}
+            topic="groups"
           />
         </GroupCard>
       </ScreenBody>

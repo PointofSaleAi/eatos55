@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CreditCard, Inbox, Printer, ScanLine, Tablet } from "lucide-react";
-import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
 
@@ -36,13 +35,13 @@ function HardwareSettings() {
             title="Printer"
             icon={Printer}
             color="magenta"
-            onClick={() => toast.info("Kitchen printer connected over Wi-Fi")}
+            topic="printer"
           />
           <IconNavRow
             title="Card Reader"
             icon={Tablet}
             color="violet"
-            onClick={() => toast.info("Built-in reader ready")}
+            topic="card-reader"
           />
           <IconNavRow
             title="Integrations"
@@ -54,13 +53,13 @@ function HardwareSettings() {
             title="Cash Drawer"
             icon={Inbox}
             color="yellow"
-            onClick={() => toast.info("No cash drawer paired with this handheld")}
+            topic="cash-drawer"
           />
           <IconNavRow
             title="Hardware Emulators"
             icon={CreditCard}
             color="blue"
-            onClick={() => toast.info("Emulators are enabled for demo mode")}
+            topic="hardware-emulators"
           />
         </GroupCard>
       </ScreenBody>

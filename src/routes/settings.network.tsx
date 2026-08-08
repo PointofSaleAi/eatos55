@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Server } from "lucide-react";
-import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, IconValueRow } from "@/components/pos/settings-rows";
 import { usePos } from "@/lib/pos-store";
@@ -40,7 +39,7 @@ function NetworkSettings() {
             icon={Server}
             color="green"
             chevron
-            onClick={() => toast.success(`Connected to ${settings.deviceName}`)}
+            topic="servers"
           />
         </GroupCard>
       </ScreenBody>
