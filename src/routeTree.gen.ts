@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccessClockInRouteImport } from './routes/access.clock-in'
 import { Route as AccessCreateAccountRouteImport } from './routes/access.create-account'
 import { Route as AccessForgotPasswordRouteImport } from './routes/access.forgot-password'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccessClockInRoute = AccessClockInRouteImport.update({
+  id: '/access/clock-in',
+  path: '/access/clock-in',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccessCreateAccountRoute = AccessCreateAccountRouteImport.update({
@@ -31,30 +37,47 @@ const AccessForgotPasswordRoute = AccessForgotPasswordRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/access/clock-in': typeof AccessClockInRoute
   '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/access/clock-in': typeof AccessClockInRoute
   '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/access/clock-in': typeof AccessClockInRoute
   '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/access/create-account' | '/access/forgot-password'
+  fullPaths:
+    | '/'
+    | '/access/clock-in'
+    | '/access/create-account'
+    | '/access/forgot-password'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/access/create-account' | '/access/forgot-password'
-  id: '__root__' | '/' | '/access/create-account' | '/access/forgot-password'
+  to:
+    | '/'
+    | '/access/clock-in'
+    | '/access/create-account'
+    | '/access/forgot-password'
+  id:
+    | '__root__'
+    | '/'
+    | '/access/clock-in'
+    | '/access/create-account'
+    | '/access/forgot-password'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccessClockInRoute: typeof AccessClockInRoute
   AccessCreateAccountRoute: typeof AccessCreateAccountRoute
   AccessForgotPasswordRoute: typeof AccessForgotPasswordRoute
 }
@@ -66,6 +89,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/access/clock-in': {
+      id: '/access/clock-in'
+      path: '/access/clock-in'
+      fullPath: '/access/clock-in'
+      preLoaderRoute: typeof AccessClockInRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/access/create-account': {
@@ -87,6 +117,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccessClockInRoute: AccessClockInRoute,
   AccessCreateAccountRoute: AccessCreateAccountRoute,
   AccessForgotPasswordRoute: AccessForgotPasswordRoute,
 }
