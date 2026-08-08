@@ -1,5 +1,14 @@
 import { Link, useRouter } from "@tanstack/react-router";
-import { ChevronLeft, ClipboardList, LayoutGrid, Settings, type LucideIcon } from "lucide-react";
+import {
+  ChevronLeft,
+  ClipboardList,
+  Columns3,
+  LayoutGrid,
+  PlusCircle,
+  Settings,
+  type LucideIcon,
+} from "lucide-react";
+
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
