@@ -139,6 +139,10 @@ type Store = {
   setFloor: (f: string) => void;
   tableStates: Record<string, "ordering">;
   startOrder: (table?: string) => void;
+  guest: Guest;
+  setGuest: (patch: Partial<Guest>) => void;
+  orderType: ServiceOrderType;
+  setOrderType: (t: ServiceOrderType) => void;
   openTicket: (id: string) => void;
 
   addItem: (
@@ -180,6 +184,8 @@ type Store = {
   unlockManager: () => void;
 };
 
+export type Guest = { name: string; phone: string; partySize: number };
+
 const PosContext = createContext<Store | null>(null);
 
 export function PosProvider({ children }: { children: ReactNode }) {
@@ -200,6 +206,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
   const [activeTable, setActiveTable] = useState<string | null>(null);
   const [floor, setFloor] = useState<string>("Ground Floor");
+  const [guest, setGuestState] = useState<Guest>({ name: "", phone: "", partySize: 1 });
+  const [orderType, setOrderType] = useState<ServiceOrderType>("Dine In");
   const [tableStates, setTableStates] = useState<Record<string, "ordering">>({});
   const [noTax, setNoTax] = useState(false);
   const [serviceCharge, setServiceCharge] = useState(0);
@@ -307,6 +315,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
       floor,
       setFloor,
       tableStates,
+      guest,
+      setGuest: (patch) => setGuestState((g) => ({ ...g, ...patch })),
+      orderType,
+      setOrderType,
       startOrder: (table) => {
         setCart([]);
         setActiveTicketId(null);
@@ -385,8 +397,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
           const created: Ticket = {
             id,
             number: tickets.length + 1,
-            label: "Guest",
-            seats: 1,
+            label: guest.name || "Guest",
+            seats: guest.partySize || 1,
             total,
             date: ticketDate,
             arrivedAt: new Date().toLocaleTimeString("en-US", {
@@ -427,6 +439,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
     activeTable,
     floor,
     tableStates,
+    guest,
+    orderType,
     noTax,
     serviceCharge,
     orderDiscountPercent,
