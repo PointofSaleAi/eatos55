@@ -24,6 +24,7 @@ import { Route as OrdersIndexRouteImport } from './routes/orders.index'
 import { Route as PaymentCardRouteImport } from './routes/payment.card'
 import { Route as PaymentCashRouteImport } from './routes/payment.cash'
 import { Route as PaymentMethodRouteImport } from './routes/payment.method'
+import { Route as RoomsIndexRouteImport } from './routes/rooms.index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SettingsControlCenterRouteImport } from './routes/settings.control-center'
 import { Route as SettingsGeneralRouteImport } from './routes/settings.general'
@@ -125,6 +126,11 @@ const PaymentCashRoute = PaymentCashRouteImport.update({
 const PaymentMethodRoute = PaymentMethodRouteImport.update({
   id: '/payment/method',
   path: '/payment/method',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoomsIndexRoute = RoomsIndexRouteImport.update({
+  id: '/rooms/',
+  path: '/rooms/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
@@ -303,6 +309,7 @@ export interface FileRoutesByFullPath {
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
   '/floor/': typeof FloorIndexRoute
   '/orders/': typeof OrdersIndexRoute
+  '/rooms/': typeof RoomsIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/system/': typeof SystemIndexRoute
   '/tickets/': typeof TicketsIndexRoute
@@ -347,6 +354,7 @@ export interface FileRoutesByTo {
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
   '/floor': typeof FloorIndexRoute
   '/orders': typeof OrdersIndexRoute
+  '/rooms': typeof RoomsIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/system': typeof SystemIndexRoute
   '/tickets': typeof TicketsIndexRoute
@@ -392,6 +400,7 @@ export interface FileRoutesById {
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
   '/floor/': typeof FloorIndexRoute
   '/orders/': typeof OrdersIndexRoute
+  '/rooms/': typeof RoomsIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/system/': typeof SystemIndexRoute
   '/tickets/': typeof TicketsIndexRoute
@@ -438,6 +447,7 @@ export interface FileRouteTypes {
     | '/tickets/whats-new'
     | '/floor/'
     | '/orders/'
+    | '/rooms/'
     | '/settings/'
     | '/system/'
     | '/tickets/'
@@ -482,6 +492,7 @@ export interface FileRouteTypes {
     | '/tickets/whats-new'
     | '/floor'
     | '/orders'
+    | '/rooms'
     | '/settings'
     | '/system'
     | '/tickets'
@@ -526,6 +537,7 @@ export interface FileRouteTypes {
     | '/tickets/whats-new'
     | '/floor/'
     | '/orders/'
+    | '/rooms/'
     | '/settings/'
     | '/system/'
     | '/tickets/'
@@ -571,6 +583,7 @@ export interface RootRouteChildren {
   TicketsWhatsNewRoute: typeof TicketsWhatsNewRoute
   FloorIndexRoute: typeof FloorIndexRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
+  RoomsIndexRoute: typeof RoomsIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   SystemIndexRoute: typeof SystemIndexRoute
   TicketsIndexRoute: typeof TicketsIndexRoute
@@ -681,6 +694,13 @@ declare module '@tanstack/react-router' {
       path: '/payment/method'
       fullPath: '/payment/method'
       preLoaderRoute: typeof PaymentMethodRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rooms/': {
+      id: '/rooms/'
+      path: '/rooms'
+      fullPath: '/rooms/'
+      preLoaderRoute: typeof RoomsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings/': {
@@ -925,6 +945,7 @@ const rootRouteChildren: RootRouteChildren = {
   TicketsWhatsNewRoute: TicketsWhatsNewRoute,
   FloorIndexRoute: FloorIndexRoute,
   OrdersIndexRoute: OrdersIndexRoute,
+  RoomsIndexRoute: RoomsIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   SystemIndexRoute: SystemIndexRoute,
   TicketsIndexRoute: TicketsIndexRoute,
