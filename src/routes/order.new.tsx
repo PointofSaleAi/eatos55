@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, MoreVertical, Plus, Search } from "lucide-react";
+import { BookOpen, Calculator, ChevronDown, MoreVertical, Plus, Search, Wifi } from "lucide-react";
 import { useState } from "react";
 import { BottomTabs } from "@/components/pos/shell";
 import { Button } from "@/components/ui/button";
