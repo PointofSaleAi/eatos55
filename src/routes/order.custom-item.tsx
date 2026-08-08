@@ -1,7 +1,9 @@
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
-import { GuestHeader, NumPad } from "@/components/pos/numpad";
+import { GuestBlock } from "@/components/pos/guest-block";
+import { GuestSheet } from "@/components/pos/guest-sheet";
+import { NumPad } from "@/components/pos/numpad";
 import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 
@@ -28,6 +30,7 @@ function CustomItem() {
   const { addCustomItem, totals } = usePos();
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
+  const [guestOpen, setGuestOpen] = useState(false);
   const price = Number(amount || "0");
 
   const addLine = () => {
@@ -39,8 +42,8 @@ function CustomItem() {
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-background">
-      <div className="flex shrink-0 items-center gap-2 bg-surface px-2 pt-3">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
+      <div className="flex shrink-0 items-center gap-2 bg-surface px-2 pt-2">
         <button
           type="button"
           aria-label="Go back"
@@ -49,28 +52,27 @@ function CustomItem() {
         >
           <ChevronLeft className="size-6" />
         </button>
-        <h1 className="truncate text-2xl font-extrabold text-foreground">Custom Item</h1>
+        <h1 className="truncate text-xl font-extrabold text-foreground">Custom Item</h1>
       </div>
-      <GuestHeader />
+      <div className="flex shrink-0 items-center gap-2 border-b border-border bg-surface px-3 py-2">
+        <GuestBlock onEdit={() => setGuestOpen(true)} />
+      </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-3 p-4 pb-[calc(1rem+var(--kb-inset,0px))]">
-        <div>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Item Name"
-            className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-sm text-foreground outline-none focus:border-accent placeholder:text-muted-foreground"
-          />
-        </div>
-        <div className="rounded-xl border border-border bg-surface px-4 py-5 text-center">
-          <p className="text-3xl font-extrabold tabular-nums text-foreground">
+      <div className="flex min-h-0 flex-1 flex-col gap-2 p-3 pb-[calc(0.75rem+var(--kb-inset,0px))]">
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Item Name"
+          className="h-11 w-full shrink-0 rounded-xl border border-border bg-surface px-4 text-sm text-foreground outline-none focus:border-accent placeholder:text-muted-foreground"
+        />
+        <div className="shrink-0 rounded-xl border border-border bg-surface px-4 py-3 text-center">
+          <p className="text-2xl font-extrabold tabular-nums text-foreground">
             {amount ? money(price) : money(0)}
           </p>
         </div>
 
         <NumPad
           variant="order"
-          className="mt-2"
           onDigit={(d) =>
             setAmount((cur) => {
               if (d === "." && cur.includes(".")) return cur;
@@ -83,7 +85,7 @@ function CustomItem() {
         />
       </div>
 
-      <div className="shrink-0 border-t border-border bg-surface p-4">
+      <div className="shrink-0 border-t border-border bg-surface px-3 py-2">
         <button
           type="button"
           disabled={price <= 0 && totals.count === 0}
@@ -91,11 +93,13 @@ function CustomItem() {
             addLine();
             navigate({ to: "/order/review" });
           }}
-          className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
+          className="h-11 w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
         >
           Add to order
         </button>
       </div>
+
+      <GuestSheet open={guestOpen} onClose={() => setGuestOpen(false)} />
     </div>
   );
 }
