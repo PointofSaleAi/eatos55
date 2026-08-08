@@ -27,13 +27,15 @@ export type Ticket = {
   /** ISO day the ticket belongs to (drives the ticket-list date stepper). */
   date: string;
   arrivedAt: string;
+  arrivedMinutesAgo: number;
   status: TicketStatus;
   mode: MenuMode;
   lines: CartLine[];
   server: string;
 };
 
-export const TAX_RATE = 0.0875;
+/** Tax is inclusive in the guest-facing totals (20%). */
+export const TAX_RATE = 0.2;
 
 export const categories = [
   "Popular",
