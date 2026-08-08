@@ -126,13 +126,22 @@ export function ScreenBody({
   className?: string;
 }) {
   return (
-    <div className={cn("no-scrollbar flex-1 overflow-y-auto px-4 py-4", className)}>{children}</div>
+    <div
+      className={cn(
+        "no-scrollbar flex-1 overflow-y-auto px-4 py-4 pb-[calc(1rem+var(--kb-inset,0px))]",
+        className,
+      )}
+    >
+      {children}
+    </div>
   );
 }
 
 export function ScreenFooter({ children }: { children: ReactNode }) {
   return (
-    <div className="shrink-0 border-t border-border bg-surface px-4 pb-5 pt-3">{children}</div>
+    <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1.25rem+var(--kb-inset,0px))] pt-3">
+      {children}
+    </div>
   );
 }
 
@@ -146,7 +155,7 @@ const tabs: { to: string; label: string; icon: LucideIcon }[] = [
 
 export function BottomTabs() {
   return (
-    <nav className="shrink-0 border-t border-border bg-surface max-md:landscape:hidden">
+    <nav className="shrink-0 border-t border-border bg-surface max-md:landscape:hidden [html[data-kb=open]_&]:hidden">
       <ul className="grid grid-cols-5">
 
         {tabs.map(({ to, label, icon: Icon }) => (
