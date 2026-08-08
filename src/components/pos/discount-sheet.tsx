@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { discountPresets } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
@@ -15,10 +16,12 @@ export function DiscountSheet({
   onClose: () => void;
   onPick: (discount: { name: string; percent: number }) => void;
 }) {
+  const { dragStyle, handleProps } = useSheetDrag(onClose);
   return (
     <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
-      <SheetContent side="bottom" className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]">
-        <SheetHeader className="px-4 pb-1.5 pt-4">
+      <SheetContent side="bottom" style={dragStyle} className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]">
+        <SheetGrabber handleProps={handleProps} />
+        <SheetHeader className="px-4 pb-1.5 pt-1" {...handleProps}>
           <SheetTitle className="text-center text-base font-extrabold text-foreground">
             Discount
           </SheetTitle>

@@ -2,6 +2,7 @@ import { BadgePercent, Check, Percent, Receipt, Wallet } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
+import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,8 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
   const [chargeOpen, setChargeOpen] = useState(false);
   const [charge, setCharge] = useState(String(serviceCharge || ""));
   const [discountOpen, setDiscountOpen] = useState(false);
+  const { dragStyle, handleProps } = useSheetDrag(onClose);
+  const charge2 = useSheetDrag(() => setChargeOpen(false));
 
   const rows = [
     {
@@ -60,8 +63,9 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
   return (
     <>
       <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
-        <SheetContent side="bottom" className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]">
-          <SheetHeader className="px-4 pb-1.5 pt-4">
+        <SheetContent side="bottom" style={dragStyle} className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]">
+          <SheetGrabber handleProps={handleProps} />
+          <SheetHeader className="px-4 pb-1.5 pt-1" {...handleProps}>
             <SheetTitle className="text-center text-base font-extrabold text-foreground">
               More
             </SheetTitle>
@@ -101,8 +105,9 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
       </Sheet>
 
       <Sheet open={chargeOpen} onOpenChange={(next) => (next ? null : setChargeOpen(false))}>
-        <SheetContent side="bottom" className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]">
-          <SheetHeader className="px-4 pb-1.5 pt-4">
+        <SheetContent side="bottom" style={charge2.dragStyle} className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]">
+          <SheetGrabber handleProps={charge2.handleProps} />
+          <SheetHeader className="px-4 pb-1.5 pt-1" {...charge2.handleProps}>
             <SheetTitle className="text-center text-base font-extrabold text-foreground">
               Service Charge
             </SheetTitle>

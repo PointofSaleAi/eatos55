@@ -259,6 +259,16 @@ export const countries = ["United States", "Canada", "United Kingdom", "Australi
 /** Order types / device profiles shown on the clock-in keypad strip. */
 export const orderTypes = ["Main", "hbjnj", "Online Ordering"];
 
+/** Service order types selectable on a new order. */
+export const serviceOrderTypes = [
+  "Dine In",
+  "Take Away",
+  "Delivery",
+  "Pickup",
+  "Online",
+] as const;
+export type ServiceOrderType = (typeof serviceOrderTypes)[number];
+
 /** Barcode-style category chips on the new order menu. */
 export const barcodeCategories = ["B", "C", "A", "TEST BARCODE"];
 

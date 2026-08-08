@@ -246,7 +246,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
       </div>
 
       {/* List */}
-      <div className="no-scrollbar relative flex-1 overflow-y-auto bg-background px-4 pb-[calc(0.75rem+var(--kb-inset,0px))] pt-3">
+      <div className="no-scrollbar relative min-h-0 flex-1 overflow-y-auto bg-background px-4 pb-[calc(0.75rem+var(--kb-inset,0px))] pt-3">
         {list.length ? (
           <div className="space-y-3">
             {list.map((t) => (

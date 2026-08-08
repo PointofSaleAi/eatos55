@@ -21,15 +21,16 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
   const { session } = usePos();
   useGlobalKeyboardAware();
   return (
-    <div className="min-h-[100dvh] bg-shell md:flex md:items-center md:justify-center md:p-8">
+    <div className="h-[100dvh] overflow-hidden bg-shell md:flex md:h-auto md:min-h-[100dvh] md:items-center md:justify-center md:overflow-visible md:p-8">
       <div
         className={cn(
-          "relative flex min-h-[100dvh] w-full overflow-hidden bg-background",
-          "md:min-h-0 md:h-[860px] md:w-[420px] md:rounded-[2.75rem] md:border-[10px] md:border-shell md:shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)]",
+          "relative flex h-full max-h-[100dvh] w-full overflow-hidden bg-background",
+          "md:h-[860px] md:max-h-none md:w-[420px] md:rounded-[2.75rem] md:border-[10px] md:border-shell md:shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)]",
           "lg:h-[880px] lg:w-[440px]",
         )}
       >
-        <div className="relative flex min-w-0 flex-1 flex-col">
+
+        <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
           {session.signedIn ? <ClockPullDown /> : null}
           {children}
         </div>
@@ -126,7 +127,7 @@ export function ScreenBody({
   return (
     <div
       className={cn(
-        "no-scrollbar flex-1 overflow-y-auto px-4 py-4 pb-[calc(1rem+var(--kb-inset,0px))]",
+        "no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4 pb-[calc(1rem+var(--kb-inset,0px))]",
         className,
       )}
     >

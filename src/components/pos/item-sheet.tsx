@@ -2,6 +2,7 @@ import { NotebookPen, Pencil, Percent } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
+import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { addOnGroups, modifierGroups, money, type MenuItem } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
@@ -23,6 +24,10 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [discount, setDiscount] = useState<{ name: string; percent: number } | null>(null);
   const [discountOpen, setDiscountOpen] = useState(false);
+  const { dragStyle, handleProps } = useSheetDrag(() => {
+    reset();
+    onClose();
+  });
 
   useEffect(() => {
     if (item) setPrice(item.price);
@@ -60,11 +65,13 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
       >
         <SheetContent
           side="bottom"
+          style={dragStyle}
           className="mx-auto flex max-h-[78dvh] w-full max-w-[420px] flex-col rounded-t-3xl border-0 bg-surface p-0"
         >
           {item ? (
             <>
-              <SheetHeader className="shrink-0 px-4 pb-1 pt-3 text-left">
+              <SheetGrabber handleProps={handleProps} />
+              <SheetHeader className="shrink-0 px-4 pb-1 pt-1 text-left" {...handleProps}>
                 <SheetTitle className="truncate text-base font-extrabold uppercase tracking-[0.02em] text-foreground">
                   {item.name}
                 </SheetTitle>

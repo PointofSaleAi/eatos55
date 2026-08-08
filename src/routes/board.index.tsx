@@ -56,7 +56,7 @@ function Board() {
   };
 
   return (
-    <div className="flex flex-1 flex-col bg-background">
+    <div className="flex min-h-0 flex-1 flex-col bg-background">
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-2xl font-extrabold text-foreground">Order Status</h1>

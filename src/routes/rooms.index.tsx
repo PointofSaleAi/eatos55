@@ -27,7 +27,7 @@ function Rooms() {
   const { startOrder } = usePos();
 
   return (
-    <div className="flex flex-1 flex-col bg-background">
+    <div className="flex min-h-0 flex-1 flex-col bg-background">
       <SubHeader title="Rooms" backLabel="Floor plan" />
       <ScreenBody>
         <div className="grid grid-cols-2 gap-3">

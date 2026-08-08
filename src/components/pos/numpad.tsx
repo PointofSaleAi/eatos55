@@ -18,7 +18,7 @@ function Key({
       aria-label={label}
       onClick={onPress}
       className={cn(
-        "grid h-full min-h-[52px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
+        "grid h-full min-h-[38px] place-items-center rounded-2xl bg-surface text-lg font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
         className,
       )}
     >
@@ -98,27 +98,6 @@ export function NumPad({
       <Key onPress={onBackspace} label="Backspace">
         <Delete className="size-5" />
       </Key>
-    </div>
-  );
-}
-
-/** Guest identity strip shown above the order / custom item keypads. */
-export function GuestHeader({
-  name = "Guest Name",
-  phone = "(XXX) XXX-XXXX",
-  right,
-}: {
-  name?: string;
-  phone?: string;
-  right?: React.ReactNode;
-}) {
-  return (
-    <div className="flex shrink-0 items-center gap-2 border-b border-border bg-surface px-4 py-3">
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-bold text-foreground">{name}</p>
-        <p className="truncate text-xs text-muted-foreground">{phone}</p>
-      </div>
-      {right ? <div className="flex shrink-0 items-center gap-1">{right}</div> : null}
     </div>
   );
 }

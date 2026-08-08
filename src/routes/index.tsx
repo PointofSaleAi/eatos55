@@ -32,7 +32,7 @@ function SignInScreen() {
   const [show, setShow] = useState(false);
 
   return (
-    <div className="flex flex-1 flex-col bg-background">
+    <div className="flex min-h-0 flex-1 flex-col bg-background">
       <div className="no-scrollbar flex flex-1 flex-col justify-center overflow-y-auto px-6 pb-[calc(2rem+var(--kb-inset,0px))] pt-8 [html[data-kb=open]_&]:justify-start">
         <div className="my-auto w-full [html[data-kb=open]_&]:my-0">
         <div className="flex flex-col items-center">

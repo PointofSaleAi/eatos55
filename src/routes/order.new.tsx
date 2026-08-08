@@ -2,6 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { BookOpen, Calculator, ChevronDown, MoreVertical, Plus, Search, Wifi } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { GuestBlock } from "@/components/pos/guest-block";
+import { GuestSheet } from "@/components/pos/guest-sheet";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { MoreSheet } from "@/components/pos/more-sheet";
 import { liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
@@ -25,11 +27,12 @@ export const Route = createFileRoute("/order/new")({
 
 function NewOrder() {
   const navigate = useNavigate();
-  const { totals, activeTable, cart, changeQty } = usePos();
+  const { totals, cart, changeQty } = usePos();
   const [activeMenu, setActiveMenu] = useState(menus[1]!.id);
   const [category, setCategory] = useState<string>(menus[1]!.categories[0]!);
   const [sheetItem, setSheetItem] = useState<MenuItem | null>(null);
   const [moreOpen, setMoreOpen] = useState(false);
+  const [guestOpen, setGuestOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [tab, setTab] = useState<"menu" | "order">("menu");
@@ -41,15 +44,10 @@ function NewOrder() {
   const items = q ? base.filter((i) => i.name.toLowerCase().includes(q)) : base;
 
   return (
-    <div className="flex flex-1 flex-col bg-background">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
         <div className="flex items-center gap-2">
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-bold text-foreground">
-              {activeTable ?? "Guest Name"}
-            </p>
-            <p className="truncate text-xs text-muted-foreground">(XXX) XXX-XXXX</p>
-          </div>
+          <GuestBlock onEdit={() => setGuestOpen(true)} />
 
           <button
             type="button"
@@ -144,7 +142,7 @@ function NewOrder() {
         ) : null}
       </div>
 
-      <div className="no-scrollbar flex-1 overflow-y-auto px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-4">
+      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-3">
         {tab === "order" ? (
           cart.length === 0 ? (
             <p className="px-4 py-24 text-center text-sm text-muted-foreground">
@@ -215,34 +213,8 @@ function NewOrder() {
         )}
       </div>
 
-      <div className="shrink-0 border-t border-border bg-surface px-3 py-2">
-        <div className="grid grid-cols-3 items-center rounded-2xl border border-border bg-surface">
-          <button
-            type="button"
-            onClick={() => navigate({ to: "/order/custom-item" })}
-            className="flex min-h-[52px] flex-col items-center justify-center gap-1 text-foreground"
-          >
-            <Calculator className="size-5" />
-            <span className="text-[11px] font-bold">Custom Item</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate({ to: "/order/menu" })}
-            className="flex min-h-[52px] flex-col items-center justify-center gap-1 text-accent"
-          >
-            <BookOpen className="size-5" />
-            <span className="text-[11px] font-bold">Menu</span>
-          </button>
-          <span className="flex min-h-[52px] flex-col items-center justify-center gap-1 text-sky-600">
-            <Wifi className="size-5" />
-            <span className="text-[11px] font-bold">Server Connected</span>
-          </span>
-        </div>
-      </div>
-
-
       {totals.count > 0 ? (
-        <div className="shrink-0 border-t border-border bg-surface px-4 pb-3 pt-3">
+        <div className="shrink-0 border-t border-border bg-surface px-4 pb-2 pt-2">
           <Button
             className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90"
             onClick={() => navigate({ to: "/order/review" })}
@@ -253,8 +225,35 @@ function NewOrder() {
         </div>
       ) : null}
 
+      <div className="shrink-0 border-t border-border bg-surface px-3 py-1.5">
+        <div className="grid grid-cols-3 items-center rounded-2xl border border-border bg-surface">
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/order/custom-item" })}
+            className="flex min-h-[46px] flex-col items-center justify-center gap-0.5 text-foreground"
+          >
+            <Calculator className="size-5" />
+            <span className="text-[11px] font-bold">Custom Item</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/order/menu" })}
+            className="flex min-h-[46px] flex-col items-center justify-center gap-0.5 text-accent"
+          >
+            <BookOpen className="size-5" />
+            <span className="text-[11px] font-bold">Menu</span>
+          </button>
+          <span className="flex min-h-[46px] flex-col items-center justify-center gap-0.5 text-sky-600">
+            <Wifi className="size-5" />
+            <span className="text-[11px] font-bold">Server Connected</span>
+          </span>
+        </div>
+      </div>
+
+
       <ItemSheet item={sheetItem} onClose={() => setSheetItem(null)} />
       <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
+      <GuestSheet open={guestOpen} onClose={() => setGuestOpen(false)} />
     </div>
   );
 }

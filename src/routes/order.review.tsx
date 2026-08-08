@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import { useState } from "react";
 import { ChevronLeft, Minus, Plus, Printer } from "lucide-react";
-import { GuestHeader } from "@/components/pos/numpad";
+import { GuestBlock } from "@/components/pos/guest-block";
+import { GuestSheet } from "@/components/pos/guest-sheet";
 import { EmptyState } from "@/components/pos/primitives";
 import { TAX_RATE, money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
@@ -28,6 +30,7 @@ function OrderReview() {
   const router = useRouter();
   const { cart, changeQty, totals, tickets } = usePos();
   const orderNumber = tickets.length + 1;
+  const [guestOpen, setGuestOpen] = useState(false);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-background">
@@ -44,8 +47,9 @@ function OrderReview() {
           Order Number {orderNumber}
         </h1>
       </div>
-      <GuestHeader
-        right={
+      <div className="flex shrink-0 items-center gap-2 border-b border-border bg-surface px-3 py-2">
+        <GuestBlock onEdit={() => setGuestOpen(true)} />
+        {(
           <button
             type="button"
             aria-label="Print order"
@@ -54,8 +58,8 @@ function OrderReview() {
           >
             <Printer className="size-6" />
           </button>
-        }
-      />
+        )}
+      </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
         {cart.length ? (
@@ -135,6 +139,7 @@ function OrderReview() {
           Charge {money(totals.total)}
         </button>
       </div>
+      <GuestSheet open={guestOpen} onClose={() => setGuestOpen(false)} />
     </div>
   );
 }
