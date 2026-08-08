@@ -33,7 +33,8 @@ function SignInScreen() {
 
   return (
     <div className="flex flex-1 flex-col bg-background">
-      <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto px-6 pb-6 pt-10">
+      <div className="no-scrollbar flex flex-1 flex-col justify-center overflow-y-auto px-6 py-8">
+        <div className="my-auto w-full">
         <div className="flex flex-col items-center">
           <Wordmark />
           <h1 className="mt-5 text-3xl font-extrabold leading-tight text-foreground">Point of Purchase</h1>
