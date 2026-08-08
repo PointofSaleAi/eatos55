@@ -357,7 +357,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
           <div className="flex gap-3 px-4 pt-4">
             <button
               type="button"
-              onClick={() => setFilters(emptyTicketFilters)}
+              onClick={() => setFilters(emptyFilters)}
               className="min-h-[52px] flex-1 rounded-xl border border-border text-base font-bold text-foreground"
             >
               Clear all
