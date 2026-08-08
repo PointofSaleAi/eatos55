@@ -62,6 +62,7 @@ function SignInScreen() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onFocus={scrollFieldIntoView}
               placeholder="Enter Email or Phone Number"
               className="h-12 rounded-xl bg-surface"
             />
