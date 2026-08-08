@@ -32,11 +32,12 @@ const chips = [...barcodeCategories, ...categories];
 
 function NewOrder() {
   const navigate = useNavigate();
-  const { addItem, totals } = usePos();
+  const { addItem, totals, activeTable, cart, changeQty } = usePos();
   const [category, setCategory] = useState<string>(chips[0]!);
   const [scanMode, setScanMode] = useState("Barcode");
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
+  const [tab, setTab] = useState<"menu" | "order">("menu");
 
   const base =
     category === "Popular"
@@ -50,9 +51,12 @@ function NewOrder() {
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
         <div className="flex items-center gap-2">
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-bold text-foreground">Guest Name</p>
+            <p className="truncate text-sm font-bold text-foreground">
+              {activeTable ?? "Guest Name"}
+            </p>
             <p className="truncate text-xs text-muted-foreground">(XXX) XXX-XXXX</p>
           </div>
+
           <button
             type="button"
             aria-label="Search products"
@@ -99,40 +103,101 @@ function NewOrder() {
           />
         ) : null}
 
-        <div className="no-scrollbar -mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4">
-          <div className="relative shrink-0">
-            <select
-              aria-label="Scan mode"
-              value={scanMode}
-              onChange={(e) => setScanMode(e.target.value)}
-              className="h-11 appearance-none rounded-xl border border-border bg-surface pl-3 pr-8 text-sm text-foreground outline-none"
-            >
-              <option value="Barcode">Barcode</option>
-              <option value="SKU">SKU</option>
-              <option value="PLU">PLU</option>
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          </div>
-          {chips.map((c) => (
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {(["menu", "order"] as const).map((t) => (
             <button
-              key={c}
+              key={t}
               type="button"
-              onClick={() => setCategory(c)}
+              onClick={() => setTab(t)}
               className={cn(
-                "min-h-[40px] shrink-0 rounded-full px-4 text-sm font-bold transition-colors",
-                c === category
+                "min-h-[40px] rounded-full text-sm font-extrabold uppercase transition-colors",
+                t === tab
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-secondary",
               )}
             >
-              {c}
+              {t === "menu" ? "Menu" : `Order${totals.count ? ` · ${totals.count}` : ""}`}
             </button>
           ))}
         </div>
+
+        {tab === "menu" ? (
+          <div className="no-scrollbar -mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4">
+            <div className="relative shrink-0">
+              <select
+                aria-label="Scan mode"
+                value={scanMode}
+                onChange={(e) => setScanMode(e.target.value)}
+                className="h-11 appearance-none rounded-xl border border-border bg-surface pl-3 pr-8 text-sm text-foreground outline-none"
+              >
+                <option value="Barcode">Barcode</option>
+                <option value="SKU">SKU</option>
+                <option value="PLU">PLU</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            </div>
+            {chips.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setCategory(c)}
+                className={cn(
+                  "min-h-[40px] shrink-0 rounded-full px-4 text-sm font-bold transition-colors",
+                  c === category
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:bg-secondary",
+                )}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        ) : null}
       </div>
 
       <div className="no-scrollbar flex-1 overflow-y-auto px-4 py-4">
-        {items.length === 0 ? (
+        {tab === "order" ? (
+          cart.length === 0 ? (
+            <p className="px-4 py-24 text-center text-sm text-muted-foreground">
+              No items yet — add products from the menu
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {cart.map((l) => (
+                <div
+                  key={l.id}
+                  className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-3"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-extrabold text-foreground">{l.name}</p>
+                    <p className="text-xs text-muted-foreground">{money(l.price)}</p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <button
+                      type="button"
+                      aria-label={`Remove one ${l.name}`}
+                      onClick={() => changeQty(l.id, -1)}
+                      className="grid size-9 place-items-center rounded-full border border-border text-sm font-bold text-foreground"
+                    >
+                      −
+                    </button>
+                    <span className="w-6 text-center text-sm font-bold text-foreground">
+                      {l.qty}
+                    </span>
+                    <button
+                      type="button"
+                      aria-label={`Add one ${l.name}`}
+                      onClick={() => changeQty(l.id, 1)}
+                      className="grid size-9 place-items-center rounded-full border border-border text-sm font-bold text-foreground"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
+        ) : items.length === 0 ? (
           <p className="px-4 py-24 text-center text-sm text-muted-foreground">
             No products found for this category
           </p>
@@ -161,6 +226,7 @@ function NewOrder() {
           </div>
         )}
       </div>
+
 
       {totals.count > 0 ? (
         <div className="shrink-0 border-t border-border bg-surface px-4 pb-3 pt-3">

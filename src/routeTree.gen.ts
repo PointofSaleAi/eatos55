@@ -15,6 +15,8 @@ import { Route as AccessCreateAccountRouteImport } from './routes/access.create-
 import { Route as AccessForgotPasswordRouteImport } from './routes/access.forgot-password'
 import { Route as AccessManagerPinRouteImport } from './routes/access.manager-pin'
 import { Route as AccessSelectStationRouteImport } from './routes/access.select-station'
+import { Route as BoardIndexRouteImport } from './routes/board.index'
+import { Route as FloorIndexRouteImport } from './routes/floor.index'
 import { Route as OrderCustomItemRouteImport } from './routes/order.custom-item'
 import { Route as OrderMenuRouteImport } from './routes/order.menu'
 import { Route as OrderNewRouteImport } from './routes/order.new'
@@ -23,6 +25,7 @@ import { Route as OrdersIndexRouteImport } from './routes/orders.index'
 import { Route as PaymentCardRouteImport } from './routes/payment.card'
 import { Route as PaymentCashRouteImport } from './routes/payment.cash'
 import { Route as PaymentMethodRouteImport } from './routes/payment.method'
+import { Route as RoomsIndexRouteImport } from './routes/rooms.index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SettingsControlCenterRouteImport } from './routes/settings.control-center'
 import { Route as SettingsGeneralRouteImport } from './routes/settings.general'
@@ -81,6 +84,16 @@ const AccessSelectStationRoute = AccessSelectStationRouteImport.update({
   path: '/access/select-station',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BoardIndexRoute = BoardIndexRouteImport.update({
+  id: '/board/',
+  path: '/board/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FloorIndexRoute = FloorIndexRouteImport.update({
+  id: '/floor/',
+  path: '/floor/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OrderCustomItemRoute = OrderCustomItemRouteImport.update({
   id: '/order/custom-item',
   path: '/order/custom-item',
@@ -119,6 +132,11 @@ const PaymentCashRoute = PaymentCashRouteImport.update({
 const PaymentMethodRoute = PaymentMethodRouteImport.update({
   id: '/payment/method',
   path: '/payment/method',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoomsIndexRoute = RoomsIndexRouteImport.update({
+  id: '/rooms/',
+  path: '/rooms/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
@@ -295,7 +313,10 @@ export interface FileRoutesByFullPath {
   '/tickets/search': typeof TicketsSearchRoute
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
+  '/board/': typeof BoardIndexRoute
+  '/floor/': typeof FloorIndexRoute
   '/orders/': typeof OrdersIndexRoute
+  '/rooms/': typeof RoomsIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/system/': typeof SystemIndexRoute
   '/tickets/': typeof TicketsIndexRoute
@@ -338,7 +359,10 @@ export interface FileRoutesByTo {
   '/tickets/search': typeof TicketsSearchRoute
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
+  '/board': typeof BoardIndexRoute
+  '/floor': typeof FloorIndexRoute
   '/orders': typeof OrdersIndexRoute
+  '/rooms': typeof RoomsIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/system': typeof SystemIndexRoute
   '/tickets': typeof TicketsIndexRoute
@@ -382,7 +406,10 @@ export interface FileRoutesById {
   '/tickets/search': typeof TicketsSearchRoute
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
+  '/board/': typeof BoardIndexRoute
+  '/floor/': typeof FloorIndexRoute
   '/orders/': typeof OrdersIndexRoute
+  '/rooms/': typeof RoomsIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/system/': typeof SystemIndexRoute
   '/tickets/': typeof TicketsIndexRoute
@@ -427,7 +454,10 @@ export interface FileRouteTypes {
     | '/tickets/search'
     | '/tickets/sort'
     | '/tickets/whats-new'
+    | '/board/'
+    | '/floor/'
     | '/orders/'
+    | '/rooms/'
     | '/settings/'
     | '/system/'
     | '/tickets/'
@@ -470,7 +500,10 @@ export interface FileRouteTypes {
     | '/tickets/search'
     | '/tickets/sort'
     | '/tickets/whats-new'
+    | '/board'
+    | '/floor'
     | '/orders'
+    | '/rooms'
     | '/settings'
     | '/system'
     | '/tickets'
@@ -513,7 +546,10 @@ export interface FileRouteTypes {
     | '/tickets/search'
     | '/tickets/sort'
     | '/tickets/whats-new'
+    | '/board/'
+    | '/floor/'
     | '/orders/'
+    | '/rooms/'
     | '/settings/'
     | '/system/'
     | '/tickets/'
@@ -557,7 +593,10 @@ export interface RootRouteChildren {
   TicketsSearchRoute: typeof TicketsSearchRoute
   TicketsSortRoute: typeof TicketsSortRoute
   TicketsWhatsNewRoute: typeof TicketsWhatsNewRoute
+  BoardIndexRoute: typeof BoardIndexRoute
+  FloorIndexRoute: typeof FloorIndexRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
+  RoomsIndexRoute: typeof RoomsIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   SystemIndexRoute: typeof SystemIndexRoute
   TicketsIndexRoute: typeof TicketsIndexRoute
@@ -605,6 +644,20 @@ declare module '@tanstack/react-router' {
       path: '/access/select-station'
       fullPath: '/access/select-station'
       preLoaderRoute: typeof AccessSelectStationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/board/': {
+      id: '/board/'
+      path: '/board'
+      fullPath: '/board/'
+      preLoaderRoute: typeof BoardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/floor/': {
+      id: '/floor/'
+      path: '/floor'
+      fullPath: '/floor/'
+      preLoaderRoute: typeof FloorIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/order/custom-item': {
@@ -661,6 +714,13 @@ declare module '@tanstack/react-router' {
       path: '/payment/method'
       fullPath: '/payment/method'
       preLoaderRoute: typeof PaymentMethodRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rooms/': {
+      id: '/rooms/'
+      path: '/rooms'
+      fullPath: '/rooms/'
+      preLoaderRoute: typeof RoomsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings/': {
@@ -903,7 +963,10 @@ const rootRouteChildren: RootRouteChildren = {
   TicketsSearchRoute: TicketsSearchRoute,
   TicketsSortRoute: TicketsSortRoute,
   TicketsWhatsNewRoute: TicketsWhatsNewRoute,
+  BoardIndexRoute: BoardIndexRoute,
+  FloorIndexRoute: FloorIndexRoute,
   OrdersIndexRoute: OrdersIndexRoute,
+  RoomsIndexRoute: RoomsIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   SystemIndexRoute: SystemIndexRoute,
   TicketsIndexRoute: TicketsIndexRoute,
@@ -911,13 +974,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

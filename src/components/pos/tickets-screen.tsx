@@ -23,16 +23,21 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { usePos, emptyFilters, type SortKey } from "@/lib/pos-store";
 import {
   employees,
+  money,
   paymentTypes,
   revenueCenters,
   ticketOrderTypes,
   type TicketStatus,
 } from "@/lib/demo-data";
+
 import { cn } from "@/lib/utils";
 
 export type TicketsOverlay = "none" | "sort" | "filter" | "search";
 
-type Tab = "all" | Extract<TicketStatus, "ordering" | "payment" | "ready" | "preparing" | "paid">;
+type Tab =
+  | "all"
+  | "unpaid"
+  | Extract<TicketStatus, "ordering" | "payment" | "ready" | "preparing" | "paid">;
 
 const tabs: { id: Tab; label: string }[] = [
   { id: "all", label: "All" },
@@ -41,7 +46,9 @@ const tabs: { id: Tab; label: string }[] = [
   { id: "ready", label: "Ready" },
   { id: "preparing", label: "Preparing" },
   { id: "paid", label: "Paid" },
+  { id: "unpaid", label: "Unpaid" },
 ];
+
 
 const sortOptions: { id: SortKey; icon: typeof Clock; strong: string; rest: string }[] = [
   { id: "time-late-early", icon: Clock, strong: "Time", rest: "Late → Early" },
@@ -100,9 +107,12 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
   const [overlay, setOverlay] = useState<TicketsOverlay>(initialOverlay);
   const [openFacet, setOpenFacet] = useState<string | null>(null);
 
-  const list = visibleTickets(tab === "all" ? "all" : tab, {
+  const baseList = visibleTickets(tab === "all" || tab === "unpaid" ? "all" : tab, {
     ignoreDate: overlay === "search" && search.trim().length > 0,
   });
+  const list = tab === "unpaid" ? baseList.filter((t) => t.status !== "paid") : baseList;
+  const amountDue = list.filter((t) => t.status !== "paid").reduce((s, t) => s + t.total, 0);
+
 
   const dateLabel = new Date(`${ticketDate}T12:00:00`).toLocaleDateString("en-GB", {
     day: "2-digit",
@@ -213,6 +223,12 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
             </button>
           ))}
         </div>
+
+        <div className="flex items-center justify-between gap-3 border-t border-border py-3">
+          <p className="text-sm font-bold text-muted-foreground">Amount Due</p>
+          <p className="text-sm font-extrabold text-accent">{money(amountDue)}</p>
+        </div>
+
       </div>
 
       {/* List */}

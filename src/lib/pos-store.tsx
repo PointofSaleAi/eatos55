@@ -133,8 +133,13 @@ type Store = {
   setMode: (m: MenuMode) => void;
   cart: CartLine[];
   activeTicketId: string | null;
-  startOrder: () => void;
+  activeTable: string | null;
+  floor: string;
+  setFloor: (f: string) => void;
+  tableStates: Record<string, "ordering">;
+  startOrder: (table?: string) => void;
   openTicket: (id: string) => void;
+
   addItem: (menuId: string) => void;
   addCustomItem: (name: string, price: number) => void;
   changeQty: (id: string, delta: number) => void;
@@ -169,6 +174,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [mode, setMode] = useState<MenuMode>("dine-in");
   const [cart, setCart] = useState<CartLine[]>([]);
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
+  const [activeTable, setActiveTable] = useState<string | null>(null);
+  const [floor, setFloor] = useState<string>("Ground Floor");
+  const [tableStates, setTableStates] = useState<Record<string, "ordering">>({});
+
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [managerUnlocked, setManagerUnlocked] = useState(false);
   const [lastPayment, setLastPayment] = useState<LastPayment>(null);
@@ -258,10 +267,17 @@ export function PosProvider({ children }: { children: ReactNode }) {
       setMode,
       cart,
       activeTicketId,
-      startOrder: () => {
+      activeTable,
+      floor,
+      setFloor,
+      tableStates,
+      startOrder: (table) => {
         setCart([]);
         setActiveTicketId(null);
+        setActiveTable(table ?? null);
+        if (table) setTableStates((s) => ({ ...s, [table]: "ordering" }));
       },
+
       openTicket: (id) => {
         const ticket = tickets.find((t) => t.id === id);
         if (!ticket) return;
@@ -355,6 +371,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
     mode,
     cart,
     activeTicketId,
+    activeTable,
+    floor,
+    tableStates,
+
     settings,
     managerUnlocked,
     lastPayment,
