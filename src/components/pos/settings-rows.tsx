@@ -98,9 +98,21 @@ const rowBase =
 
 export function IconNavRow({
   to,
+  topic,
   onClick,
   ...rest
-}: RowShellProps & { to?: string; onClick?: () => void }) {
+}: RowShellProps & { to?: string; topic?: string; onClick?: () => void }) {
+  if (topic) {
+    return (
+      <Link
+        to="/settings/detail/$topic"
+        params={{ topic }}
+        className={cn(rowBase, "transition-colors hover:bg-muted")}
+      >
+        <RowInner {...rest} chevron />
+      </Link>
+    );
+  }
   if (to) {
     return (
       <Link to={to} className={cn(rowBase, "transition-colors hover:bg-muted")}>
@@ -119,8 +131,21 @@ export function IconNavRow({
   );
 }
 
-export function IconValueRow(props: RowShellProps & { onClick?: () => void }) {
-  const { onClick, ...rest } = props;
+export function IconValueRow(
+  props: RowShellProps & { onClick?: () => void; topic?: string },
+) {
+  const { onClick, topic, ...rest } = props;
+  if (topic) {
+    return (
+      <Link
+        to="/settings/detail/$topic"
+        params={{ topic }}
+        className={cn(rowBase, "transition-colors hover:bg-muted")}
+      >
+        <RowInner {...rest} />
+      </Link>
+    );
+  }
   if (!onClick) {
     return (
       <div className={rowBase}>
@@ -157,6 +182,51 @@ export function IconToggleRow({
           />
         }
       />
+    </div>
+  );
+}
+
+/** Either/or row: exactly one of the options is selected. */
+export function SegmentRow({
+  title,
+  options,
+  value,
+  onChange,
+}: {
+  title: string;
+  options: string[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className={cn(rowBase, "flex-col items-stretch gap-2 sm:flex-row sm:items-center")}>
+      <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">{title}</span>
+      <div
+        role="radiogroup"
+        aria-label={title}
+        className="flex shrink-0 gap-1 rounded-full bg-muted p-1"
+      >
+        {options.map((option) => {
+          const active = option === value;
+          return (
+            <button
+              key={option}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => onChange(option)}
+              className={cn(
+                "min-h-[32px] flex-1 whitespace-nowrap rounded-full px-3 text-xs font-bold transition-colors",
+                active
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {option}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
