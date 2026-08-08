@@ -60,7 +60,7 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
   return (
     <>
       <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
-        <SheetContent side="bottom" className="rounded-t-3xl border-0 bg-surface p-0 pb-8">
+        <SheetContent side="bottom" className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-8">
           <SheetHeader className="px-4 pb-2 pt-5">
             <SheetTitle className="text-center text-xl font-extrabold text-foreground">
               More
@@ -101,7 +101,7 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
       </Sheet>
 
       <Sheet open={chargeOpen} onOpenChange={(next) => (next ? null : setChargeOpen(false))}>
-        <SheetContent side="bottom" className="rounded-t-3xl border-0 bg-surface p-0 pb-8">
+        <SheetContent side="bottom" className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-8">
           <SheetHeader className="px-4 pb-2 pt-5">
             <SheetTitle className="text-center text-xl font-extrabold text-foreground">
               Service Charge

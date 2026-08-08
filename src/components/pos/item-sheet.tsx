@@ -59,12 +59,12 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
       >
         <SheetContent
           side="bottom"
-          className="max-h-[90dvh] overflow-y-auto rounded-t-3xl border-0 bg-surface p-0"
+          className="mx-auto max-h-[85dvh] w-full max-w-[420px] overflow-y-auto rounded-t-3xl border-0 bg-surface p-0"
         >
           {item ? (
             <>
-              <SheetHeader className="px-4 pb-2 pt-5 text-left">
-                <SheetTitle className="text-xl font-extrabold text-foreground">
+              <SheetHeader className="px-4 pb-1 pt-4 text-left">
+                <SheetTitle className="text-lg font-extrabold text-foreground">
                   {item.name}
                 </SheetTitle>
               </SheetHeader>
@@ -115,7 +115,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Item Notes"
                     aria-label="Item notes"
-                    className="h-12 min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none"
+                    className="h-11 min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none"
                   />
                 </div>
               </div>
@@ -180,7 +180,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                         })
                       }
                       className={cn(
-                        "flex min-h-[48px] items-center justify-between gap-2 rounded-2xl border px-4 text-left text-sm font-bold transition-colors",
+                        "flex min-h-[44px] items-center justify-between gap-2 rounded-2xl border px-4 text-left text-sm font-bold transition-colors",
                         on
                           ? "border-accent bg-accent/10 text-foreground"
                           : "border-border bg-surface text-foreground",
@@ -203,7 +203,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                   onClick={() => setDiscountOpen(true)}
                   aria-label="Apply discount"
                   className={cn(
-                    "grid size-12 shrink-0 place-items-center rounded-full border",
+                    "grid size-11 shrink-0 place-items-center rounded-full border",
                     discount
                       ? "border-accent bg-accent text-accent-foreground"
                       : "border-border text-foreground",
@@ -225,7 +225,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                     reset();
                     onClose();
                   }}
-                  className="min-h-[52px] flex-1 rounded-full bg-primary text-base font-extrabold uppercase tracking-[0.06em] text-primary-foreground"
+                  className="min-h-[48px] flex-1 rounded-full bg-primary text-sm font-extrabold uppercase tracking-[0.06em] text-primary-foreground"
                 >
                   Add · {money(lineTotal)}
                 </button>
