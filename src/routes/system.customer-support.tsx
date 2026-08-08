@@ -82,8 +82,8 @@ function CustomerSupport() {
             title="Live Pin"
             icon={MessageCircleMore}
             color="grey"
-            value={settings.livePin}
             right={
+              <>
               <button
                 type="button"
                 aria-label="Regenerate Live Pin"
@@ -96,6 +96,8 @@ function CustomerSupport() {
               >
                 <RotateCw className="size-5" />
               </button>
+              <span className="shrink-0 text-lg font-bold text-foreground">{settings.livePin}</span>
+              </>
             }
           />
           <IconNavRow
