@@ -38,18 +38,18 @@ export function PinSheet({
     >
       <SheetContent
         side="bottom"
-        className="max-h-[92dvh] overflow-y-auto rounded-t-3xl border-0 bg-background px-3 pb-6 pt-3"
+        className="max-h-[92dvh] overflow-y-auto rounded-t-3xl border-t border-border bg-background px-4 pb-6 pt-4"
       >
-        <SheetTitle className="text-center text-xl font-extrabold text-foreground">
+        <SheetTitle className="text-center text-2xl font-extrabold text-foreground">
           Enter PIN
         </SheetTitle>
 
-        <div className="mt-3 flex min-h-[64px] items-center justify-center gap-8 rounded-xl bg-surface px-4">
+        <div className="mt-3 flex min-h-[56px] items-center justify-center gap-8 rounded-2xl border border-border bg-surface px-4">
           {[0, 1, 2, 3].map((i) => (
             <span
               key={i}
               className={cn(
-                "text-4xl font-bold leading-none",
+                "text-2xl font-extrabold leading-none",
                 i < pin.length ? "text-foreground" : "text-foreground/25",
               )}
             >
@@ -64,7 +64,7 @@ export function PinSheet({
               key={k}
               type="button"
               onClick={() => push(k)}
-              className="grid min-h-[64px] place-items-center rounded-2xl bg-surface text-3xl font-bold text-muted-foreground transition-colors active:bg-muted"
+              className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]"
             >
               {k}
             </button>
@@ -73,14 +73,14 @@ export function PinSheet({
             type="button"
             aria-label="Clear PIN"
             onClick={() => setPin("")}
-            className="grid min-h-[64px] place-items-center rounded-2xl bg-surface text-3xl font-bold text-destructive transition-colors active:bg-muted"
+            className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-destructive shadow-sm transition-transform active:scale-[0.97]"
           >
             C
           </button>
           <button
             type="button"
             onClick={() => push("0")}
-            className="grid min-h-[64px] place-items-center rounded-2xl bg-surface text-3xl font-bold text-muted-foreground transition-colors active:bg-muted"
+            className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]"
           >
             0
           </button>
@@ -88,7 +88,7 @@ export function PinSheet({
             type="button"
             aria-label="Delete last digit"
             onClick={() => setPin((p) => p.slice(0, -1))}
-            className="grid min-h-[64px] place-items-center rounded-2xl bg-surface text-destructive transition-colors active:bg-muted"
+            className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-destructive shadow-sm transition-transform active:scale-[0.97]"
           >
             <Delete className="size-8" />
           </button>
@@ -99,17 +99,17 @@ export function PinSheet({
             type="button"
             aria-label="Unlock with fingerprint"
             onClick={onSubmit}
-            className="grid min-h-[64px] place-items-center rounded-2xl bg-foreground text-surface transition-transform active:scale-[0.98]"
+            className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-foreground shadow-sm transition-transform active:scale-[0.97]"
           >
-            <Fingerprint className="size-8" />
+            <Fingerprint className="size-6" />
           </button>
           <button
             type="button"
             aria-label="Unlock with face"
             onClick={onSubmit}
-            className="grid min-h-[64px] place-items-center rounded-2xl bg-foreground text-surface transition-transform active:scale-[0.98]"
+            className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-foreground shadow-sm transition-transform active:scale-[0.97]"
           >
-            <ScanFace className="size-8" />
+            <ScanFace className="size-6" />
           </button>
         </div>
       </SheetContent>

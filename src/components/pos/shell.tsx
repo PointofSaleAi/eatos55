@@ -61,7 +61,7 @@ export function ScreenHeader({
   );
 }
 
-/** Back-labelled sub screen header: "< Back" on the left, centered title. */
+/** Sub screen header: back chevron + labelled title, original design styling. */
 export function SubHeader({
   title,
   backLabel = "Back",
@@ -73,18 +73,25 @@ export function SubHeader({
 }) {
   const router = useRouter();
   return (
-    <div className="shrink-0 bg-background px-2 pb-2 pt-3">
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-        <button
-          type="button"
-          onClick={() => router.history.back()}
-          className="flex min-h-[44px] items-center gap-1 justify-self-start rounded-full px-1 text-lg text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ChevronLeft className="size-6" />
-          <span className="truncate font-medium">{backLabel}</span>
-        </button>
-        <h1 className="truncate text-lg font-extrabold text-foreground">{title}</h1>
-        <div className="flex items-center justify-end gap-1">{right}</div>
+    <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <button
+            type="button"
+            aria-label={`Back to ${backLabel}`}
+            onClick={() => router.history.back()}
+            className="-ml-1 grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+          >
+            <ChevronLeft className="size-5" />
+          </button>
+          <div className="min-w-0">
+            <p className="truncate text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              {backLabel}
+            </p>
+            <h1 className="truncate text-2xl font-extrabold text-foreground">{title}</h1>
+          </div>
+        </div>
+        {right ? <div className="flex shrink-0 items-center gap-1">{right}</div> : null}
       </div>
     </div>
   );

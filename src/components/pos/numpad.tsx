@@ -18,7 +18,7 @@ function Key({
       aria-label={label}
       onClick={onPress}
       className={cn(
-        "grid min-h-[60px] place-items-center rounded-xl border border-border bg-surface text-2xl font-bold text-foreground transition-colors active:bg-muted",
+        "grid min-h-[56px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
         className,
       )}
     >
@@ -72,14 +72,14 @@ export function NumPad({
           label="Backspace"
           className="col-start-4 row-start-1 row-span-2"
         >
-          <Delete className="size-6" />
+          <Delete className="size-5" />
         </Key>
         <Key
           onPress={() => onPlus?.()}
           label="Add another"
           className="col-start-4 row-start-3 row-span-2 bg-primary text-primary-foreground"
         >
-          <Plus className="size-6" />
+          <Plus className="size-5" />
         </Key>
       </div>
     );
@@ -96,7 +96,7 @@ export function NumPad({
       <Key onPress={() => onDigit(".")}>.</Key>
       <Key onPress={() => onDigit("0")}>0</Key>
       <Key onPress={onBackspace} label="Backspace">
-        <Delete className="size-6" />
+        <Delete className="size-5" />
       </Key>
     </div>
   );
@@ -115,8 +115,8 @@ export function GuestHeader({
   return (
     <div className="flex shrink-0 items-center gap-2 border-b border-border bg-surface px-4 py-3">
       <div className="min-w-0 flex-1">
-        <p className="truncate text-base font-bold text-muted-foreground">{name}</p>
-        <p className="truncate text-base font-bold text-muted-foreground">{phone}</p>
+        <p className="truncate text-sm font-bold text-foreground">{name}</p>
+        <p className="truncate text-xs text-muted-foreground">{phone}</p>
       </div>
       {right ? <div className="flex shrink-0 items-center gap-1">{right}</div> : null}
     </div>

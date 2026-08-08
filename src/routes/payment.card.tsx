@@ -41,13 +41,13 @@ function PayByCard() {
         >
           <ChevronLeft className="size-6" />
         </button>
-        <h1 className="truncate text-xl font-extrabold text-foreground">Pay by Card</h1>
+        <h1 className="truncate text-2xl font-extrabold text-foreground">Pay by Card</h1>
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
         <div className="py-6 text-center">
           <p className="text-5xl font-extrabold tabular-nums text-foreground">{money(charged)}</p>
-          <p className="mt-2 text-base text-muted-foreground">Total due {money(totals.total)}</p>
+          <p className="mt-2 text-sm text-muted-foreground">Total due {money(totals.total)}</p>
         </div>
 
         <NumPad
@@ -72,7 +72,7 @@ function PayByCard() {
             toast.success("Card payment approved");
             navigate({ to: "/tickets" });
           }}
-          className="min-h-[56px] w-full rounded-xl bg-primary text-base font-extrabold uppercase tracking-wide text-primary-foreground disabled:opacity-40"
+          className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
         >
           Charge {money(charged)}
         </button>

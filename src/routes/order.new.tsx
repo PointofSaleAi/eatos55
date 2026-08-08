@@ -50,8 +50,8 @@ function NewOrder() {
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
         <div className="flex items-center gap-2">
           <div className="min-w-0 flex-1">
-            <p className="truncate text-base font-bold text-muted-foreground">Guest Name</p>
-            <p className="truncate text-base font-bold text-muted-foreground">(XXX) XXX-XXXX</p>
+            <p className="truncate text-sm font-bold text-foreground">Guest Name</p>
+            <p className="truncate text-xs text-muted-foreground">(XXX) XXX-XXXX</p>
           </div>
           <button
             type="button"
@@ -83,7 +83,7 @@ function NewOrder() {
           <button
             type="button"
             onClick={() => navigate({ to: "/order/custom-item" })}
-            className="min-h-[44px] shrink-0 rounded-md border border-input px-3 text-sm text-foreground"
+            className="min-h-[40px] shrink-0 rounded-full border border-border px-4 text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             Custom Item
           </button>
@@ -95,7 +95,7 @@ function NewOrder() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search products"
-            className="mt-3 h-11 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none"
+            className="mt-3 h-12 w-full rounded-xl border border-border bg-surface px-3 text-sm text-foreground outline-none"
           />
         ) : null}
 
@@ -105,7 +105,7 @@ function NewOrder() {
               aria-label="Scan mode"
               value={scanMode}
               onChange={(e) => setScanMode(e.target.value)}
-              className="h-11 appearance-none rounded-md border border-input bg-background pl-3 pr-8 text-base text-foreground outline-none"
+              className="h-11 appearance-none rounded-xl border border-border bg-surface pl-3 pr-8 text-sm text-foreground outline-none"
             >
               <option value="Barcode">Barcode</option>
               <option value="SKU">SKU</option>
@@ -119,7 +119,7 @@ function NewOrder() {
               type="button"
               onClick={() => setCategory(c)}
               className={cn(
-                "min-h-[44px] shrink-0 rounded-md px-5 text-sm font-bold uppercase transition-colors",
+                "min-h-[40px] shrink-0 rounded-full px-4 text-sm font-bold transition-colors",
                 c === category
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -133,7 +133,7 @@ function NewOrder() {
 
       <div className="no-scrollbar flex-1 overflow-y-auto px-4 py-4">
         {items.length === 0 ? (
-          <p className="px-4 py-24 text-center text-2xl font-medium text-foreground">
+          <p className="px-4 py-24 text-center text-sm text-muted-foreground">
             No products found for this category
           </p>
         ) : (
@@ -165,7 +165,7 @@ function NewOrder() {
       {totals.count > 0 ? (
         <div className="shrink-0 border-t border-border bg-surface px-4 pb-3 pt-3">
           <Button
-            className="h-12 w-full rounded-xl bg-primary text-base font-extrabold text-primary-foreground hover:bg-primary/90"
+            className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90"
             onClick={() => navigate({ to: "/order/review" })}
           >
             Review order · {totals.count} item{totals.count === 1 ? "" : "s"} ·{" "}

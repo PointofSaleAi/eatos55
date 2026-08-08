@@ -47,11 +47,11 @@ function PaymentMethod() {
     <Sheet open onOpenChange={(open) => (open ? null : navigate({ to: "/order/review" }))}>
       <SheetContent side="bottom" className="rounded-t-3xl border-0 bg-surface p-0 pb-8">
         <SheetHeader className="px-4 pb-1 pt-5">
-          <SheetTitle className="text-center text-2xl font-extrabold text-foreground">
+          <SheetTitle className="text-center text-xl font-extrabold text-foreground">
             Select Payment Method
           </SheetTitle>
         </SheetHeader>
-        <p className="pb-5 text-center text-lg text-muted-foreground">
+        <p className="pb-5 text-center text-sm text-muted-foreground">
           Total due <span className="font-extrabold text-foreground">{money(totals.total)}</span>
         </p>
         <div className="grid grid-cols-4 gap-2 px-3 pb-2">

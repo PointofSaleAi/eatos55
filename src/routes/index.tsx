@@ -36,11 +36,11 @@ function SignInScreen() {
       <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto px-6 pb-6 pt-10">
         <div className="flex flex-col items-center">
           <Wordmark />
-          <h1 className="mt-5 text-3xl font-extrabold text-foreground">Point of Purchase</h1>
+          <h1 className="mt-5 text-3xl font-extrabold leading-tight text-foreground">Point of Purchase</h1>
         </div>
 
         <form
-          className="mt-10 space-y-5"
+          className="mt-8 space-y-4"
           onSubmit={(e) => {
             e.preventDefault();
             signIn();
@@ -48,8 +48,8 @@ function SignInScreen() {
             navigate({ to: "/access/clock-in" });
           }}
         >
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-extrabold">
+          <div className="space-y-1.5">
+            <Label htmlFor="email">
               Email Address
             </Label>
             <Input
@@ -57,11 +57,11 @@ function SignInScreen() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter Email or Phone Number"
-              className="h-14 rounded-xl bg-surface text-base"
+              className="h-12 rounded-xl bg-surface"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-sm font-extrabold">
+          <div className="space-y-1.5">
+            <Label htmlFor="password">
               Password
             </Label>
             <div className="relative">
@@ -71,7 +71,7 @@ function SignInScreen() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter Password"
-                className="h-14 rounded-xl bg-surface pr-12 text-base"
+                className="h-12 rounded-xl bg-surface pr-12"
               />
               <button
                 type="button"
@@ -86,7 +86,7 @@ function SignInScreen() {
 
           <Button
             type="submit"
-            className="h-14 w-full rounded-xl bg-primary text-base font-extrabold uppercase tracking-wide text-primary-foreground hover:bg-primary/90"
+            className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground hover:bg-accent/90"
           >
             Sign in
           </Button>
@@ -94,14 +94,14 @@ function SignInScreen() {
 
         <Link
           to="/access/forgot-password"
-          className="mt-7 text-center text-base font-extrabold text-foreground"
+          className="mt-6 text-center text-sm font-bold text-foreground underline"
         >
           Forgot Your Password?
         </Link>
 
         <Link
           to="/access/create-account"
-          className="mt-5 flex h-14 items-center justify-center rounded-xl border-2 border-foreground text-base font-extrabold uppercase tracking-wide text-foreground"
+          className="mt-4 flex h-12 items-center justify-center rounded-full border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted"
         >
           Create an account
         </Link>
