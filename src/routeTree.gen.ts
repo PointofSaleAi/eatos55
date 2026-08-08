@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccessClockInRouteImport } from './routes/access.clock-in'
 import { Route as AccessCreateAccountRouteImport } from './routes/access.create-account'
 import { Route as AccessForgotPasswordRouteImport } from './routes/access.forgot-password'
+import { Route as AccessSelectStationRouteImport } from './routes/access.select-station'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,25 @@ const AccessForgotPasswordRoute = AccessForgotPasswordRouteImport.update({
   path: '/access/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccessSelectStationRoute = AccessSelectStationRouteImport.update({
+  id: '/access/select-station',
+  path: '/access/select-station',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/access/clock-in': typeof AccessClockInRoute
   '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
+  '/access/select-station': typeof AccessSelectStationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/access/clock-in': typeof AccessClockInRoute
   '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
+  '/access/select-station': typeof AccessSelectStationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,6 +61,7 @@ export interface FileRoutesById {
   '/access/clock-in': typeof AccessClockInRoute
   '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
+  '/access/select-station': typeof AccessSelectStationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -61,18 +70,21 @@ export interface FileRouteTypes {
     | '/access/clock-in'
     | '/access/create-account'
     | '/access/forgot-password'
+    | '/access/select-station'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/access/clock-in'
     | '/access/create-account'
     | '/access/forgot-password'
+    | '/access/select-station'
   id:
     | '__root__'
     | '/'
     | '/access/clock-in'
     | '/access/create-account'
     | '/access/forgot-password'
+    | '/access/select-station'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -80,6 +92,7 @@ export interface RootRouteChildren {
   AccessClockInRoute: typeof AccessClockInRoute
   AccessCreateAccountRoute: typeof AccessCreateAccountRoute
   AccessForgotPasswordRoute: typeof AccessForgotPasswordRoute
+  AccessSelectStationRoute: typeof AccessSelectStationRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -112,6 +125,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccessForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/access/select-station': {
+      id: '/access/select-station'
+      path: '/access/select-station'
+      fullPath: '/access/select-station'
+      preLoaderRoute: typeof AccessSelectStationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -120,6 +140,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccessClockInRoute: AccessClockInRoute,
   AccessCreateAccountRoute: AccessCreateAccountRoute,
   AccessForgotPasswordRoute: AccessForgotPasswordRoute,
+  AccessSelectStationRoute: AccessSelectStationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
