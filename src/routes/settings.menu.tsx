@@ -1,65 +1,86 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import {
+  Boxes,
+  CircleDot,
+  Grid2x2,
+  Layers,
+  LayoutList,
+  PencilRuler,
+  ScrollText,
+  UtensilsCrossed,
+} from "lucide-react";
 import { toast } from "sonner";
-import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
-import { Card, Pills, SectionLabel, ToggleRow } from "@/components/pos/primitives";
-import { categories, menu, money } from "@/lib/demo-data";
-import { usePos } from "@/lib/pos-store";
+import { ScreenBody, SubHeader } from "@/components/pos/shell";
+import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
 
 export const Route = createFileRoute("/settings/menu")({
   head: () => ({
     meta: [
-      { title: "Menu settings — EATOS Handheld" },
-      { name: "description", content: "Manage items, categories and sold out availability." },
-      { property: "og:title", content: "Menu settings — EATOS Handheld" },
-      { property: "og:description", content: "Manage items, categories and sold out availability." },
+      { title: "Menu — EATOS Handheld settings" },
+      {
+        name: "description",
+        content: "Menus, categories, modifiers, add-ons, products, inventory and groups.",
+      },
+      { property: "og:title", content: "Menu — EATOS Handheld settings" },
+      {
+        property: "og:description",
+        content: "Menus, categories, modifiers, add-ons, products, inventory and groups.",
+      },
     ],
   }),
   component: MenuSettings,
 });
 
 function MenuSettings() {
-  const { settings, updateSettings } = usePos();
-  const [category, setCategory] = useState<string>("Burgers");
-  const [soldOut, setSoldOut] = useState<string[]>([]);
-  const items = menu.filter((m) => m.category === category);
-
   return (
     <>
-      <ScreenHeader eyebrow="Settings" title="Menu" back />
-      <div className="shrink-0 border-b border-border bg-surface px-4 pb-3">
-        <Pills
-          value={category}
-          onChange={setCategory}
-          options={categories.filter((c) => c !== "Popular").map((c) => ({ id: c, label: c }))}
-        />
-      </div>
-      <ScreenBody>
-        <SectionLabel>Availability</SectionLabel>
-        <Card className="overflow-hidden">
-          <ToggleRow
-            title="Show sold out items"
-            detail="Keep unavailable items visible on the grid"
-            checked={settings.showSoldOut}
-            onChange={(v) => updateSettings({ showSoldOut: v })}
+      <SubHeader title="Menu" />
+      <ScreenBody className="py-2">
+        <GroupCard>
+          <IconNavRow title="Menu" icon={ScrollText} color="magenta" to="/order/menu" />
+          <IconNavRow
+            title="Categories"
+            icon={LayoutList}
+            color="violet"
+            onClick={() => toast.info("4 categories synced from Back Office")}
           />
-        </Card>
-
-        <SectionLabel>{category} items</SectionLabel>
-        <Card className="overflow-hidden">
-          {items.map((item) => (
-            <ToggleRow
-              key={item.id}
-              title={item.name}
-              detail={`${money(item.price)} · ${soldOut.includes(item.id) ? "Sold out" : "Available"}`}
-              checked={!soldOut.includes(item.id)}
-              onChange={(v) => {
-                setSoldOut((list) => (v ? list.filter((id) => id !== item.id) : [...list, item.id]));
-                toast.success(`${item.name} ${v ? "available" : "marked sold out"}`);
-              }}
-            />
-          ))}
-        </Card>
+          <IconNavRow
+            title="Modifiers"
+            icon={CircleDot}
+            color="yellow"
+            onClick={() => toast.info("No modifier groups on this device")}
+          />
+          <IconNavRow
+            title="Add-Ons"
+            icon={Grid2x2}
+            color="pink"
+            onClick={() => toast.info("No add-ons configured")}
+          />
+          <IconNavRow
+            title="Products"
+            icon={UtensilsCrossed}
+            color="magenta"
+            to="/order/new"
+          />
+          <IconNavRow
+            title="Inventory"
+            icon={PencilRuler}
+            color="sky"
+            onClick={() => toast.info("Inventory tracking is on for this venue")}
+          />
+          <IconNavRow
+            title="Default Modifiers"
+            icon={Boxes}
+            color="indigo"
+            onClick={() => toast.info("No default modifiers set")}
+          />
+          <IconNavRow
+            title="Groups"
+            icon={Layers}
+            color="slate"
+            onClick={() => toast.info("No product groups on this device")}
+          />
+        </GroupCard>
       </ScreenBody>
     </>
   );

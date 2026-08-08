@@ -24,6 +24,7 @@ import { Route as PaymentCardRouteImport } from './routes/payment.card'
 import { Route as PaymentCashRouteImport } from './routes/payment.cash'
 import { Route as PaymentMethodRouteImport } from './routes/payment.method'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
+import { Route as SettingsControlCenterRouteImport } from './routes/settings.control-center'
 import { Route as SettingsGeneralRouteImport } from './routes/settings.general'
 import { Route as SettingsMenuRouteImport } from './routes/settings.menu'
 import { Route as SettingsMoreRouteImport } from './routes/settings.more'
@@ -116,6 +117,11 @@ const PaymentMethodRoute = PaymentMethodRouteImport.update({
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsControlCenterRoute = SettingsControlCenterRouteImport.update({
+  id: '/settings/control-center',
+  path: '/settings/control-center',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsGeneralRoute = SettingsGeneralRouteImport.update({
@@ -223,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/payment/card': typeof PaymentCardRoute
   '/payment/cash': typeof PaymentCashRoute
   '/payment/method': typeof PaymentMethodRoute
+  '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
@@ -258,6 +265,7 @@ export interface FileRoutesByTo {
   '/payment/card': typeof PaymentCardRoute
   '/payment/cash': typeof PaymentCashRoute
   '/payment/method': typeof PaymentMethodRoute
+  '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
@@ -294,6 +302,7 @@ export interface FileRoutesById {
   '/payment/card': typeof PaymentCardRoute
   '/payment/cash': typeof PaymentCashRoute
   '/payment/method': typeof PaymentMethodRoute
+  '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
@@ -331,6 +340,7 @@ export interface FileRouteTypes {
     | '/payment/card'
     | '/payment/cash'
     | '/payment/method'
+    | '/settings/control-center'
     | '/settings/general'
     | '/settings/menu'
     | '/settings/more'
@@ -366,6 +376,7 @@ export interface FileRouteTypes {
     | '/payment/card'
     | '/payment/cash'
     | '/payment/method'
+    | '/settings/control-center'
     | '/settings/general'
     | '/settings/menu'
     | '/settings/more'
@@ -401,6 +412,7 @@ export interface FileRouteTypes {
     | '/payment/card'
     | '/payment/cash'
     | '/payment/method'
+    | '/settings/control-center'
     | '/settings/general'
     | '/settings/menu'
     | '/settings/more'
@@ -437,6 +449,7 @@ export interface RootRouteChildren {
   PaymentCardRoute: typeof PaymentCardRoute
   PaymentCashRoute: typeof PaymentCashRoute
   PaymentMethodRoute: typeof PaymentMethodRoute
+  SettingsControlCenterRoute: typeof SettingsControlCenterRoute
   SettingsGeneralRoute: typeof SettingsGeneralRoute
   SettingsMenuRoute: typeof SettingsMenuRoute
   SettingsMoreRoute: typeof SettingsMoreRoute
@@ -564,6 +577,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings/'
       preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/control-center': {
+      id: '/settings/control-center'
+      path: '/settings/control-center'
+      fullPath: '/settings/control-center'
+      preLoaderRoute: typeof SettingsControlCenterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings/general': {
@@ -709,6 +729,7 @@ const rootRouteChildren: RootRouteChildren = {
   PaymentCardRoute: PaymentCardRoute,
   PaymentCashRoute: PaymentCashRoute,
   PaymentMethodRoute: PaymentMethodRoute,
+  SettingsControlCenterRoute: SettingsControlCenterRoute,
   SettingsGeneralRoute: SettingsGeneralRoute,
   SettingsMenuRoute: SettingsMenuRoute,
   SettingsMoreRoute: SettingsMoreRoute,
