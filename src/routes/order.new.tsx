@@ -226,6 +226,31 @@ function NewOrder() {
         )}
       </div>
 
+      <div className="shrink-0 border-t border-border bg-surface px-3 py-2">
+        <div className="grid grid-cols-3 items-center rounded-2xl border border-border bg-surface">
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/order/custom-item" })}
+            className="flex min-h-[52px] flex-col items-center justify-center gap-1 text-foreground"
+          >
+            <Calculator className="size-5" />
+            <span className="text-[11px] font-bold">Custom Item</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/order/menu" })}
+            className="flex min-h-[52px] flex-col items-center justify-center gap-1 text-accent"
+          >
+            <BookOpen className="size-5" />
+            <span className="text-[11px] font-bold">Menu</span>
+          </button>
+          <span className="flex min-h-[52px] flex-col items-center justify-center gap-1 text-sky-600">
+            <Wifi className="size-5" />
+            <span className="text-[11px] font-bold">Server Connected</span>
+          </span>
+        </div>
+      </div>
+
 
       {totals.count > 0 ? (
         <div className="shrink-0 border-t border-border bg-surface px-4 pb-3 pt-3">
