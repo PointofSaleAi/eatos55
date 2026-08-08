@@ -35,7 +35,12 @@ function TenderRoute() {
   const { kind } = useParams({ from: "/payment/tender/$kind" });
   const navigate = useNavigate();
   const { totals, paidSoFar, commitPayment, addPartialPayment } = usePos();
-  const cfg = kinds[kind] ?? kinds.other;
+  const cfg = kinds[kind] ?? {
+    title: "Other Tender",
+    method: "other" as TenderMethod,
+    success: "Payment recorded",
+  };
+
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
 
   return (
