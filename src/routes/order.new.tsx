@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Ban, ChevronDown, MoreVertical, Plus, Search, Tag, Wifi } from "lucide-react";
+import { Ban, ChevronDown, MoreVertical, Plus, Search, Tag } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GuestBlock } from "@/components/pos/guest-block";
