@@ -54,7 +54,7 @@ function WorkforceSettings() {
               title="Employee"
               icon={Users}
               color="indigo"
-              onClick={() => toast.info("Employee list syncs from Back Office")}
+              topic="employee"
             />
           </div>
         </GroupCard>
