@@ -71,7 +71,7 @@ function NewOrder() {
               aria-label="Add custom item"
               title="Custom item"
               onClick={() => navigate({ to: "/order/custom-item" })}
-              className="grid size-10 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+              className="grid size-10 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
             >
               <Tag className="size-5" />
             </button>
@@ -80,7 +80,7 @@ function NewOrder() {
               aria-label="More options"
               title="More options"
               onClick={() => setMoreOpen(true)}
-              className="-mr-2 grid size-10 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+              className="-mr-2 grid size-10 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
             >
               <MoreVertical className="size-5" />
             </button>

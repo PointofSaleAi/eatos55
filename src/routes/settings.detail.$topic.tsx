@@ -90,7 +90,7 @@ function SettingsDetail() {
 
         {screen.empty ? (
           <div className="grid place-items-center px-6 py-16 text-center">
-            {Icon ? <Icon className="mb-3 size-8 text-muted-foreground" /> : null}
+            {Icon ? <Icon className="mb-3 size-8 tap-safe text-muted-foreground" /> : null}
             <p className="text-fs-sm text-muted-foreground">{screen.empty}</p>
           </div>
         ) : null}

@@ -85,7 +85,7 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
                     i % 2 === 0 ? "bg-muted/40" : "bg-surface",
                   )}
                 >
-                  <span className="grid size-9 shrink-0 place-items-center rounded-row bg-muted text-muted-foreground">
+                  <span className="grid size-9 tap-safe shrink-0 place-items-center rounded-row bg-muted text-muted-foreground">
                     <Icon className="size-5" />
                   </span>
                   <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">

@@ -84,7 +84,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
             type="button"
             aria-label="Close navigation"
             onClick={onClose}
-            className="grid size-9 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+            className="grid size-9 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
           >
             <X className="size-5" />
           </button>

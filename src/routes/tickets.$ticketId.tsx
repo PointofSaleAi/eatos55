@@ -65,7 +65,7 @@ function TicketDetail() {
               key={l.id}
               className="flex items-center gap-3 border-b border-border px-4 py-3 last:border-b-0"
             >
-              <span className="grid size-8 shrink-0 place-items-center rounded-row bg-muted text-fs-xs font-extrabold">
+              <span className="grid size-8 tap-safe shrink-0 place-items-center rounded-row bg-muted text-fs-xs font-extrabold">
                 {l.qty}
               </span>
               <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">

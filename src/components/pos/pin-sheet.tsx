@@ -90,7 +90,7 @@ export function PinSheet({
             onClick={() => setPin((p) => p.slice(0, -1))}
             className="grid min-h-[56px] place-items-center rounded-card bg-surface text-destructive shadow-sm transition-transform active:scale-[0.97]"
           >
-            <Delete className="size-8" />
+            <Delete className="size-8 tap-safe" />
           </button>
         </div>
 

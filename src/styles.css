@@ -416,3 +416,20 @@
   min-height: max(var(--tap), 3.5rem);
 }
 
+
+/* --- Hit area: keep the drawn control small, make the touch target 44px ---
+   HIG requires a 44x44pt target; this expands the tappable area with a
+   pseudo-element so the visual design is unchanged. */
+@utility tap-safe {
+  position: relative;
+  touch-action: manipulation;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    width: max(100%, var(--tap));
+    height: max(100%, var(--tap));
+  }
+}

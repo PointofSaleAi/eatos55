@@ -182,7 +182,7 @@ function SettingsHub() {
         }}
         className="absolute bottom-20 right-4 z-10 grid size-16 place-items-center rounded-pill bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
       >
-        <SquarePen className="size-7" />
+        <SquarePen className="size-7 tap-safe" />
       </button>
 
       <PinSheet

@@ -72,7 +72,7 @@ export function SearchDock({
               type="button"
               aria-label="Clear search"
               onClick={() => onChange("")}
-              className="grid size-7 shrink-0 place-items-center rounded-pill text-muted-foreground"
+              className="grid size-7 tap-safe shrink-0 place-items-center rounded-pill text-muted-foreground"
             >
               <X className="size-4" />
             </button>

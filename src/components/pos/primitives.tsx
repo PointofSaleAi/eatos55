@@ -184,7 +184,7 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
       onClick={onClick}
       className="flex w-full items-center gap-row rounded-card border border-border bg-surface px-3 py-3 text-left transition-colors hover:bg-muted"
     >
-      <span className="grid size-10 shrink-0 place-items-center rounded-row bg-muted t-row text-foreground">
+      <span className="grid size-10 tap-safe shrink-0 place-items-center rounded-row bg-muted t-row text-foreground">
         {ticket.seats}
       </span>
       <span className="min-w-0 flex-1">

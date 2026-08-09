@@ -28,7 +28,7 @@ export function AccountBar() {
     <div className="relative z-20 shrink-0 bg-background px-3 pt-2">
       <div className="flex items-center gap-3 rounded-card border border-border bg-surface px-3 py-3">
 
-          <span className="grid size-10 shrink-0 place-items-center rounded-row bg-muted text-fs-sm font-extrabold text-foreground">
+          <span className="grid size-10 tap-safe shrink-0 place-items-center rounded-row bg-muted text-fs-sm font-extrabold text-foreground">
             {initials}
           </span>
           <div className="min-w-0 flex-1">
@@ -43,7 +43,7 @@ export function AccountBar() {
             type="button"
             aria-label="What's new"
             onClick={() => setNews((n) => !n)}
-            className="grid size-9 shrink-0 place-items-center rounded-pill bg-muted text-foreground transition-colors hover:bg-secondary"
+            className="grid size-9 tap-safe shrink-0 place-items-center rounded-pill bg-muted text-foreground transition-colors hover:bg-secondary"
           >
             <Bell className="size-4" />
           </button>
@@ -51,7 +51,7 @@ export function AccountBar() {
             type="button"
             aria-label="Refresh tickets"
             onClick={() => toast.success("Tickets refreshed")}
-            className="grid size-9 shrink-0 place-items-center rounded-pill bg-muted text-foreground transition-colors hover:bg-secondary"
+            className="grid size-9 tap-safe shrink-0 place-items-center rounded-pill bg-muted text-foreground transition-colors hover:bg-secondary"
           >
             <RotateCw className="size-4" />
           </button>
@@ -75,7 +75,7 @@ export function AccountBar() {
           >
             <p className="text-center text-fs-xs font-bold uppercase tracking-[0.14em] text-accent">what&apos;s new</p>
             <div className="mt-3 flex items-start gap-3">
-              <span className="mt-1 grid size-8 shrink-0 place-items-center rounded-row bg-muted text-fs-sm font-extrabold text-foreground">
+              <span className="mt-1 grid size-8 tap-safe shrink-0 place-items-center rounded-row bg-muted text-fs-sm font-extrabold text-foreground">
                 e
               </span>
               <div className="min-w-0">

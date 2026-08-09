@@ -92,7 +92,7 @@ function OrderReview() {
                       changeQty(line.id, -1);
                       announce(`${line.name} quantity ${line.qty - 1}`);
                     }}
-                    className="grid size-9 place-items-center rounded-row border border-border text-foreground"
+                    className="grid size-9 tap-safe place-items-center rounded-row border border-border text-foreground"
                   >
                     <Minus className="size-4" />
                   </button>
@@ -107,7 +107,7 @@ function OrderReview() {
                       changeQty(line.id, 1);
                       announce(`${line.name} quantity ${line.qty + 1}`);
                     }}
-                    className="grid size-9 place-items-center rounded-row border border-border text-foreground"
+                    className="grid size-9 tap-safe place-items-center rounded-row border border-border text-foreground"
                   >
                     <Plus className="size-4" />
                   </button>

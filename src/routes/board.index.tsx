@@ -70,7 +70,7 @@ function Board() {
               type="button"
               aria-label="Pick board date"
               onClick={() => toast.info("Showing today's orders")}
-              className="grid size-10 place-items-center rounded-pill border border-border text-foreground transition-colors hover:bg-muted"
+              className="grid size-10 tap-safe place-items-center rounded-pill border border-border text-foreground transition-colors hover:bg-muted"
             >
               <CalendarDays className="size-5" />
             </button>
@@ -82,7 +82,7 @@ function Board() {
                 announce("Board refreshed");
                 toast.success("Board refreshed");
               }}
-              className="grid size-10 place-items-center rounded-pill border border-border text-foreground transition-colors hover:bg-muted"
+              className="grid size-10 tap-safe place-items-center rounded-pill border border-border text-foreground transition-colors hover:bg-muted"
             >
               <RefreshCw className="size-5" />
             </button>
@@ -94,7 +94,7 @@ function Board() {
                 setAsc({});
                 toast.success("Board filters cleared");
               }}
-              className="grid size-10 place-items-center rounded-pill border border-border text-foreground transition-colors hover:bg-muted"
+              className="grid size-10 tap-safe place-items-center rounded-pill border border-border text-foreground transition-colors hover:bg-muted"
             >
               <XCircle className="size-5" />
             </button>

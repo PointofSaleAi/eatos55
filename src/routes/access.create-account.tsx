@@ -102,7 +102,7 @@ function CreateAccount() {
         </Field>
         <Field label="Phone Number">
           <div className="flex h-12 items-center">
-            <span className="flex h-8 shrink-0 items-center gap-2 border-r border-input px-3 text-fs-sm font-bold text-foreground">
+            <span className="flex h-8 tap-safe shrink-0 items-center gap-2 border-r border-input px-3 text-fs-sm font-bold text-foreground">
               <span aria-hidden>🇺🇸</span> +1
             </span>
             <input
@@ -127,7 +127,7 @@ function CreateAccount() {
               type="button"
               aria-label={show ? "Hide password" : "Show password"}
               onClick={() => setShow((s) => !s)}
-              className="absolute right-2 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-pill text-muted-foreground"
+              className="absolute right-2 top-1/2 grid size-10 tap-safe -translate-y-1/2 place-items-center rounded-pill text-muted-foreground"
             >
               {show ? <Eye className="size-5" /> : <EyeOff className="size-5" />}
             </button>
