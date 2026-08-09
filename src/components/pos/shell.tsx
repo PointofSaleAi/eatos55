@@ -12,8 +12,11 @@ import {
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { ClockPullDown } from "@/components/pos/clock-pulldown";
+import { ConfirmProvider } from "@/components/pos/confirm-sheet";
+import { LiveRegionProvider } from "@/components/pos/live-region";
 import { NavDrawer } from "@/components/pos/nav-drawer";
 import { OfflineBanner } from "@/components/pos/offline-banner";
+import { useAppearance } from "@/hooks/use-appearance";
 import { useGlobalKeyboardAware } from "@/hooks/use-keyboard-inset";
 import { cn } from "@/lib/utils";
 
