@@ -30,6 +30,13 @@ export type CartLine = {
 };
 
 
+export type TicketPayment = {
+  no: string;
+  method: string;
+  amount: number;
+  at: string;
+};
+
 export type Ticket = {
   id: string;
   number: number;
@@ -44,7 +51,15 @@ export type Ticket = {
   mode: MenuMode;
   lines: CartLine[];
   server: string;
+  /** Check number printed on the guest copy. */
+  checkNumber?: number;
+  /** Tips recorded against the ticket. */
+  tips?: number;
+  revenueCenter?: string;
+  paymentType?: string;
+  payments?: TicketPayment[];
 };
+
 
 /** Tax is inclusive in the guest-facing totals (20%). */
 export const TAX_RATE = 0.2;
@@ -125,6 +140,11 @@ export const initialTickets: Ticket[] = [
     mode: "dine-in",
     lines: [custom(11.0)],
     server: "Elizer Cruz",
+    checkNumber: 1042,
+    tips: 0,
+    revenueCenter: "Main dining",
+    paymentType: "Unpaid",
+    payments: [],
   },
   {
     id: "t-1043",
@@ -139,6 +159,11 @@ export const initialTickets: Ticket[] = [
     mode: "takeaway",
     lines: [custom(5.76)],
     server: "Elizer Cruz",
+    checkNumber: 1043,
+    tips: 1.0,
+    revenueCenter: "Counter pickup",
+    paymentType: "Card",
+    payments: [{ no: "1", method: "Card", amount: 5.76, at: "5:46 PM" }],
   },
   {
     id: "t-1044",
@@ -153,6 +178,11 @@ export const initialTickets: Ticket[] = [
     mode: "dine-in",
     lines: [line("m2", 2), line("m10"), line("m15", 2)],
     server: "Dana Whitfield",
+    checkNumber: 1044,
+    tips: 0,
+    revenueCenter: "Main dining",
+    paymentType: "Unpaid",
+    payments: [],
   },
   {
     id: "t-1045",
@@ -167,6 +197,11 @@ export const initialTickets: Ticket[] = [
     mode: "bar",
     lines: [line("m15", 3)],
     server: "Marcus Lee",
+    checkNumber: 1045,
+    tips: 0,
+    revenueCenter: "Bar",
+    paymentType: "Unpaid",
+    payments: [{ no: "1", method: "Cash", amount: 10.0, at: "6:03 PM" }],
   },
   {
     id: "t-1046",
@@ -181,8 +216,14 @@ export const initialTickets: Ticket[] = [
     mode: "takeaway",
     lines: [line("m3"), line("m9")],
     server: "Elizer Cruz",
+    checkNumber: 1046,
+    tips: 2.5,
+    revenueCenter: "Patio",
+    paymentType: "QR Code",
+    payments: [{ no: "1", method: "QR Code", amount: 16.5, at: "6:05 PM" }],
   },
 ];
+
 
 export const statusMeta: Record<TicketStatus, { label: string; tone: string }> = {
   ordering: { label: "ORDERING", tone: "text-muted-foreground" },
@@ -282,7 +323,11 @@ export const barcodeCategories = ["B", "C", "A", "TEST BARCODE"];
 
 /** Filter sheet facets on the ticket list. */
 export const revenueCenters = ["Main dining", "Patio", "Bar", "Counter pickup"];
-export const ticketOrderTypes = orderTypes;
+export const ticketOrderTypes = [...serviceOrderTypes];
+
+/** Maps the internal menu mode onto the guest-facing order type shown on tickets. */
+export const modeOrderType = (m: MenuMode): string =>
+  m === "takeaway" ? "Take Away" : m === "delivery" ? "Delivery" : "Dine In";
 export const paymentTypes = ["Card", "Cash", "QR Code", "Unpaid"];
 
 /** Quick tender denominations on the cash payment screen. */

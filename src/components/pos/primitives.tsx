@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, Delete, Inbox } from "lucide-react";
-import type { ReactNode } from "react";
+import { ChevronRight, Delete, Inbox, Table2 } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { haptic } from "@/lib/haptics";
-import { money, statusMeta, type Ticket } from "@/lib/demo-data";
+import { modeOrderType, money, statusMeta, type Ticket } from "@/lib/demo-data";
 
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
@@ -184,29 +184,73 @@ export function Pills<T extends string>({
   );
 }
 
+/** Live m:ss timer counting up from the ticket's arrival. */
+function useTicketTimer(minutesAgo: number) {
+  const [seconds, setSeconds] = useState(minutesAgo * 60);
+  useEffect(() => {
+    setSeconds(minutesAgo * 60);
+    const id = window.setInterval(() => setSeconds((v) => v + 1), 1000);
+    return () => window.clearInterval(id);
+  }, [minutesAgo]);
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const sec = seconds % 60;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return h ? `${h}:${pad(m)}:${pad(sec)}` : `${m}:${pad(sec)}`;
+}
+
+function Cell({ label, value, tone }: { label: string; value: string; tone?: string }) {
+  return (
+    <span className="block min-w-0">
+      <span className="block truncate t-caption uppercase tracking-[0.08em] text-muted-foreground">
+        {label}
+      </span>
+      <span className={cn("block truncate t-row text-foreground", tone)}>{value}</span>
+    </span>
+  );
+}
+
 export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () => void }) {
   const meta = statusMeta[ticket.status];
+  const timer = useTicketTimer(ticket.arrivedMinutesAgo);
+  const dateLabel = new Date(`${ticket.date}T12:00:00`).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
   return (
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center gap-row rounded-card border border-border bg-surface px-3 py-3 text-left transition-colors hover:bg-muted"
+      className="@container w-full rounded-card border border-border bg-surface px-3 py-3 text-left transition-colors hover:bg-muted"
     >
-      <span className="grid size-10 tap-safe shrink-0 place-items-center rounded-row bg-muted t-row text-foreground">
-        {ticket.seats}
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block truncate t-row text-foreground">
-          {ticket.label}
+      <div className="flex items-center gap-2">
+        <span className="flex shrink-0 items-center gap-1.5 rounded-row bg-muted px-2 py-1 t-row text-foreground">
+          <Table2 className="size-4" aria-hidden />
+          {ticket.number}
         </span>
-        <span className="block truncate t-caption text-muted-foreground">
-          Arrived {ticket.arrivedAt} · {ticket.arrivedMinutesAgo} min ago
-        </span>
-      </span>
-      <span className="shrink-0 text-right">
-        <span className="block t-row text-foreground">{money(ticket.total)}</span>
-        <span className={cn("block t-badge", meta.tone)}>{meta.label}</span>
-      </span>
+        <span className="min-w-0 flex-1 truncate t-row text-foreground">{ticket.label}</span>
+        <span className={cn("shrink-0 t-badge", meta.tone)}>{meta.label}</span>
+      </div>
+
+      <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-2 @[30rem]:grid-cols-4 @[46rem]:grid-cols-6">
+
+        <Cell label="Timer" value={timer} />
+        <Cell label="Check" value={String(ticket.checkNumber ?? ticket.number)} />
+        <Cell label="Total" value={money(ticket.total)} />
+        <Cell label="Tips" value={money(ticket.tips ?? 0)} />
+        <Cell label="Order No" value={String(ticket.number)} />
+        <Cell label="Arrived At" value={ticket.arrivedAt} />
+        <Cell label="Date" value={dateLabel} />
+        <Cell label="Employee" value={ticket.server} />
+        <Cell label="Revenue Center" value={ticket.revenueCenter ?? "Main dining"} />
+        <Cell label="Order Type" value={modeOrderType(ticket.mode)} />
+        <Cell
+          label="Payment Type"
+          value={ticket.paymentType ?? (ticket.status === "paid" ? "Card" : "Unpaid")}
+        />
+      </div>
     </button>
   );
 }
