@@ -11,7 +11,14 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { ClockPullDown } from "@/components/pos/clock-pulldown";
 import { ConfirmProvider } from "@/components/pos/confirm-sheet";
 import { LiveRegionProvider } from "@/components/pos/live-region";
@@ -64,6 +71,8 @@ export function useAppChrome() {
 /** Device frame: full-bleed on phones, framed handheld on tablet/desktop. */
 export function DeviceFrame({ children }: { children: ReactNode }) {
   const [navOpen, setNavOpen] = useState(false);
+  const closeNav = useCallback(() => setNavOpen(false), []);
+  const navCtx = useMemo(() => ({ open: () => setNavOpen(true) }), []);
   const appChrome = useAppChrome();
   useGlobalKeyboardAware();
   // Follows the system light/dark appearance unless overridden in Settings.
@@ -78,7 +87,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
           "lg:h-[880px] lg:w-[440px]",
         )}
       >
-        <NavDrawerContext.Provider value={{ open: () => setNavOpen(true) }}>
+        <NavDrawerContext.Provider value={navCtx}>
           <LiveRegionProvider>
             <ConfirmProvider>
               <div
@@ -90,7 +99,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
                 {children}
                 {appChrome ? <BottomTabs /> : null}
                 {appChrome ? (
-                  <NavDrawer open={navOpen} onClose={() => setNavOpen(false)} />
+                  <NavDrawer open={navOpen} onClose={closeNav} />
                 ) : null}
                 {/* Portal host for keyboard-docked UI (search bar). */}
                 <div id="pos-dock-root" className="pointer-events-none absolute inset-0 z-40" />
