@@ -73,7 +73,7 @@ function ContactUs() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search our help center..."
-              className="min-w-0 flex-1 bg-transparent text-center text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
+              className="min-h-tap min-w-0 flex-1 bg-transparent text-center text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
           </label>
         </div>
