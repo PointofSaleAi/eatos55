@@ -42,7 +42,7 @@ function ForgotPassword() {
 
         <div className="flex flex-col items-center">
           <Wordmark />
-          <h1 className="mt-4 text-3xl font-extrabold leading-tight text-foreground">Point of Purchase</h1>
+          <h1 className="mt-4 text-fs-2xl font-extrabold leading-tight text-foreground">Point of Purchase</h1>
         </div>
 
         <h2 className="mt-3 text-xl font-extrabold text-foreground">Forgot Password</h2>

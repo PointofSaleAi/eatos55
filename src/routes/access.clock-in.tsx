@@ -38,7 +38,7 @@ function ClockIn() {
     <div className="relative flex min-h-0 flex-1 flex-col bg-background">
       {/* Tickets screen chrome behind the keypad overlay */}
       <div className="flex shrink-0 items-center justify-between border-b border-border bg-surface px-4 pb-3 pt-4">
-        <p className="text-2xl font-extrabold text-foreground">Tickets</p>
+        <p className="text-fs-xl font-extrabold text-foreground">Tickets</p>
         <span className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
           {session.station ?? orderType}
         </span>
@@ -51,7 +51,7 @@ function ClockIn() {
               <span
                 key={i}
                 className={cn(
-                  "text-2xl font-extrabold leading-none",
+                  "text-fs-xl font-extrabold leading-none",
                   pin.length > i ? "text-foreground" : "text-foreground/25",
                 )}
               >

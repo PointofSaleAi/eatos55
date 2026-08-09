@@ -43,7 +43,7 @@ function Orders() {
             <p className="truncate text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               This shift
             </p>
-            <h1 className="truncate text-2xl font-extrabold text-foreground">Orders</h1>
+            <h1 className="truncate text-fs-xl font-extrabold text-foreground">Orders</h1>
           </div>
           <div className="shrink-0 text-right">
             <p className="text-xs text-muted-foreground">Net sales</p>

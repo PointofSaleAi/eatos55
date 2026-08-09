@@ -71,7 +71,7 @@ function CreateAccount() {
         >
           <ArrowLeft className="size-6" />
         </button>
-        <h1 className="text-2xl font-extrabold text-foreground">Create an Account</h1>
+        <h1 className="text-fs-xl font-extrabold text-foreground">Create an Account</h1>
       </div>
 
       <div className="no-scrollbar flex-1 space-y-6 overflow-y-auto px-5 pb-[calc(1.5rem+var(--kb-inset,0px))] pt-6">

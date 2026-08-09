@@ -37,7 +37,7 @@ function SignInScreen() {
         <div className="my-auto w-full [html[data-kb=open]_&]:my-0">
         <div className="flex flex-col items-center">
           <Wordmark />
-          <h1 className="mt-5 text-3xl font-extrabold leading-tight text-foreground">Point of Purchase</h1>
+          <h1 className="mt-5 text-fs-2xl font-extrabold leading-tight text-foreground">Point of Purchase</h1>
         </div>
 
         <form

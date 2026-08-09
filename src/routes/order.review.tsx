@@ -36,7 +36,7 @@ function OrderReview() {
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <div className="flex shrink-0 items-center gap-2 bg-surface px-2 pt-3">
         <BackButton fallbackTo="/order/new" label="Back to order" />
-        <h1 className="truncate text-2xl font-extrabold text-foreground">
+        <h1 className="truncate text-fs-xl font-extrabold text-foreground">
           Order Number {orderNumber}
         </h1>
       </div>

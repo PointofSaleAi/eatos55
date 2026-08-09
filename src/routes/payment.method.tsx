@@ -94,7 +94,7 @@ function PaymentMethod() {
       <div className="flex shrink-0 items-center gap-2 border-b border-border bg-surface px-2 py-3">
         <BackButton fallbackTo="/order/review" label="Back to order review" />
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-2xl font-extrabold text-foreground">Payment</h1>
+          <h1 className="truncate text-fs-xl font-extrabold text-foreground">Payment</h1>
           <p className="truncate text-xs text-muted-foreground">
             Order {orderNumber} · {guest.name || activeTable || "Guest"} · {orderType}
           </p>

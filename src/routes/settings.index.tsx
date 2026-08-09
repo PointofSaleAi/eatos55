@@ -111,7 +111,7 @@ function SettingsHub() {
   return (
     <>
       <ScreenBody className="pt-5">
-        <h1 className="px-1 text-2xl font-extrabold text-foreground">Settings</h1>
+        <h1 className="px-1 text-fs-xl font-extrabold text-foreground">Settings</h1>
 
         <button
           type="button"

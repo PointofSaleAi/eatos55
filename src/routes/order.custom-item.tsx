@@ -66,7 +66,7 @@ function CustomItem() {
           className="h-11 w-full shrink-0 rounded-xl border border-border bg-surface px-4 text-sm text-foreground outline-none focus:border-accent placeholder:text-muted-foreground"
         />
         <div className="shrink-0 rounded-xl border border-border bg-surface px-4 py-3 text-center">
-          <p className="text-2xl font-extrabold tabular-nums text-foreground">
+          <p className="text-fs-xl font-extrabold tabular-nums text-foreground">
             {amount ? money(price) : money(0)}
           </p>
         </div>
