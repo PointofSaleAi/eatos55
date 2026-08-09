@@ -314,9 +314,23 @@ export const serviceOrderTypes = [
   "Take Away",
   "Delivery",
   "Pickup",
+  "Drive Thru",
   "Online",
 ] as const;
 export type ServiceOrderType = (typeof serviceOrderTypes)[number];
+
+/** Vehicle picker options on a Drive Thru order. */
+export const vehicleTypes = ["Car", "SUV", "Truck", "Van", "Motorcycle", "Bicycle"];
+export const vehicleColors = [
+  { name: "Silver", hex: "#b6bcc2" },
+  { name: "White", hex: "#f2f4f6" },
+  { name: "Black", hex: "#1b1d20" },
+  { name: "Grey", hex: "#6b7280" },
+  { name: "Blue", hex: "#2f6fd0" },
+  { name: "Red", hex: "#d0342c" },
+  { name: "Green", hex: "#2f8f5b" },
+];
+
 
 /** Barcode-style category chips on the new order menu. */
 export const barcodeCategories = ["B", "C", "A", "TEST BARCODE"];
