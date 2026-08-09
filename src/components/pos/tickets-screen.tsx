@@ -14,7 +14,7 @@ import {
   RefreshCcwDot,
 } from "lucide-react";
 import { useState } from "react";
-import {} from "@/components/pos/shell";
+import { MenuButton } from "@/components/pos/shell";
 import { AccountBar } from "@/components/pos/account-bar";
 import { EmptyState, TicketCard } from "@/components/pos/primitives";
 import { SwipeRow } from "@/components/pos/swipe-row";
