@@ -35,13 +35,14 @@ const roomOptions: StatusOption<RoomState>[] = [
 
 function Rooms() {
   const navigate = useNavigate();
-  const { startOrder, roomStates, setRoomState, settings, settingsReady } = usePos();
+  const { startOrder, roomStates, setRoomState, settings, sessionReady } = usePos();
   const [statusFor, setStatusFor] = useState<{ name: string; state: RoomState } | null>(null);
 
   // Rooms is a hotel module: without it switched on there is nothing to show here.
   useEffect(() => {
-    if (settingsReady && !settings.roomService) navigate({ to: "/floor", replace: true });
-  }, [settingsReady, settings.roomService, navigate]);
+    if (sessionReady && !settings.roomService) navigate({ to: "/floor", replace: true });
+  }, [sessionReady, settings.roomService, navigate]);
+
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-background">
