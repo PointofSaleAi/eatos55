@@ -38,13 +38,13 @@ export function PinSheet({
     >
       <SheetContent
         side="bottom"
-        className="max-h-[92dvh] overflow-y-auto rounded-t-3xl border-t border-border bg-background px-4 pb-6 pt-4"
+        className="max-h-[92dvh] overflow-y-auto rounded-t-sheet border-t border-border bg-background px-4 pb-6 pt-4"
       >
         <SheetTitle className="text-center text-fs-xl font-extrabold text-foreground">
           Enter PIN
         </SheetTitle>
 
-        <div className="mt-3 flex min-h-[56px] items-center justify-center gap-8 rounded-card border border-border bg-surface px-4">
+        <div className="mt-3 flex min-h-key items-center justify-center gap-8 rounded-card border border-border bg-surface px-4">
           {[0, 1, 2, 3].map((i) => (
             <span
               key={i}
@@ -64,7 +64,7 @@ export function PinSheet({
               key={k}
               type="button"
               onClick={() => push(k)}
-              className="grid min-h-[56px] place-items-center rounded-card bg-surface text-fs-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]"
+              className="grid min-h-key place-items-center rounded-card bg-surface text-fs-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]"
             >
               {k}
             </button>
@@ -73,14 +73,14 @@ export function PinSheet({
             type="button"
             aria-label="Clear PIN"
             onClick={() => setPin("")}
-            className="grid min-h-[56px] place-items-center rounded-card bg-surface text-fs-xl font-extrabold text-destructive shadow-sm transition-transform active:scale-[0.97]"
+            className="grid min-h-key place-items-center rounded-card bg-surface text-fs-xl font-extrabold text-destructive shadow-sm transition-transform active:scale-[0.97]"
           >
             C
           </button>
           <button
             type="button"
             onClick={() => push("0")}
-            className="grid min-h-[56px] place-items-center rounded-card bg-surface text-fs-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]"
+            className="grid min-h-key place-items-center rounded-card bg-surface text-fs-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]"
           >
             0
           </button>
@@ -88,7 +88,7 @@ export function PinSheet({
             type="button"
             aria-label="Delete last digit"
             onClick={() => setPin((p) => p.slice(0, -1))}
-            className="grid min-h-[56px] place-items-center rounded-card bg-surface text-destructive shadow-sm transition-transform active:scale-[0.97]"
+            className="grid min-h-key place-items-center rounded-card bg-surface text-destructive shadow-sm transition-transform active:scale-[0.97]"
           >
             <Delete className="size-8 tap-safe" />
           </button>
@@ -99,7 +99,7 @@ export function PinSheet({
             type="button"
             aria-label="Unlock with fingerprint"
             onClick={onSubmit}
-            className="grid min-h-[56px] place-items-center rounded-card bg-surface text-foreground shadow-sm transition-transform active:scale-[0.97]"
+            className="grid min-h-key place-items-center rounded-card bg-surface text-foreground shadow-sm transition-transform active:scale-[0.97]"
           >
             <Fingerprint className="size-6" />
           </button>
@@ -107,7 +107,7 @@ export function PinSheet({
             type="button"
             aria-label="Unlock with face"
             onClick={onSubmit}
-            className="grid min-h-[56px] place-items-center rounded-card bg-surface text-foreground shadow-sm transition-transform active:scale-[0.97]"
+            className="grid min-h-key place-items-center rounded-card bg-surface text-foreground shadow-sm transition-transform active:scale-[0.97]"
           >
             <ScanFace className="size-6" />
           </button>

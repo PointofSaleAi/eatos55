@@ -22,9 +22,9 @@ export const tableStateTabs: { id: TableState | "all"; label: string }[] = [
 ];
 
 export const tableStateMeta: Record<TableState, { label: string; strip: string; text: string }> = {
-  available: { label: "AVAILABLE", strip: "bg-emerald-100", text: "text-emerald-600" },
+  available: { label: "AVAILABLE", strip: "bg-success/20", text: "text-success" },
   ordering: { label: "ORDERING", strip: "bg-accent/15", text: "text-accent" },
-  ordered: { label: "ORDERED", strip: "bg-amber-100", text: "text-amber-600" },
+  ordered: { label: "ORDERED", strip: "bg-warning/20", text: "text-warning" },
   reserved: { label: "RESERVED", strip: "bg-muted", text: "text-muted-foreground" },
 };
 

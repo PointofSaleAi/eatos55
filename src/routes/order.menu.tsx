@@ -45,7 +45,7 @@ function MenuSheet() {
 
   return (
     <Sheet open onOpenChange={(open) => (open ? null : navigate({ to: "/order/new" }))}>
-      <SheetContent side="bottom" className="rounded-t-3xl border-0 bg-surface p-0 pb-8">
+      <SheetContent side="bottom" className="rounded-t-sheet border-0 bg-surface p-0 pb-8">
         <SheetHeader className="px-4 pb-2 pt-5">
           <SheetTitle className="text-center text-fs-xl font-extrabold text-foreground">
             Menu

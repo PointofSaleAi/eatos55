@@ -42,7 +42,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
       <SheetContent
         side="bottom"
         style={dragStyle}
-        className="mx-auto flex max-h-[min(78dvh,34rem)] w-full max-w-[420px] flex-col overflow-y-auto rounded-t-3xl border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]"
+        className="mx-auto flex max-h-[min(78dvh,34rem)] w-full max-w-sheet flex-col overflow-y-auto rounded-t-sheet border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]"
       >
         <SheetGrabber handleProps={handleProps} />
         <SheetHeader className="px-4 pb-2 pt-1 text-left">

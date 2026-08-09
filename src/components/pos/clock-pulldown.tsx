@@ -153,7 +153,7 @@ export function ClockPullDown() {
                 close();
                 navigate({ to: "/" });
               }}
-              className="mt-3 min-h-[52px] w-full rounded-card border border-shell-foreground/60 text-fs-base font-extrabold uppercase tracking-[0.08em] text-shell-foreground"
+              className="mt-3 min-h-key w-full rounded-card border border-shell-foreground/60 text-fs-base font-extrabold uppercase tracking-[0.08em] text-shell-foreground"
             >
               Log out
             </button>

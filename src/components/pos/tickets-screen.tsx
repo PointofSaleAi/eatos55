@@ -354,7 +354,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                     setOverlay("none");
                   }}
                   className={cn(
-                    "flex min-h-[56px] w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted",
+                    "flex min-h-key w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted",
                     active && "bg-muted",
                   )}
                 >
@@ -381,7 +381,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
       >
         <SheetContent
           side="bottom"
-          className="rounded-t-3xl border-t border-border bg-surface p-0 pb-6"
+          className="rounded-t-sheet border-t border-border bg-surface p-0 pb-6"
         >
           <SheetHeader className="px-4 pb-2 pt-5">
             <SheetTitle className="text-center text-fs-xl font-extrabold text-foreground">
@@ -398,7 +398,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                   <button
                     type="button"
                     onClick={() => setOpenFacet(open ? null : f.id)}
-                    className="flex min-h-[60px] w-full items-center gap-3 px-4 py-3 text-left"
+                    className="flex min-h-row w-full items-center gap-3 px-4 py-3 text-left"
                   >
                     <span className="shrink-0 text-accent">
                       <Icon className="size-5" />

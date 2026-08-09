@@ -19,7 +19,7 @@ export function DiscountSheet({
   const { dragStyle, handleProps } = useSheetDrag(onClose);
   return (
     <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
-      <SheetContent side="bottom" style={dragStyle} className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]">
+      <SheetContent side="bottom" style={dragStyle} className="mx-auto w-full max-w-sheet rounded-t-sheet border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]">
         <SheetGrabber handleProps={handleProps} />
         <SheetHeader className="px-4 pb-1.5 pt-1" {...handleProps}>
           <SheetTitle className="text-center text-fs-base font-extrabold text-foreground">
