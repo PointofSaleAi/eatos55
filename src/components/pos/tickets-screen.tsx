@@ -368,10 +368,6 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               </button>
             ))}
           </div>
-          <p className="shrink-0 whitespace-nowrap pr-1 text-fs-xs font-extrabold text-accent">
-            <span className="font-bold text-muted-foreground">Due </span>
-            {money(amountDue)}
-          </p>
         </div>
       </div>
 
