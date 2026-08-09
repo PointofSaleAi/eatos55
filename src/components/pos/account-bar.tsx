@@ -27,11 +27,12 @@ export function AccountInfo() {
       </span>
       <p className="min-w-0 truncate text-fs-xs font-extrabold leading-tight text-foreground">
         {session.name}
-        <span className="hidden font-semibold text-muted-foreground xs:inline">
+        <span className="font-semibold text-muted-foreground">
           {" "}
           · {session.role} ({settings.clockedInAt})
         </span>
       </p>
+
     </div>
   );
 }
