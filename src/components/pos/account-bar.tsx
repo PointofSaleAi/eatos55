@@ -102,7 +102,7 @@ export function AccountBar() {
             <button
               type="button"
               onClick={() => toast.info("Full release notes opened")}
-              className="mt-3 w-full text-center text-fs-sm font-extrabold text-accent"
+              className="mt-3 flex min-h-tap w-full items-center justify-center text-fs-sm font-extrabold text-accent"
             >
               See more
             </button>
