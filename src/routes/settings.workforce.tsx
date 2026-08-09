@@ -43,7 +43,7 @@ function WorkforceSettings() {
                     "Access and track employee clock-in and clock-out times, manage breaks and review shift totals from Back Office.",
                   )
                 }
-                className="font-extrabold text-foreground transition-colors hover:text-accent active:text-accent focus-visible:text-accent"
+                className="tap-safe font-extrabold text-foreground transition-colors hover:text-accent active:text-accent focus-visible:text-accent"
               >
                 Learn more
               </button>

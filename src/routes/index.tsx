@@ -95,7 +95,7 @@ function SignInScreen() {
 
         <Link
           to="/access/forgot-password"
-          className="mt-6 block text-center text-fs-sm font-bold text-foreground transition-colors hover:text-accent active:text-accent focus-visible:text-accent"
+          className="mt-6 flex min-h-tap items-center justify-center text-center text-fs-sm font-bold text-foreground transition-colors hover:text-accent active:text-accent focus-visible:text-accent"
         >
           Forgot Your Password?
         </Link>
