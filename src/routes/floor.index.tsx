@@ -1,8 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
+import { StatusSheet, type StatusOption } from "@/components/pos/status-sheet";
 import { MenuButton, ScreenBody } from "@/components/pos/shell";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,14 +42,35 @@ export const Route = createFileRoute("/floor/")({
   component: FloorPlan,
 });
 
+function elapsed(iso: string) {
+  const mins = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+  return mins < 60 ? `${mins}M` : `${Math.floor(mins / 60)}H`;
+}
+
+const statusOptions: StatusOption<TableState>[] = [
+  { id: "available", label: "Available", dot: "text-success" },
+  { id: "ordering", label: "Ordering", dot: "text-accent" },
+  { id: "ordered", label: "Ordered", dot: "text-warning" },
+  { id: "reserved", label: "Reserved", dot: "text-muted-foreground" },
+];
+
 function FloorPlan() {
   const navigate = useNavigate();
-  const { floor, setFloor, tableStates, startOrder } = usePos();
+  const { floor, setFloor, tableStates, tableSince, setTableState, startOrder } = usePos();
   const [tab, setTab] = useState<TableState | "all">("all");
+  const [statusFor, setStatusFor] = useState<{ name: string; state: TableState } | null>(null);
 
   const tables = floorTables
     .filter((t) => t.floor === floor)
-    .map((t) => ({ ...t, state: (tableStates[t.name] ?? t.state) as TableState }))
+    .map((t) => {
+      const started = tableSince[t.name];
+      return {
+        ...t,
+        state: (tableStates[t.name] ?? t.state) as TableState,
+        since: started ? elapsed(started) : t.since,
+      };
+    })
+
     .filter((t) => (tab === "all" ? true : t.state === tab));
 
   return (
@@ -104,43 +128,68 @@ function FloorPlan() {
             {tables.map((t) => {
               const meta = tableStateMeta[t.state];
               return (
-                <button
+                <div
                   key={t.id}
-                  type="button"
-                  onClick={() => {
-                    startOrder(t.name);
-                    navigate({ to: "/order/new" });
-                  }}
-                  className="overflow-hidden rounded-card border border-border bg-surface text-left transition-transform active:scale-[0.98]"
+                  className="overflow-hidden rounded-card border border-border bg-surface text-left"
                 >
-                  <div className="relative grid h-tile place-items-center">
-                    <div className="grid size-[70px] place-items-center rounded-row border border-border text-fs-sm font-bold text-foreground">
-                      {t.name}
-                    </div>
-                    {t.since ? (
-                      <span className="absolute bottom-2 right-3 text-fs-xs font-bold text-muted-foreground">
-                        {t.since}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      startOrder(t.name);
+                      navigate({ to: "/order/new" });
+                    }}
+                    className="block w-full transition-transform active:scale-[0.98]"
+                  >
+                    <div className="relative grid h-tile place-items-center">
+                      <div className="grid size-[70px] place-items-center rounded-row border border-border text-fs-sm font-bold text-foreground">
+                        {t.name}
+                      </div>
+                      {t.since ? (
+                        <span className="absolute bottom-2 right-3 text-fs-xs font-bold text-muted-foreground">
+                          {t.since}
+                        </span>
+                      ) : null}
+                      <span className="absolute bottom-2 left-3 text-fs-xs text-muted-foreground">
+                        {t.seats} seat{t.seats === 1 ? "" : "s"}
                       </span>
-                    ) : null}
-                    <span className="absolute bottom-2 left-3 text-fs-xs text-muted-foreground">
-                      {t.seats} seat{t.seats === 1 ? "" : "s"}
-                    </span>
-                  </div>
-                  <div
+                    </div>
+                  </button>
+                  {/* Status strip is its own control so staff can change state without ordering. */}
+                  <button
+                    type="button"
+                    onClick={() => setStatusFor({ name: t.name, state: t.state })}
+                    aria-label={`Change status for ${t.name}, currently ${meta.label}`}
                     className={cn(
-                      "px-3 py-2 text-center text-fs-sm font-extrabold",
+                      "flex min-h-ctl-sm w-full items-center justify-center gap-1 px-3 py-2 text-center text-fs-sm font-extrabold transition-opacity active:opacity-80",
                       meta.strip,
                       meta.text,
                     )}
                   >
                     {meta.label}
-                  </div>
-                </button>
+                    <ChevronDown className="size-3.5 shrink-0" aria-hidden />
+                  </button>
+                </div>
               );
             })}
           </div>
         )}
       </ScreenBody>
+
+      <StatusSheet
+        open={statusFor !== null}
+        title={statusFor ? `${statusFor.name} status` : "Status"}
+        options={statusOptions}
+        value={statusFor?.state ?? null}
+        onClose={() => setStatusFor(null)}
+        onPick={(state) => {
+          if (statusFor) {
+            setTableState(statusFor.name, state);
+            toast.success(`${statusFor.name} · ${tableStateMeta[state].label}`);
+          }
+          setStatusFor(null);
+        }}
+      />
     </div>
   );
 }
+

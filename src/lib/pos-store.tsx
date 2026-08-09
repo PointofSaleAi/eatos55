@@ -12,8 +12,12 @@ import {
   type Ticket,
   type TicketStatus,
 } from "./demo-data";
+import type { TableState } from "./floor-data";
+
+export type RoomState = "available" | "occupied";
 
 export type SortKey = "time-late-early" | "time-early-late" | "orders-z-a" | "orders-a-z";
+
 
 export type TicketFilters = {
   statuses: TicketStatus[];
@@ -259,8 +263,13 @@ type Store = {
   activeTable: string | null;
   floor: string;
   setFloor: (f: string) => void;
-  tableStates: Record<string, "ordering">;
+  tableStates: Record<string, TableState>;
+  tableSince: Record<string, string>;
+  setTableState: (table: string, state: TableState) => void;
+  roomStates: Record<string, RoomState>;
+  setRoomState: (room: string, state: RoomState) => void;
   startOrder: (table?: string) => void;
+
   guest: Guest;
   setGuest: (patch: Partial<Guest>) => void;
   orderType: ServiceOrderType;
@@ -366,7 +375,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [floor, setFloor] = useState<string>("Ground Floor");
   const [guest, setGuestState] = useState<Guest>({ name: "", phone: "", partySize: 1 });
   const [orderType, setOrderType] = useState<ServiceOrderType>("Dine In");
-  const [tableStates, setTableStates] = useState<Record<string, "ordering">>({});
+  const [tableStates, setTableStates] = useState<Record<string, TableState>>({});
+  const [tableSince, setTableSince] = useState<Record<string, string>>({});
+  const [roomStates, setRoomStates] = useState<Record<string, RoomState>>({});
+  const [floorReady, setFloorReady] = useState(false);
+
   const [noTax, setNoTax] = useState(false);
   const [serviceCharge, setServiceCharge] = useState(0);
   const [orderDiscountPercent, setOrderDiscountPercent] = useState(0);
@@ -396,6 +409,39 @@ export function PosProvider({ children }: { children: ReactNode }) {
       /* ignore unwritable storage */
     }
   }, [settings, settingsReady]);
+
+  // Table/room statuses are device-local so a table stays Reserved across screens.
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("eatos.pos.floor");
+      if (raw) {
+        const saved = JSON.parse(raw) as {
+          tableStates?: Record<string, TableState>;
+          tableSince?: Record<string, string>;
+          roomStates?: Record<string, RoomState>;
+        };
+        if (saved.tableStates) setTableStates(saved.tableStates);
+        if (saved.tableSince) setTableSince(saved.tableSince);
+        if (saved.roomStates) setRoomStates(saved.roomStates);
+      }
+    } catch {
+      /* ignore unreadable storage */
+    }
+    setFloorReady(true);
+  }, []);
+  useEffect(() => {
+    if (!floorReady) return;
+    try {
+      window.localStorage.setItem(
+        "eatos.pos.floor",
+        JSON.stringify({ tableStates, tableSince, roomStates }),
+      );
+    } catch {
+      /* ignore unwritable storage */
+    }
+  }, [tableStates, tableSince, roomStates, floorReady]);
+
+
 
   // Keep real device haptics in step with the user's setting.
   useEffect(() => {
@@ -505,6 +551,19 @@ export function PosProvider({ children }: { children: ReactNode }) {
       floor,
       setFloor,
       tableStates,
+      tableSince,
+      setTableState: (table, state) => {
+        setTableStates((s) => ({ ...s, [table]: state }));
+        setTableSince((s) => {
+          const next = { ...s };
+          if (state === "available" || state === "reserved") delete next[table];
+          else next[table] = new Date().toISOString();
+          return next;
+        });
+      },
+      roomStates,
+      setRoomState: (room, state) => setRoomStates((s) => ({ ...s, [room]: state })),
+
       guest,
       setGuest: (patch) => setGuestState((g) => ({ ...g, ...patch })),
       orderType,
@@ -513,7 +572,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setCart([]);
         setActiveTicketId(null);
         setActiveTable(table ?? null);
-        if (table) setTableStates((s) => ({ ...s, [table]: "ordering" }));
+        if (table) {
+          setTableStates((s) => ({ ...s, [table]: "ordering" }));
+          setTableSince((s) => ({ ...s, [table]: new Date().toISOString() }));
+        }
+
       },
 
       openTicket: (id) => {
@@ -640,6 +703,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
     activeTable,
     floor,
     tableStates,
+    tableSince,
+    roomStates,
+
     guest,
     orderType,
     noTax,
