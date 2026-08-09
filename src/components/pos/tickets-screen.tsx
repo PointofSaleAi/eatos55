@@ -27,7 +27,6 @@ import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { usePos, emptyFilters, type SortKey } from "@/lib/pos-store";
 import {
   employees,
-  money,
   paymentTypes,
   revenueCenters,
   ticketOrderTypes,
@@ -135,7 +134,6 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
       : tab === "closed"
         ? baseList.filter((t) => t.status === "paid")
         : baseList;
-  const amountDue = list.filter((t) => t.status !== "paid").reduce((s, t) => s + t.total, 0);
 
   const dateLabel = new Date(`${ticketDate}T12:00:00`).toLocaleDateString("en-GB", {
     day: "2-digit",
