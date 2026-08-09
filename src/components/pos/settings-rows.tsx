@@ -35,7 +35,7 @@ export function IconTile({ icon: Icon }: { icon: LucideIcon; color?: TileColor |
 
 export function GroupCard({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("overflow-hidden rounded-2xl border border-border bg-surface", className)}>
+    <div className={cn("overflow-hidden rounded-card border border-border bg-surface elev-1", className)}>
       {children}
     </div>
   );
@@ -45,7 +45,7 @@ export function Caption({ children, tone }: { children: ReactNode; tone?: "dange
   return (
     <p
       className={cn(
-        "px-1 pt-2 text-xs leading-snug",
+        "px-1 pt-2 t-caption",
         tone === "danger" ? "text-destructive" : "text-muted-foreground",
       )}
     >
@@ -86,7 +86,7 @@ function RowInner({ icon, color, title, value, right, chevron }: RowShellProps) 
 }
 
 const rowBase =
-  "flex min-h-row w-full items-center gap-3 border-b border-border px-4 py-3 text-left last:border-b-0";
+  "flex min-h-row w-full items-center gap-row border-b border-border px-4 py-3 text-left last:border-b-0";
 
 export function IconNavRow({
   to,
@@ -206,7 +206,7 @@ export function SegmentRow({
               aria-checked={active}
               onClick={() => onChange(option)}
               className={cn(
-                "min-h-ctl-sm flex-1 whitespace-nowrap rounded-full px-3 text-xs font-bold transition-colors",
+                "min-h-ctl-sm flex-1 whitespace-nowrap rounded-pill px-3 t-badge transition-colors",
                 active
                   ? "bg-accent text-accent-foreground"
                   : "text-muted-foreground hover:text-foreground",

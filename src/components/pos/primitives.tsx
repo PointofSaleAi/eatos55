@@ -22,7 +22,7 @@ export function Card({
   className?: string;
 }) {
   return (
-    <div className={cn("rounded-2xl border border-border bg-surface", className)}>{children}</div>
+    <div className={cn("rounded-card border border-border bg-surface elev-1", className)}>{children}</div>
   );
 }
 
@@ -163,7 +163,7 @@ export function Pills<T extends string>({
           type="button"
           onClick={() => onChange(o.id)}
           className={cn(
-            "min-h-ctl-sm shrink-0 rounded-full px-3.5 text-fs-sm font-bold transition-colors",
+            "min-h-ctl-sm shrink-0 rounded-pill px-3.5 t-row transition-colors",
             value === o.id
               ? "bg-primary text-primary-foreground"
               : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -182,13 +182,13 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface px-3 py-3 text-left transition-colors hover:bg-muted"
+      className="flex w-full items-center gap-row rounded-card border border-border bg-surface px-3 py-3 text-left transition-colors hover:bg-muted"
     >
-      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-muted text-sm font-extrabold text-foreground">
+      <span className="grid size-10 shrink-0 place-items-center rounded-row bg-muted t-row text-foreground">
         {ticket.seats}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-extrabold text-foreground">
+        <span className="block truncate t-row text-foreground">
           {ticket.label}
         </span>
         <span className="block truncate t-caption text-muted-foreground">
@@ -196,8 +196,8 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
         </span>
       </span>
       <span className="shrink-0 text-right">
-        <span className="block text-sm font-extrabold text-foreground">{money(ticket.total)}</span>
-        <span className={cn("block text-xs font-bold", meta.tone)}>{meta.label}</span>
+        <span className="block t-row text-foreground">{money(ticket.total)}</span>
+        <span className={cn("block t-badge", meta.tone)}>{meta.label}</span>
       </span>
     </button>
   );
@@ -251,7 +251,7 @@ function KeypadKey({
         haptic("light");
         onPress();
       }}
-      className="grid min-h-row place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]"
+      className="grid min-h-row place-items-center rounded-key bg-surface t-numeric text-foreground elev-1 transition-transform active:scale-[0.97]"
     >
       {children}
     </button>
@@ -272,16 +272,16 @@ export function EmptyState({
   return (
     <div className="grid place-items-center px-6 py-12 text-center">
       <div>
-        <span className="mx-auto mb-3 grid size-12 place-items-center rounded-2xl bg-muted text-muted-foreground">
+        <span className="mx-auto mb-3 grid size-12 place-items-center rounded-card bg-muted text-muted-foreground">
           {icon ?? <Inbox className="size-6" aria-hidden />}
         </span>
-        <p className="text-fs-sm font-extrabold text-foreground">{title}</p>
-        <p className="mt-1 text-fs-xs text-muted-foreground">{detail}</p>
+        <p className="t-row text-foreground">{title}</p>
+        <p className="mt-1 t-caption text-muted-foreground">{detail}</p>
         {action ? (
           <button
             type="button"
             onClick={action.onPress}
-            className="min-h-ctl-sm mt-4 rounded-full bg-primary px-5 text-fs-sm font-extrabold text-primary-foreground transition-opacity hover:opacity-90"
+            className="min-h-ctl-sm mt-4 rounded-pill bg-primary px-5 t-row text-primary-foreground transition-opacity hover:opacity-90"
           >
             {action.label}
           </button>
