@@ -1,11 +1,12 @@
 import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import {
+  Check,
   ChevronLeft,
   Menu as MenuIcon,
   ClipboardList,
   Columns3,
   LayoutGrid,
-  PlusCircle,
+  Plus,
   Settings,
   type LucideIcon,
 } from "lucide-react";
@@ -18,6 +19,8 @@ import { NavDrawer } from "@/components/pos/nav-drawer";
 import { OfflineBanner } from "@/components/pos/offline-banner";
 import { useAppearance } from "@/hooks/use-appearance";
 import { useGlobalKeyboardAware } from "@/hooks/use-keyboard-inset";
+import { haptic } from "@/lib/haptics";
+import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
 const NavDrawerContext = createContext<{ open: () => void } | null>(null);
