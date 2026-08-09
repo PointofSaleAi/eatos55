@@ -223,7 +223,7 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
     <button
       type="button"
       onClick={onClick}
-      className="w-full rounded-card border border-border bg-surface px-3 py-3 text-left transition-colors hover:bg-muted"
+      className="@container w-full rounded-card border border-border bg-surface px-3 py-3 text-left transition-colors hover:bg-muted"
     >
       <div className="flex items-center gap-2">
         <span className="flex shrink-0 items-center gap-1.5 rounded-row bg-muted px-2 py-1 t-row text-foreground">
@@ -234,7 +234,8 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
         <span className={cn("shrink-0 t-badge", meta.tone)}>{meta.label}</span>
       </div>
 
-      <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-4 lg:grid-cols-6">
+      <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-2 @[30rem]:grid-cols-4 @[46rem]:grid-cols-6">
+
         <Cell label="Timer" value={timer} />
         <Cell label="Check" value={String(ticket.checkNumber ?? ticket.number)} />
         <Cell label="Total" value={money(ticket.total)} />
