@@ -177,7 +177,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                 type="button"
                 aria-label="Previous day"
                 onClick={() => shiftTicketDate(-1)}
-                className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+                className="grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
               >
                 <ChevronLeft className="size-5" />
               </button>
@@ -187,7 +187,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                 type="button"
                 aria-label="Next day"
                 onClick={() => shiftTicketDate(1)}
-                className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+                className="grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
               >
                 <ChevronRight className="size-5" />
               </button>

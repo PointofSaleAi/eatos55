@@ -55,7 +55,7 @@ export function ClockPullDown() {
                   <span
                     key={i}
                     className={cn(
-                      "grid size-9 place-items-center text-fs-xl font-extrabold",
+                      "grid size-11 place-items-center text-fs-xl font-extrabold",
                       pin.length > i ? "text-foreground" : "text-muted-foreground/40",
                     )}
                   >

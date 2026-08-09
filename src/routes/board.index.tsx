@@ -117,7 +117,7 @@ function Board() {
                     type="button"
                     aria-label={`Sort ${col.label}`}
                     onClick={() => setAsc((s) => ({ ...s, [col.id]: !s[col.id] }))}
-                    className="grid size-8 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted"
+                    className="grid size-11 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted"
                   >
                     <ArrowDownUp className="size-4" />
                   </button>

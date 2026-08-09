@@ -50,7 +50,7 @@ function NewOrder() {
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
         <div className="flex items-center gap-1">
-          <MenuButton className="-ml-2 size-9" />
+          <MenuButton className="-ml-2 size-11" />
           <GuestBlock onEdit={() => setGuestOpen(true)} />
 
           <div className="ml-auto flex shrink-0 items-center gap-0.5">
@@ -174,7 +174,7 @@ function NewOrder() {
                       type="button"
                       aria-label={`Remove one ${l.name}`}
                       onClick={() => changeQty(l.id, -1)}
-                      className="grid size-9 place-items-center rounded-full border border-border text-sm font-bold text-foreground"
+                      className="grid size-11 place-items-center rounded-full border border-border text-sm font-bold text-foreground"
                     >
                       −
                     </button>
@@ -185,7 +185,7 @@ function NewOrder() {
                       type="button"
                       aria-label={`Add one ${l.name}`}
                       onClick={() => changeQty(l.id, 1)}
-                      className="grid size-9 place-items-center rounded-full border border-border text-sm font-bold text-foreground"
+                      className="grid size-11 place-items-center rounded-full border border-border text-sm font-bold text-foreground"
                     >
                       +
                     </button>

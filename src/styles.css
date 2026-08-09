@@ -88,8 +88,8 @@
   --fs-2xl: clamp(1.5rem, 1.2rem + 1.3vw, 2.125rem);
 
   --tap: 2.75rem; /* 44px minimum touch target */
-  --ctl-sm: clamp(2.25rem, 2rem + 1.1vw, 2.625rem);
-  --ctl-md: clamp(2.5rem, 2.2rem + 1.3vw, 2.9375rem);
+  --ctl-sm: clamp(2.75rem, 2.6rem + 0.6vw, 3rem);
+  --ctl-md: clamp(2.75rem, 2.55rem + 0.9vw, 3.125rem);
   --ctl-lg: clamp(2.75rem, 2.4rem + 1.6vw, 3.25rem);
   --tile-h: clamp(5.75rem, 4.2rem + 7vw, 8.5rem);
   --gap-sec: clamp(0.5rem, 0.3rem + 1vw, 0.875rem);
@@ -252,8 +252,8 @@
 /* Short viewports (small Androids, 568-620px tall): compact step, taps stay 44px. */
 @media (max-height: 620px) {
   :root {
-    --ctl-sm: 2.25rem;
-    --ctl-md: 2.375rem;
+    --ctl-sm: 2.75rem;
+    --ctl-md: 2.75rem;
     --ctl-lg: 2.75rem;
     --tile-h: 5.5rem;
     --gap-sec: 0.5rem;

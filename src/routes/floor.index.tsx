@@ -68,7 +68,7 @@ function FloorPlan() {
           </DropdownMenu>
           <Link
             to="/rooms"
-            className="min-h-ctl-sm shrink-0 rounded-full border border-border px-3.5 text-fs-sm font-bold leading-[34px] text-foreground transition-colors hover:bg-muted"
+            className="min-h-ctl-sm shrink-0 rounded-full border border-border px-3.5 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             Rooms
           </Link>
