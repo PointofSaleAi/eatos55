@@ -59,7 +59,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
               onChange={(e) => setName(e.target.value)}
               placeholder="Guest Name"
               aria-label="Guest name"
-              className="h-11 min-w-0 flex-1 bg-transparent text-fs-sm text-foreground outline-none"
+              className="h-ctl-lg min-w-0 flex-1 bg-transparent text-fs-sm text-foreground outline-none"
             />
           </div>
           <div
@@ -75,7 +75,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
               inputMode="tel"
               placeholder="(XXX) XXX-XXXX"
               aria-label="Guest phone number"
-              className="h-11 min-w-0 flex-1 bg-transparent text-fs-sm text-foreground outline-none"
+              className="h-ctl-lg min-w-0 flex-1 bg-transparent text-fs-sm text-foreground outline-none"
             />
           </div>
           <div className="flex items-center gap-2 rounded-xl border border-border bg-surface px-3">
@@ -85,7 +85,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
               value={party}
               onChange={(e) => setParty(Number(e.target.value))}
               aria-label="Party size"
-              className="h-11 shrink-0 bg-transparent text-fs-sm font-bold text-foreground outline-none"
+              className="h-ctl-lg shrink-0 bg-transparent text-fs-sm font-bold text-foreground outline-none"
             >
               {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
                 <option key={n} value={n}>
@@ -129,7 +129,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
               setOrderType("Dine In");
               onClose();
             }}
-            className="h-11 shrink-0 rounded-full border border-border px-4 text-fs-sm font-bold text-foreground"
+            className="h-ctl-lg shrink-0 rounded-full border border-border px-4 text-fs-sm font-bold text-foreground"
           >
             Clear
           </button>
@@ -141,7 +141,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
               toast.success("Guest details saved");
               onClose();
             }}
-            className="h-11 flex-1 rounded-full bg-primary text-fs-sm font-extrabold uppercase tracking-[0.06em] text-primary-foreground"
+            className="h-ctl-lg flex-1 rounded-full bg-primary text-fs-sm font-extrabold uppercase tracking-[0.06em] text-primary-foreground"
           >
             Save
           </button>

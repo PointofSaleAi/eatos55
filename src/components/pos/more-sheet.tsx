@@ -132,7 +132,7 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
                 setChargeOpen(false);
                 toast.success("Service charge updated");
               }}
-              className="mt-3 h-11 w-full rounded-full bg-primary text-fs-sm font-extrabold uppercase text-primary-foreground"
+              className="mt-3 h-ctl-lg w-full rounded-full bg-primary text-fs-sm font-extrabold uppercase text-primary-foreground"
             >
               Apply
             </button>

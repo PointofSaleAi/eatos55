@@ -125,7 +125,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
           <Link
             to="/tickets/manager-controls"
             onClick={onClose}
-            className="flex min-h-[42px] items-center gap-2 rounded-xl border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="flex min-h-ctl-md items-center gap-2 rounded-xl border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             <ShieldCheck className="size-4" />
             Manager Controls
@@ -136,7 +136,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
               onClose();
               clockOut();
             }}
-            className="flex min-h-[42px] w-full items-center gap-2 rounded-xl border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="flex min-h-ctl-md w-full items-center gap-2 rounded-xl border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             <LogOut className="size-4" />
             Clock Out
