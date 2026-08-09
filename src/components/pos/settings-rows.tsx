@@ -116,6 +116,10 @@ function RowInner({ icon, color, title, value, right, chevron }: RowShellProps) 
 const rowBase =
   "flex min-h-row w-full items-center gap-row border-b border-border px-4 py-3 text-left last:border-b-0";
 
+/** Shared row metrics so settings screens can compose custom rows. */
+export const settingsRowClass = rowBase;
+
+
 export function IconNavRow({
   to,
   topic,
