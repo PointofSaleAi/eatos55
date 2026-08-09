@@ -2,6 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { AccountActions, AccountInfo } from "@/components/pos/account-bar";
 import { PinPad } from "@/components/pos/pin-pad";
 import { usePos } from "@/lib/pos-store";
 
@@ -33,16 +34,21 @@ export function ClockPullDown() {
   return (
     <>
       <div className="relative z-40 shrink-0 bg-background">
-        <button
-          type="button"
-          aria-label={open ? "Close clock pad" : "Open clock pad"}
-          aria-expanded={open}
-          onClick={() => (open ? close() : setOpen(true))}
-          className="mx-auto flex h-7 tap-safe w-32 items-center justify-center rounded-b-xl border border-t-0 border-border bg-surface text-muted-foreground"
-        >
-          {open ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
-        </button>
+        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 px-2">
+          <AccountInfo />
+          <button
+            type="button"
+            aria-label={open ? "Close clock pad" : "Open clock pad"}
+            aria-expanded={open}
+            onClick={() => (open ? close() : setOpen(true))}
+            className="flex h-7 tap-safe w-24 items-center justify-center rounded-b-xl border border-t-0 border-border bg-surface text-muted-foreground"
+          >
+            {open ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+          </button>
+          <AccountActions />
+        </div>
       </div>
+
 
       {open ? (
         <div className="absolute inset-0 z-30 flex flex-col bg-shell/80 px-3 pb-4 pt-8">
