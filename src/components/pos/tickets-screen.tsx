@@ -245,7 +245,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
       <div
         {...ptr.bind}
         className={cn(
-          "no-scrollbar relative min-h-0 flex-1 overflow-y-auto bg-background px-4 pt-3",
+          "no-scrollbar relative min-h-0 flex-1 overflow-y-auto bg-background px-4 pb-24 pt-3",
           overlay === "search"
             ? "pb-[calc(5rem+var(--kb-inset,0px))]"
             : "pb-[calc(0.75rem+var(--kb-inset,0px))]",
@@ -327,7 +327,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
           startOrder();
           navigate({ to: "/order/new" });
         }}
-        className="absolute bottom-24 right-5 grid size-14 place-items-center rounded-pill bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
+        className="absolute bottom-4 right-4 z-10 grid size-14 place-items-center rounded-pill bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
       >
         <FilePlus2 className="size-6" />
       </button>

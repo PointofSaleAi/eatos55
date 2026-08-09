@@ -170,7 +170,7 @@ function SettingsHub() {
             </GroupCard>
           ))
         )}
-        <div className="h-6" />
+        <div className="h-24" />
       </ScreenBody>
 
       <button
@@ -180,9 +180,9 @@ function SettingsHub() {
           startOrder();
           navigate({ to: "/order/new" });
         }}
-        className="absolute bottom-20 right-4 z-10 grid size-16 place-items-center rounded-pill bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
+        className="absolute bottom-4 right-4 z-10 grid size-14 place-items-center rounded-pill bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
       >
-        <SquarePen className="size-7 tap-safe" />
+        <SquarePen className="size-6" />
       </button>
 
       <PinSheet
