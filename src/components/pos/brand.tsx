@@ -3,8 +3,8 @@ import { cn } from "@/lib/utils";
 
 /**
  * eatOS wordmark. Black on light surfaces, automatically white in the dark
- * appearance. `invert` flips that for a surface that opposes the appearance
- * (e.g. a dark header shown in light mode).
+ * appearance. `invert` pins it to white for surfaces that are dark in both
+ * appearances (e.g. the `bg-shell` help-centre header).
  * Never use the pink app icon inside page content — pink is for launcher icons only.
  */
 export function Wordmark({
@@ -20,11 +20,11 @@ export function Wordmark({
       alt="eatOS — Restaurants Made Simple"
       className={cn(
         "h-14 w-auto object-contain",
-        // Non-cumulative: exactly one of the two states inverts.
-        invert ? "invert dark:invert-0" : "dark:invert",
+        invert ? "invert" : "dark:invert",
         className,
       )}
     />
   );
 }
+
 
