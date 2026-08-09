@@ -713,9 +713,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
                 checkNumber: t.checkNumber ?? Number(t.id.replace("t-", "")),
                 revenueCenter: t.revenueCenter ?? session.station ?? "Main dining",
                 orderType,
-                guestEmail: guest.email,
-                notes: guest.notes,
-                vehicle: guest.vehicle,
+                ...(guest.email ? { guestEmail: guest.email } : {}),
+                ...(guest.notes ? { notes: guest.notes } : {}),
+                ...(guest.vehicle ? { vehicle: guest.vehicle } : {}),
                 payments: [
                   ...(t.payments ?? []),
                   {
@@ -757,9 +757,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
             revenueCenter: session.station ?? "Main dining",
             paymentType: paymentLabel,
             orderType,
-            guestEmail: guest.email,
-            notes: guest.notes,
-            vehicle: guest.vehicle,
+            ...(guest.email ? { guestEmail: guest.email } : {}),
+            ...(guest.notes ? { notes: guest.notes } : {}),
+            ...(guest.vehicle ? { vehicle: guest.vehicle } : {}),
             payments: [{ no: "1", method: paymentLabel, amount: total, at }],
           };
           setTickets((list) => [created, ...list]);
