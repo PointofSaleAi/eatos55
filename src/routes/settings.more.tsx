@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
 import { ActionRow, Card, NavRow, SectionLabel, ToggleRow } from "@/components/pos/primitives";
 import { usePos } from "@/lib/pos-store";
+import { useAppearance } from "@/hooks/use-appearance";
 
 export const Route = createFileRoute("/settings/more")({
   head: () => ({
