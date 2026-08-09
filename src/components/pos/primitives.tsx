@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, ChevronRight, Delete, Inbox, Table2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Delete, Inbox, Table2, Utensils } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
