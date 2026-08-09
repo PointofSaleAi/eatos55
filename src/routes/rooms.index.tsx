@@ -30,7 +30,7 @@ function Rooms() {
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <SubHeader title="Rooms" backLabel="Floor plan" />
       <ScreenBody>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(8.5rem,1fr))] gap-3">
           {rooms.map((r) => (
             <button
               key={r.id}

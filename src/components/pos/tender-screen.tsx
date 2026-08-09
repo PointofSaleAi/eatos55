@@ -53,7 +53,7 @@ export function TenderScreen({
         </div>
 
         {denominations ? (
-          <div className="grid shrink-0 grid-cols-3 gap-2">
+          <div className="grid shrink-0 grid-cols-[repeat(auto-fill,minmax(6.25rem,1fr))] gap-2">
             {cashDenominations.map((d) => (
               <button
                 key={d}
