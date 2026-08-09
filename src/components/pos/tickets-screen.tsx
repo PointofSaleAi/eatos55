@@ -403,6 +403,30 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               Filters
             </SheetTitle>
           </SheetHeader>
+          <div className="flex gap-2 px-4 pb-3">
+            <button
+              type="button"
+              onClick={() => setFilters((prev) => ({ ...prev, mineOnly: !prev.mineOnly }))}
+              className={cn(
+                "min-h-ctl-sm flex flex-1 items-center justify-center gap-2 rounded-pill border text-fs-sm font-bold transition-colors",
+                filters.mineOnly
+                  ? "border-accent bg-accent/10 text-accent"
+                  : "border-border text-foreground hover:bg-muted",
+              )}
+            >
+              <User className="size-4" aria-hidden />
+              My tickets
+            </button>
+            <button
+              type="button"
+              onClick={() => announce("Tickets refreshed")}
+              className="min-h-ctl-sm flex flex-1 items-center justify-center gap-2 rounded-pill border border-border text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
+            >
+              <RefreshCcwDot className="size-4" aria-hidden />
+              Sync
+            </button>
+          </div>
+
           <div className="max-h-[60vh] overflow-y-auto">
             {filterFacets.map((f, i) => {
               const Icon = f.icon;
