@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, Delete } from "lucide-react";
+import { ChevronRight, Delete, Inbox } from "lucide-react";
 import type { ReactNode } from "react";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
+import { haptic } from "@/lib/haptics";
 import { money, statusMeta, type Ticket } from "@/lib/demo-data";
 
 export function SectionLabel({ children }: { children: ReactNode }) {
