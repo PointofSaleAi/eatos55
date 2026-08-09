@@ -181,8 +181,10 @@ function CreateAccount() {
           <Checkbox
             checked={agree}
             onCheckedChange={(v) => setAgree(v === true)}
+            aria-label="Accept the eatOS Seller Agreement and e-Sign Consent"
             className="mt-0.5 size-6 rounded-none"
           />
+
           <span>
             eatOS's <span className="font-extrabold">Seller Agreement</span> and{" "}
             <span className="font-extrabold">e-Sign Consent</span>
