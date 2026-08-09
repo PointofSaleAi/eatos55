@@ -30,7 +30,7 @@ function Rooms() {
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <SubHeader title="Rooms" backLabel="Floor plan" />
       <ScreenBody>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(8.25rem,1fr))] gap-3">
           {rooms.map((r) => (
             <button
               key={r.id}
@@ -41,7 +41,7 @@ function Rooms() {
               }}
               className="overflow-hidden rounded-2xl border border-border bg-surface text-left transition-transform active:scale-[0.98]"
             >
-              <div className="flex h-[124px] flex-col items-center justify-center gap-1 px-3 text-center">
+              <div className="flex h-tile flex-col items-center justify-center gap-1 px-3 text-center">
                 <p className="text-sm font-extrabold leading-tight text-foreground">{r.name}</p>
                 {r.guest ? <p className="text-xs text-muted-foreground">{r.guest}</p> : null}
                 {typeof r.amount === "number" ? (

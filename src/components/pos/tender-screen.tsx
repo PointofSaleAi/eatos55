@@ -31,12 +31,12 @@ export function TenderScreen({
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <div className="flex shrink-0 items-center gap-2 border-b border-border bg-surface px-2 py-3">
         <BackButton fallbackTo="/payment/method" label="Back to payment methods" />
-        <h1 className="truncate text-2xl font-extrabold text-foreground">{title}</h1>
+        <h1 className="truncate text-fs-xl font-extrabold text-foreground">{title}</h1>
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col gap-2 p-3 pb-[max(0.75rem,var(--kb-inset,0px))]">
         <div className="shrink-0 text-center">
-          <p className="text-3xl font-extrabold tabular-nums text-foreground">{money(entered)}</p>
+          <p className="text-fs-2xl font-extrabold tabular-nums text-foreground">{money(entered)}</p>
           <p className="text-sm text-muted-foreground">
             Due {money(due)}
             {amount ? (
@@ -53,13 +53,13 @@ export function TenderScreen({
         </div>
 
         {denominations ? (
-          <div className="grid shrink-0 grid-cols-3 gap-2">
+          <div className="grid shrink-0 grid-cols-[repeat(auto-fill,minmax(6.25rem,1fr))] gap-2">
             {cashDenominations.map((d) => (
               <button
                 key={d}
                 type="button"
                 onClick={() => setAmount(String(Math.round((entered + d) * 100) / 100))}
-                className="min-h-[44px] rounded-full border border-border bg-surface text-base font-extrabold text-foreground shadow-sm transition-colors hover:bg-muted active:scale-[0.97]"
+                className="min-h-ctl-lg rounded-full border border-border bg-surface text-base font-extrabold text-foreground shadow-sm transition-colors hover:bg-muted active:scale-[0.97]"
               >
                 ${d}
               </button>
@@ -86,7 +86,7 @@ export function TenderScreen({
           disabled={entered <= 0}
           onClick={() => onCommit(entered)}
           className={cn(
-            "h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40",
+            "h-ctl-lg w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40",
           )}
         >
           {actionLabel ? actionLabel(entered) : `Charge ${money(entered || due)}`}

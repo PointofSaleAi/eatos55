@@ -46,7 +46,7 @@ function ContactUs() {
               <button
                 type="button"
                 onClick={() => toast.info("Region: United States")}
-                className="flex min-h-[40px] items-center gap-1 rounded-full bg-surface px-3 text-sm font-bold"
+                className="flex min-h-ctl-md items-center gap-1 rounded-full bg-surface px-3 text-sm font-bold"
                 aria-label="Choose region"
               >
                 <span aria-hidden>🇺🇸</span>
@@ -63,10 +63,10 @@ function ContactUs() {
             </div>
           </div>
 
-          <h2 className="mt-6 text-center text-2xl font-extrabold text-surface">
+          <h2 className="mt-6 text-center text-fs-xl font-extrabold text-surface">
             How can we help you?
           </h2>
-          <label className="mt-4 flex min-h-[48px] items-center gap-3 rounded-full bg-surface px-4">
+          <label className="mt-4 flex min-h-ctl-lg items-center gap-3 rounded-full bg-surface px-4">
             <Search className="size-6 shrink-0 text-foreground" />
             <input
               value={query}

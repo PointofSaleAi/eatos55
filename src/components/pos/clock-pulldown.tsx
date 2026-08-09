@@ -40,7 +40,7 @@ export function ClockPullDown() {
           aria-label={open ? "Close clock pad" : "Open clock pad"}
           aria-expanded={open}
           onClick={() => (open ? close() : setOpen(true))}
-          className="mx-auto flex h-6 w-32 items-center justify-center rounded-b-xl border border-t-0 border-border bg-surface text-muted-foreground"
+          className="mx-auto flex h-7 w-32 items-center justify-center rounded-b-xl border border-t-0 border-border bg-surface text-muted-foreground"
         >
           {open ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
         </button>
@@ -55,7 +55,7 @@ export function ClockPullDown() {
                   <span
                     key={i}
                     className={cn(
-                      "grid size-9 place-items-center text-2xl font-extrabold",
+                      "grid size-11 place-items-center text-fs-xl font-extrabold",
                       pin.length > i ? "text-foreground" : "text-muted-foreground/40",
                     )}
                   >

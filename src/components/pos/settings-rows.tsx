@@ -206,7 +206,7 @@ export function SegmentRow({
               aria-checked={active}
               onClick={() => onChange(option)}
               className={cn(
-                "min-h-[32px] flex-1 whitespace-nowrap rounded-full px-3 text-xs font-bold transition-colors",
+                "min-h-ctl-sm flex-1 whitespace-nowrap rounded-full px-3 text-xs font-bold transition-colors",
                 active
                   ? "bg-accent text-accent-foreground"
                   : "text-muted-foreground hover:text-foreground",

@@ -11,6 +11,14 @@
  */
 
 @theme inline {
+  /* Fluid type scale: compact at 320px, roomier on large phones. */
+  --text-fs-xs: var(--fs-xs);
+  --text-fs-sm: var(--fs-sm);
+  --text-fs-base: var(--fs-base);
+  --text-fs-lg: var(--fs-lg);
+  --text-fs-xl: var(--fs-xl);
+  --text-fs-2xl: var(--fs-2xl);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -68,6 +76,25 @@
 :root {
   --radius: 0.875rem;
   --font-app: "Archivo", ui-sans-serif, system-ui, sans-serif;
+
+  /* ---- One adaptive scale for every phone size ----
+     rem bases keep user text-size preferences working; the vw term lets a
+     bigger phone show slightly bigger text/controls instead of wasted space. */
+  --fs-xs: clamp(0.6875rem, 0.61rem + 0.36vw, 0.8125rem);
+  --fs-sm: clamp(0.8125rem, 0.73rem + 0.4vw, 0.9375rem);
+  --fs-base: clamp(0.9375rem, 0.86rem + 0.34vw, 1.0625rem);
+  --fs-lg: clamp(1.0625rem, 0.95rem + 0.5vw, 1.25rem);
+  --fs-xl: clamp(1.25rem, 1.05rem + 0.9vw, 1.625rem);
+  --fs-2xl: clamp(1.5rem, 1.2rem + 1.3vw, 2.125rem);
+
+  --tap: 2.75rem; /* 44px minimum touch target */
+  --ctl-sm: clamp(2.75rem, 2.6rem + 0.6vw, 3rem);
+  --ctl-md: clamp(2.75rem, 2.55rem + 0.9vw, 3.125rem);
+  --ctl-lg: clamp(2.75rem, 2.4rem + 1.6vw, 3.25rem);
+  --tile-h: clamp(5.75rem, 4.2rem + 7vw, 8.5rem);
+  --gap-sec: clamp(0.5rem, 0.3rem + 1vw, 0.875rem);
+  --pad-screen: clamp(0.75rem, 0.5rem + 1.2vw, 1.25rem);
+
 
   --shell: oklch(0.13 0 0);
   --shell-foreground: oklch(0.99 0 0);
@@ -220,4 +247,49 @@
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* Short viewports (small Androids, 568-620px tall): compact step, taps stay 44px. */
+@media (max-height: 620px) {
+  :root {
+    --ctl-sm: 2.75rem;
+    --ctl-md: 2.75rem;
+    --ctl-lg: 2.75rem;
+    --tile-h: 5.5rem;
+    --gap-sec: 0.5rem;
+  }
+}
+
+@utility min-h-tap {
+  min-height: var(--tap);
+}
+@utility h-ctl-sm {
+  height: var(--ctl-sm);
+}
+@utility min-h-ctl-sm {
+  min-height: var(--ctl-sm);
+}
+@utility h-ctl-md {
+  height: var(--ctl-md);
+}
+@utility min-h-ctl-md {
+  min-height: var(--ctl-md);
+}
+@utility h-ctl-lg {
+  height: var(--ctl-lg);
+}
+@utility min-h-ctl-lg {
+  min-height: var(--ctl-lg);
+}
+@utility h-tile {
+  height: var(--tile-h);
+}
+@utility min-h-tile {
+  min-height: var(--tile-h);
+}
+@utility gap-sec {
+  gap: var(--gap-sec);
+}
+@utility px-screen {
+  padding-inline: var(--pad-screen);
 }

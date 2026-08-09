@@ -93,7 +93,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
         <nav className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 py-2">
           {groups.map((g) => (
             <div key={g.title} className="pb-2">
-              <p className="px-2 pb-1 pt-2 text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+              <p className="px-2 pb-1 pt-2 text-fs-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
                 {g.title}
               </p>
               <ul>
@@ -105,7 +105,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
                         to={l.to}
                         onClick={onClose}
                         className={cn(
-                          "flex min-h-[40px] items-center rounded-xl px-2 text-[13px] font-bold transition-colors",
+                          "flex min-h-ctl-md items-center rounded-xl px-2 text-fs-sm font-bold transition-colors",
                           active
                             ? "bg-primary text-primary-foreground"
                             : "text-foreground hover:bg-muted",
@@ -125,7 +125,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
           <Link
             to="/tickets/manager-controls"
             onClick={onClose}
-            className="flex min-h-[42px] items-center gap-2 rounded-xl border border-border px-3 text-[13px] font-bold text-foreground transition-colors hover:bg-muted"
+            className="flex min-h-ctl-md items-center gap-2 rounded-xl border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             <ShieldCheck className="size-4" />
             Manager Controls
@@ -136,7 +136,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
               onClose();
               clockOut();
             }}
-            className="flex min-h-[42px] w-full items-center gap-2 rounded-xl border border-border px-3 text-[13px] font-bold text-foreground transition-colors hover:bg-muted"
+            className="flex min-h-ctl-md w-full items-center gap-2 rounded-xl border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             <LogOut className="size-4" />
             Clock Out

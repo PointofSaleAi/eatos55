@@ -43,7 +43,7 @@ function ManagerControls() {
                   search: { action: "Manager controls", next: "manager-controls" },
                 })
               }
-              className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-sm font-bold text-accent-foreground"
+              className="mt-4 inline-flex min-h-ctl-lg items-center rounded-full bg-accent px-5 text-sm font-bold text-accent-foreground"
             >
               Enter manager PIN
             </button>

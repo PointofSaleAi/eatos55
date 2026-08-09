@@ -61,7 +61,7 @@ function Board() {
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-2xl font-extrabold text-foreground">Order Status</h1>
+          <h1 className="text-fs-xl font-extrabold text-foreground">Order Status</h1>
           <div className="flex shrink-0 items-center gap-1">
             <button
               type="button"
@@ -95,7 +95,7 @@ function Board() {
               type="button"
               onClick={() => setChannel(c)}
               className={cn(
-                "min-h-[36px] rounded-full px-4 text-sm font-bold transition-colors",
+                "min-h-ctl-sm rounded-full px-4 text-sm font-bold transition-colors",
                 c === channel ? "bg-primary text-primary-foreground" : "text-muted-foreground",
               )}
             >
@@ -117,7 +117,7 @@ function Board() {
                     type="button"
                     aria-label={`Sort ${col.label}`}
                     onClick={() => setAsc((s) => ({ ...s, [col.id]: !s[col.id] }))}
-                    className="grid size-8 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted"
+                    className="grid size-11 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted"
                   >
                     <ArrowDownUp className="size-4" />
                   </button>

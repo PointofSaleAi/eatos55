@@ -40,7 +40,7 @@ export function PinSheet({
         side="bottom"
         className="max-h-[92dvh] overflow-y-auto rounded-t-3xl border-t border-border bg-background px-4 pb-6 pt-4"
       >
-        <SheetTitle className="text-center text-2xl font-extrabold text-foreground">
+        <SheetTitle className="text-center text-fs-xl font-extrabold text-foreground">
           Enter PIN
         </SheetTitle>
 
@@ -49,7 +49,7 @@ export function PinSheet({
             <span
               key={i}
               className={cn(
-                "text-2xl font-extrabold leading-none",
+                "text-fs-xl font-extrabold leading-none",
                 i < pin.length ? "text-foreground" : "text-foreground/25",
               )}
             >

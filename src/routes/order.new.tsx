@@ -50,7 +50,7 @@ function NewOrder() {
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
         <div className="flex items-center gap-1">
-          <MenuButton className="-ml-2 size-9" />
+          <MenuButton className="-ml-2 size-11" />
           <GuestBlock onEdit={() => setGuestOpen(true)} />
 
           <div className="ml-auto flex shrink-0 items-center gap-0.5">
@@ -94,7 +94,7 @@ function NewOrder() {
               type="button"
               onClick={() => setTab(t)}
               className={cn(
-                "min-h-[44px] rounded-full text-sm font-extrabold uppercase transition-colors",
+                "min-h-ctl-lg rounded-full text-sm font-extrabold uppercase transition-colors",
                 t === tab
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -132,7 +132,7 @@ function NewOrder() {
                 type="button"
                 onClick={() => setCategory(c)}
                 className={cn(
-                  "min-h-[40px] shrink-0 rounded-full px-3.5 text-[13px] font-bold transition-colors",
+                  "min-h-ctl-md shrink-0 rounded-full px-3.5 text-fs-sm font-bold transition-colors",
                   c === category
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -174,7 +174,7 @@ function NewOrder() {
                       type="button"
                       aria-label={`Remove one ${l.name}`}
                       onClick={() => changeQty(l.id, -1)}
-                      className="grid size-9 place-items-center rounded-full border border-border text-sm font-bold text-foreground"
+                      className="grid size-11 place-items-center rounded-full border border-border text-sm font-bold text-foreground"
                     >
                       −
                     </button>
@@ -185,7 +185,7 @@ function NewOrder() {
                       type="button"
                       aria-label={`Add one ${l.name}`}
                       onClick={() => changeQty(l.id, 1)}
-                      className="grid size-9 place-items-center rounded-full border border-border text-sm font-bold text-foreground"
+                      className="grid size-11 place-items-center rounded-full border border-border text-sm font-bold text-foreground"
                     >
                       +
                     </button>
@@ -198,7 +198,7 @@ function NewOrder() {
           <p className="px-4 py-24 text-center text-sm text-muted-foreground">No Active Menu</p>
         ) : (
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(8.25rem,1fr))] gap-3">
             {items.map((item) => {
               const low =
                 typeof item.stock === "number" &&
@@ -221,7 +221,7 @@ function NewOrder() {
                   setSheetItem(item);
                 }}
                 className={cn(
-                  "relative flex min-h-[92px] flex-col justify-between rounded-2xl border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
+                  "relative flex min-h-tile flex-col justify-between rounded-2xl border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
                   item.outOfStock && "opacity-50",
                 )}
               >
@@ -247,7 +247,7 @@ function NewOrder() {
                     <span
                       title={`${item.stock} in stock`}
                       className={cn(
-                        "shrink-0 rounded-full px-1.5 text-[11px] font-extrabold leading-5",
+                        "shrink-0 rounded-full px-1.5 text-fs-xs font-extrabold leading-5",
                         low
                           ? "bg-destructive/10 text-destructive"
                           : "bg-muted text-muted-foreground",

@@ -137,7 +137,7 @@ export function ScreenHeader({
         <div className="flex min-w-0 items-center gap-2">
           {back ? <BackButton fallbackTo={backTo} /> : <MenuButton className="-ml-1" />}
           <div className="min-w-0">
-            <h1 className="truncate text-2xl font-extrabold text-foreground">{title}</h1>
+            <h1 className="truncate text-fs-xl font-extrabold text-foreground">{title}</h1>
           </div>
         </div>
         {right ? <div className="flex shrink-0 items-center gap-1">{right}</div> : null}
@@ -168,7 +168,7 @@ export function SubHeader({
           />
           <MenuButton className="-ml-2" />
           <div className="min-w-0">
-            <h1 className="truncate text-2xl font-extrabold text-foreground">{title}</h1>
+            <h1 className="truncate text-fs-xl font-extrabold text-foreground">{title}</h1>
           </div>
         </div>
         {right ? <div className="flex shrink-0 items-center gap-1">{right}</div> : null}
@@ -220,7 +220,7 @@ export function BottomTabs() {
             >
               <span className="absolute inset-x-6 top-0 h-[3px] rounded-full bg-transparent group-data-[status=active]:bg-accent" />
               <Icon className="size-5" />
-              <span className="text-[11px] font-semibold">{label}</span>
+              <span className="text-fs-xs font-semibold">{label}</span>
             </Link>
           </li>
         ))}

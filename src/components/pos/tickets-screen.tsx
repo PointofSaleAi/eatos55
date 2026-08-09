@@ -135,7 +135,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
       {/* Title bar */}
       <div className="shrink-0 border-b border-border bg-surface px-4 py-3">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-2xl font-extrabold text-foreground">Tickets</h1>
+          <h1 className="text-fs-xl font-extrabold text-foreground">Tickets</h1>
           <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
@@ -177,7 +177,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                 type="button"
                 aria-label="Previous day"
                 onClick={() => shiftTicketDate(-1)}
-                className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+                className="grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
               >
                 <ChevronLeft className="size-5" />
               </button>
@@ -187,7 +187,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                 type="button"
                 aria-label="Next day"
                 onClick={() => shiftTicketDate(1)}
-                className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+                className="grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
               >
                 <ChevronRight className="size-5" />
               </button>
@@ -211,7 +211,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               type="button"
               onClick={() => setTab(t.id)}
               className={cn(
-                "min-h-[36px] shrink-0 rounded-full px-3.5 text-[13px] font-bold transition-colors",
+                "min-h-ctl-sm shrink-0 rounded-full px-3.5 text-fs-sm font-bold transition-colors",
                 tab === t.id
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -369,7 +369,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                               }))
                             }
                             className={cn(
-                              "min-h-[36px] rounded-full px-3.5 text-[13px] font-bold transition-colors",
+                              "min-h-ctl-sm rounded-full px-3.5 text-fs-sm font-bold transition-colors",
                               active
                                 ? "bg-primary text-primary-foreground"
                                 : "bg-muted text-muted-foreground",
@@ -389,14 +389,14 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
             <button
               type="button"
               onClick={() => setFilters(emptyFilters)}
-              className="min-h-[48px] flex-1 rounded-2xl border border-border text-sm font-bold text-foreground"
+              className="min-h-ctl-lg flex-1 rounded-2xl border border-border text-sm font-bold text-foreground"
             >
               Clear all
             </button>
             <button
               type="button"
               onClick={() => setOverlay("none")}
-              className="min-h-[48px] flex-1 rounded-2xl bg-primary text-sm font-bold text-primary-foreground"
+              className="min-h-ctl-lg flex-1 rounded-2xl bg-primary text-sm font-bold text-primary-foreground"
             >
               Apply
             </button>
