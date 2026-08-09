@@ -164,17 +164,20 @@ export function IconToggleRow({
       <RowInner
         {...rest}
         right={
-          <Switch
-            checked={checked}
-            onCheckedChange={onChange}
-            aria-label={rest.title}
-            className="shrink-0"
-          />
+          <span className="grid size-11 shrink-0 place-items-center">
+            <Switch
+              checked={checked}
+              onCheckedChange={onChange}
+              aria-label={rest.title}
+              className="tap-safe shrink-0"
+            />
+          </span>
         }
       />
     </div>
   );
 }
+
 
 /** Either/or row: exactly one of the options is selected. */
 export function SegmentRow({
