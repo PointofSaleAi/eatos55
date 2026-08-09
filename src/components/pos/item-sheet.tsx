@@ -5,6 +5,8 @@ import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { addOnGroups, modifierGroups, money, type MenuItem } from "@/lib/demo-data";
+import { useAnnounce } from "@/components/pos/live-region";
+import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
@@ -17,6 +19,7 @@ import { cn } from "@/lib/utils";
 export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: () => void }) {
   useBackDismiss(!!item, onClose);
   const { addItem } = usePos();
+  const announce = useAnnounce();
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState(item?.price ?? 0);
   const [editingPrice, setEditingPrice] = useState(false);
@@ -262,6 +265,8 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                       modifiers: Object.keys(selected),
                       ...(discount ? { discountPercent: discount.percent } : {}),
                     });
+                    haptic("success");
+                    announce(`${item.name} added to the order`);
                     toast.success(`${item.name} added`);
                     reset();
                     onClose();
