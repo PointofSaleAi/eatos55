@@ -65,7 +65,7 @@ export function SearchDock({
             autoComplete="off"
             placeholder={placeholder}
             aria-label={placeholder}
-            className="min-w-0 flex-1 bg-transparent text-fs-base text-foreground outline-none placeholder:text-muted-foreground"
+            className="min-h-tap min-w-0 flex-1 bg-transparent text-fs-base text-foreground outline-none placeholder:text-muted-foreground"
           />
           {value ? (
             <button

@@ -12,7 +12,7 @@ export function GuestBlock({ onEdit }: { onEdit: () => void }) {
       type="button"
       onClick={onEdit}
       aria-label="Edit guest details and order type"
-      className="flex min-w-0 flex-1 items-center gap-1.5 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted"
+      className="flex min-h-tap min-w-0 flex-1 items-center gap-1.5 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted"
     >
       <span className="min-w-0 flex-1">
         <span className="block truncate text-fs-sm font-bold text-foreground">
