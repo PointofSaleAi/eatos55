@@ -78,7 +78,10 @@ export type AppSettings = {
   hapticFeedback: boolean;
   deviceName: string;
   deviceService: "Table Service" | "Quick Service";
+  /** Rooms / room-service module: hides the Rooms screen when off. */
+  roomService: boolean;
   language: string;
+
   taxAlias: string;
   appVersion: string;
   restartApp: boolean;
