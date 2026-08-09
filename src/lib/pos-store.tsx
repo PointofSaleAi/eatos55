@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { setHapticsEnabled } from "@/lib/haptics";
 import {
   DEFAULT_TICKET_DATE,
   TAX_RATE,
