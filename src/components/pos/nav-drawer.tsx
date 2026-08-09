@@ -163,7 +163,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
               if (!ok) return;
               onClose();
               signOut();
-              navigate({ to: "/" });
+              navigate({ to: "/", replace: true });
             }}
             className="flex min-h-ctl-sm tap-safe w-full items-center gap-2 rounded-row border border-border px-3 t-row text-destructive transition-colors hover:bg-muted"
           >

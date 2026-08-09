@@ -66,14 +66,14 @@ function Board() {
         <div className="flex items-center justify-between gap-3">
           <h1 className="text-fs-xl font-extrabold text-foreground">Order Status</h1>
           <div className="flex shrink-0 items-center gap-1">
-            <button
-              type="button"
-              aria-label="Pick board date"
-              onClick={() => toast.info("Showing today's orders")}
+            <Link
+              to="/orders"
+              aria-label="Order history"
+              title="Order history"
               className="grid size-10 tap-safe place-items-center rounded-pill border border-border text-foreground transition-colors hover:bg-muted"
             >
               <CalendarDays className="size-5" />
-            </button>
+            </Link>
             <button
               type="button"
               aria-label="Refresh board"
