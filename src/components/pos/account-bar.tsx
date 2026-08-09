@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Bell, RotateCw } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -99,13 +100,12 @@ export function AccountBar() {
                 </li>
               ))}
             </ul>
-            <button
-              type="button"
-              onClick={() => toast.info("Full release notes opened")}
+            <Link
+              to="/tickets/whats-new"
               className="mt-3 flex min-h-tap w-full items-center justify-center text-fs-sm font-extrabold text-accent"
             >
               See more
-            </button>
+            </Link>
           </div>
         </>
       ) : null}

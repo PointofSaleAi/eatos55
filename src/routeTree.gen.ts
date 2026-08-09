@@ -55,6 +55,7 @@ import { Route as TicketsWhatsNewRouteImport } from './routes/tickets.whats-new'
 import { Route as PaymentTenderKindRouteImport } from './routes/payment.tender.$kind'
 import { Route as SettingsDetailTopicRouteImport } from './routes/settings.detail.$topic'
 import { Route as SettingsHardwareIntegrationsRouteImport } from './routes/settings.hardware.integrations'
+import { Route as SystemArticleSlugRouteImport } from './routes/system.article.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -287,6 +288,11 @@ const SettingsHardwareIntegrationsRoute =
     path: '/integrations',
     getParentRoute: () => SettingsHardwareRoute,
   } as any)
+const SystemArticleSlugRoute = SystemArticleSlugRouteImport.update({
+  id: '/system/article/$slug',
+  path: '/system/article/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -335,6 +341,7 @@ export interface FileRoutesByFullPath {
   '/payment/tender/$kind': typeof PaymentTenderKindRoute
   '/settings/detail/$topic': typeof SettingsDetailTopicRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
+  '/system/article/$slug': typeof SystemArticleSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -383,6 +390,7 @@ export interface FileRoutesByTo {
   '/payment/tender/$kind': typeof PaymentTenderKindRoute
   '/settings/detail/$topic': typeof SettingsDetailTopicRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
+  '/system/article/$slug': typeof SystemArticleSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -432,6 +440,7 @@ export interface FileRoutesById {
   '/payment/tender/$kind': typeof PaymentTenderKindRoute
   '/settings/detail/$topic': typeof SettingsDetailTopicRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
+  '/system/article/$slug': typeof SystemArticleSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -482,6 +491,7 @@ export interface FileRouteTypes {
     | '/payment/tender/$kind'
     | '/settings/detail/$topic'
     | '/settings/hardware/integrations'
+    | '/system/article/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -530,6 +540,7 @@ export interface FileRouteTypes {
     | '/payment/tender/$kind'
     | '/settings/detail/$topic'
     | '/settings/hardware/integrations'
+    | '/system/article/$slug'
   id:
     | '__root__'
     | '/'
@@ -578,6 +589,7 @@ export interface FileRouteTypes {
     | '/payment/tender/$kind'
     | '/settings/detail/$topic'
     | '/settings/hardware/integrations'
+    | '/system/article/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -626,6 +638,7 @@ export interface RootRouteChildren {
   TicketsIndexRoute: typeof TicketsIndexRoute
   PaymentTenderKindRoute: typeof PaymentTenderKindRoute
   SettingsDetailTopicRoute: typeof SettingsDetailTopicRoute
+  SystemArticleSlugRoute: typeof SystemArticleSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -952,6 +965,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsHardwareIntegrationsRouteImport
       parentRoute: typeof SettingsHardwareRoute
     }
+    '/system/article/$slug': {
+      id: '/system/article/$slug'
+      path: '/system/article/$slug'
+      fullPath: '/system/article/$slug'
+      preLoaderRoute: typeof SystemArticleSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1012,17 +1032,8 @@ const rootRouteChildren: RootRouteChildren = {
   TicketsIndexRoute: TicketsIndexRoute,
   PaymentTenderKindRoute: PaymentTenderKindRoute,
   SettingsDetailTopicRoute: SettingsDetailTopicRoute,
+  SystemArticleSlugRoute: SystemArticleSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

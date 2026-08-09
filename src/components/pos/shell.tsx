@@ -15,6 +15,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -68,12 +69,37 @@ export function useAppChrome() {
   return !publicPaths.includes(p);
 }
 
+/**
+ * Enforces the session: signing out or clocking out must actually leave the app,
+ * and no in-app screen stays reachable (or reloadable) without a session.
+ */
+function useSessionGate() {
+  const router = useRouter();
+  const { session, sessionReady } = usePos();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const path = pathname.replace(/\/+$/, "") || "/";
+  const isAccess = path === "/" || path.startsWith("/access");
+
+  useEffect(() => {
+    if (!sessionReady) return;
+    if (!session.signedIn && !isAccess) {
+      router.navigate({ to: "/", replace: true });
+      return;
+    }
+    if (session.signedIn && !session.clockedIn && !isAccess) {
+      router.navigate({ to: "/access/clock-in", replace: true });
+    }
+  }, [router, isAccess, sessionReady, session.signedIn, session.clockedIn]);
+}
+
+
 /** Device frame: full-bleed on phones, framed handheld on tablet/desktop. */
 export function DeviceFrame({ children }: { children: ReactNode }) {
   const [navOpen, setNavOpen] = useState(false);
   const closeNav = useCallback(() => setNavOpen(false), []);
   const navCtx = useMemo(() => ({ open: () => setNavOpen(true) }), []);
   const appChrome = useAppChrome();
+  useSessionGate();
   useGlobalKeyboardAware();
   // Follows the system light/dark appearance unless overridden in Settings.
   useAppearance();

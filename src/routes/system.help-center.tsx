@@ -1,7 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { toast } from "sonner";
 import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
 import { ActionRow, Card, EmptyState, SectionLabel } from "@/components/pos/primitives";
 import { Input } from "@/components/ui/input";
@@ -22,14 +21,15 @@ export const Route = createFileRoute("/system/help-center")({
 });
 
 const articles = [
-  { id: "a1", title: "Take your first order", detail: "Ordering basics · 3 min read" },
-  { id: "a2", title: "Split a check between guests", detail: "Payments · 4 min read" },
-  { id: "a3", title: "Re-pair a card reader", detail: "Hardware · 2 min read" },
-  { id: "a4", title: "Close out a shift", detail: "Manager tasks · 5 min read" },
-  { id: "a5", title: "Work offline safely", detail: "Network · 3 min read" },
+  { id: "first-order", title: "Take your first order", detail: "Ordering basics · 3 min read" },
+  { id: "split-check", title: "Split a check between guests", detail: "Payments · 4 min read" },
+  { id: "pair-card-reader", title: "Re-pair a card reader", detail: "Hardware · 2 min read" },
+  { id: "close-shift", title: "Close out a shift", detail: "Manager tasks · 5 min read" },
+  { id: "work-offline", title: "Work offline safely", detail: "Network · 3 min read" },
 ];
 
 function HelpCenter() {
+  const navigate = useNavigate();
   const [q, setQ] = useState("");
   const results = articles.filter((a) => a.title.toLowerCase().includes(q.trim().toLowerCase()));
 
@@ -57,7 +57,7 @@ function HelpCenter() {
                 key={a.id}
                 title={a.title}
                 detail={a.detail}
-                onClick={() => toast.info(`Opening “${a.title}”`)}
+                onClick={() => navigate({ to: "/system/article/$slug", params: { slug: a.id } })}
               />
             ))}
           </Card>

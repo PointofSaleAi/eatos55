@@ -113,7 +113,7 @@ function SettingsHub() {
               });
               if (!ok) return;
               signOut();
-              navigate({ to: "/" });
+              navigate({ to: "/", replace: true });
             })();
           },
         },
@@ -206,7 +206,7 @@ function SettingsHub() {
           setPinOpen(false);
           signOut();
           toast.success("Signed out — switch user");
-          navigate({ to: "/access/clock-in" });
+          navigate({ to: "/access/clock-in", replace: true });
         }}
       />
     </>
