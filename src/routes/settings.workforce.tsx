@@ -1,6 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { BriefcaseBusiness, Users } from "lucide-react";
-import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
 
@@ -36,17 +35,13 @@ function WorkforceSettings() {
               clock-in and clock-out times,…
             </p>
             <p className="text-fs-sm leading-relaxed">
-              <button
-                type="button"
-                onClick={() =>
-                  toast.info(
-                    "Access and track employee clock-in and clock-out times, manage breaks and review shift totals from Back Office.",
-                  )
-                }
+              <Link
+                to="/system/article/$slug"
+                params={{ slug: "close-shift" }}
                 className="tap-safe font-extrabold text-foreground transition-colors hover:text-accent active:text-accent focus-visible:text-accent"
               >
                 Learn more
-              </button>
+              </Link>
             </p>
           </div>
           <div className="border-t border-border">
