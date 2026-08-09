@@ -99,7 +99,7 @@ function Rooms() {
                       Available
                     </>
                   )}
-                  <ChevronDown className="size-3.5 shrink-0" aria-hidden />
+                  
                 </button>
               </div>
             );
