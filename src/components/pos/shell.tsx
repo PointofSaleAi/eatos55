@@ -99,7 +99,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
                 {children}
                 {appChrome ? <BottomTabs /> : null}
                 {appChrome ? (
-                  <NavDrawer open={navOpen} onClose={() => setNavOpen(false)} />
+                  <NavDrawer open={navOpen} onClose={closeNav} />
                 ) : null}
                 {/* Portal host for keyboard-docked UI (search bar). */}
                 <div id="pos-dock-root" className="pointer-events-none absolute inset-0 z-40" />
