@@ -3,7 +3,9 @@ import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
+import { GuestsSheet } from "@/components/pos/guests-sheet";
 import { StatusSheet, type StatusOption } from "@/components/pos/status-sheet";
+
 import { MenuButton, ScreenBody } from "@/components/pos/shell";
 
 import {
