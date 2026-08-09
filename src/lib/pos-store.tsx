@@ -372,14 +372,37 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [orderDiscountPercent, setOrderDiscountPercent] = useState(0);
 
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
+  const [settingsReady, setSettingsReady] = useState(false);
   const [managerUnlocked, setManagerUnlocked] = useState(false);
   const [lastPayment, setLastPayment] = useState<LastPayment>(null);
   const [paidSoFar, setPaidSoFar] = useState(0);
+
+  // Settings are device-local: read them back, then persist every change.
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("eatos.pos.settings");
+      if (raw)
+        setSettings((s) => ({ ...s, ...(JSON.parse(raw) as Partial<AppSettings>) }));
+    } catch {
+      /* ignore unreadable storage */
+    }
+    setSettingsReady(true);
+  }, []);
+  useEffect(() => {
+    if (!settingsReady) return;
+    try {
+      window.localStorage.setItem("eatos.pos.settings", JSON.stringify(settings));
+    } catch {
+      /* ignore unwritable storage */
+    }
+  }, [settings, settingsReady]);
 
   // Keep real device haptics in step with the user's setting.
   useEffect(() => {
     setHapticsEnabled(settings.hapticFeedback);
   }, [settings.hapticFeedback]);
+
+
 
 
 
