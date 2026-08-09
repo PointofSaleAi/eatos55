@@ -56,6 +56,7 @@ type Row = {
 function SettingsHub() {
   const navigate = useNavigate();
   const { session, settings, signOut } = usePos();
+  const confirmAction = useConfirm();
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [pinOpen, setPinOpen] = useState(false);
