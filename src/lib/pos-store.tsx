@@ -249,6 +249,13 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [lastPayment, setLastPayment] = useState<LastPayment>(null);
   const [paidSoFar, setPaidSoFar] = useState(0);
 
+  // Keep real device haptics in step with the user's setting.
+  useEffect(() => {
+    setHapticsEnabled(settings.hapticFeedback);
+  }, [settings.hapticFeedback]);
+
+
+
   const value = useMemo<Store>(() => {
     const round = (n: number) => Math.round(n * 100) / 100;
     const gross = round(
