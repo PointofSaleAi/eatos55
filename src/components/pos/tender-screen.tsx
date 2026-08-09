@@ -34,7 +34,7 @@ export function TenderScreen({
         <h1 className="truncate text-fs-xl font-extrabold text-foreground">{title}</h1>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto momentum p-3 pb-[max(0.75rem,var(--kb-inset,0px))]">
+      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-3 pb-[max(0.75rem,var(--kb-inset,0px))]">
         <div className="shrink-0 text-center">
           <p className="text-fs-2xl font-extrabold tabular-nums text-foreground">{money(entered)}</p>
           <p className="text-fs-sm text-muted-foreground">
