@@ -305,6 +305,9 @@ type Store = {
 
   settings: AppSettings;
   updateSettings: (patch: Partial<AppSettings>) => void;
+  /** True when the signed-in role is allowed to change settings. */
+  canManageSettings: boolean;
+
 
   managerUnlocked: boolean;
   unlockManager: () => void;
