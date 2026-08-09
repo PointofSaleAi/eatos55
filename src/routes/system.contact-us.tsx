@@ -58,7 +58,7 @@ function ContactUs() {
                 onClick={() => setQuery("")}
                 className="grid size-11 shrink-0 place-items-center rounded-lg bg-muted-foreground/40 text-shell-foreground"
               >
-                <Home className="size-6 text-surface" />
+                <Home className="size-6 text-shell-foreground" />
               </button>
             </div>
           </div>
