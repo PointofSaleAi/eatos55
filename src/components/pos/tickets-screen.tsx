@@ -188,10 +188,8 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
   ) + (filters.mineOnly ? 1 : 0);
 
   const activeChips: { id: string; label: string; clear: () => void }[] = [
-    ...(isDefaultPeriod
-      ? []
-      : [{ id: "period", label: dateLabel, clear: () => applyRangePreset("today") }]),
     ...filterFacets.flatMap((f) =>
+
       (filters[f.key] as string[]).map((opt) => ({
         id: `${f.key}-${opt}`,
         label: opt,
