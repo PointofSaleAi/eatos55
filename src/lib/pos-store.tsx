@@ -339,9 +339,9 @@ export type Guest = {
   name: string;
   phone: string;
   partySize: number;
-  email?: string;
-  notes?: string;
-  vehicle?: GuestVehicle;
+  email?: string | undefined;
+  notes?: string | undefined;
+  vehicle?: GuestVehicle | undefined;
 };
 
 const PosContext = createContext<Store | null>(null);
