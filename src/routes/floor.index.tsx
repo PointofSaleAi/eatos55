@@ -54,7 +54,7 @@ function FloorPlan() {
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
         <div className="flex items-center justify-between gap-3">
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex min-w-0 items-center gap-1 text-fs-xl font-extrabold uppercase text-foreground">
+            <DropdownMenuTrigger className="flex min-h-tap min-w-0 items-center gap-1 text-fs-xl font-extrabold uppercase text-foreground">
               <span className="truncate">{floor}</span>
               <ChevronDown className="size-5 shrink-0" />
             </DropdownMenuTrigger>
