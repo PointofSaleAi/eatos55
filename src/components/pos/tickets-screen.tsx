@@ -5,7 +5,6 @@ import {
   ChevronRight,
   Clock,
   CreditCard,
-  FilePlus2,
   ListFilter,
   Search,
   Settings2,

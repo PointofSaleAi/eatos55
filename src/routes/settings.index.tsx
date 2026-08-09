@@ -8,7 +8,6 @@ import {
   Search,
   Settings2,
   SmartphoneNfc,
-  SquarePen,
   Tablet,
   UserRoundCog,
   Utensils,
@@ -53,7 +52,7 @@ type Row = {
 
 function SettingsHub() {
   const navigate = useNavigate();
-  const { session, settings, signOut, startOrder } = usePos();
+  const { session, settings, signOut } = usePos();
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [pinOpen, setPinOpen] = useState(false);
