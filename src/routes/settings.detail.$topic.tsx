@@ -347,7 +347,7 @@ function EditSheet({
               autoFocus
               value={draft.value}
               onChange={(e) => setDraft({ ...draft, value: e.target.value })}
-              className="min-h-ctl w-full rounded-card border border-border bg-background px-3 text-fs-sm text-foreground"
+              className="min-h-ctl-md w-full rounded-card border border-border bg-background px-3 text-fs-sm text-foreground"
               aria-label={draft.label}
             />
           ) : (
@@ -357,14 +357,14 @@ function EditSheet({
                 value={draft.name}
                 placeholder="Name"
                 onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-                className="min-h-ctl w-full rounded-card border border-border bg-background px-3 text-fs-sm text-foreground"
+                className="min-h-ctl-md w-full rounded-card border border-border bg-background px-3 text-fs-sm text-foreground"
                 aria-label="Name"
               />
               <input
                 value={draft.detail}
                 placeholder="Details"
                 onChange={(e) => setDraft({ ...draft, detail: e.target.value })}
-                className="min-h-ctl w-full rounded-card border border-border bg-background px-3 text-fs-sm text-foreground"
+                className="min-h-ctl-md w-full rounded-card border border-border bg-background px-3 text-fs-sm text-foreground"
                 aria-label="Details"
               />
             </>
@@ -373,14 +373,14 @@ function EditSheet({
             type="button"
             disabled={disabled}
             onClick={() => onSave(draft)}
-            className="min-h-ctl w-full rounded-pill bg-accent text-fs-sm font-extrabold text-accent-foreground disabled:opacity-50"
+            className="min-h-ctl-md w-full rounded-pill bg-accent text-fs-sm font-extrabold text-accent-foreground disabled:opacity-50"
           >
             Save
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="min-h-ctl w-full rounded-pill border border-border text-fs-sm font-bold text-foreground"
+            className="min-h-ctl-md w-full rounded-pill border border-border text-fs-sm font-bold text-foreground"
           >
             Cancel
           </button>
