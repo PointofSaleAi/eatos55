@@ -410,6 +410,39 @@ export function PosProvider({ children }: { children: ReactNode }) {
     }
   }, [settings, settingsReady]);
 
+  // Table/room statuses are device-local so a table stays Reserved across screens.
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("eatos.pos.floor");
+      if (raw) {
+        const saved = JSON.parse(raw) as {
+          tableStates?: Record<string, TableState>;
+          tableSince?: Record<string, string>;
+          roomStates?: Record<string, RoomState>;
+        };
+        if (saved.tableStates) setTableStates(saved.tableStates);
+        if (saved.tableSince) setTableSince(saved.tableSince);
+        if (saved.roomStates) setRoomStates(saved.roomStates);
+      }
+    } catch {
+      /* ignore unreadable storage */
+    }
+    setFloorReady(true);
+  }, []);
+  useEffect(() => {
+    if (!floorReady) return;
+    try {
+      window.localStorage.setItem(
+        "eatos.pos.floor",
+        JSON.stringify({ tableStates, tableSince, roomStates }),
+      );
+    } catch {
+      /* ignore unwritable storage */
+    }
+  }, [tableStates, tableSince, roomStates, floorReady]);
+
+
+
   // Keep real device haptics in step with the user's setting.
   useEffect(() => {
     setHapticsEnabled(settings.hapticFeedback);
