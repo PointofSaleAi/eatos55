@@ -55,13 +55,14 @@ function TicketDetail() {
   return (
     <>
       <ScreenHeader
-        eyebrow={`Order Number ${ticket.number}`}
-        title={ticket.label}
+        title={`Order Number ${ticket.number}`}
         back
         right={
           <span className="text-right">
-            <span className="block t-row text-foreground">{ticket.server}</span>
-            <span className="block t-caption text-muted-foreground">{session.role}</span>
+            <span className="block t-row text-foreground">{ticket.label}</span>
+            <span className="block t-caption text-muted-foreground">
+              {ticket.server} · {session.role}
+            </span>
           </span>
         }
       />
