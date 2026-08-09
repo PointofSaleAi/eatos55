@@ -63,6 +63,8 @@ export type Ticket = {
   guestEmail?: string;
   notes?: string;
   vehicle?: { type: string; color: string; brand?: string; plate?: string };
+};
+
 
 
 
