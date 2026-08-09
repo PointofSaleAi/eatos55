@@ -60,7 +60,7 @@ function NewOrder() {
               title="Search products"
               onClick={() => setSearching((s) => !s)}
               className={cn(
-                "grid size-10 shrink-0 place-items-center rounded-pill transition-colors hover:bg-muted",
+                "grid size-10 shrink-0 place-items-center rounded-pill transition-colors hover:bg-muted tap-safe",
                 searching ? "bg-muted text-accent" : "text-foreground",
               )}
             >
@@ -232,14 +232,14 @@ function NewOrder() {
                   {item.outOfStock ? (
                     <span
                       title="Out of stock"
-                      className="grid size-5 shrink-0 place-items-center rounded-pill bg-destructive/10 text-destructive"
+                      className="grid size-5 shrink-0 place-items-center rounded-pill bg-destructive/10 text-destructive tap-safe"
                     >
                       <Ban className="size-3.5" />
                     </span>
                   ) : item.openPrice ? (
                     <span
                       title="Open price"
-                      className="grid size-5 shrink-0 place-items-center rounded-pill bg-muted text-muted-foreground"
+                      className="grid size-5 shrink-0 place-items-center rounded-pill bg-muted text-muted-foreground tap-safe"
                     >
                       <Tag className="size-3.5" />
                     </span>
@@ -267,7 +267,7 @@ function NewOrder() {
                   </span>
                   <span
                     className={cn(
-                      "grid size-7 place-items-center rounded-pill",
+                      "grid size-7 place-items-center rounded-pill tap-safe",
                       item.outOfStock
                         ? "bg-muted text-muted-foreground"
                         : "bg-accent text-accent-foreground",

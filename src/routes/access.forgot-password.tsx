@@ -96,7 +96,7 @@ function ForgotPassword() {
 
         <p className="mt-6 text-center text-fs-sm text-muted-foreground">
           Got your password?{" "}
-          <Link to="/" className="font-extrabold text-foreground">
+          <Link to="/" className="tap-safe font-extrabold text-foreground">
             Sign In
           </Link>
         </p>

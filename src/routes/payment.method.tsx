@@ -148,7 +148,7 @@ function PaymentMethod() {
       <div className="shrink-0 rounded-t-3xl border-t border-border bg-surface px-3 pb-[max(0.75rem,var(--kb-inset,0px))] pt-4">
         <p className="text-center text-fs-lg font-extrabold text-foreground">Select Payment Method</p>
         <p className="pb-3 text-center text-fs-sm text-muted-foreground">
-          Total due <span className="font-extrabold text-foreground">{money(due)}</span>
+          Total due <span className="tap-safe font-extrabold text-foreground">{money(due)}</span>
         </p>
         <div className="grid grid-cols-4 gap-x-2 gap-y-3">
           {tenders.map((t) => {

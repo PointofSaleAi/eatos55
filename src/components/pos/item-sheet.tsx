@@ -246,7 +246,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                   onClick={() => setDiscountOpen(true)}
                   aria-label="Apply discount"
                   className={cn(
-                    "grid size-10 shrink-0 place-items-center rounded-pill border",
+                    "grid size-10 shrink-0 place-items-center rounded-pill border tap-safe",
                     discount
                       ? "border-accent bg-accent text-accent-foreground"
                       : "border-border text-foreground",
