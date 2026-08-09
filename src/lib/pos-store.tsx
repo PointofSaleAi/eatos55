@@ -332,7 +332,15 @@ type Store = {
   sessionReady: boolean;
 };
 
-export type Guest = { name: string; phone: string; partySize: number };
+export type GuestVehicle = { type: string; color: string; brand?: string; plate?: string };
+export type Guest = {
+  name: string;
+  phone: string;
+  partySize: number;
+  email?: string;
+  notes?: string;
+  vehicle?: GuestVehicle;
+};
 
 const PosContext = createContext<Store | null>(null);
 
