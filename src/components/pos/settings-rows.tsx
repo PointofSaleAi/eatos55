@@ -5,9 +5,8 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
 /**
- * Settings list rows. Styling follows the original imported design system
- * (bordered surface cards, accent icons, compact type scale); the `color` prop
- * is kept for API compatibility but no longer paints a coloured tile.
+ * Settings list rows. Styling follows the original imported design: rounded
+ * colour-filled icon tiles, bordered surface cards, compact type scale.
  */
 export type TileColor =
   | "green"
@@ -25,13 +24,42 @@ export type TileColor =
   | "grey"
   | "black";
 
-export function IconTile({ icon: Icon }: { icon: LucideIcon; color?: TileColor | undefined }) {
+const tileBg: Record<TileColor, string> = {
+  green: "bg-tile-green",
+  violet: "bg-tile-violet",
+  orange: "bg-tile-orange",
+  indigo: "bg-tile-indigo",
+  purple: "bg-tile-purple",
+  slate: "bg-tile-slate",
+  sky: "bg-tile-sky",
+  pink: "bg-tile-pink",
+  magenta: "bg-tile-magenta",
+  yellow: "bg-tile-yellow",
+  red: "bg-tile-red",
+  blue: "bg-tile-blue",
+  grey: "bg-tile-grey",
+  black: "bg-tile-black",
+};
+
+export function IconTile({
+  icon: Icon,
+  color = "slate",
+}: {
+  icon: LucideIcon;
+  color?: TileColor | undefined;
+}) {
   return (
-    <span className="shrink-0 text-accent">
-      <Icon className="size-5" strokeWidth={2} />
+    <span
+      className={cn(
+        "grid size-8 shrink-0 place-items-center rounded-md text-accent-foreground",
+        tileBg[color],
+      )}
+    >
+      <Icon className="size-[1.05rem]" strokeWidth={2.25} />
     </span>
   );
 }
+
 
 export function GroupCard({ children, className }: { children: ReactNode; className?: string }) {
   return (
