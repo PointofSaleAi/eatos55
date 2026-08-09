@@ -63,6 +63,7 @@ export function ClockPullDown() {
                 requirePin(clockIn, `Clocked in at ${settings.clockedInAt}`)
               }
               onBiometric={() => toast.info("Biometrics not enrolled on this device")}
+              onShell
               revenueCenter={session.station ?? "Test Revenue Center"}
               onLogOut={() => {
                 signOut();

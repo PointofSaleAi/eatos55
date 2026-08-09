@@ -45,6 +45,7 @@ export function PinPad({
   onBiometric,
   revenueCenter,
   onLogOut,
+  onShell,
   className,
 }: {
   pin: string;
@@ -58,6 +59,8 @@ export function PinPad({
   onBiometric?: () => void;
   revenueCenter?: string;
   onLogOut?: () => void;
+  /** Rendered over the dark shell overlay: invert the Log Out bar. */
+  onShell?: boolean;
   className?: string;
 }) {
   return (
@@ -148,7 +151,12 @@ export function PinPad({
         <button
           type="button"
           onClick={onLogOut}
-          className="min-h-[clamp(2.75rem,7dvh,3.5rem)] w-full shrink-0 rounded-card border border-foreground/40 text-fs-base font-extrabold uppercase tracking-[0.08em] text-foreground"
+          className={cn(
+            "min-h-[clamp(2.75rem,7dvh,3.5rem)] w-full shrink-0 rounded-card border text-fs-base font-extrabold uppercase tracking-[0.08em]",
+            onShell
+              ? "border-shell-foreground/60 text-shell-foreground"
+              : "border-foreground/40 text-foreground",
+          )}
         >
           Log out
         </button>
