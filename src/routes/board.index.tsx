@@ -95,7 +95,7 @@ function Board() {
               type="button"
               onClick={() => setChannel(c)}
               className={cn(
-                "min-h-[36px] rounded-full px-4 text-sm font-bold transition-colors",
+                "min-h-ctl-sm rounded-full px-4 text-sm font-bold transition-colors",
                 c === channel ? "bg-primary text-primary-foreground" : "text-muted-foreground",
               )}
             >

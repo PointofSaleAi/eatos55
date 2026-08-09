@@ -49,7 +49,7 @@ export function SearchDock({
       }}
     >
       <div className="mx-auto flex w-full max-w-[420px] items-center gap-2">
-        <label className="flex min-h-[44px] min-w-0 flex-1 items-center gap-2 rounded-full border border-border bg-muted px-4">
+        <label className="flex min-h-ctl-lg min-w-0 flex-1 items-center gap-2 rounded-full border border-border bg-muted px-4">
           <Search className="size-5 shrink-0 text-muted-foreground" />
           <input
             ref={inputRef}
@@ -81,7 +81,7 @@ export function SearchDock({
         <button
           type="button"
           onClick={onClose}
-          className="min-h-[44px] shrink-0 rounded-full px-2 text-sm font-bold text-accent"
+          className="min-h-ctl-lg shrink-0 rounded-full px-2 text-sm font-bold text-accent"
         >
           Cancel
         </button>

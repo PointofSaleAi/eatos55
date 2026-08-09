@@ -41,7 +41,7 @@ function Rooms() {
               }}
               className="overflow-hidden rounded-2xl border border-border bg-surface text-left transition-transform active:scale-[0.98]"
             >
-              <div className="flex h-[124px] flex-col items-center justify-center gap-1 px-3 text-center">
+              <div className="flex h-tile flex-col items-center justify-center gap-1 px-3 text-center">
                 <p className="text-sm font-extrabold leading-tight text-foreground">{r.name}</p>
                 {r.guest ? <p className="text-xs text-muted-foreground">{r.guest}</p> : null}
                 {typeof r.amount === "number" ? (

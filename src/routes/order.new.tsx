@@ -94,7 +94,7 @@ function NewOrder() {
               type="button"
               onClick={() => setTab(t)}
               className={cn(
-                "min-h-[44px] rounded-full text-sm font-extrabold uppercase transition-colors",
+                "min-h-ctl-lg rounded-full text-sm font-extrabold uppercase transition-colors",
                 t === tab
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -132,7 +132,7 @@ function NewOrder() {
                 type="button"
                 onClick={() => setCategory(c)}
                 className={cn(
-                  "min-h-[40px] shrink-0 rounded-full px-3.5 text-[13px] font-bold transition-colors",
+                  "min-h-ctl-md shrink-0 rounded-full px-3.5 text-fs-sm font-bold transition-colors",
                   c === category
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -221,7 +221,7 @@ function NewOrder() {
                   setSheetItem(item);
                 }}
                 className={cn(
-                  "relative flex min-h-[92px] flex-col justify-between rounded-2xl border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
+                  "relative flex min-h-tile flex-col justify-between rounded-2xl border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
                   item.outOfStock && "opacity-50",
                 )}
               >
@@ -247,7 +247,7 @@ function NewOrder() {
                     <span
                       title={`${item.stock} in stock`}
                       className={cn(
-                        "shrink-0 rounded-full px-1.5 text-[11px] font-extrabold leading-5",
+                        "shrink-0 rounded-full px-1.5 text-fs-xs font-extrabold leading-5",
                         low
                           ? "bg-destructive/10 text-destructive"
                           : "bg-muted text-muted-foreground",

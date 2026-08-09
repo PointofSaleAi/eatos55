@@ -88,11 +88,11 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
                   <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-muted text-muted-foreground">
                     <Icon className="size-5" />
                   </span>
-                  <span className="min-w-0 flex-1 truncate text-[13px] font-bold text-foreground">
+                  <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
                     {r.label}
                   </span>
                   {r.value ? (
-                    <span className="shrink-0 text-[13px] font-bold text-muted-foreground">
+                    <span className="shrink-0 text-fs-sm font-bold text-muted-foreground">
                       {r.value}
                     </span>
                   ) : null}
@@ -132,7 +132,7 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
                 setChargeOpen(false);
                 toast.success("Service charge updated");
               }}
-              className="mt-3 h-11 w-full rounded-full bg-primary text-[13px] font-extrabold uppercase text-primary-foreground"
+              className="mt-3 h-11 w-full rounded-full bg-primary text-fs-sm font-extrabold uppercase text-primary-foreground"
             >
               Apply
             </button>

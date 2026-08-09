@@ -107,7 +107,7 @@ function SignInScreen() {
           Create an account
         </Link>
 
-        <p className="mt-6 text-center text-[11px] text-muted-foreground">{APP_VERSION}</p>
+        <p className="mt-6 text-center text-fs-xs text-muted-foreground">{APP_VERSION}</p>
         </div>
       </div>
     </div>

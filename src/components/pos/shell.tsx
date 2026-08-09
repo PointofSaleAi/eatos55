@@ -220,7 +220,7 @@ export function BottomTabs() {
             >
               <span className="absolute inset-x-6 top-0 h-[3px] rounded-full bg-transparent group-data-[status=active]:bg-accent" />
               <Icon className="size-5" />
-              <span className="text-[11px] font-semibold">{label}</span>
+              <span className="text-fs-xs font-semibold">{label}</span>
             </Link>
           </li>
         ))}

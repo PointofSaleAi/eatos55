@@ -211,7 +211,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               type="button"
               onClick={() => setTab(t.id)}
               className={cn(
-                "min-h-[36px] shrink-0 rounded-full px-3.5 text-[13px] font-bold transition-colors",
+                "min-h-ctl-sm shrink-0 rounded-full px-3.5 text-fs-sm font-bold transition-colors",
                 tab === t.id
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -369,7 +369,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                               }))
                             }
                             className={cn(
-                              "min-h-[36px] rounded-full px-3.5 text-[13px] font-bold transition-colors",
+                              "min-h-ctl-sm rounded-full px-3.5 text-fs-sm font-bold transition-colors",
                               active
                                 ? "bg-primary text-primary-foreground"
                                 : "bg-muted text-muted-foreground",
@@ -389,14 +389,14 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
             <button
               type="button"
               onClick={() => setFilters(emptyFilters)}
-              className="min-h-[48px] flex-1 rounded-2xl border border-border text-sm font-bold text-foreground"
+              className="min-h-ctl-lg flex-1 rounded-2xl border border-border text-sm font-bold text-foreground"
             >
               Clear all
             </button>
             <button
               type="button"
               onClick={() => setOverlay("none")}
-              className="min-h-[48px] flex-1 rounded-2xl bg-primary text-sm font-bold text-primary-foreground"
+              className="min-h-ctl-lg flex-1 rounded-2xl bg-primary text-sm font-bold text-primary-foreground"
             >
               Apply
             </button>

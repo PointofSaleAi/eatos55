@@ -39,10 +39,10 @@ export function DiscountSheet({
                   i % 2 === 0 ? "bg-muted/40" : "bg-surface",
                 )}
               >
-                <span className="min-w-0 flex-1 truncate text-[13px] font-bold text-foreground">
+                <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
                   {d.name}
                 </span>
-                <span className="shrink-0 text-[13px] font-bold text-muted-foreground">
+                <span className="shrink-0 text-fs-sm font-bold text-muted-foreground">
                   {d.percent}%
                 </span>
                 {active ? <Check className="size-5 shrink-0 text-success" /> : null}

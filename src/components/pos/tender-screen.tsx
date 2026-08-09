@@ -59,7 +59,7 @@ export function TenderScreen({
                 key={d}
                 type="button"
                 onClick={() => setAmount(String(Math.round((entered + d) * 100) / 100))}
-                className="min-h-[44px] rounded-full border border-border bg-surface text-base font-extrabold text-foreground shadow-sm transition-colors hover:bg-muted active:scale-[0.97]"
+                className="min-h-ctl-lg rounded-full border border-border bg-surface text-base font-extrabold text-foreground shadow-sm transition-colors hover:bg-muted active:scale-[0.97]"
               >
                 ${d}
               </button>

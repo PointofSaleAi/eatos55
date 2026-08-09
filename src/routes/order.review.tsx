@@ -111,14 +111,14 @@ function OrderReview() {
           <button
             type="button"
             onClick={() => navigate({ to: "/order/new" })}
-            className="min-h-[48px] flex-1 rounded-2xl border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="min-h-ctl-lg flex-1 rounded-2xl border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             Add More
           </button>
           <button
             type="button"
             onClick={() => toast.success("Receipt printed")}
-            className="min-h-[48px] flex-1 rounded-2xl border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="min-h-ctl-lg flex-1 rounded-2xl border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             Print
           </button>

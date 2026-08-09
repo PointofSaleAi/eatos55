@@ -100,13 +100,13 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                         onChange={(e) => setPrice(Number(e.target.value) || 0)}
                         onBlur={() => setEditingPrice(false)}
                         aria-label="Item price"
-                        className="h-9 w-20 rounded-full border border-border bg-surface px-3 text-[13px] font-bold text-foreground outline-none"
+                        className="h-9 w-20 rounded-full border border-border bg-surface px-3 text-fs-sm font-bold text-foreground outline-none"
                       />
                     ) : (
                       <button
                         type="button"
                         onClick={() => setEditingPrice(true)}
-                        className="flex h-9 items-center gap-1.5 rounded-full border border-border px-3 text-[13px] font-bold text-foreground"
+                        className="flex h-9 items-center gap-1.5 rounded-full border border-border px-3 text-fs-sm font-bold text-foreground"
                       >
                         {money(price)}
                         <Pencil className="size-3.5 text-muted-foreground" />
@@ -117,7 +117,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                     aria-label="Quantity"
                     value={qty}
                     onChange={(e) => setQty(Number(e.target.value))}
-                    className="h-9 shrink-0 rounded-full border border-border bg-surface px-2.5 text-[13px] font-bold text-foreground outline-none"
+                    className="h-9 shrink-0 rounded-full border border-border bg-surface px-2.5 text-fs-sm font-bold text-foreground outline-none"
                   >
                     {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
                       <option key={n} value={n}>
@@ -135,7 +135,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="Item Notes"
                       aria-label="Item notes"
-                      className="h-10 min-w-0 flex-1 bg-transparent text-[13px] text-foreground outline-none"
+                      className="h-10 min-w-0 flex-1 bg-transparent text-fs-sm text-foreground outline-none"
                     />
                   </div>
                 </div>
@@ -171,7 +171,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                       type="button"
                       onClick={() => setGroup(g.name)}
                       className={cn(
-                        "h-8 shrink-0 rounded-full px-3 text-[11px] font-bold transition-colors",
+                        "h-8 shrink-0 rounded-full px-3 text-fs-xs font-bold transition-colors",
                         g.name === activeGroup.name
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -209,7 +209,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                           })
                         }
                         className={cn(
-                          "flex h-10 items-center justify-between gap-1.5 rounded-xl border px-3 text-left text-[13px] font-bold transition-colors",
+                          "flex h-10 items-center justify-between gap-1.5 rounded-xl border px-3 text-left text-fs-sm font-bold transition-colors",
                           on
                             ? "border-accent bg-accent/10 text-foreground"
                             : "border-border bg-surface text-foreground",
@@ -217,7 +217,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                       >
                         <span className="min-w-0 truncate">{o.name}</span>
                         {o.price ? (
-                          <span className="shrink-0 text-[11px] text-muted-foreground">
+                          <span className="shrink-0 text-fs-xs text-muted-foreground">
                             +{money(o.price)}
                           </span>
                         ) : null}
@@ -229,7 +229,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
 
               <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-2.5">
                 {selectedList.length || requiredMissing.length || openPriceMissing ? (
-                  <p className="pb-1.5 text-[11px] font-bold text-muted-foreground">
+                  <p className="pb-1.5 text-fs-xs font-bold text-muted-foreground">
                     {openPriceMissing
                       ? "Enter a price for this open-price item"
                       : requiredMissing.length
@@ -266,7 +266,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                     reset();
                     onClose();
                   }}
-                  className="h-11 flex-1 rounded-full bg-primary text-[13px] font-extrabold uppercase tracking-[0.06em] text-primary-foreground disabled:opacity-40"
+                  className="h-11 flex-1 rounded-full bg-primary text-fs-sm font-extrabold uppercase tracking-[0.06em] text-primary-foreground disabled:opacity-40"
                 >
                   Add · {money(lineTotal)}
                 </button>

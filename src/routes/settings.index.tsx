@@ -116,7 +116,7 @@ function SettingsHub() {
         <button
           type="button"
           onClick={() => setSearching(true)}
-          className="mt-4 flex min-h-[48px] w-full items-center gap-3 rounded-full border border-border bg-surface px-4 text-left transition-colors hover:bg-muted"
+          className="mt-4 flex min-h-ctl-lg w-full items-center gap-3 rounded-full border border-border bg-surface px-4 text-left transition-colors hover:bg-muted"
         >
           <Search className="size-6 shrink-0 text-muted-foreground" />
           <span

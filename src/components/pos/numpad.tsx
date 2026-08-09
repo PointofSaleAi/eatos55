@@ -18,7 +18,7 @@ function Key({
       aria-label={label}
       onClick={onPress}
       className={cn(
-        "grid h-full min-h-[44px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
+        "grid h-full min-h-ctl-lg place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
         className,
       )}
     >

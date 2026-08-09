@@ -21,7 +21,7 @@ export function OfflineBanner() {
   return (
     <div
       role="status"
-      className="flex shrink-0 items-center justify-center gap-2 bg-warning px-4 py-1.5 text-[12px] font-bold text-warning-foreground"
+      className="flex shrink-0 items-center justify-center gap-2 bg-warning px-4 py-1.5 text-fs-xs font-bold text-warning-foreground"
     >
       <WifiOff className="size-3.5 shrink-0" />
       <span>Offline — orders are held on this device</span>
