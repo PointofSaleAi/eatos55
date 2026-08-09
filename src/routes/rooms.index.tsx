@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, Circle, CircleDot } from "lucide-react";
+import { Circle, CircleDot } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
