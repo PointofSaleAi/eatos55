@@ -53,13 +53,13 @@ export function TenderScreen({
         </div>
 
         {denominations ? (
-          <div className="grid shrink-0 grid-cols-3 gap-2">
+          <div className="no-scrollbar -mx-1 flex shrink-0 snap-x gap-2 overflow-x-auto px-1 pb-1">
             {cashDenominations.map((d) => (
               <button
                 key={d}
                 type="button"
                 onClick={() => setAmount(String(Math.round((entered + d) * 100) / 100))}
-                className="min-h-tap rounded-pill border border-border bg-surface text-fs-base font-extrabold text-foreground shadow-sm transition-colors hover:bg-muted active:scale-[0.97]"
+                className="min-h-tap min-w-[4.5rem] shrink-0 snap-start rounded-pill border border-border bg-surface px-4 text-fs-base font-extrabold text-foreground shadow-sm transition-colors hover:bg-muted active:scale-[0.97]"
               >
                 ${d}
               </button>
