@@ -60,6 +60,10 @@ export type Ticket = {
   payments?: TicketPayment[];
   /** Guest-facing order type, when it was chosen explicitly on the order. */
   orderType?: string;
+  /** Table number, when the ticket belongs to a table (dine-in / bar) order. */
+  table?: number;
+  /** Guest-facing order number, up to 5 digits. */
+  orderNo?: number;
   guestEmail?: string;
   notes?: string;
   vehicle?: { type: string; color: string; brand?: string; plate?: string };
@@ -136,6 +140,8 @@ const custom = (price: number): CartLine => ({
 export const initialTickets: Ticket[] = [
   {
     id: "t-1042",
+    orderNo: 10242,
+    table: 2,
     number: 2,
     label: "Guest",
     seats: 2,
@@ -155,6 +161,7 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1043",
+    orderNo: 10243,
     number: 1,
     label: "Guest",
     seats: 1,
@@ -174,6 +181,8 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1044",
+    orderNo: 10244,
+    table: 4,
     number: 4,
     label: "Guest",
     seats: 4,
@@ -193,6 +202,8 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1045",
+    orderNo: 10245,
+    table: 3,
     number: 3,
     label: "Guest",
     seats: 3,
@@ -212,6 +223,7 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1046",
+    orderNo: 10246,
     number: 1,
     label: "Guest",
     seats: 1,
