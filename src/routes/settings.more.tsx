@@ -3,6 +3,8 @@ import { toast } from "sonner";
 import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
 import { ActionRow, Card, NavRow, SectionLabel, ToggleRow } from "@/components/pos/primitives";
 import { usePos } from "@/lib/pos-store";
+import { useAppearance } from "@/hooks/use-appearance";
+import { useConfirm } from "@/components/pos/confirm-sheet";
 
 export const Route = createFileRoute("/settings/more")({
   head: () => ({
@@ -21,12 +23,45 @@ export const Route = createFileRoute("/settings/more")({
 
 function MoreSettings() {
   const { settings, updateSettings } = usePos();
+  const confirm = useConfirm();
+  const { appearance, setAppearance } = useAppearance();
 
   return (
     <>
       <ScreenHeader eyebrow="Settings" title="More" back />
       <ScreenBody>
+        <SectionLabel>Appearance</SectionLabel>
+        <Card className="overflow-hidden p-3">
+          <div
+            role="radiogroup"
+            aria-label="Appearance"
+            className="grid grid-cols-3 gap-1 rounded-2xl bg-muted p-1"
+          >
+            {(["light", "dark", "system"] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                role="radio"
+                aria-checked={appearance === mode}
+                onClick={() => setAppearance(mode)}
+                className={
+                  "min-h-ctl-sm rounded-xl text-fs-sm font-extrabold capitalize transition-colors " +
+                  (appearance === mode
+                    ? "bg-surface text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground")
+                }
+              >
+                {mode}
+              </button>
+            ))}
+          </div>
+          <p className="px-1 pt-2 text-fs-xs text-muted-foreground">
+            System follows your phone&apos;s light or dark setting.
+          </p>
+        </Card>
+
         <SectionLabel>Device behaviour</SectionLabel>
+
         <Card className="overflow-hidden">
           <ToggleRow
             title="Offline mode"
@@ -65,8 +100,17 @@ function MoreSettings() {
             title="Reset device"
             detail="Unpairs this handheld from the venue"
             tone="danger"
-            onClick={() => toast.error("Reset requires an owner PIN")}
+            onClick={async () => {
+              const ok = await confirm({
+                title: "Reset this device?",
+                message: "The handheld is unpaired from the venue and all local data is removed.",
+                confirmLabel: "Reset device",
+                destructive: true,
+              });
+              if (ok) toast.error("Reset requires an owner PIN");
+            }}
           />
+
         </Card>
       </ScreenBody>
     </>

@@ -1,11 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowDownUp, CalendarDays, XCircle } from "lucide-react";
+import { ArrowDownUp, CalendarDays, RefreshCw, XCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import {} from "@/components/pos/shell";
 import { money, type Ticket, type TicketStatus } from "@/lib/demo-data";
 import { boardChannels, boardColumns, type BoardChannel } from "@/lib/floor-data";
+import { useAnnounce } from "@/components/pos/live-region";
+import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
@@ -40,6 +42,7 @@ const columnStatuses: Record<string, TicketStatus[]> = {
 function Board() {
   const navigate = useNavigate();
   const { tickets, openTicket } = usePos();
+  const announce = useAnnounce();
   const [channel, setChannel] = useState<BoardChannel>("DINE IN");
   const [asc, setAsc] = useState<Record<string, boolean>>({});
 
@@ -70,6 +73,18 @@ function Board() {
               className="grid size-10 place-items-center rounded-full border border-border text-foreground transition-colors hover:bg-muted"
             >
               <CalendarDays className="size-5" />
+            </button>
+            <button
+              type="button"
+              aria-label="Refresh board"
+              onClick={() => {
+                haptic("light");
+                announce("Board refreshed");
+                toast.success("Board refreshed");
+              }}
+              className="grid size-10 place-items-center rounded-full border border-border text-foreground transition-colors hover:bg-muted"
+            >
+              <RefreshCw className="size-5" />
             </button>
             <button
               type="button"
@@ -124,7 +139,7 @@ function Board() {
                 </div>
                 <div className="space-y-3">
                   {list.length === 0 ? (
-                    <p className="py-8 text-center text-xs text-muted-foreground">No orders</p>
+                    <p className="py-8 text-center text-fs-xs text-muted-foreground">No orders in this stage yet</p>
                   ) : (
                     list.map((t) => (
                       <button

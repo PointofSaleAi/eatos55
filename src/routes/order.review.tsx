@@ -6,6 +6,9 @@ import { GuestBlock } from "@/components/pos/guest-block";
 import { GuestSheet } from "@/components/pos/guest-sheet";
 import { EmptyState } from "@/components/pos/primitives";
 import { TAX_RATE, money } from "@/lib/demo-data";
+import { useConfirm } from "@/components/pos/confirm-sheet";
+import { useAnnounce } from "@/components/pos/live-region";
+import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { toast } from "sonner";
 
@@ -29,6 +32,8 @@ export const Route = createFileRoute("/order/review")({
 function OrderReview() {
   const navigate = useNavigate();
   const { cart, changeQty, totals, tickets } = usePos();
+  const confirm = useConfirm();
+  const announce = useAnnounce();
   const orderNumber = tickets.length + 1;
   const [guestOpen, setGuestOpen] = useState(false);
 
@@ -67,7 +72,26 @@ function OrderReview() {
                   <button
                     type="button"
                     aria-label={`Remove one ${line.name}`}
-                    onClick={() => changeQty(line.id, -1)}
+                    onClick={() => {
+                      if (line.qty <= 1) {
+                        void (async () => {
+                          const ok = await confirm({
+                            title: `Remove ${line.name}?`,
+                            message: "The line is taken off this order.",
+                            confirmLabel: "Remove item",
+                            destructive: true,
+                          });
+                          if (ok) {
+                            changeQty(line.id, -1);
+                            announce(`${line.name} removed`);
+                          }
+                        })();
+                        return;
+                      }
+                      haptic("light");
+                      changeQty(line.id, -1);
+                      announce(`${line.name} quantity ${line.qty - 1}`);
+                    }}
                     className="grid size-9 place-items-center rounded-lg border border-border text-foreground"
                   >
                     <Minus className="size-4" />
@@ -78,7 +102,11 @@ function OrderReview() {
                   <button
                     type="button"
                     aria-label={`Add one ${line.name}`}
-                    onClick={() => changeQty(line.id, 1)}
+                    onClick={() => {
+                      haptic("light");
+                      changeQty(line.id, 1);
+                      announce(`${line.name} quantity ${line.qty + 1}`);
+                    }}
                     className="grid size-9 place-items-center rounded-lg border border-border text-foreground"
                   >
                     <Plus className="size-4" />
@@ -91,7 +119,11 @@ function OrderReview() {
             ))}
           </div>
         ) : (
-          <EmptyState title="No items yet" detail="Add products or a custom item to continue." />
+          <EmptyState
+            title="No items yet"
+            detail="Add products or a custom item to continue."
+            action={{ label: "Browse menu", onPress: () => navigate({ to: "/order/new" }) }}
+          />
         )}
 
         {cart.length ? (

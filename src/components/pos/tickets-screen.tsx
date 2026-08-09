@@ -18,6 +18,10 @@ import { useState } from "react";
 import {} from "@/components/pos/shell";
 import { AccountBar } from "@/components/pos/account-bar";
 import { EmptyState, TicketCard } from "@/components/pos/primitives";
+import { SwipeRow } from "@/components/pos/swipe-row";
+import { useConfirm } from "@/components/pos/confirm-sheet";
+import { useAnnounce } from "@/components/pos/live-region";
+import { usePullToRefresh } from "@/hooks/use-pull-to-refresh";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { usePos, emptyFilters, type SortKey } from "@/lib/pos-store";
 import {
@@ -105,10 +109,19 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
     setFilters,
     ticketDate,
     shiftTicketDate,
+    setTicketStatus,
   } = usePos();
+  const confirm = useConfirm();
+  const announce = useAnnounce();
   const [tab, setTab] = useState<Tab>("all");
   const [overlay, setOverlay] = useState<TicketsOverlay>(initialOverlay);
   const [openFacet, setOpenFacet] = useState<string | null>(null);
+  const ptr = usePullToRefresh(async () => {
+    await new Promise((r) => setTimeout(r, 600));
+    announce("Tickets refreshed");
+  });
+
+
 
   const aggregate = tab === "all" || tab === "unpaid" || tab === "open" || tab === "closed";
   const baseList = visibleTickets(aggregate ? "all" : tab, {
@@ -229,29 +242,82 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
       </div>
 
       {/* List */}
-      <div className={cn(
+      <div
+        {...ptr.bind}
+        className={cn(
           "no-scrollbar relative min-h-0 flex-1 overflow-y-auto bg-background px-4 pt-3",
           overlay === "search"
             ? "pb-[calc(5rem+var(--kb-inset,0px))]"
             : "pb-[calc(0.75rem+var(--kb-inset,0px))]",
-        )}>
+        )}
+      >
+        <div
+          aria-live="polite"
+          style={{ height: ptr.busy ? 28 : ptr.pull }}
+          className="grid place-items-center overflow-hidden text-fs-xs font-bold text-muted-foreground"
+        >
+          {ptr.busy
+            ? "Refreshing…"
+            : ptr.pull >= ptr.threshold
+              ? "Release to refresh"
+              : ptr.pull > 0
+                ? "Pull to refresh"
+                : ""}
+        </div>
         {list.length ? (
           <div className="space-y-3">
             {list.map((t) => (
-              <TicketCard
+              <SwipeRow
                 key={t.id}
-                ticket={t}
-                onClick={() => {
-                  openTicket(t.id);
-                  navigate({ to: "/tickets/$ticketId", params: { ticketId: t.id } });
-                }}
-              />
+                action={
+                  t.status === "paid"
+                    ? undefined
+                    : {
+                        label: "Void",
+                        destructive: true,
+                        onAction: () => {
+                          void (async () => {
+                            const ok = await confirm({
+                              title: `Void ${t.label}?`,
+                              message: "The ticket is removed from the open list.",
+                              confirmLabel: "Void ticket",
+                              destructive: true,
+                            });
+                            if (ok) {
+                              setTicketStatus(t.id, "paid");
+                              announce(`${t.label} voided`);
+                            }
+                          })();
+                        },
+                      }
+                }
+              >
+                <TicketCard
+                  ticket={t}
+                  onClick={() => {
+                    openTicket(t.id);
+                    navigate({ to: "/tickets/$ticketId", params: { ticketId: t.id } });
+                  }}
+                />
+              </SwipeRow>
             ))}
           </div>
         ) : (
-          <EmptyState title="No Tickets Found" detail="Let's create an order." />
+          <EmptyState
+            title="No Tickets Found"
+            detail="Let's create an order."
+            icon={<ReceiptText className="size-6" aria-hidden />}
+            action={{
+              label: "New order",
+              onPress: () => {
+                startOrder();
+                navigate({ to: "/order/new" });
+              },
+            }}
+          />
         )}
       </div>
+
 
       {/* New ticket FAB */}
       <button

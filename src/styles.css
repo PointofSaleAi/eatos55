@@ -228,6 +228,29 @@
     }
   }
 
+  /* Reduced motion: sheets and overlays fade instead of sliding. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-slot="sheet-content"],
+    [data-slot="dialog-content"],
+    [role="dialog"] {
+      transform: none !important;
+    }
+  }
+
+  /* Increased contrast: stronger separators and dimmer text lifted to body. */
+  @media (prefers-contrast: more) {
+    :root {
+      --border: oklch(0.72 0.01 260);
+      --input: oklch(0.72 0.01 260);
+      --muted-foreground: oklch(0.38 0.02 265);
+    }
+    .dark {
+      --border: oklch(1 0 0 / 42%);
+      --input: oklch(1 0 0 / 46%);
+      --muted-foreground: oklch(0.86 0.01 260);
+    }
+  }
+
   body {
     background-color: var(--color-shell);
     color: var(--color-foreground);

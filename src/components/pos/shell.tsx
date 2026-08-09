@@ -12,8 +12,11 @@ import {
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { ClockPullDown } from "@/components/pos/clock-pulldown";
+import { ConfirmProvider } from "@/components/pos/confirm-sheet";
+import { LiveRegionProvider } from "@/components/pos/live-region";
 import { NavDrawer } from "@/components/pos/nav-drawer";
 import { OfflineBanner } from "@/components/pos/offline-banner";
+import { useAppearance } from "@/hooks/use-appearance";
 import { useGlobalKeyboardAware } from "@/hooks/use-keyboard-inset";
 import { cn } from "@/lib/utils";
 
@@ -60,6 +63,8 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
   const [navOpen, setNavOpen] = useState(false);
   const appChrome = useAppChrome();
   useGlobalKeyboardAware();
+  // Follows the system light/dark appearance unless overridden in Settings.
+  useAppearance();
 
   return (
     <div className="h-[100dvh] overflow-hidden bg-shell md:flex md:h-auto md:min-h-[100dvh] md:items-center md:justify-center md:overflow-visible md:p-8">
@@ -71,18 +76,24 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
         )}
       >
         <NavDrawerContext.Provider value={{ open: () => setNavOpen(true) }}>
-          <div
-            className="relative flex min-h-0 min-w-0 flex-1 flex-col pt-[var(--sat,0px)]"
-            style={{ ["--tabs-h" as string]: appChrome ? "56px" : "0px" }}
-          >
-            {appChrome ? <ClockPullDown /> : null}
-            <OfflineBanner />
-            {children}
-            {appChrome ? <BottomTabs /> : null}
-            {appChrome ? <NavDrawer open={navOpen} onClose={() => setNavOpen(false)} /> : null}
-            {/* Portal host for keyboard-docked UI (search bar). */}
-            <div id="pos-dock-root" className="pointer-events-none absolute inset-0 z-40" />
-          </div>
+          <LiveRegionProvider>
+            <ConfirmProvider>
+              <div
+                className="relative flex min-h-0 min-w-0 flex-1 flex-col pt-[var(--sat,0px)]"
+                style={{ ["--tabs-h" as string]: appChrome ? "56px" : "0px" }}
+              >
+                {appChrome ? <ClockPullDown /> : null}
+                <OfflineBanner />
+                {children}
+                {appChrome ? <BottomTabs /> : null}
+                {appChrome ? (
+                  <NavDrawer open={navOpen} onClose={() => setNavOpen(false)} />
+                ) : null}
+                {/* Portal host for keyboard-docked UI (search bar). */}
+                <div id="pos-dock-root" className="pointer-events-none absolute inset-0 z-40" />
+              </div>
+            </ConfirmProvider>
+          </LiveRegionProvider>
         </NavDrawerContext.Provider>
       </div>
     </div>

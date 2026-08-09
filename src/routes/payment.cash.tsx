@@ -2,6 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { TenderScreen } from "@/components/pos/tender-screen";
 import { money } from "@/lib/demo-data";
+import { useAnnounce } from "@/components/pos/live-region";
+import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/payment/cash")({
@@ -21,6 +23,7 @@ export const Route = createFileRoute("/payment/cash")({
 function PayByCash() {
   const navigate = useNavigate();
   const { totals, paidSoFar, commitPayment } = usePos();
+  const announce = useAnnounce();
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
 
   return (
@@ -34,6 +37,8 @@ function PayByCash() {
           toast.error(`Short ${money(due - amount)} — enter the full amount`);
           return;
         }
+        haptic("success");
+        announce("Payment complete");
         commitPayment("cash", amount);
         const change = Math.round((amount - due) * 100) / 100;
         toast.success(

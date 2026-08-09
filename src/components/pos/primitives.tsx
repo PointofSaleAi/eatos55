@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, Delete } from "lucide-react";
+import { ChevronRight, Delete, Inbox } from "lucide-react";
 import type { ReactNode } from "react";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
+import { haptic } from "@/lib/haptics";
 import { money, statusMeta, type Ticket } from "@/lib/demo-data";
 
 export function SectionLabel({ children }: { children: ReactNode }) {
@@ -246,7 +247,10 @@ function KeypadKey({
     <button
       type="button"
       aria-label={label}
-      onClick={onPress}
+      onClick={() => {
+        haptic("light");
+        onPress();
+      }}
       className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]"
     >
       {children}
@@ -254,12 +258,34 @@ function KeypadKey({
   );
 }
 
-export function EmptyState({ title, detail }: { title: string; detail: string }) {
+export function EmptyState({
+  title,
+  detail,
+  icon,
+  action,
+}: {
+  title: string;
+  detail: string;
+  icon?: ReactNode;
+  action?: { label: string; onPress: () => void };
+}) {
   return (
-    <div className="grid place-items-center px-6 py-16 text-center">
+    <div className="grid place-items-center px-6 py-12 text-center">
       <div>
-        <p className="text-sm font-extrabold text-foreground">{title}</p>
-        <p className="mt-1 text-xs text-muted-foreground">{detail}</p>
+        <span className="mx-auto mb-3 grid size-12 place-items-center rounded-2xl bg-muted text-muted-foreground">
+          {icon ?? <Inbox className="size-6" aria-hidden />}
+        </span>
+        <p className="text-fs-sm font-extrabold text-foreground">{title}</p>
+        <p className="mt-1 text-fs-xs text-muted-foreground">{detail}</p>
+        {action ? (
+          <button
+            type="button"
+            onClick={action.onPress}
+            className="min-h-ctl-sm mt-4 rounded-full bg-primary px-5 text-fs-sm font-extrabold text-primary-foreground transition-opacity hover:opacity-90"
+          >
+            {action.label}
+          </button>
+        ) : null}
       </div>
     </div>
   );

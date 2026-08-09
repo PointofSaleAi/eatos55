@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { setHapticsEnabled } from "@/lib/haptics";
 import {
   DEFAULT_TICKET_DATE,
   TAX_RATE,
@@ -248,6 +249,13 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [managerUnlocked, setManagerUnlocked] = useState(false);
   const [lastPayment, setLastPayment] = useState<LastPayment>(null);
   const [paidSoFar, setPaidSoFar] = useState(0);
+
+  // Keep real device haptics in step with the user's setting.
+  useEffect(() => {
+    setHapticsEnabled(settings.hapticFeedback);
+  }, [settings.hapticFeedback]);
+
+
 
   const value = useMemo<Store>(() => {
     const round = (n: number) => Math.round(n * 100) / 100;

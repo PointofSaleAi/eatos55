@@ -2,6 +2,8 @@ import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router"
 import { toast } from "sonner";
 import { TenderScreen } from "@/components/pos/tender-screen";
 import { money } from "@/lib/demo-data";
+import { useAnnounce } from "@/components/pos/live-region";
+import { haptic } from "@/lib/haptics";
 import { type TenderMethod, usePos } from "@/lib/pos-store";
 
 const kinds: Record<
@@ -35,6 +37,7 @@ function TenderRoute() {
   const { kind } = useParams({ from: "/payment/tender/$kind" });
   const navigate = useNavigate();
   const { totals, paidSoFar, commitPayment, addPartialPayment } = usePos();
+  const announce = useAnnounce();
   const cfg = kinds[kind] ?? {
     title: "Other Tender",
     method: "other" as TenderMethod,
@@ -53,11 +56,15 @@ function TenderRoute() {
       }
       onCommit={(amount) => {
         if (amount < due) {
+          haptic("medium");
+          announce(`Partial payment applied`);
           addPartialPayment(amount);
           toast.success(`${cfg.success} · ${money(due - amount)} remaining`);
           navigate({ to: "/payment/method" });
           return;
         }
+        haptic("success");
+        announce("Payment complete");
         commitPayment(cfg.method, amount);
         toast.success(cfg.success);
         navigate({ to: "/tickets" });
