@@ -21,13 +21,13 @@ function apply(appearance: Appearance) {
  * override the user can pick in Settings. Persisted on the device.
  */
 export function useAppearance() {
-  const [appearance, setAppearance] = useState<Appearance>("system");
+  const [appearance, setAppearance] = useState<Appearance>("light");
 
   // Read the stored preference after hydration to avoid an SSR mismatch.
   useEffect(() => {
     const stored = window.localStorage.getItem(KEY) as Appearance | null;
     const next: Appearance =
-      stored === "light" || stored === "dark" || stored === "system" ? stored : "system";
+      stored === "light" || stored === "dark" || stored === "system" ? stored : "light";
     setAppearance(next);
     apply(next);
   }, []);
