@@ -239,6 +239,8 @@ export type LastPayment = {
   total: number;
   tendered: number;
   change: number;
+  orderNumber: number;
+  guestName: string;
 } | null;
 
 type Store = {
