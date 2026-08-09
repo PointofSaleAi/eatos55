@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, Delete, Inbox, Table2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Delete, Inbox, Table2 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
@@ -213,6 +213,7 @@ function Cell({ label, value, tone }: { label: string; value: string; tone?: str
 export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () => void }) {
   const meta = statusMeta[ticket.status];
   const timer = useTicketTimer(ticket.arrivedMinutesAgo);
+  const [open, setOpen] = useState(false);
   const dateLabel = new Date(`${ticket.date}T12:00:00`).toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "short",
@@ -220,40 +221,67 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
   });
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="@container w-full rounded-card border border-border bg-surface px-3 py-3 text-left transition-colors hover:bg-muted"
-    >
-      <div className="flex items-center gap-2">
-        <span className="flex shrink-0 items-center gap-1.5 rounded-row bg-muted px-2 py-1 t-row text-foreground">
+    <div className="@container w-full overflow-hidden rounded-card border border-border bg-surface">
+      <div className="flex items-center gap-2 px-2 py-1.5">
+        <button
+          type="button"
+          aria-label={`Open ticket ${ticket.number}`}
+          onClick={onClick}
+          className="flex shrink-0 items-center gap-1.5 rounded-row bg-muted px-2 py-1.5 t-row text-foreground transition-colors hover:bg-secondary"
+        >
           <Table2 className="size-4" aria-hidden />
           {ticket.number}
-        </span>
-        <span className="min-w-0 flex-1 truncate t-row text-foreground">{ticket.label}</span>
-        <span className={cn("shrink-0 t-badge", meta.tone)}>{meta.label}</span>
+        </button>
+        <button
+          type="button"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+          className="flex min-h-row min-w-0 flex-1 items-center gap-2 rounded-row px-1 text-left transition-colors hover:bg-muted"
+        >
+          <span className="min-w-0 flex-1 truncate t-row text-foreground">{ticket.label}</span>
+          <span className="shrink-0 t-caption text-muted-foreground">{timer}</span>
+          <span className="shrink-0 t-row text-foreground">{money(ticket.total)}</span>
+          <span className={cn("shrink-0 t-badge", meta.tone)}>{meta.label}</span>
+          <ChevronDown
+            className={cn(
+              "size-4 shrink-0 text-muted-foreground transition-transform",
+              open && "rotate-180",
+            )}
+            aria-hidden
+          />
+        </button>
       </div>
 
-      <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-2 @[30rem]:grid-cols-4 @[46rem]:grid-cols-6">
-
-        <Cell label="Timer" value={timer} />
-        <Cell label="Check" value={String(ticket.checkNumber ?? ticket.number)} />
-        <Cell label="Total" value={money(ticket.total)} />
-        <Cell label="Tips" value={money(ticket.tips ?? 0)} />
-        <Cell label="Order No" value={String(ticket.number)} />
-        <Cell label="Arrived At" value={ticket.arrivedAt} />
-        <Cell label="Date" value={dateLabel} />
-        <Cell label="Employee" value={ticket.server} />
-        <Cell label="Revenue Center" value={ticket.revenueCenter ?? "Main dining"} />
-        <Cell label="Order Type" value={modeOrderType(ticket.mode)} />
-        <Cell
-          label="Payment Type"
-          value={ticket.paymentType ?? (ticket.status === "paid" ? "Card" : "Unpaid")}
-        />
-      </div>
-    </button>
+      {open ? (
+        <div className="border-t border-border px-3 py-3">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-2 @[30rem]:grid-cols-4 @[46rem]:grid-cols-6">
+            <Cell label="Check" value={String(ticket.checkNumber ?? ticket.number)} />
+            <Cell label="Tips" value={money(ticket.tips ?? 0)} />
+            <Cell label="Order No" value={String(ticket.number)} />
+            <Cell label="Arrived At" value={ticket.arrivedAt} />
+            <Cell label="Date" value={dateLabel} />
+            <Cell label="Employee" value={ticket.server} />
+            <Cell label="Revenue Center" value={ticket.revenueCenter ?? "Main dining"} />
+            <Cell label="Order Type" value={modeOrderType(ticket.mode)} />
+            <Cell
+              label="Payment Type"
+              value={ticket.paymentType ?? (ticket.status === "paid" ? "Card" : "Unpaid")}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={onClick}
+            className="mt-3 flex min-h-ctl-sm w-full items-center justify-center gap-1 rounded-pill bg-muted t-row text-foreground transition-colors hover:bg-secondary"
+          >
+            View ticket
+            <ChevronRight className="size-4" aria-hidden />
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 }
+
 
 
 export function Keypad({
