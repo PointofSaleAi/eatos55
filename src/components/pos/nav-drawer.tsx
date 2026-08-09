@@ -13,7 +13,6 @@ import {
   ShieldCheck,
   Settings as SettingsIcon,
   Sofa,
-  Tag,
   Utensils,
   X,
   type LucideIcon,
@@ -35,7 +34,6 @@ const groups: { title: string; links: NavLink[] }[] = [
     links: [
       { to: "/order/new", label: "New Order", icon: ClipboardList },
       { to: "/order/menu", label: "Menus", icon: Utensils },
-      { to: "/order/custom-item", label: "Custom Item", icon: Tag },
     ],
   },
   {
@@ -52,7 +50,6 @@ const groups: { title: string; links: NavLink[] }[] = [
     links: [
       { to: "/payment/method", label: "Payments", icon: CreditCard },
       { to: "/settings/sales-summary", label: "Sales Summary", icon: FileText },
-      { to: "/orders", label: "Shift Summary", icon: Clock },
     ],
   },
   {
@@ -98,7 +95,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
         <nav className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 pb-2">
           {groups.map((g) => (
             <div key={g.title} className="pb-1">
-              <p className="px-2 pb-1 pt-2 t-section text-muted-foreground">{g.title}</p>
+              <p className="px-2 pb-0.5 pt-2 t-section text-muted-foreground">{g.title}</p>
               <ul>
                 {g.links.map((l) => {
                   const active = pathname === l.to;
@@ -108,7 +105,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
                         to={l.to}
                         onClick={onClose}
                         className={cn(
-                          "flex min-h-ctl-md items-center gap-3 rounded-row px-2 t-row transition-colors",
+                          "flex min-h-ctl-sm items-center gap-3 rounded-row px-2 py-1.5 tap-safe t-row transition-colors",
                           active
                             ? "bg-primary text-primary-foreground"
                             : "text-foreground hover:bg-muted",
@@ -134,11 +131,11 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
           ))}
         </nav>
 
-        <div className="shrink-0 space-y-2 border-t border-border p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+        <div className="shrink-0 space-y-1.5 border-t border-border p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
           <Link
             to="/tickets/manager-controls"
             onClick={onClose}
-            className="flex min-h-ctl-md items-center gap-2 rounded-row border border-border px-3 t-row text-foreground transition-colors hover:bg-muted"
+            className="flex min-h-ctl-sm tap-safe items-center gap-2 rounded-row border border-border px-3 t-row text-foreground transition-colors hover:bg-muted"
           >
             <ShieldCheck className="size-4" />
             Manager Controls
@@ -149,7 +146,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
               onClose();
               clockOut();
             }}
-            className="flex min-h-ctl-md w-full items-center gap-2 rounded-row border border-border px-3 t-row text-foreground transition-colors hover:bg-muted"
+            className="flex min-h-ctl-sm tap-safe w-full items-center gap-2 rounded-row border border-border px-3 t-row text-foreground transition-colors hover:bg-muted"
           >
             <Clock className="size-4" />
             Clock Out
@@ -168,7 +165,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
               signOut();
               navigate({ to: "/" });
             }}
-            className="flex min-h-ctl-md w-full items-center gap-2 rounded-row border border-border px-3 t-row text-destructive transition-colors hover:bg-muted"
+            className="flex min-h-ctl-sm tap-safe w-full items-center gap-2 rounded-row border border-border px-3 t-row text-destructive transition-colors hover:bg-muted"
           >
             <LogOut className="size-4" />
             Sign Out
