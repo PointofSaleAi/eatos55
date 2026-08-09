@@ -24,11 +24,12 @@ export function setHapticsEnabled(v: boolean) {
 /** Fires a short haptic when supported and the user has haptics enabled. */
 export function haptic(pattern: Pattern = "light") {
   if (!enabled || typeof navigator === "undefined") return;
-  const vibrate = (navigator as Navigator & { vibrate?: (p: number | number[]) => boolean })
-    .vibrate;
-  if (typeof vibrate !== "function") return;
+  const nav = navigator as unknown as {
+    vibrate?: (p: number | number[]) => boolean;
+  };
+  if (typeof nav.vibrate !== "function") return;
   try {
-    vibrate.call(navigator, patterns[pattern]);
+    nav.vibrate(patterns[pattern]);
   } catch {
     /* ignore: some browsers throw without a user gesture */
   }
