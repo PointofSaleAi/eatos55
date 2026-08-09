@@ -8,7 +8,7 @@ import { money, statusMeta, type Ticket } from "@/lib/demo-data";
 
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <p className="px-1 pb-2 pt-4 text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
+    <p className="px-1 pb-2 pt-4 t-section text-muted-foreground">
       {children}
     </p>
   );
@@ -40,13 +40,13 @@ export function NavRow({
   return (
     <Link
       to={to}
-      className="flex min-h-[60px] items-center gap-3 border-b border-border px-4 py-3 last:border-b-0 transition-colors hover:bg-muted"
+      className="flex min-h-row items-center gap-3 border-b border-border px-4 py-3 last:border-b-0 transition-colors hover:bg-muted"
     >
       {icon ? <span className="shrink-0 text-accent">{icon}</span> : null}
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-bold text-foreground">{title}</span>
+        <span className="block truncate t-row text-foreground">{title}</span>
         {detail ? (
-          <span className="block truncate text-xs text-muted-foreground">{detail}</span>
+          <span className="block truncate t-caption text-muted-foreground">{detail}</span>
         ) : null}
       </span>
       <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
@@ -71,7 +71,7 @@ export function ActionRow({
     <button
       type="button"
       onClick={onClick}
-      className="flex min-h-[60px] w-full items-center gap-3 border-b border-border px-4 py-3 text-left last:border-b-0 transition-colors hover:bg-muted"
+      className="flex min-h-row w-full items-center gap-3 border-b border-border px-4 py-3 text-left last:border-b-0 transition-colors hover:bg-muted"
     >
       <span className="min-w-0 flex-1">
         <span
@@ -83,7 +83,7 @@ export function ActionRow({
           {title}
         </span>
         {detail ? (
-          <span className="block truncate text-xs text-muted-foreground">{detail}</span>
+          <span className="block truncate t-caption text-muted-foreground">{detail}</span>
         ) : null}
       </span>
       {right ?? <ChevronRight className="size-4 shrink-0 text-muted-foreground" />}
@@ -103,10 +103,10 @@ export function ToggleRow({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="flex min-h-[60px] items-center gap-3 border-b border-border px-4 py-3 last:border-b-0">
+    <div className="flex min-h-row items-center gap-3 border-b border-border px-4 py-3 last:border-b-0">
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-bold text-foreground">{title}</p>
-        {detail ? <p className="truncate text-xs text-muted-foreground">{detail}</p> : null}
+        <p className="truncate t-row text-foreground">{title}</p>
+        {detail ? <p className="truncate t-caption text-muted-foreground">{detail}</p> : null}
       </div>
       <Switch checked={checked} onCheckedChange={onChange} className="shrink-0" />
     </div>
@@ -124,13 +124,13 @@ export function ValueRow({
 }) {
   const content = (
     <>
-      <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">{title}</span>
-      <span className="shrink-0 truncate text-sm text-muted-foreground">{value}</span>
+      <span className="min-w-0 flex-1 truncate t-row text-foreground">{title}</span>
+      <span className="shrink-0 truncate t-value text-muted-foreground">{value}</span>
     </>
   );
   if (!onClick) {
     return (
-      <div className="flex min-h-[56px] items-center gap-3 border-b border-border px-4 py-3 last:border-b-0">
+      <div className="flex min-h-row items-center gap-3 border-b border-border px-4 py-3 last:border-b-0">
         {content}
       </div>
     );
@@ -139,7 +139,7 @@ export function ValueRow({
     <button
       type="button"
       onClick={onClick}
-      className="flex min-h-[56px] w-full items-center gap-3 border-b border-border px-4 py-3 text-left last:border-b-0 transition-colors hover:bg-muted"
+      className="flex min-h-row w-full items-center gap-3 border-b border-border px-4 py-3 text-left last:border-b-0 transition-colors hover:bg-muted"
     >
       {content}
     </button>
@@ -191,7 +191,7 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
         <span className="block truncate text-sm font-extrabold text-foreground">
           {ticket.label}
         </span>
-        <span className="block truncate text-xs text-muted-foreground">
+        <span className="block truncate t-caption text-muted-foreground">
           Arrived {ticket.arrivedAt} · {ticket.arrivedMinutesAgo} min ago
         </span>
       </span>
@@ -251,7 +251,7 @@ function KeypadKey({
         haptic("light");
         onPress();
       }}
-      className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]"
+      className="grid min-h-row place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]"
     >
       {children}
     </button>

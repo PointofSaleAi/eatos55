@@ -56,7 +56,7 @@ export function Caption({ children, tone }: { children: ReactNode; tone?: "dange
 
 export function GroupLabel({ children }: { children: ReactNode }) {
   return (
-    <p className="px-1 pb-2 pt-4 text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
+    <p className="px-1 pb-2 pt-4 t-section text-muted-foreground">
       {children}
     </p>
   );
@@ -75,9 +75,9 @@ function RowInner({ icon, color, title, value, right, chevron }: RowShellProps) 
   return (
     <>
       {icon ? <IconTile icon={icon} color={color} /> : null}
-      <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">{title}</span>
+      <span className="min-w-0 flex-1 truncate t-row text-foreground">{title}</span>
       {value ? (
-        <span className="shrink-0 truncate text-sm text-muted-foreground">{value}</span>
+        <span className="shrink-0 truncate t-value text-muted-foreground">{value}</span>
       ) : null}
       {right}
       {chevron ? <ChevronRight className="size-4 shrink-0 text-muted-foreground" /> : null}
@@ -86,7 +86,7 @@ function RowInner({ icon, color, title, value, right, chevron }: RowShellProps) 
 }
 
 const rowBase =
-  "flex min-h-[60px] w-full items-center gap-3 border-b border-border px-4 py-3 text-left last:border-b-0";
+  "flex min-h-row w-full items-center gap-3 border-b border-border px-4 py-3 text-left last:border-b-0";
 
 export function IconNavRow({
   to,
@@ -190,7 +190,7 @@ export function SegmentRow({
 }) {
   return (
     <div className={cn(rowBase, "flex-col items-stretch gap-2 sm:flex-row sm:items-center")}>
-      <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">{title}</span>
+      <span className="min-w-0 flex-1 truncate t-row text-foreground">{title}</span>
       <div
         role="radiogroup"
         aria-label={title}
