@@ -273,7 +273,7 @@ type Store = {
   setTableState: (table: string, state: TableState) => void;
   roomStates: Record<string, RoomState>;
   setRoomState: (room: string, state: RoomState) => void;
-  startOrder: (table?: string) => void;
+  startOrder: (table?: string, partySize?: number) => void;
 
   guest: Guest;
   setGuest: (patch: Partial<Guest>) => void;
