@@ -375,7 +375,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [floor, setFloor] = useState<string>("Ground Floor");
   const [guest, setGuestState] = useState<Guest>({ name: "", phone: "", partySize: 1 });
   const [orderType, setOrderType] = useState<ServiceOrderType>("Dine In");
-  const [tableStates, setTableStates] = useState<Record<string, "ordering">>({});
+  const [tableStates, setTableStates] = useState<Record<string, TableState>>({});
+  const [tableSince, setTableSince] = useState<Record<string, string>>({});
+  const [roomStates, setRoomStates] = useState<Record<string, RoomState>>({});
+  const [floorReady, setFloorReady] = useState(false);
+
   const [noTax, setNoTax] = useState(false);
   const [serviceCharge, setServiceCharge] = useState(0);
   const [orderDiscountPercent, setOrderDiscountPercent] = useState(0);
