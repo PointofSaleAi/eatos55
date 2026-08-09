@@ -189,7 +189,6 @@ export function SubHeader({
             fallbackTo={backTo}
             label={backLabel ? `Back to ${backLabel}` : "Go back"}
           />
-          <MenuButton className="-ml-2" />
           <div className="min-w-0">
             <h1 className="truncate t-title text-foreground">{title}</h1>
           </div>

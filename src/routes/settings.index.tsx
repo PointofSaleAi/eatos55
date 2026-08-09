@@ -4,6 +4,9 @@ import {
   Briefcase,
   FileText,
   Headset,
+  LifeBuoy,
+  LogOut,
+  Mail,
   Mic,
   Search,
   Settings2,
@@ -23,6 +26,7 @@ import { PinSheet } from "@/components/pos/pin-sheet";
 import { cn } from "@/lib/utils";
 import { SearchDock } from "@/components/pos/search-dock";
 import { usePos } from "@/lib/pos-store";
+import { useConfirm } from "@/components/pos/confirm-sheet";
 
 export const Route = createFileRoute("/settings/")({
   head: () => ({
@@ -53,6 +57,7 @@ type Row = {
 function SettingsHub() {
   const navigate = useNavigate();
   const { session, settings, signOut } = usePos();
+  const confirmAction = useConfirm();
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [pinOpen, setPinOpen] = useState(false);
@@ -84,6 +89,8 @@ function SettingsHub() {
       [
         { title: "Notifications", icon: Bell, color: "grey", to: "/settings/notifications" },
         { title: "Customer Support", icon: Headset, color: "red", to: "/system/customer-support" },
+        { title: "Contact Us", icon: Mail, color: "blue", to: "/system/contact-us" },
+        { title: "Help Center", icon: LifeBuoy, color: "sky", to: "/system/help-center" },
       ],
       [
         {
@@ -91,6 +98,24 @@ function SettingsHub() {
           icon: Settings2,
           color: "slate",
           onClick: () => setPinOpen(true),
+        },
+        {
+          title: "Sign Out",
+          icon: LogOut,
+          color: "red",
+          onClick: () => {
+            void (async () => {
+              const ok = await confirmAction({
+                title: "Sign out?",
+                message: "You will need to sign in again to use this device.",
+                confirmLabel: "Sign Out",
+                destructive: true,
+              });
+              if (!ok) return;
+              signOut();
+              navigate({ to: "/" });
+            })();
+          },
         },
       ],
     ],
