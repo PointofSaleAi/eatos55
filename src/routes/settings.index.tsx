@@ -170,20 +170,7 @@ function SettingsHub() {
             </GroupCard>
           ))
         )}
-        <div className="h-24" />
       </ScreenBody>
-
-      <button
-        type="button"
-        aria-label="New ticket"
-        onClick={() => {
-          startOrder();
-          navigate({ to: "/order/new" });
-        }}
-        className="absolute bottom-24 right-4 z-10 grid size-14 place-items-center rounded-pill bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
-      >
-        <SquarePen className="size-6" />
-      </button>
 
       <PinSheet
         open={pinOpen}

@@ -83,7 +83,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
             <ConfirmProvider>
               <div
                 className="relative flex min-h-0 min-w-0 flex-1 flex-col pt-[var(--sat,0px)]"
-                style={{ ["--tabs-h" as string]: appChrome ? "56px" : "0px" }}
+                style={{ ["--tabs-h" as string]: appChrome ? "4.75rem" : "0px" }}
               >
                 {appChrome ? <ClockPullDown /> : null}
                 <OfflineBanner />
@@ -196,7 +196,8 @@ export function ScreenBody({ children, className }: { children: ReactNode; class
   return (
     <div
       className={cn(
-        "no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4 pb-[calc(1rem+var(--kb-inset,0px))]",
+        "no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4",
+        "pb-[calc(1rem+var(--kb-inset,0px)+var(--tabs-h,0px))]",
         className,
       )}
     >
@@ -207,7 +208,7 @@ export function ScreenBody({ children, className }: { children: ReactNode; class
 
 export function ScreenFooter({ children }: { children: ReactNode }) {
   return (
-    <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1.25rem+var(--kb-inset,0px)+var(--sab,0px))] pt-3">
+    <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1.25rem+var(--kb-inset,0px)+var(--sab,0px)+var(--tabs-h,0px))] pt-3">
       {children}
     </div>
   );
