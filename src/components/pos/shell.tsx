@@ -212,30 +212,71 @@ export function ScreenFooter({ children }: { children: ReactNode }) {
 
 const tabs: { to: string; label: string; icon: LucideIcon }[] = [
   { to: "/floor", label: "Home", icon: LayoutGrid },
-  { to: "/order/new", label: "Order", icon: PlusCircle },
   { to: "/tickets", label: "Tickets", icon: ClipboardList },
   { to: "/board", label: "Board", icon: Columns3 },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 
+/**
+ * Floating tab pill plus a separate primary action button.
+ * The pill carries the four browse destinations; the round button carries the
+ * single most common action for the current context (start / review an order).
+ */
 export function BottomTabs() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { startOrder } = usePos();
+  const router = useRouter();
+  const onOrderFlow = pathname.startsWith("/order");
+
+  const action = onOrderFlow
+    ? { label: "Review order", icon: Check, run: () => router.navigate({ to: "/order/review" }) }
+    : {
+        label: "New order",
+        icon: Plus,
+        run: () => {
+          startOrder();
+          router.navigate({ to: "/order/new" });
+        },
+      };
+  const ActionIcon = action.icon;
+
   return (
-    <nav className="shrink-0 border-t border-border bg-surface pb-[var(--sab,0px)] [html[data-kb=open]_&]:hidden">
-      <ul className="grid grid-cols-5">
-        {tabs.map(({ to, label, icon: Icon }) => (
-          <li key={to}>
-            <Link
-              to={to}
-              preload="intent"
-              className="group relative flex min-h-[3.5rem] flex-col items-center justify-center gap-1 py-2 text-muted-foreground transition-colors data-[status=active]:text-accent"
-            >
-              <span className="absolute inset-x-6 top-0 h-[3px] rounded-pill bg-transparent group-data-[status=active]:bg-accent" />
-              <Icon className="size-5" />
-              <span className="t-badge">{label}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex items-end justify-center gap-2 px-3 pb-[calc(0.5rem+var(--sab,0px))] [html[data-kb=open]_&]:hidden">
+      <nav
+        aria-label="Main"
+        className="pointer-events-auto min-w-0 flex-1 rounded-pill border border-border bg-surface/90 p-1 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+      >
+        <ul className="grid grid-cols-4">
+          {tabs.map(({ to, label, icon: Icon }) => (
+            <li key={to} className="min-w-0">
+              <Link
+                to={to}
+                preload="intent"
+                onClick={() => haptic("light")}
+                className="group flex min-h-tap min-w-0 flex-col items-center justify-center gap-0.5 rounded-pill px-1 py-1.5 text-muted-foreground transition-colors hover:text-foreground data-[status=active]:bg-accent/15 data-[status=active]:text-accent"
+              >
+                <Icon className="size-5 shrink-0" />
+                <span className="t-badge max-w-full truncate group-data-[status=active]:inline max-[360px]:hidden max-[360px]:group-data-[status=active]:inline">
+                  {label}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <button
+        type="button"
+        aria-label={action.label}
+        title={action.label}
+        onClick={() => {
+          haptic("medium");
+          action.run();
+        }}
+        className="pointer-events-auto grid size-14 shrink-0 place-items-center rounded-pill bg-primary text-primary-foreground shadow-[0_12px_40px_-12px_rgba(0,0,0,0.55)] transition-transform active:scale-95 motion-reduce:transition-none"
+      >
+        <ActionIcon className="size-6" />
+      </button>
+    </div>
   );
 }
+
