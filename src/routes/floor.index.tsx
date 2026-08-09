@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ScreenBody } from "@/components/pos/shell";
+import { MenuButton, ScreenBody } from "@/components/pos/shell";
 import {
   DropdownMenu,
   DropdownMenuContent,
