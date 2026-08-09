@@ -58,7 +58,12 @@ export type Ticket = {
   revenueCenter?: string;
   paymentType?: string;
   payments?: TicketPayment[];
-};
+  /** Guest-facing order type, when it was chosen explicitly on the order. */
+  orderType?: string;
+  guestEmail?: string;
+  notes?: string;
+  vehicle?: { type: string; color: string; brand?: string; plate?: string };
+
 
 
 /** Tax is inclusive in the guest-facing totals (20%). */
