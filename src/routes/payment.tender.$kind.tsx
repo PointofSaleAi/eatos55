@@ -2,6 +2,8 @@ import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router"
 import { toast } from "sonner";
 import { TenderScreen } from "@/components/pos/tender-screen";
 import { money } from "@/lib/demo-data";
+import { useAnnounce } from "@/components/pos/live-region";
+import { haptic } from "@/lib/haptics";
 import { type TenderMethod, usePos } from "@/lib/pos-store";
 
 const kinds: Record<
