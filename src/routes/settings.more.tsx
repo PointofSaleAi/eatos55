@@ -98,8 +98,17 @@ function MoreSettings() {
             title="Reset device"
             detail="Unpairs this handheld from the venue"
             tone="danger"
-            onClick={() => toast.error("Reset requires an owner PIN")}
+            onClick={async () => {
+              const ok = await confirm({
+                title: "Reset this device?",
+                message: "The handheld is unpaired from the venue and all local data is removed.",
+                confirmLabel: "Reset device",
+                destructive: true,
+              });
+              if (ok) toast.error("Reset requires an owner PIN");
+            }}
           />
+
         </Card>
       </ScreenBody>
     </>
