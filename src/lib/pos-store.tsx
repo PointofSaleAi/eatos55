@@ -261,6 +261,7 @@ type Store = {
   shiftTicketDate: (days: number) => void;
   visibleTickets: (tab: TicketStatus | "all", opts?: { ignoreDate?: boolean }) => Ticket[];
   setTicketStatus: (id: string, status: TicketStatus) => void;
+  addTip: (id: string, amount: number) => void;
 
   mode: MenuMode;
   setMode: (m: MenuMode) => void;
@@ -557,6 +558,30 @@ export function PosProvider({ children }: { children: ReactNode }) {
       },
       setTicketStatus: (id, status) =>
         setTickets((list) => list.map((t) => (t.id === id ? { ...t, status } : t))),
+      addTip: (id, amount) =>
+        setTickets((list) =>
+          list.map((t) =>
+            t.id === id
+              ? {
+                  ...t,
+                  tips: Math.round(((t.tips ?? 0) + amount) * 100) / 100,
+                  total: Math.round((t.total + amount) * 100) / 100,
+                  payments: [
+                    ...(t.payments ?? []),
+                    {
+                      no: String((t.payments?.length ?? 0) + 1),
+                      method: "Tip",
+                      amount,
+                      at: new Date().toLocaleTimeString("en-US", {
+                        hour: "numeric",
+                        minute: "2-digit",
+                      }),
+                    },
+                  ],
+                }
+              : t,
+          ),
+        ),
 
       mode,
       setMode,
@@ -653,13 +678,36 @@ export function PosProvider({ children }: { children: ReactNode }) {
 
       commitPayment: (method, tendered) => {
         const change = Math.max(0, Math.round((tendered - total) * 100) / 100);
+        const paymentLabel =
+          method === "cash" ? "Cash" : method === "qr" ? "QR Code" : "Card";
+        const at = new Date().toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+        });
         let id = activeTicketId;
         if (id) {
           const ticketId = id;
           setTickets((list) =>
             list.map((t) =>
               t.id === ticketId
-                ? { ...t, status: "paid", total, lines: cart.map((l) => ({ ...l })) }
+                ? {
+                    ...t,
+                    status: "paid",
+                    total,
+                    lines: cart.map((l) => ({ ...l })),
+                    paymentType: paymentLabel,
+                    checkNumber: t.checkNumber ?? Number(t.id.replace("t-", "")),
+                    revenueCenter: t.revenueCenter ?? session.station ?? "Main dining",
+                    payments: [
+                      ...(t.payments ?? []),
+                      {
+                        no: String((t.payments?.length ?? 0) + 1),
+                        method: paymentLabel,
+                        amount: total,
+                        at,
+                      },
+                    ],
+                  }
                 : t,
             ),
           );
@@ -681,6 +729,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
             mode,
             lines: cart.map((l) => ({ ...l })),
             server: session.name,
+            checkNumber: 1047 + tickets.length,
+            tips: 0,
+            revenueCenter: session.station ?? "Main dining",
+            paymentType: paymentLabel,
+            payments: [{ no: "1", method: paymentLabel, amount: total, at }],
           };
           setTickets((list) => [created, ...list]);
         }
