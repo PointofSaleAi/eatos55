@@ -572,7 +572,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setCart([]);
         setActiveTicketId(null);
         setActiveTable(table ?? null);
-        if (table) setTableStates((s) => ({ ...s, [table]: "ordering" }));
+        if (table) {
+          setTableStates((s) => ({ ...s, [table]: "ordering" }));
+          setTableSince((s) => ({ ...s, [table]: new Date().toISOString() }));
+        }
+
       },
 
       openTicket: (id) => {
