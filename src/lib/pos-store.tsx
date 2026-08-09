@@ -12,8 +12,12 @@ import {
   type Ticket,
   type TicketStatus,
 } from "./demo-data";
+import type { TableState } from "./floor-data";
+
+export type RoomState = "available" | "occupied";
 
 export type SortKey = "time-late-early" | "time-early-late" | "orders-z-a" | "orders-a-z";
+
 
 export type TicketFilters = {
   statuses: TicketStatus[];
