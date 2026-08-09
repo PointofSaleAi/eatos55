@@ -617,6 +617,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
 
       settings,
       updateSettings: (patch) => setSettings((s) => ({ ...s, ...patch })),
+      canManageSettings:
+        managerUnlocked ||
+        ["Manager", "Supervisor", "Owner", "Admin"].includes(session.role),
+
 
       managerUnlocked,
       unlockManager: () => setManagerUnlocked(true),
