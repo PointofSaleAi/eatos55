@@ -48,6 +48,17 @@ export type DetailScreen = {
 
 /** Content for every Settings row that used to be a toast-only tap. */
 export const settingsDetails: Record<string, DetailScreen> = {
+  "device-name": {
+    title: "Device Name",
+    backLabel: "General",
+    icon: Tablet,
+    rows: [
+      { label: "Name", value: "aurora 22" },
+      { label: "Serial", value: "HH-22-9041" },
+      { label: "Assigned To", value: "Front of house" },
+    ],
+    note: "Device names are assigned in Back Office so tickets show the right terminal.",
+  },
   "restaurant-information": {
     title: "Restaurant Information",
     backLabel: "General",
