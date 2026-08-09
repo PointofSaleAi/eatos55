@@ -38,7 +38,7 @@ export function SwipeRow({
   };
 
   return (
-    <div className={cn("relative overflow-hidden rounded-2xl", className)}>
+    <div className={cn("relative overflow-hidden rounded-card", className)}>
       <button
         type="button"
         aria-hidden={dx === 0}

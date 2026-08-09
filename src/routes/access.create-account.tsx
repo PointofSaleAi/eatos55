@@ -30,8 +30,8 @@ function Field({
   children: ReactNode;
 }) {
   return (
-    <div className="relative rounded-xl border border-input bg-surface">
-      <span className="absolute -top-2 left-3 bg-surface px-1 text-xs font-extrabold text-foreground">
+    <div className="relative rounded-row border border-input bg-surface">
+      <span className="absolute -top-2 left-3 bg-surface px-1 text-fs-xs font-extrabold text-foreground">
         {label}
       </span>
       {children}
@@ -40,7 +40,7 @@ function Field({
 }
 
 const inputClass =
-  "h-12 w-full rounded-xl bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
+  "h-12 w-full rounded-row bg-transparent px-3 text-fs-sm text-foreground outline-none placeholder:text-muted-foreground";
 
 function CreateAccount() {
   const navigate = useNavigate();
@@ -67,7 +67,7 @@ function CreateAccount() {
           type="button"
           aria-label="Go back"
           onClick={() => router.history.back()}
-          className="grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+          className="grid size-11 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
         >
           <ArrowLeft className="size-6" />
         </button>
@@ -102,11 +102,11 @@ function CreateAccount() {
         </Field>
         <Field label="Phone Number">
           <div className="flex h-12 items-center">
-            <span className="flex h-8 shrink-0 items-center gap-2 border-r border-input px-3 text-sm font-bold text-foreground">
+            <span className="flex h-8 shrink-0 items-center gap-2 border-r border-input px-3 text-fs-sm font-bold text-foreground">
               <span aria-hidden>🇺🇸</span> +1
             </span>
             <input
-              className="h-full min-w-0 flex-1 bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+              className="h-full min-w-0 flex-1 bg-transparent px-3 text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
               inputMode="tel"
               placeholder="(123) 456 7890"
               value={form.phone}
@@ -127,7 +127,7 @@ function CreateAccount() {
               type="button"
               aria-label={show ? "Hide password" : "Show password"}
               onClick={() => setShow((s) => !s)}
-              className="absolute right-2 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-full text-muted-foreground"
+              className="absolute right-2 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-pill text-muted-foreground"
             >
               {show ? <Eye className="size-5" /> : <EyeOff className="size-5" />}
             </button>
@@ -177,7 +177,7 @@ function CreateAccount() {
           </div>
         </Field>
 
-        <label className="flex items-start gap-3 pt-1 text-sm text-foreground">
+        <label className="flex items-start gap-3 pt-1 text-fs-sm text-foreground">
           <Checkbox
             checked={agree}
             onCheckedChange={(v) => setAgree(v === true)}
@@ -193,7 +193,7 @@ function CreateAccount() {
       <div className="shrink-0 border-t border-border bg-surface px-5 pb-5 pt-3">
         <Button
           disabled={!agree}
-          className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground hover:bg-accent/90 disabled:opacity-40"
+          className="h-12 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground hover:bg-accent/90 disabled:opacity-40"
           onClick={() => {
             signIn();
             toast.success("Account created — welcome to eatOS");

@@ -35,7 +35,7 @@ function SettingsDetail() {
       <>
         <SubHeader title="Not found" backLabel="Settings" />
         <ScreenBody className="grid place-items-center">
-          <p className="text-sm text-muted-foreground">This settings screen is not available.</p>
+          <p className="text-fs-sm text-muted-foreground">This settings screen is not available.</p>
         </ScreenBody>
       </>
     );
@@ -48,7 +48,7 @@ function SettingsDetail() {
       <SubHeader title={screen.title} backLabel={screen.backLabel ?? "Settings"} />
       <ScreenBody className="py-2">
         {screen.intro ? (
-          <p className="px-1 pb-4 text-sm leading-relaxed text-muted-foreground">{screen.intro}</p>
+          <p className="px-1 pb-4 text-fs-sm leading-relaxed text-muted-foreground">{screen.intro}</p>
         ) : null}
 
         {screen.choice ? (
@@ -65,7 +65,7 @@ function SettingsDetail() {
                     onClick={() => updateSettings({ [field]: option })}
                     className="flex min-h-[60px] w-full items-center gap-3 border-b border-border px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-muted"
                   >
-                    <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">
+                    <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
                       {option}
                     </span>
                     {selected ? <Check className="size-4 shrink-0 text-accent" /> : null}
@@ -91,7 +91,7 @@ function SettingsDetail() {
         {screen.empty ? (
           <div className="grid place-items-center px-6 py-16 text-center">
             {Icon ? <Icon className="mb-3 size-8 text-muted-foreground" /> : null}
-            <p className="text-sm text-muted-foreground">{screen.empty}</p>
+            <p className="text-fs-sm text-muted-foreground">{screen.empty}</p>
           </div>
         ) : null}
 

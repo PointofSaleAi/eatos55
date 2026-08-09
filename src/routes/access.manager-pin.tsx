@@ -47,10 +47,10 @@ function ManagerPin() {
     <>
       <ScreenHeader eyebrow="Access" title="Manager PIN" back />
       <ScreenBody className="flex flex-col">
-        <div className="rounded-2xl border border-border bg-surface p-4 text-center">
+        <div className="rounded-card border border-border bg-surface p-4 text-center">
           <ShieldCheck className="mx-auto size-6 text-accent" />
-          <p className="mt-2 text-sm font-extrabold text-foreground">Protected action</p>
-          <p className="text-xs text-muted-foreground">
+          <p className="mt-2 text-fs-sm font-extrabold text-foreground">Protected action</p>
+          <p className="text-fs-xs text-muted-foreground">
             {action ?? "This action"} requires a manager PIN.
           </p>
         </div>
@@ -60,7 +60,7 @@ function ManagerPin() {
             <span
               key={i}
               className={cn(
-                "size-3.5 rounded-full",
+                "size-3.5 rounded-pill",
                 pin.length > i ? "bg-accent" : "bg-muted-foreground/25",
               )}
             />
@@ -82,7 +82,7 @@ function ManagerPin() {
       <ScreenFooter>
         <Button
           variant="ghost"
-          className="h-12 w-full rounded-full text-sm font-bold"
+          className="h-12 w-full rounded-pill text-fs-sm font-bold"
           onClick={() => navigate({ to: "/tickets" })}
         >
           Cancel

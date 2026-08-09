@@ -24,8 +24,8 @@ function WhatsNew() {
         <Card className="flex items-start gap-3 p-4">
           <Sparkles className="mt-0.5 size-5 shrink-0 text-accent" />
           <div className="min-w-0">
-            <p className="text-sm font-extrabold text-foreground">You are on version 4.12</p>
-            <p className="text-xs text-muted-foreground">Updated automatically overnight.</p>
+            <p className="text-fs-sm font-extrabold text-foreground">You are on version 4.12</p>
+            <p className="text-fs-xs text-muted-foreground">Updated automatically overnight.</p>
           </div>
         </Card>
         <SectionLabel>Product updates</SectionLabel>
@@ -33,13 +33,13 @@ function WhatsNew() {
           {releaseNotes.map((n) => (
             <Card key={n.version} className="p-4">
               <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-                <p className="truncate text-sm font-extrabold text-foreground">{n.title}</p>
-                <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs font-bold text-muted-foreground">
+                <p className="truncate text-fs-sm font-extrabold text-foreground">{n.title}</p>
+                <span className="shrink-0 rounded-pill bg-muted px-2 py-0.5 text-fs-xs font-bold text-muted-foreground">
                   {n.version}
                 </span>
               </div>
-              <p className="mt-1 text-xs text-muted-foreground">{n.date}</p>
-              <p className="mt-2 text-sm text-foreground">{n.body}</p>
+              <p className="mt-1 text-fs-xs text-muted-foreground">{n.date}</p>
+              <p className="mt-2 text-fs-sm text-foreground">{n.body}</p>
             </Card>
           ))}
         </div>

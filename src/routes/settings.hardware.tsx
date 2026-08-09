@@ -26,7 +26,7 @@ function HardwareSettings() {
     <>
       <SubHeader title="Hardware" />
       <ScreenBody className="py-2">
-        <p className="px-1 pb-4 text-sm leading-relaxed text-muted-foreground">
+        <p className="px-1 pb-4 text-fs-sm leading-relaxed text-muted-foreground">
           Manage hardware components including printers, cash drawer for secure cash transactions,
           and card readers for electronic card processing.
         </p>

@@ -29,7 +29,7 @@ function NetworkSettings() {
     <>
       <SubHeader title="Network" />
       <ScreenBody className="py-2">
-        <p className="px-1 pb-4 text-sm leading-relaxed text-muted-foreground">
+        <p className="px-1 pb-4 text-fs-sm leading-relaxed text-muted-foreground">
           Enabling seamless communication between client and server for data exchange.
         </p>
         <GroupCard>

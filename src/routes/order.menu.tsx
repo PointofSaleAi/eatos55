@@ -47,7 +47,7 @@ function MenuSheet() {
     <Sheet open onOpenChange={(open) => (open ? null : navigate({ to: "/order/new" }))}>
       <SheetContent side="bottom" className="rounded-t-3xl border-0 bg-surface p-0 pb-8">
         <SheetHeader className="px-4 pb-2 pt-5">
-          <SheetTitle className="text-center text-xl font-extrabold text-foreground">
+          <SheetTitle className="text-center text-fs-xl font-extrabold text-foreground">
             Menu
           </SheetTitle>
         </SheetHeader>
@@ -65,10 +65,10 @@ function MenuSheet() {
                   i % 2 === 0 ? "bg-muted/40" : "bg-surface",
                 )}
               >
-                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-muted text-muted-foreground">
+                <span className="grid size-11 shrink-0 place-items-center rounded-row bg-muted text-muted-foreground">
                   <Icon className="size-6" />
                 </span>
-                <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">{o.label}</span>
+                <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">{o.label}</span>
                 {active ? <Check className="size-6 shrink-0 text-success" /> : null}
               </button>
             );

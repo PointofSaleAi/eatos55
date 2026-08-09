@@ -29,10 +29,10 @@ function ControlCenter() {
       <ScreenHeader eyebrow="System" title="Control Center" back />
       <ScreenBody>
         <Card className="p-4">
-          <p className="text-sm font-extrabold text-foreground">
+          <p className="text-fs-sm font-extrabold text-foreground">
             {issues ? `${issues} device${issues > 1 ? "s" : ""} need attention` : "All systems normal"}
           </p>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 text-fs-xs text-muted-foreground">
             {settings.offlineMode ? "Offline mode is on" : "Connected to EATOS cloud"} · Version 4.12
           </p>
         </Card>

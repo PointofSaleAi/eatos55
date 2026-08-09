@@ -194,7 +194,7 @@ export function SegmentRow({
       <div
         role="radiogroup"
         aria-label={title}
-        className="flex shrink-0 gap-1 rounded-full bg-muted p-1"
+        className="flex shrink-0 gap-1 rounded-pill bg-muted p-1"
       >
         {options.map((option) => {
           const active = option === value;

@@ -52,7 +52,7 @@ function OrderReview() {
             type="button"
             aria-label="Print order"
             onClick={() => toast.success("Order ticket sent to printer")}
-            className="grid size-11 place-items-center rounded-full text-foreground hover:bg-muted"
+            className="grid size-11 place-items-center rounded-pill text-foreground hover:bg-muted"
           >
             <Printer className="size-6" />
           </button>
@@ -65,8 +65,8 @@ function OrderReview() {
             {cart.map((line) => (
               <div key={line.id} className="flex items-center gap-3 py-4">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-bold text-foreground">{line.name}</p>
-                  <p className="text-sm text-muted-foreground">{money(line.price)} each</p>
+                  <p className="truncate text-fs-sm font-bold text-foreground">{line.name}</p>
+                  <p className="text-fs-sm text-muted-foreground">{money(line.price)} each</p>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
                   <button
@@ -92,11 +92,11 @@ function OrderReview() {
                       changeQty(line.id, -1);
                       announce(`${line.name} quantity ${line.qty - 1}`);
                     }}
-                    className="grid size-9 place-items-center rounded-lg border border-border text-foreground"
+                    className="grid size-9 place-items-center rounded-row border border-border text-foreground"
                   >
                     <Minus className="size-4" />
                   </button>
-                  <span className="w-6 text-center text-sm font-bold tabular-nums text-foreground">
+                  <span className="w-6 text-center text-fs-sm font-bold tabular-nums text-foreground">
                     {line.qty}
                   </span>
                   <button
@@ -107,12 +107,12 @@ function OrderReview() {
                       changeQty(line.id, 1);
                       announce(`${line.name} quantity ${line.qty + 1}`);
                     }}
-                    className="grid size-9 place-items-center rounded-lg border border-border text-foreground"
+                    className="grid size-9 place-items-center rounded-row border border-border text-foreground"
                   >
                     <Plus className="size-4" />
                   </button>
                 </div>
-                <span className="w-20 shrink-0 text-right text-sm font-extrabold tabular-nums text-foreground">
+                <span className="w-20 shrink-0 text-right text-fs-sm font-extrabold tabular-nums text-foreground">
                   {money(line.price * line.qty)}
                 </span>
               </div>
@@ -127,10 +127,10 @@ function OrderReview() {
         )}
 
         {cart.length ? (
-          <div className="mt-4 space-y-2 border-t border-border pt-4 text-sm">
+          <div className="mt-4 space-y-2 border-t border-border pt-4 text-fs-sm">
             <Row label="Subtotal" value={money(totals.subtotal)} />
             <Row label={`Tax (${Math.round(TAX_RATE * 100)}%)`} value={money(totals.tax)} />
-            <div className="flex items-center justify-between pt-2 text-lg font-extrabold text-foreground">
+            <div className="flex items-center justify-between pt-2 text-fs-lg font-extrabold text-foreground">
               <span>Total</span>
               <span className="tabular-nums">{money(totals.total)}</span>
             </div>
@@ -143,14 +143,14 @@ function OrderReview() {
           <button
             type="button"
             onClick={() => navigate({ to: "/order/new" })}
-            className="min-h-ctl-lg flex-1 rounded-2xl border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="min-h-ctl-lg flex-1 rounded-card border border-border text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             Add More
           </button>
           <button
             type="button"
             onClick={() => toast.success("Receipt printed")}
-            className="min-h-ctl-lg flex-1 rounded-2xl border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="min-h-ctl-lg flex-1 rounded-card border border-border text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             Print
           </button>
@@ -159,7 +159,7 @@ function OrderReview() {
           type="button"
           disabled={!cart.length}
           onClick={() => navigate({ to: "/payment/method" })}
-          className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
+          className="h-12 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
         >
           Charge {money(totals.total)}
         </button>

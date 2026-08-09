@@ -79,12 +79,12 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
       />
       <div className="absolute inset-y-0 left-0 flex w-[86%] max-w-[320px] flex-col bg-surface shadow-2xl">
         <div className="grid shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-b border-border px-4 py-3">
-          <p className="truncate text-lg font-extrabold text-foreground">Navigation</p>
+          <p className="truncate text-fs-lg font-extrabold text-foreground">Navigation</p>
           <button
             type="button"
             aria-label="Close navigation"
             onClick={onClose}
-            className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+            className="grid size-9 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
           >
             <X className="size-5" />
           </button>
@@ -105,7 +105,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
                         to={l.to}
                         onClick={onClose}
                         className={cn(
-                          "flex min-h-ctl-md items-center rounded-xl px-2 text-fs-sm font-bold transition-colors",
+                          "flex min-h-ctl-md items-center rounded-row px-2 text-fs-sm font-bold transition-colors",
                           active
                             ? "bg-primary text-primary-foreground"
                             : "text-foreground hover:bg-muted",
@@ -125,7 +125,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
           <Link
             to="/tickets/manager-controls"
             onClick={onClose}
-            className="flex min-h-ctl-md items-center gap-2 rounded-xl border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="flex min-h-ctl-md items-center gap-2 rounded-row border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             <ShieldCheck className="size-4" />
             Manager Controls
@@ -136,7 +136,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
               onClose();
               clockOut();
             }}
-            className="flex min-h-ctl-md w-full items-center gap-2 rounded-xl border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="flex min-h-ctl-md w-full items-center gap-2 rounded-row border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             <LogOut className="size-4" />
             Clock Out

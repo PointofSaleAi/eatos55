@@ -37,7 +37,7 @@ export function TenderScreen({
       <div className="flex min-h-0 flex-1 flex-col gap-2 p-3 pb-[max(0.75rem,var(--kb-inset,0px))]">
         <div className="shrink-0 text-center">
           <p className="text-fs-2xl font-extrabold tabular-nums text-foreground">{money(entered)}</p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-fs-sm text-muted-foreground">
             Due {money(due)}
             {amount ? (
               change >= 0 ? (
@@ -59,7 +59,7 @@ export function TenderScreen({
                 key={d}
                 type="button"
                 onClick={() => setAmount(String(Math.round((entered + d) * 100) / 100))}
-                className="min-h-ctl-lg rounded-full border border-border bg-surface text-base font-extrabold text-foreground shadow-sm transition-colors hover:bg-muted active:scale-[0.97]"
+                className="min-h-ctl-lg rounded-pill border border-border bg-surface text-fs-base font-extrabold text-foreground shadow-sm transition-colors hover:bg-muted active:scale-[0.97]"
               >
                 ${d}
               </button>
@@ -86,7 +86,7 @@ export function TenderScreen({
           disabled={entered <= 0}
           onClick={() => onCommit(entered)}
           className={cn(
-            "h-ctl-lg w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40",
+            "h-ctl-lg w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40",
           )}
         >
           {actionLabel ? actionLabel(entered) : `Charge ${money(entered || due)}`}

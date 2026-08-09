@@ -58,7 +58,7 @@ function SignInScreen() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter Email or Phone Number"
-              className="h-12 rounded-xl bg-surface"
+              className="h-12 rounded-row bg-surface"
             />
           </div>
           <div className="space-y-1.5">
@@ -72,13 +72,13 @@ function SignInScreen() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter Password"
-                className="h-12 rounded-xl bg-surface pr-12"
+                className="h-12 rounded-row bg-surface pr-12"
               />
               <button
                 type="button"
                 aria-label={show ? "Hide password" : "Show password"}
                 onClick={() => setShow((s) => !s)}
-                className="absolute right-2 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-full text-muted-foreground"
+                className="absolute right-2 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-pill text-muted-foreground"
               >
                 {show ? <Eye className="size-5" /> : <EyeOff className="size-5" />}
               </button>
@@ -87,7 +87,7 @@ function SignInScreen() {
 
           <Button
             type="submit"
-            className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground hover:bg-accent/90"
+            className="h-12 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground hover:bg-accent/90"
           >
             Sign in
           </Button>
@@ -95,14 +95,14 @@ function SignInScreen() {
 
         <Link
           to="/access/forgot-password"
-          className="mt-6 block text-center text-sm font-bold text-foreground transition-colors hover:text-accent active:text-accent focus-visible:text-accent"
+          className="mt-6 block text-center text-fs-sm font-bold text-foreground transition-colors hover:text-accent active:text-accent focus-visible:text-accent"
         >
           Forgot Your Password?
         </Link>
 
         <Link
           to="/access/create-account"
-          className="mt-4 flex h-12 items-center justify-center rounded-full border border-border text-sm font-bold text-foreground transition-colors hover:bg-muted hover:text-accent active:text-accent focus-visible:text-accent"
+          className="mt-4 flex h-12 items-center justify-center rounded-pill border border-border text-fs-sm font-bold text-foreground transition-colors hover:bg-muted hover:text-accent active:text-accent focus-visible:text-accent"
         >
           Create an account
         </Link>

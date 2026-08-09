@@ -40,14 +40,14 @@ function Orders() {
         <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-end gap-2">
           <BackButton fallbackTo="/floor" />
           <div className="min-w-0">
-            <p className="truncate text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            <p className="truncate text-fs-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               This shift
             </p>
             <h1 className="truncate text-fs-xl font-extrabold text-foreground">Orders</h1>
           </div>
           <div className="shrink-0 text-right">
-            <p className="text-xs text-muted-foreground">Net sales</p>
-            <p className="text-lg font-extrabold text-foreground">{money(sales)}</p>
+            <p className="text-fs-xs text-muted-foreground">Net sales</p>
+            <p className="text-fs-lg font-extrabold text-foreground">{money(sales)}</p>
           </div>
         </div>
         <div className="mt-3">
@@ -87,7 +87,7 @@ function Orders() {
               startOrder();
               navigate({ to: "/order/new" });
             }}
-            className="pointer-events-auto grid size-12 place-items-center rounded-full bg-accent text-accent-foreground shadow-lg transition-transform active:scale-95"
+            className="pointer-events-auto grid size-12 place-items-center rounded-pill bg-accent text-accent-foreground shadow-lg transition-transform active:scale-95"
           >
             <Plus className="size-5" />
           </button>

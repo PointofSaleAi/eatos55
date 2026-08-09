@@ -35,7 +35,7 @@ function ForgotPassword() {
           type="button"
           aria-label="Go back"
           onClick={() => router.history.back()}
-          className="-ml-2 grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+          className="-ml-2 grid size-11 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
         >
           <ChevronLeft className="size-6" />
         </button>
@@ -45,13 +45,13 @@ function ForgotPassword() {
           <h1 className="mt-4 text-fs-2xl font-extrabold leading-tight text-foreground">Point of Purchase</h1>
         </div>
 
-        <h2 className="mt-3 text-xl font-extrabold text-foreground">Forgot Password</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <h2 className="mt-3 text-fs-xl font-extrabold text-foreground">Forgot Password</h2>
+        <p className="mt-1 text-fs-sm text-muted-foreground">
           Please select an option to change password
         </p>
 
         <div className="mt-7 space-y-2">
-          <Label htmlFor="fp-email" className="text-sm font-extrabold">
+          <Label htmlFor="fp-email" className="text-fs-sm font-extrabold">
             Email Address
           </Label>
           <Input
@@ -59,18 +59,18 @@ function ForgotPassword() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter Your Email"
-            className="h-12 rounded-xl bg-surface"
+            className="h-12 rounded-row bg-surface"
           />
         </div>
 
-        <p className="py-4 text-center text-sm font-bold text-muted-foreground">Or</p>
+        <p className="py-4 text-center text-fs-sm font-bold text-muted-foreground">Or</p>
 
         <div className="space-y-2">
-          <Label htmlFor="fp-phone" className="text-sm font-extrabold">
+          <Label htmlFor="fp-phone" className="text-fs-sm font-extrabold">
             Mobile Number
           </Label>
-          <div className="flex h-12 items-center overflow-hidden rounded-xl border border-input bg-surface">
-            <span className="flex h-full shrink-0 items-center gap-2 border-r border-input px-3 text-sm font-bold text-foreground">
+          <div className="flex h-12 items-center overflow-hidden rounded-row border border-input bg-surface">
+            <span className="flex h-full shrink-0 items-center gap-2 border-r border-input px-3 text-fs-sm font-bold text-foreground">
               <span aria-hidden>🇺🇸</span> +1
             </span>
             <input
@@ -79,13 +79,13 @@ function ForgotPassword() {
               onChange={(e) => setPhone(e.target.value)}
               placeholder="(XXX) XXX-XXXX"
               inputMode="tel"
-              className="h-full min-w-0 flex-1 bg-transparent px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+              className="h-full min-w-0 flex-1 bg-transparent px-3 text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
           </div>
         </div>
 
         <Button
-          className="mt-8 h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground hover:bg-accent/90"
+          className="mt-8 h-12 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground hover:bg-accent/90"
           onClick={() => {
             toast.success(email ? "OTP sent by email" : "OTP sent by SMS");
             navigate({ to: "/" });
@@ -94,7 +94,7 @@ function ForgotPassword() {
           Send OTP
         </Button>
 
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+        <p className="mt-6 text-center text-fs-sm text-muted-foreground">
           Got your password?{" "}
           <Link to="/" className="font-extrabold text-foreground">
             Sign In

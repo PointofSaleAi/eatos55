@@ -35,7 +35,7 @@ function MoreSettings() {
           <div
             role="radiogroup"
             aria-label="Appearance"
-            className="grid grid-cols-3 gap-1 rounded-2xl bg-muted p-1"
+            className="grid grid-cols-3 gap-1 rounded-card bg-muted p-1"
           >
             {(["light", "dark", "system"] as const).map((mode) => (
               <button
@@ -45,7 +45,7 @@ function MoreSettings() {
                 aria-checked={appearance === mode}
                 onClick={() => setAppearance(mode)}
                 className={
-                  "min-h-ctl-sm rounded-xl text-fs-sm font-extrabold capitalize transition-colors " +
+                  "min-h-ctl-sm rounded-row text-fs-sm font-extrabold capitalize transition-colors " +
                   (appearance === mode
                     ? "bg-surface text-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground")

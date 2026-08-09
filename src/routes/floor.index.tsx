@@ -68,7 +68,7 @@ function FloorPlan() {
           </DropdownMenu>
           <Link
             to="/rooms"
-            className="min-h-ctl-sm shrink-0 rounded-full border border-border px-3.5 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="min-h-ctl-sm shrink-0 rounded-pill border border-border px-3.5 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             Rooms
           </Link>
@@ -81,7 +81,7 @@ function FloorPlan() {
               type="button"
               onClick={() => setTab(s.id)}
               className={cn(
-                "min-h-ctl-sm shrink-0 rounded-full px-3.5 text-fs-sm font-bold transition-colors",
+                "min-h-ctl-sm shrink-0 rounded-pill px-3.5 text-fs-sm font-bold transition-colors",
                 s.id === tab
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -95,7 +95,7 @@ function FloorPlan() {
 
       <ScreenBody>
         {tables.length === 0 ? (
-          <p className="px-4 py-24 text-center text-sm text-muted-foreground">No Tables Found</p>
+          <p className="px-4 py-24 text-center text-fs-sm text-muted-foreground">No Tables Found</p>
         ) : (
           <div className="grid grid-cols-[repeat(auto-fill,minmax(8.25rem,1fr))] gap-3">
             {tables.map((t) => {
@@ -108,24 +108,24 @@ function FloorPlan() {
                     startOrder(t.name);
                     navigate({ to: "/order/new" });
                   }}
-                  className="overflow-hidden rounded-2xl border border-border bg-surface text-left transition-transform active:scale-[0.98]"
+                  className="overflow-hidden rounded-card border border-border bg-surface text-left transition-transform active:scale-[0.98]"
                 >
                   <div className="relative grid h-tile place-items-center">
-                    <div className="grid size-[70px] place-items-center rounded-xl border border-border text-sm font-bold text-foreground">
+                    <div className="grid size-[70px] place-items-center rounded-row border border-border text-fs-sm font-bold text-foreground">
                       {t.name}
                     </div>
                     {t.since ? (
-                      <span className="absolute bottom-2 right-3 text-xs font-bold text-muted-foreground">
+                      <span className="absolute bottom-2 right-3 text-fs-xs font-bold text-muted-foreground">
                         {t.since}
                       </span>
                     ) : null}
-                    <span className="absolute bottom-2 left-3 text-xs text-muted-foreground">
+                    <span className="absolute bottom-2 left-3 text-fs-xs text-muted-foreground">
                       {t.seats} seat{t.seats === 1 ? "" : "s"}
                     </span>
                   </div>
                   <div
                     className={cn(
-                      "px-3 py-2 text-center text-sm font-extrabold",
+                      "px-3 py-2 text-center text-fs-sm font-extrabold",
                       meta.strip,
                       meta.text,
                     )}

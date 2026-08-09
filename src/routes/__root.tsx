@@ -20,14 +20,14 @@ function NotFoundComponent() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-extrabold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-bold text-foreground">Screen not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <h2 className="mt-4 text-fs-xl font-bold text-foreground">Screen not found</h2>
+        <p className="mt-2 text-fs-sm text-muted-foreground">
           This handheld screen doesn't exist or has been moved.
         </p>
         <div className="mt-6">
           <Link
             to="/tickets"
-            className="inline-flex min-h-ctl-lg items-center justify-center rounded-full bg-accent px-5 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/90"
+            className="inline-flex min-h-ctl-lg items-center justify-center rounded-pill bg-accent px-5 text-fs-sm font-bold text-accent-foreground transition-colors hover:bg-accent/90"
           >
             Back to tickets
           </Link>
@@ -47,8 +47,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-bold tracking-tight text-foreground">This screen didn't load</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <h1 className="text-fs-xl font-bold tracking-tight text-foreground">This screen didn't load</h1>
+        <p className="mt-2 text-fs-sm text-muted-foreground">
           Something went wrong. You can try again or head back to the ticket queue.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
@@ -57,13 +57,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="inline-flex min-h-ctl-lg items-center justify-center rounded-full bg-accent px-5 text-sm font-bold text-accent-foreground transition-colors hover:bg-accent/90"
+            className="inline-flex min-h-ctl-lg items-center justify-center rounded-pill bg-accent px-5 text-fs-sm font-bold text-accent-foreground transition-colors hover:bg-accent/90"
           >
             Try again
           </button>
           <a
             href="/tickets"
-            className="inline-flex min-h-ctl-lg items-center justify-center rounded-full border border-input bg-surface px-5 text-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="inline-flex min-h-ctl-lg items-center justify-center rounded-pill border border-input bg-surface px-5 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
           >
             Back to tickets
           </a>

@@ -22,7 +22,7 @@ export function DiscountSheet({
       <SheetContent side="bottom" style={dragStyle} className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]">
         <SheetGrabber handleProps={handleProps} />
         <SheetHeader className="px-4 pb-1.5 pt-1" {...handleProps}>
-          <SheetTitle className="text-center text-base font-extrabold text-foreground">
+          <SheetTitle className="text-center text-fs-base font-extrabold text-foreground">
             Discount
           </SheetTitle>
         </SheetHeader>

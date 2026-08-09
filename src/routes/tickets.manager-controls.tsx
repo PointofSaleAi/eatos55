@@ -31,8 +31,8 @@ function ManagerControls() {
         <ScreenBody>
           <Card className="p-6 text-center">
             <LockKeyhole className="mx-auto size-6 text-accent" />
-            <p className="mt-3 text-sm font-extrabold text-foreground">Manager approval needed</p>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-3 text-fs-sm font-extrabold text-foreground">Manager approval needed</p>
+            <p className="mt-1 text-fs-xs text-muted-foreground">
               Enter a manager PIN to open session controls.
             </p>
             <button
@@ -43,7 +43,7 @@ function ManagerControls() {
                   search: { action: "Manager controls", next: "manager-controls" },
                 })
               }
-              className="mt-4 inline-flex min-h-ctl-lg items-center rounded-full bg-accent px-5 text-sm font-bold text-accent-foreground"
+              className="mt-4 inline-flex min-h-ctl-lg items-center rounded-pill bg-accent px-5 text-fs-sm font-bold text-accent-foreground"
             >
               Enter manager PIN
             </button>

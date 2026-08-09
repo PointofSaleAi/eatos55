@@ -116,12 +116,12 @@ function SettingsHub() {
         <button
           type="button"
           onClick={() => setSearching(true)}
-          className="mt-4 flex min-h-ctl-lg w-full items-center gap-3 rounded-full border border-border bg-surface px-4 text-left transition-colors hover:bg-muted"
+          className="mt-4 flex min-h-ctl-lg w-full items-center gap-3 rounded-pill border border-border bg-surface px-4 text-left transition-colors hover:bg-muted"
         >
           <Search className="size-6 shrink-0 text-muted-foreground" />
           <span
             className={cn(
-              "min-w-0 flex-1 truncate text-sm",
+              "min-w-0 flex-1 truncate text-fs-sm",
               query ? "text-foreground" : "text-muted-foreground",
             )}
           >
@@ -140,16 +140,16 @@ function SettingsHub() {
 
         <GroupCard className="mt-6">
           <div className="flex items-center gap-4 px-4 py-4">
-            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-muted text-sm font-extrabold text-foreground">
+            <span className="grid size-12 shrink-0 place-items-center rounded-pill bg-muted text-fs-sm font-extrabold text-foreground">
               {initials}
             </span>
             <div className="min-w-0">
-              <p className="truncate text-base font-extrabold text-foreground">{session.name}</p>
-              <p className="truncate text-xs text-muted-foreground">{session.role}</p>
+              <p className="truncate text-fs-base font-extrabold text-foreground">{session.name}</p>
+              <p className="truncate text-fs-xs text-muted-foreground">{session.role}</p>
             </div>
           </div>
           <div className="border-t border-border px-4 py-3">
-            <p className="text-xs text-muted-foreground">Clocked in at {settings.clockedInAt}</p>
+            <p className="text-fs-xs text-muted-foreground">Clocked in at {settings.clockedInAt}</p>
           </div>
         </GroupCard>
 
@@ -180,7 +180,7 @@ function SettingsHub() {
           startOrder();
           navigate({ to: "/order/new" });
         }}
-        className="absolute bottom-20 right-4 z-10 grid size-16 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
+        className="absolute bottom-20 right-4 z-10 grid size-16 place-items-center rounded-pill bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
       >
         <SquarePen className="size-7" />
       </button>

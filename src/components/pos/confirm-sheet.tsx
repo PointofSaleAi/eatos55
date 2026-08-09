@@ -75,7 +75,7 @@ function ConfirmSheet({ req, onDone }: { req: ConfirmRequest; onDone: (ok: boole
       />
       <div
         className={cn(
-          "relative m-3 w-full max-w-[26rem] rounded-3xl border border-border bg-surface p-4",
+          "relative m-3 w-full max-w-[26rem] rounded-sheet border border-border bg-surface p-4",
           "pb-[calc(1rem+var(--sab,0px))] md:pb-4",
         )}
       >
@@ -94,7 +94,7 @@ function ConfirmSheet({ req, onDone }: { req: ConfirmRequest; onDone: (ok: boole
               onDone(true);
             }}
             className={cn(
-              "min-h-ctl-lg w-full rounded-2xl text-fs-base font-extrabold transition-colors",
+              "min-h-ctl-lg w-full rounded-card text-fs-base font-extrabold transition-colors",
               req.destructive
                 ? "bg-destructive text-destructive-foreground hover:opacity-90"
                 : "bg-primary text-primary-foreground hover:opacity-90",
@@ -105,7 +105,7 @@ function ConfirmSheet({ req, onDone }: { req: ConfirmRequest; onDone: (ok: boole
           <button
             type="button"
             onClick={() => onDone(false)}
-            className="min-h-ctl-lg w-full rounded-2xl bg-muted text-fs-base font-extrabold text-foreground transition-colors hover:bg-secondary"
+            className="min-h-ctl-lg w-full rounded-card bg-muted text-fs-base font-extrabold text-foreground transition-colors hover:bg-secondary"
           >
             {req.cancelLabel ?? "Cancel"}
           </button>

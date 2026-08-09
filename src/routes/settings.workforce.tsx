@@ -30,12 +30,12 @@ function WorkforceSettings() {
         <GroupCard>
           <div className="px-6 pb-4 pt-6 text-center">
             <BriefcaseBusiness className="mx-auto size-14 text-foreground" strokeWidth={1.75} />
-            <p className="mt-3 text-lg font-extrabold text-foreground">Workforce</p>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-3 text-fs-lg font-extrabold text-foreground">Workforce</p>
+            <p className="mt-4 text-fs-sm leading-relaxed text-muted-foreground">
               The ultimate tool for efficient workforce management. Access and track employee
               clock-in and clock-out times,…
             </p>
-            <p className="text-sm leading-relaxed">
+            <p className="text-fs-sm leading-relaxed">
               <button
                 type="button"
                 onClick={() =>

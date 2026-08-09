@@ -28,7 +28,7 @@ function SelectStation() {
     <>
       <ScreenHeader eyebrow="Access" title="Select station" back />
       <ScreenBody>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-fs-sm text-muted-foreground">
           Tickets, printers and menus follow the station you pick.
         </p>
         <SectionLabel>Revenue centers</SectionLabel>
@@ -40,7 +40,7 @@ function SelectStation() {
               detail={s.hint}
               right={
                 session.station === s.name ? (
-                  <span className="shrink-0 text-xs font-bold text-accent">Current</span>
+                  <span className="shrink-0 text-fs-xs font-bold text-accent">Current</span>
                 ) : undefined
               }
               onClick={() => {

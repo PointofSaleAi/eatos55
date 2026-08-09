@@ -76,7 +76,7 @@ export function ActionRow({
       <span className="min-w-0 flex-1">
         <span
           className={cn(
-            "block truncate text-sm font-bold",
+            "block truncate text-fs-sm font-bold",
             tone === "danger" ? "text-destructive" : "text-foreground",
           )}
         >
