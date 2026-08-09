@@ -327,7 +327,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
           startOrder();
           navigate({ to: "/order/new" });
         }}
-        className="absolute bottom-4 right-4 z-10 grid size-14 place-items-center rounded-pill bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
+        className="absolute bottom-24 right-4 z-10 grid size-14 place-items-center rounded-pill bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
       >
         <FilePlus2 className="size-6" />
       </button>
