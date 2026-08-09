@@ -196,6 +196,9 @@ type Store = {
 
   managerUnlocked: boolean;
   unlockManager: () => void;
+
+  /** False until the stored session has been read back, so guards don't fire early. */
+  sessionReady: boolean;
 };
 
 export type Guest = { name: string; phone: string; partySize: number };
@@ -211,6 +214,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
     station: null,
   });
 
+  const [sessionReady, setSessionReady] = useState(false);
+
   // Keep the shift/session across page reloads so navigation never disappears.
   useEffect(() => {
     try {
@@ -223,14 +228,16 @@ export function PosProvider({ children }: { children: ReactNode }) {
     } catch {
       /* ignore unreadable storage */
     }
+    setSessionReady(true);
   }, []);
   useEffect(() => {
+    if (!sessionReady) return;
     try {
       window.localStorage.setItem("eatos.pos.session", JSON.stringify(session));
     } catch {
       /* ignore unwritable storage */
     }
-  }, [session]);
+  }, [session, sessionReady]);
 
   const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
   const [sortKey, setSortKey] = useState<SortKey>("time-early-late");
@@ -277,6 +284,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
 
     return {
       session,
+      sessionReady,
       signIn: () => setSession((s) => ({ ...s, signedIn: true })),
       signOut: () =>
         setSession({
