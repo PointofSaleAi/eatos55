@@ -44,7 +44,7 @@ function PayByCash() {
         toast.success(
           change > 0 ? `Paid · change due ${money(change)}` : "Paid in full with cash",
         );
-        navigate({ to: "/tickets" });
+        navigate({ to: "/payment/success" });
       }}
     />
   );
