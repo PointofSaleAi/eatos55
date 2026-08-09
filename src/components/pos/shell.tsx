@@ -75,12 +75,13 @@ export function useAppChrome() {
  */
 function useSessionGate() {
   const router = useRouter();
-  const { session } = usePos();
+  const { session, sessionReady } = usePos();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const path = pathname.replace(/\/+$/, "") || "/";
   const isAccess = path === "/" || path.startsWith("/access");
 
   useEffect(() => {
+    if (!sessionReady) return;
     if (!session.signedIn && !isAccess) {
       router.navigate({ to: "/", replace: true });
       return;
@@ -88,7 +89,7 @@ function useSessionGate() {
     if (session.signedIn && !session.clockedIn && !isAccess) {
       router.navigate({ to: "/access/clock-in", replace: true });
     }
-  }, [router, isAccess, session.signedIn, session.clockedIn]);
+  }, [router, isAccess, sessionReady, session.signedIn, session.clockedIn]);
 }
 
 
