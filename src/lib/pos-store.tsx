@@ -43,18 +43,32 @@ export type Session = {
   station: string | null;
 };
 
+/** Editable collection item used by list-style settings screens. */
+export type SettingsListItem = { id: string; name: string; detail: string };
+
 export type AppSettings = {
   restaurantName: string;
+  restaurantAddress: string;
+  restaurantCity: string;
+  restaurantPhone: string;
+  taxId: string;
   timezone: string;
   currency: string;
   autoPrintReceipts: boolean;
   askForTip: boolean;
   tipPresets: string;
+  tipBasis: string;
+  customTip: string;
   taxRate: string;
+  inclusivePricing: boolean;
   emailReceipts: boolean;
+  receiptFooter: string;
+  printLogo: boolean;
   trackInventory: boolean;
+  lowStockAlerts: boolean;
   showSoldOut: boolean;
   requireManagerVoid: boolean;
+  cashRounding: string;
   offlineMode: boolean;
   darkKds: boolean;
   hapticFeedback: boolean;
@@ -70,20 +84,62 @@ export type AppSettings = {
   sentry: boolean;
   instabug: boolean;
   livePin: string;
+
+  // Service charge
+  serviceChargeEnabled: boolean;
+  serviceChargeName: string;
+  serviceChargeRate: string;
+  serviceChargeAppliesTo: string;
+
+  // Cash management
+  cashDrawerAssigned: string;
+  openRegister: string;
+  blindClose: boolean;
+  openDrawerOnSale: boolean;
+
+  // Hardware
+  printerName: string;
+  printerConnection: string;
+  paperWidth: string;
+  contactless: boolean;
+  readerFirmware: string;
+  printerEmulator: boolean;
+  readerEmulator: boolean;
+
+  // Collections
+  discounts: SettingsListItem[];
+  serviceCharges: SettingsListItem[];
+  timedPricing: SettingsListItem[];
+  categories: SettingsListItem[];
+  modifierGroups: SettingsListItem[];
+  defaultModifiers: SettingsListItem[];
+  addOns: SettingsListItem[];
+  productGroups: SettingsListItem[];
 };
 
 const defaultSettings: AppSettings = {
   restaurantName: "EATOS Kitchen · Downtown",
+  restaurantAddress: "418 W 25th St",
+  restaurantCity: "New York, NY 10001",
+  restaurantPhone: "(212) 555-0148",
+  taxId: "88-4102397",
   timezone: "America/New_York",
   currency: "USD",
   autoPrintReceipts: true,
   askForTip: true,
   tipPresets: "18% · 20% · 25%",
+  tipBasis: "Pre-tax",
+  customTip: "Allowed",
   taxRate: "8.75%",
+  inclusivePricing: true,
   emailReceipts: false,
+  receiptFooter: "Thank you!",
+  printLogo: true,
   trackInventory: true,
+  lowStockAlerts: true,
   showSoldOut: false,
   requireManagerVoid: true,
+  cashRounding: "Nearest cent",
   offlineMode: false,
   darkKds: true,
   hapticFeedback: true,
@@ -99,7 +155,63 @@ const defaultSettings: AppSettings = {
   sentry: false,
   instabug: true,
   livePin: "F179488",
+
+  serviceChargeEnabled: false,
+  serviceChargeName: "Service Charge",
+  serviceChargeRate: "10%",
+  serviceChargeAppliesTo: "All orders",
+
+  cashDrawerAssigned: "Not assigned",
+  openRegister: "Manager only",
+  blindClose: false,
+  openDrawerOnSale: true,
+
+  printerName: "Kitchen Printer",
+  printerConnection: "Wi-Fi · 10.0.1.42",
+  paperWidth: "80 mm",
+  contactless: true,
+  readerFirmware: "2.14.0",
+  printerEmulator: true,
+  readerEmulator: true,
+
+  discounts: [
+    { id: "d1", name: "Staff Meal", detail: "50% · whole order" },
+    { id: "d2", name: "Happy Hour", detail: "20% · drinks" },
+    { id: "d3", name: "Manager Comp", detail: "100% · whole order" },
+  ],
+  serviceCharges: [{ id: "s1", name: "Large Party", detail: "18% · 6+ guests" }],
+  timedPricing: [
+    { id: "t1", name: "Happy Hour", detail: "Mon–Fri · 4–6 PM · −20%" },
+    { id: "t2", name: "Late Night", detail: "Fri–Sat · 10 PM–1 AM · +10%" },
+  ],
+  categories: [
+    { id: "c1", name: "Breakfast", detail: "12 items" },
+    { id: "c2", name: "Sandwiches", detail: "9 items" },
+    { id: "c3", name: "Drinks", detail: "14 items" },
+    { id: "c4", name: "Desserts", detail: "6 items" },
+  ],
+  modifierGroups: [
+    { id: "m1", name: "Temperature", detail: "Required · pick 1" },
+    { id: "m2", name: "Milk", detail: "Optional · pick up to 1" },
+    { id: "m3", name: "Course", detail: "Optional · pick up to 1" },
+    { id: "m4", name: "Extras", detail: "Optional · pick up to 4" },
+  ],
+  defaultModifiers: [
+    { id: "dm1", name: "No Onion", detail: "Sandwiches" },
+    { id: "dm2", name: "Oat Milk", detail: "Coffee" },
+  ],
+  addOns: [
+    { id: "a1", name: "Extra Shot", detail: "$1.00" },
+    { id: "a2", name: "Avocado", detail: "$2.50" },
+    { id: "a3", name: "Bacon", detail: "$3.00" },
+  ],
+  productGroups: [
+    { id: "g1", name: "Hot Drinks", detail: "18 products" },
+    { id: "g2", name: "Cold Drinks", detail: "11 products" },
+    { id: "g3", name: "Kitchen", detail: "27 products" },
+  ],
 };
+
 
 export type TenderMethod =
   | "cash"
@@ -193,6 +305,9 @@ type Store = {
 
   settings: AppSettings;
   updateSettings: (patch: Partial<AppSettings>) => void;
+  /** True when the signed-in role is allowed to change settings. */
+  canManageSettings: boolean;
+
 
   managerUnlocked: boolean;
   unlockManager: () => void;
@@ -257,14 +372,37 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [orderDiscountPercent, setOrderDiscountPercent] = useState(0);
 
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
+  const [settingsReady, setSettingsReady] = useState(false);
   const [managerUnlocked, setManagerUnlocked] = useState(false);
   const [lastPayment, setLastPayment] = useState<LastPayment>(null);
   const [paidSoFar, setPaidSoFar] = useState(0);
+
+  // Settings are device-local: read them back, then persist every change.
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("eatos.pos.settings");
+      if (raw)
+        setSettings((s) => ({ ...s, ...(JSON.parse(raw) as Partial<AppSettings>) }));
+    } catch {
+      /* ignore unreadable storage */
+    }
+    setSettingsReady(true);
+  }, []);
+  useEffect(() => {
+    if (!settingsReady) return;
+    try {
+      window.localStorage.setItem("eatos.pos.settings", JSON.stringify(settings));
+    } catch {
+      /* ignore unwritable storage */
+    }
+  }, [settings, settingsReady]);
 
   // Keep real device haptics in step with the user's setting.
   useEffect(() => {
     setHapticsEnabled(settings.hapticFeedback);
   }, [settings.hapticFeedback]);
+
+
 
 
 
@@ -479,6 +617,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
 
       settings,
       updateSettings: (patch) => setSettings((s) => ({ ...s, ...patch })),
+      canManageSettings:
+        managerUnlocked ||
+        ["Manager", "Supervisor", "Owner", "Admin"].includes(session.role),
+
 
       managerUnlocked,
       unlockManager: () => setManagerUnlocked(true),
