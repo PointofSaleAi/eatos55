@@ -116,6 +116,12 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
   const [tab, setTab] = useState<Tab>("all");
   const [overlay, setOverlay] = useState<TicketsOverlay>(initialOverlay);
   const [openFacet, setOpenFacet] = useState<string | null>(null);
+  const ptr = usePullToRefresh(async () => {
+    await new Promise((r) => setTimeout(r, 600));
+    announce("Tickets refreshed");
+  });
+
+
 
   const aggregate = tab === "all" || tab === "unpaid" || tab === "open" || tab === "closed";
   const baseList = visibleTickets(aggregate ? "all" : tab, {
