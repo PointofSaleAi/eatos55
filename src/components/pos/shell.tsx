@@ -11,7 +11,14 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { ClockPullDown } from "@/components/pos/clock-pulldown";
 import { ConfirmProvider } from "@/components/pos/confirm-sheet";
 import { LiveRegionProvider } from "@/components/pos/live-region";
