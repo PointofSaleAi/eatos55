@@ -150,53 +150,13 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col bg-background">
-      <AccountBar />
-
-      {/* Title + date + controls in one band */}
+      {/* Title + controls */}
       <div className="shrink-0 bg-surface px-2 pt-1.5">
         <div className="flex items-center gap-1">
           <MenuButton />
-          <h1 className="shrink-0 text-fs-lg font-extrabold text-foreground">Tickets</h1>
-          <div className="mx-auto flex min-w-0 items-center">
-            <button
-              type="button"
-              aria-label="Previous day"
-              onClick={() => shiftTicketDate(-1)}
-              className="grid size-9 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
-            >
-              <ChevronLeft className="size-4" />
-            </button>
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  aria-label="Pick a date"
-                  className="flex min-w-0 items-center gap-1.5 rounded-pill px-1.5 py-2 transition-colors hover:bg-muted"
-                >
-                  <Calendar className="size-4 shrink-0 text-muted-foreground" />
-                  <span className="truncate text-fs-xs font-bold text-foreground">{dateLabel}</span>
-                </button>
-              </PopoverTrigger>
-              <PopoverContent align="center" className="w-auto p-0">
-                <CalendarPicker
-                  mode="single"
-                  selected={new Date(`${ticketDate}T12:00:00`)}
-                  onSelect={(d) => {
-                    if (d) setTicketDate(d.toISOString().slice(0, 10));
-                  }}
-                  className={cn("pointer-events-auto p-3")}
-                />
-              </PopoverContent>
-            </Popover>
-            <button
-              type="button"
-              aria-label="Next day"
-              onClick={() => shiftTicketDate(1)}
-              className="grid size-9 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
-            >
-              <ChevronRight className="size-4" />
-            </button>
-          </div>
+          <h1 className="min-w-0 flex-1 truncate text-fs-lg font-extrabold text-foreground">
+            Tickets
+          </h1>
           <div className="flex shrink-0 items-center">
             <button
               type="button"
@@ -226,6 +186,150 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                   {activeFacetCount}
                 </span>
               ) : null}
+            </button>
+          </div>
+        </div>
+
+        {/* Date stepper + facet icons */}
+        <div className="flex flex-col items-center gap-1 pt-0.5 md:flex-row md:justify-center md:gap-3">
+          <div className="flex shrink-0 items-center">
+            <button
+              type="button"
+              aria-label="Previous day"
+              onClick={() => shiftTicketDate(-1)}
+              className="grid size-9 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+            >
+              <ChevronLeft className="size-4" />
+            </button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Pick a date"
+                  className="flex shrink-0 items-center gap-1.5 rounded-pill px-2 py-2 transition-colors hover:bg-muted"
+                >
+                  <Calendar className="size-4 shrink-0 text-muted-foreground" />
+                  <span className="whitespace-nowrap text-fs-sm font-extrabold text-foreground">
+                    {dateLabel}
+                  </span>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="center" className="w-auto p-0">
+                <CalendarPicker
+                  mode="single"
+                  selected={new Date(`${ticketDate}T12:00:00`)}
+                  onSelect={(d) => {
+                    if (d) setTicketDate(d.toISOString().slice(0, 10));
+                  }}
+                  className={cn("pointer-events-auto p-3")}
+                />
+              </PopoverContent>
+            </Popover>
+            <button
+              type="button"
+              aria-label="Next day"
+              onClick={() => shiftTicketDate(1)}
+              className="grid size-9 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+            >
+              <ChevronRight className="size-4" />
+            </button>
+          </div>
+
+          <div className="no-scrollbar flex max-w-full items-center gap-1.5 overflow-x-auto pb-0.5">
+            {filterFacets.map((f) => {
+              const Icon = f.icon;
+              const selected = filters[f.key] as string[];
+              const active = selected.length > 0;
+              return (
+                <Popover key={f.id}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label={f.label}
+                      title={f.label}
+                      className={cn(
+                        "relative grid size-10 shrink-0 place-items-center rounded-row border transition-colors",
+                        active
+                          ? "border-accent bg-accent/10 text-accent"
+                          : "border-border text-foreground hover:bg-muted",
+                      )}
+                    >
+                      <Icon className="size-5" />
+                      {active ? (
+                        <span className="absolute -right-0.5 -top-0.5 grid size-4 place-items-center rounded-pill bg-accent text-[0.5625rem] font-bold text-accent-foreground">
+                          {selected.length}
+                        </span>
+                      ) : null}
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    align="center"
+                    className="w-[min(18rem,calc(100vw-1.5rem))] p-3"
+                  >
+                    <p className="pb-2 text-fs-sm font-extrabold text-foreground">{f.label}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {f.options.map((opt) => {
+                        const on = selected.includes(opt);
+                        return (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() =>
+                              setFilters((prev) => ({
+                                ...prev,
+                                [f.key]: on
+                                  ? selected.filter((s) => s !== opt)
+                                  : [...selected, opt],
+                              }))
+                            }
+                            className={cn(
+                              "min-h-ctl-sm rounded-pill px-3 text-fs-xs font-bold transition-colors",
+                              on
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-muted text-muted-foreground hover:bg-secondary",
+                            )}
+                          >
+                            {opt}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {active ? (
+                      <button
+                        type="button"
+                        onClick={() => setFilters((prev) => ({ ...prev, [f.key]: [] }))}
+                        className="mt-3 min-h-ctl-sm w-full rounded-pill border border-border text-fs-xs font-bold text-foreground"
+                      >
+                        Clear {f.label}
+                      </button>
+                    ) : null}
+                  </PopoverContent>
+                </Popover>
+              );
+            })}
+            <button
+              type="button"
+              aria-label="My tickets"
+              title="My tickets"
+              aria-pressed={filters.mineOnly}
+              onClick={() => setFilters((prev) => ({ ...prev, mineOnly: !prev.mineOnly }))}
+              className={cn(
+                "grid size-10 shrink-0 place-items-center rounded-row border transition-colors",
+                filters.mineOnly
+                  ? "border-accent bg-accent/10 text-accent"
+                  : "border-border text-foreground hover:bg-muted",
+              )}
+            >
+              <User className="size-5" />
+            </button>
+            <button
+              type="button"
+              aria-label="Sync tickets"
+              title="Sync"
+              onClick={() => announce("Tickets refreshed")}
+              className="grid size-10 shrink-0 place-items-center rounded-row border border-border text-foreground transition-colors hover:bg-muted"
+            >
+              <RefreshCcwDot className="size-5" />
             </button>
           </div>
         </div>
@@ -267,6 +371,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
           <p className="shrink-0 pr-1 text-fs-xs font-extrabold text-accent">{money(amountDue)}</p>
         </div>
       </div>
+
 
 
       {/* List */}
