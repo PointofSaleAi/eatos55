@@ -573,16 +573,19 @@ export function PosProvider({ children }: { children: ReactNode }) {
       setGuest: (patch) => setGuestState((g) => ({ ...g, ...patch })),
       orderType,
       setOrderType,
-      startOrder: (table) => {
+      startOrder: (table, partySize) => {
         setCart([]);
         setActiveTicketId(null);
         setActiveTable(table ?? null);
+        if (partySize && partySize > 0) {
+          setGuestState((g) => ({ ...g, partySize }));
+        }
         if (table) {
           setTableStates((s) => ({ ...s, [table]: "ordering" }));
           setTableSince((s) => ({ ...s, [table]: new Date().toISOString() }));
         }
-
       },
+
 
       openTicket: (id) => {
         const ticket = tickets.find((t) => t.id === id);
