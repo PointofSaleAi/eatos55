@@ -87,7 +87,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
           "lg:h-[880px] lg:w-[440px]",
         )}
       >
-        <NavDrawerContext.Provider value={{ open: () => setNavOpen(true) }}>
+        <NavDrawerContext.Provider value={navCtx}>
           <LiveRegionProvider>
             <ConfirmProvider>
               <div
