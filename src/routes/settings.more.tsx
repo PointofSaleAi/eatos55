@@ -22,6 +22,7 @@ export const Route = createFileRoute("/settings/more")({
 
 function MoreSettings() {
   const { settings, updateSettings } = usePos();
+  const confirm = useConfirm();
   const { appearance, setAppearance } = useAppearance();
 
   return (
