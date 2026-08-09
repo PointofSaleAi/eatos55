@@ -92,8 +92,12 @@
   --ctl-md: clamp(2.75rem, 2.55rem + 0.9vw, 3.125rem);
   --ctl-lg: clamp(2.75rem, 2.4rem + 1.6vw, 3.25rem);
   --tile-h: clamp(5.75rem, 4.2rem + 7vw, 8.5rem);
+  --key-h: clamp(3rem, 2.5rem + 2.2vw, 3.75rem); /* keypad key / primary bar */
+  --row-h: clamp(3.25rem, 2.9rem + 1.6vw, 3.875rem); /* list row */
+  --sheet-w: 26.25rem; /* one max width for sheets, docks and rails */
   --gap-sec: clamp(0.5rem, 0.3rem + 1vw, 0.875rem);
   --pad-screen: clamp(0.75rem, 0.5rem + 1.2vw, 1.25rem);
+
 
 
   --shell: oklch(0.13 0 0);
