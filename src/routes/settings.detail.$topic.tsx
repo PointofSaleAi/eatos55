@@ -10,7 +10,6 @@ import {
   IconValueRow,
   settingsRowClass,
 } from "@/components/pos/settings-rows";
-import { Switch } from "@/components/ui/switch";
 import { usePos, type AppSettings, type SettingsListItem } from "@/lib/pos-store";
 import { settingsDetails, type DetailRow } from "@/lib/settings-details";
 import { cn } from "@/lib/utils";
@@ -390,6 +389,3 @@ function EditSheet({
     </div>
   );
 }
-
-// Switch is imported for parity with the row primitives' toggle control.
-void Switch;
