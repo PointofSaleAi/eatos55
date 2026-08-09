@@ -48,11 +48,11 @@ function CustomItem() {
           type="button"
           aria-label="Go back"
           onClick={() => router.history.back()}
-          className="grid size-11 place-items-center rounded-full text-foreground hover:bg-muted"
+          className="grid size-11 place-items-center rounded-pill text-foreground hover:bg-muted"
         >
           <ChevronLeft className="size-6" />
         </button>
-        <h1 className="truncate text-xl font-extrabold text-foreground">Custom Item</h1>
+        <h1 className="truncate text-fs-xl font-extrabold text-foreground">Custom Item</h1>
       </div>
       <div className="flex shrink-0 items-center gap-2 border-b border-border bg-surface px-3 py-2">
         <GuestBlock onEdit={() => setGuestOpen(true)} />
@@ -63,9 +63,9 @@ function CustomItem() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Item Name"
-          className="h-11 w-full shrink-0 rounded-xl border border-border bg-surface px-4 text-sm text-foreground outline-none focus:border-accent placeholder:text-muted-foreground"
+          className="h-11 w-full shrink-0 rounded-row border border-border bg-surface px-4 text-fs-sm text-foreground outline-none focus:border-accent placeholder:text-muted-foreground"
         />
-        <div className="shrink-0 rounded-xl border border-border bg-surface px-4 py-3 text-center">
+        <div className="shrink-0 rounded-row border border-border bg-surface px-4 py-3 text-center">
           <p className="text-fs-xl font-extrabold tabular-nums text-foreground">
             {amount ? money(price) : money(0)}
           </p>
@@ -93,7 +93,7 @@ function CustomItem() {
             addLine();
             navigate({ to: "/order/review" });
           }}
-          className="h-11 w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
+          className="h-11 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
         >
           Add to order
         </button>

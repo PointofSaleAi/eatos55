@@ -30,7 +30,7 @@ function Hardware() {
               detail={h.detail}
               right={
                 <span
-                  className={`shrink-0 text-xs font-bold ${h.ok ? "text-success" : "text-warning"}`}
+                  className={`shrink-0 text-fs-xs font-bold ${h.ok ? "text-success" : "text-warning"}`}
                 >
                   {h.ok ? "Ready" : "Attention"}
                 </span>

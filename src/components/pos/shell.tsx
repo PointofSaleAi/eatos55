@@ -39,7 +39,7 @@ export function MenuButton({ className }: { className?: string }) {
       title="Navigation"
       onClick={drawer.open}
       className={cn(
-        "grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted",
+        "grid size-11 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted",
         className,
       )}
     >
@@ -122,7 +122,7 @@ export function BackButton({
       aria-label={label}
       title={label}
       onClick={onClick}
-      className="-ml-1 grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+      className="-ml-1 grid size-11 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
     >
       <ChevronLeft className="size-5" />
     </button>
@@ -148,7 +148,7 @@ export function ScreenHeader({
         <div className="flex min-w-0 items-center gap-2">
           {back ? <BackButton fallbackTo={backTo} /> : <MenuButton className="-ml-1" />}
           <div className="min-w-0">
-            <h1 className="truncate text-fs-xl font-extrabold text-foreground">{title}</h1>
+            <h1 className="truncate t-title text-foreground">{title}</h1>
           </div>
         </div>
         {right ? <div className="flex shrink-0 items-center gap-1">{right}</div> : null}
@@ -179,7 +179,7 @@ export function SubHeader({
           />
           <MenuButton className="-ml-2" />
           <div className="min-w-0">
-            <h1 className="truncate text-fs-xl font-extrabold text-foreground">{title}</h1>
+            <h1 className="truncate t-title text-foreground">{title}</h1>
           </div>
         </div>
         {right ? <div className="flex shrink-0 items-center gap-1">{right}</div> : null}
@@ -227,11 +227,11 @@ export function BottomTabs() {
             <Link
               to={to}
               preload="intent"
-              className="group relative flex min-h-[56px] flex-col items-center justify-center gap-1 py-2 text-muted-foreground transition-colors data-[status=active]:text-accent"
+              className="group relative flex min-h-[3.5rem] flex-col items-center justify-center gap-1 py-2 text-muted-foreground transition-colors data-[status=active]:text-accent"
             >
-              <span className="absolute inset-x-6 top-0 h-[3px] rounded-full bg-transparent group-data-[status=active]:bg-accent" />
+              <span className="absolute inset-x-6 top-0 h-[3px] rounded-pill bg-transparent group-data-[status=active]:bg-accent" />
               <Icon className="size-5" />
-              <span className="text-fs-xs font-semibold">{label}</span>
+              <span className="t-badge">{label}</span>
             </Link>
           </li>
         ))}

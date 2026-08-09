@@ -8,7 +8,7 @@ import { money, statusMeta, type Ticket } from "@/lib/demo-data";
 
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <p className="px-1 pb-2 pt-4 text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
+    <p className="px-1 pb-2 pt-4 t-section text-muted-foreground">
       {children}
     </p>
   );
@@ -22,7 +22,7 @@ export function Card({
   className?: string;
 }) {
   return (
-    <div className={cn("rounded-2xl border border-border bg-surface", className)}>{children}</div>
+    <div className={cn("rounded-card border border-border bg-surface elev-1", className)}>{children}</div>
   );
 }
 
@@ -40,13 +40,13 @@ export function NavRow({
   return (
     <Link
       to={to}
-      className="flex min-h-[60px] items-center gap-3 border-b border-border px-4 py-3 last:border-b-0 transition-colors hover:bg-muted"
+      className="flex min-h-row items-center gap-3 border-b border-border px-4 py-3 last:border-b-0 transition-colors hover:bg-muted"
     >
       {icon ? <span className="shrink-0 text-accent">{icon}</span> : null}
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-bold text-foreground">{title}</span>
+        <span className="block truncate t-row text-foreground">{title}</span>
         {detail ? (
-          <span className="block truncate text-xs text-muted-foreground">{detail}</span>
+          <span className="block truncate t-caption text-muted-foreground">{detail}</span>
         ) : null}
       </span>
       <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
@@ -71,19 +71,19 @@ export function ActionRow({
     <button
       type="button"
       onClick={onClick}
-      className="flex min-h-[60px] w-full items-center gap-3 border-b border-border px-4 py-3 text-left last:border-b-0 transition-colors hover:bg-muted"
+      className="flex min-h-row w-full items-center gap-3 border-b border-border px-4 py-3 text-left last:border-b-0 transition-colors hover:bg-muted"
     >
       <span className="min-w-0 flex-1">
         <span
           className={cn(
-            "block truncate text-sm font-bold",
+            "block truncate text-fs-sm font-bold",
             tone === "danger" ? "text-destructive" : "text-foreground",
           )}
         >
           {title}
         </span>
         {detail ? (
-          <span className="block truncate text-xs text-muted-foreground">{detail}</span>
+          <span className="block truncate t-caption text-muted-foreground">{detail}</span>
         ) : null}
       </span>
       {right ?? <ChevronRight className="size-4 shrink-0 text-muted-foreground" />}
@@ -103,12 +103,20 @@ export function ToggleRow({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="flex min-h-[60px] items-center gap-3 border-b border-border px-4 py-3 last:border-b-0">
+    <div className="flex min-h-row items-center gap-3 border-b border-border px-4 py-3 last:border-b-0">
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-bold text-foreground">{title}</p>
-        {detail ? <p className="truncate text-xs text-muted-foreground">{detail}</p> : null}
+        <p className="truncate t-row text-foreground">{title}</p>
+        {detail ? <p className="truncate t-caption text-muted-foreground">{detail}</p> : null}
       </div>
-      <Switch checked={checked} onCheckedChange={onChange} className="shrink-0" />
+      <span className="grid size-11 shrink-0 place-items-center">
+        <Switch
+          checked={checked}
+          onCheckedChange={onChange}
+          aria-label={title}
+          className="shrink-0"
+        />
+      </span>
+
     </div>
   );
 }
@@ -124,13 +132,13 @@ export function ValueRow({
 }) {
   const content = (
     <>
-      <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">{title}</span>
-      <span className="shrink-0 truncate text-sm text-muted-foreground">{value}</span>
+      <span className="min-w-0 flex-1 truncate t-row text-foreground">{title}</span>
+      <span className="shrink-0 truncate t-value text-muted-foreground">{value}</span>
     </>
   );
   if (!onClick) {
     return (
-      <div className="flex min-h-[56px] items-center gap-3 border-b border-border px-4 py-3 last:border-b-0">
+      <div className="flex min-h-row items-center gap-3 border-b border-border px-4 py-3 last:border-b-0">
         {content}
       </div>
     );
@@ -139,7 +147,7 @@ export function ValueRow({
     <button
       type="button"
       onClick={onClick}
-      className="flex min-h-[56px] w-full items-center gap-3 border-b border-border px-4 py-3 text-left last:border-b-0 transition-colors hover:bg-muted"
+      className="flex min-h-row w-full items-center gap-3 border-b border-border px-4 py-3 text-left last:border-b-0 transition-colors hover:bg-muted"
     >
       {content}
     </button>
@@ -163,7 +171,7 @@ export function Pills<T extends string>({
           type="button"
           onClick={() => onChange(o.id)}
           className={cn(
-            "min-h-ctl-sm shrink-0 rounded-full px-3.5 text-fs-sm font-bold transition-colors",
+            "min-h-ctl-sm shrink-0 rounded-pill px-3.5 t-row transition-colors",
             value === o.id
               ? "bg-primary text-primary-foreground"
               : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -182,22 +190,22 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center gap-3 rounded-2xl border border-border bg-surface px-3 py-3 text-left transition-colors hover:bg-muted"
+      className="flex w-full items-center gap-row rounded-card border border-border bg-surface px-3 py-3 text-left transition-colors hover:bg-muted"
     >
-      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-muted text-sm font-extrabold text-foreground">
+      <span className="grid size-10 tap-safe shrink-0 place-items-center rounded-row bg-muted t-row text-foreground">
         {ticket.seats}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-extrabold text-foreground">
+        <span className="block truncate t-row text-foreground">
           {ticket.label}
         </span>
-        <span className="block truncate text-xs text-muted-foreground">
+        <span className="block truncate t-caption text-muted-foreground">
           Arrived {ticket.arrivedAt} · {ticket.arrivedMinutesAgo} min ago
         </span>
       </span>
       <span className="shrink-0 text-right">
-        <span className="block text-sm font-extrabold text-foreground">{money(ticket.total)}</span>
-        <span className={cn("block text-xs font-bold", meta.tone)}>{meta.label}</span>
+        <span className="block t-row text-foreground">{money(ticket.total)}</span>
+        <span className={cn("block t-badge", meta.tone)}>{meta.label}</span>
       </span>
     </button>
   );
@@ -251,7 +259,7 @@ function KeypadKey({
         haptic("light");
         onPress();
       }}
-      className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]"
+      className="grid min-h-row place-items-center rounded-key bg-surface t-numeric text-foreground elev-1 transition-transform active:scale-[0.97]"
     >
       {children}
     </button>
@@ -272,16 +280,16 @@ export function EmptyState({
   return (
     <div className="grid place-items-center px-6 py-12 text-center">
       <div>
-        <span className="mx-auto mb-3 grid size-12 place-items-center rounded-2xl bg-muted text-muted-foreground">
+        <span className="mx-auto mb-3 grid size-12 place-items-center rounded-card bg-muted text-muted-foreground">
           {icon ?? <Inbox className="size-6" aria-hidden />}
         </span>
-        <p className="text-fs-sm font-extrabold text-foreground">{title}</p>
-        <p className="mt-1 text-fs-xs text-muted-foreground">{detail}</p>
+        <p className="t-row text-foreground">{title}</p>
+        <p className="mt-1 t-caption text-muted-foreground">{detail}</p>
         {action ? (
           <button
             type="button"
             onClick={action.onPress}
-            className="min-h-ctl-sm mt-4 rounded-full bg-primary px-5 text-fs-sm font-extrabold text-primary-foreground transition-opacity hover:opacity-90"
+            className="min-h-ctl-sm mt-4 rounded-pill bg-primary px-5 t-row text-primary-foreground transition-opacity hover:opacity-90"
           >
             {action.label}
           </button>

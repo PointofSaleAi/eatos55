@@ -29,7 +29,7 @@ function SalesSummary() {
     <>
       <SubHeader title="Sales Summary Report" />
       <ScreenBody className="py-2">
-        <p className="px-1 pb-4 text-sm text-muted-foreground">{ticketDate}</p>
+        <p className="px-1 pb-4 text-fs-sm text-muted-foreground">{ticketDate}</p>
         <GroupCard>
           <IconValueRow title="Tickets" value={String(list.length)} />
           <IconValueRow title="Closed tickets" value={String(paid.length)} />

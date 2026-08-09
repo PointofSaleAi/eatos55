@@ -46,7 +46,7 @@ function ContactUs() {
               <button
                 type="button"
                 onClick={() => toast.info("Region: United States")}
-                className="flex min-h-ctl-md items-center gap-1 rounded-full bg-surface px-3 text-sm font-bold"
+                className="flex min-h-ctl-md items-center gap-1 rounded-pill bg-surface px-3 text-fs-sm font-bold"
                 aria-label="Choose region"
               >
                 <span aria-hidden>🇺🇸</span>
@@ -56,7 +56,7 @@ function ContactUs() {
                 type="button"
                 aria-label="Help center home"
                 onClick={() => setQuery("")}
-                className="grid size-11 shrink-0 place-items-center rounded-lg bg-muted-foreground/40 text-shell-foreground"
+                className="grid size-11 shrink-0 place-items-center rounded-row bg-muted-foreground/40 text-shell-foreground"
               >
                 <Home className="size-6 text-shell-foreground" />
               </button>
@@ -67,19 +67,19 @@ function ContactUs() {
             How can we help you?
           </h2>
 
-          <label className="mt-4 flex min-h-ctl-lg items-center gap-3 rounded-full bg-surface px-4">
+          <label className="mt-4 flex min-h-ctl-lg items-center gap-3 rounded-pill bg-surface px-4">
             <Search className="size-6 shrink-0 text-foreground" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search our help center..."
-              className="min-w-0 flex-1 bg-transparent text-center text-sm text-foreground outline-none placeholder:text-muted-foreground"
+              className="min-h-tap min-w-0 flex-1 bg-transparent text-center text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
           </label>
         </div>
 
         <ScreenBody className="flex-none overflow-visible py-6">
-          <h3 className="text-center text-lg font-extrabold text-foreground">
+          <h3 className="text-center text-fs-lg font-extrabold text-foreground">
             Browse All Categories
           </h3>
           <div className="mt-5 space-y-4">
@@ -88,16 +88,16 @@ function ContactUs() {
                 key={label}
                 type="button"
                 onClick={() => toast.info(`Opening ${label}`)}
-                className="flex w-full items-center gap-5 rounded-2xl bg-surface px-5 py-6 text-left transition-colors hover:bg-muted"
+                className="flex w-full items-center gap-5 rounded-card bg-surface px-5 py-6 text-left transition-colors hover:bg-muted"
               >
                 <Icon className="size-12 shrink-0 text-foreground" strokeWidth={1.75} />
-                <span className="min-w-0 flex-1 rounded-xl bg-foreground px-3 py-2 text-sm font-extrabold text-surface">
+                <span className="min-w-0 flex-1 rounded-row bg-foreground px-3 py-2 text-fs-sm font-extrabold text-surface">
                   {label}
                 </span>
               </button>
             ))}
             {list.length === 0 ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">
+              <p className="py-8 text-center text-fs-sm text-muted-foreground">
                 No help articles match “{query}”.
               </p>
             ) : null}

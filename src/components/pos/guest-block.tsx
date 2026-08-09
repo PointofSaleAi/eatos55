@@ -12,13 +12,13 @@ export function GuestBlock({ onEdit }: { onEdit: () => void }) {
       type="button"
       onClick={onEdit}
       aria-label="Edit guest details and order type"
-      className="flex min-w-0 flex-1 items-center gap-1.5 rounded-xl px-1 py-0.5 text-left transition-colors hover:bg-muted"
+      className="flex min-h-tap min-w-0 flex-1 items-center gap-1.5 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted"
     >
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-bold text-foreground">
+        <span className="block truncate text-fs-sm font-bold text-foreground">
           {guest.name || activeTable || "Guest Name"}
         </span>
-        <span className="block truncate text-xs text-muted-foreground">
+        <span className="block truncate text-fs-xs text-muted-foreground">
           {guest.phone || "(XXX) XXX-XXXX"} · {orderType}
         </span>
       </span>

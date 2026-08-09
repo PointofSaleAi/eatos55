@@ -95,7 +95,7 @@ function PaymentMethod() {
         <BackButton fallbackTo="/order/review" label="Back to order review" />
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-fs-xl font-extrabold text-foreground">Payment</h1>
-          <p className="truncate text-xs text-muted-foreground">
+          <p className="truncate text-fs-xs text-muted-foreground">
             Order {orderNumber} · {guest.name || activeTable || "Guest"} · {orderType}
           </p>
         </div>
@@ -107,34 +107,34 @@ function PaymentMethod() {
             <div className="divide-y divide-border">
               {cart.map((line) => (
                 <div key={line.id} className="flex items-center gap-3 py-3">
-                  <span className="w-7 shrink-0 text-sm font-extrabold tabular-nums text-muted-foreground">
+                  <span className="w-7 shrink-0 text-fs-sm font-extrabold tabular-nums text-muted-foreground">
                     {line.qty}×
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-bold text-foreground">{line.name}</p>
-                    <p className="text-xs text-muted-foreground">{money(line.price)} each</p>
+                    <p className="truncate text-fs-sm font-bold text-foreground">{line.name}</p>
+                    <p className="text-fs-xs text-muted-foreground">{money(line.price)} each</p>
                   </div>
-                  <span className="shrink-0 text-sm font-extrabold tabular-nums text-foreground">
+                  <span className="shrink-0 text-fs-sm font-extrabold tabular-nums text-foreground">
                     {money(line.price * line.qty)}
                   </span>
                 </div>
               ))}
             </div>
-            <div className="mt-3 space-y-1.5 border-t border-border pt-3 text-sm">
+            <div className="mt-3 space-y-1.5 border-t border-border pt-3 text-fs-sm">
               <Row label="Subtotal" value={money(totals.subtotal)} />
               <Row label={`Tax (${Math.round(TAX_RATE * 100)}%)`} value={money(totals.tax)} />
               {totals.serviceCharge ? (
                 <Row label="Service charge" value={money(totals.serviceCharge)} />
               ) : null}
               {totals.discount ? <Row label="Discount" value={`-${money(totals.discount)}`} /> : null}
-              <div className="flex items-center justify-between pt-1.5 text-base font-extrabold text-foreground">
+              <div className="flex items-center justify-between pt-1.5 text-fs-base font-extrabold text-foreground">
                 <span>Total</span>
                 <span className="tabular-nums">{money(totals.total)}</span>
               </div>
               {paidSoFar > 0 ? (
                 <>
                   <Row label="Paid so far" value={money(paidSoFar)} />
-                  <div className="flex items-center justify-between text-base font-extrabold text-accent">
+                  <div className="flex items-center justify-between text-fs-base font-extrabold text-accent">
                     <span>Balance due</span>
                     <span className="tabular-nums">{money(due)}</span>
                   </div>
@@ -146,9 +146,9 @@ function PaymentMethod() {
       </div>
 
       <div className="shrink-0 rounded-t-3xl border-t border-border bg-surface px-3 pb-[max(0.75rem,var(--kb-inset,0px))] pt-4">
-        <p className="text-center text-lg font-extrabold text-foreground">Select Payment Method</p>
-        <p className="pb-3 text-center text-sm text-muted-foreground">
-          Total due <span className="font-extrabold text-foreground">{money(due)}</span>
+        <p className="text-center text-fs-lg font-extrabold text-foreground">Select Payment Method</p>
+        <p className="pb-3 text-center text-fs-sm text-muted-foreground">
+          Total due <span className="tap-safe font-extrabold text-foreground">{money(due)}</span>
         </p>
         <div className="grid grid-cols-4 gap-x-2 gap-y-3">
           {tenders.map((t) => {
@@ -161,10 +161,10 @@ function PaymentMethod() {
                 onClick={t.onPick}
                 className="flex flex-col items-center gap-1.5 disabled:opacity-40"
               >
-                <span className="grid size-14 place-items-center rounded-full border border-border bg-muted/50 text-foreground transition-colors active:bg-muted">
+                <span className="grid size-14 place-items-center rounded-pill border border-border bg-muted/50 text-foreground transition-colors active:bg-muted">
                   <Icon className="size-6" />
                 </span>
-                <span className="text-center text-xs font-medium text-foreground">{t.label}</span>
+                <span className="text-center text-fs-xs font-medium text-foreground">{t.label}</span>
               </button>
             );
           })}

@@ -92,11 +92,11 @@ function CustomerSupport() {
                   updateSettings({ livePin: next });
                   toast.success(`New Live Pin ${next}`);
                 }}
-                className="grid size-9 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+                className="grid size-9 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
               >
                 <RotateCw className="size-5" />
               </button>
-              <span className="shrink-0 text-sm font-bold text-foreground">{settings.livePin}</span>
+              <span className="shrink-0 text-fs-sm font-bold text-foreground">{settings.livePin}</span>
               </>
             }
           />

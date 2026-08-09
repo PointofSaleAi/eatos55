@@ -49,7 +49,7 @@ export function SearchDock({
       }}
     >
       <div className="mx-auto flex w-full max-w-[420px] items-center gap-2">
-        <label className="flex min-h-ctl-lg min-w-0 flex-1 items-center gap-2 rounded-full border border-border bg-muted px-4">
+        <label className="flex min-h-ctl-lg min-w-0 flex-1 items-center gap-2 rounded-pill border border-border bg-muted px-4">
           <Search className="size-5 shrink-0 text-muted-foreground" />
           <input
             ref={inputRef}
@@ -65,14 +65,14 @@ export function SearchDock({
             autoComplete="off"
             placeholder={placeholder}
             aria-label={placeholder}
-            className="min-w-0 flex-1 bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground"
+            className="min-h-tap min-w-0 flex-1 bg-transparent text-fs-base text-foreground outline-none placeholder:text-muted-foreground"
           />
           {value ? (
             <button
               type="button"
               aria-label="Clear search"
               onClick={() => onChange("")}
-              className="grid size-7 shrink-0 place-items-center rounded-full text-muted-foreground"
+              className="grid size-7 tap-safe shrink-0 place-items-center rounded-pill text-muted-foreground"
             >
               <X className="size-4" />
             </button>
@@ -81,7 +81,7 @@ export function SearchDock({
         <button
           type="button"
           onClick={onClose}
-          className="min-h-ctl-lg shrink-0 rounded-full px-2 text-sm font-bold text-accent"
+          className="min-h-ctl-lg shrink-0 rounded-pill px-2 text-fs-sm font-bold text-accent"
         >
           Cancel
         </button>

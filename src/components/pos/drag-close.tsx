@@ -58,7 +58,7 @@ export function SheetGrabber({
       aria-hidden
       className={`flex shrink-0 cursor-grab items-center justify-center pb-1 pt-2 active:cursor-grabbing ${className ?? ""}`}
     >
-      <span className="h-1.5 w-10 rounded-full bg-border" />
+      <span className="h-1.5 w-10 rounded-pill bg-border" />
     </div>
   );
 }

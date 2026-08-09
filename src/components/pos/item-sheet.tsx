@@ -86,7 +86,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
             <>
               <SheetGrabber handleProps={handleProps} />
               <SheetHeader className="shrink-0 px-4 pb-1 pt-1 text-left" {...handleProps}>
-                <SheetTitle className="truncate text-base font-extrabold uppercase tracking-[0.02em] text-foreground">
+                <SheetTitle className="truncate text-fs-base font-extrabold uppercase tracking-[0.02em] text-foreground">
                   {item.name}
                 </SheetTitle>
               </SheetHeader>
@@ -103,13 +103,13 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                         onChange={(e) => setPrice(Number(e.target.value) || 0)}
                         onBlur={() => setEditingPrice(false)}
                         aria-label="Item price"
-                        className="h-ctl-sm w-20 rounded-full border border-border bg-surface px-3 text-fs-sm font-bold text-foreground outline-none"
+                        className="h-ctl-sm w-20 rounded-pill border border-border bg-surface px-3 text-fs-sm font-bold text-foreground outline-none"
                       />
                     ) : (
                       <button
                         type="button"
                         onClick={() => setEditingPrice(true)}
-                        className="flex h-ctl-sm items-center gap-1.5 rounded-full border border-border px-3 text-fs-sm font-bold text-foreground"
+                        className="flex h-ctl-sm items-center gap-1.5 rounded-pill border border-border px-3 text-fs-sm font-bold text-foreground"
                       >
                         {money(price)}
                         <Pencil className="size-3.5 text-muted-foreground" />
@@ -120,7 +120,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                     aria-label="Quantity"
                     value={qty}
                     onChange={(e) => setQty(Number(e.target.value))}
-                    className="h-ctl-sm shrink-0 rounded-full border border-border bg-surface px-2.5 text-fs-sm font-bold text-foreground outline-none"
+                    className="h-ctl-sm shrink-0 rounded-pill border border-border bg-surface px-2.5 text-fs-sm font-bold text-foreground outline-none"
                   >
                     {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
                       <option key={n} value={n}>
@@ -131,7 +131,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                 </div>
 
                 <div className="px-4 pb-2">
-                  <div className="flex items-center gap-2 rounded-xl border border-border bg-surface px-3">
+                  <div className="flex items-center gap-2 rounded-row border border-border bg-surface px-3">
                     <NotebookPen className="size-4 shrink-0 text-muted-foreground" />
                     <input
                       value={notes}
@@ -153,7 +153,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                         setGroup((t === "item" ? modifierGroups : addOnGroups)[0]!.name);
                       }}
                       className={cn(
-                        "h-ctl-sm rounded-full text-xs font-extrabold uppercase transition-colors",
+                        "h-ctl-sm rounded-pill text-fs-xs font-extrabold uppercase transition-colors",
                         t === tab
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -164,7 +164,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                   ))}
                 </div>
 
-                <p className="px-4 pb-1.5 pt-3 text-xs font-bold text-muted-foreground">
+                <p className="px-4 pb-1.5 pt-3 text-fs-xs font-bold text-muted-foreground">
                   Additional Modifiers
                 </p>
                 <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto px-4">
@@ -174,7 +174,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                       type="button"
                       onClick={() => setGroup(g.name)}
                       className={cn(
-                        "h-ctl-sm shrink-0 rounded-full px-3 text-fs-xs font-bold transition-colors",
+                        "h-ctl-sm shrink-0 rounded-pill px-3 text-fs-xs font-bold transition-colors",
                         g.name === activeGroup.name
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -212,7 +212,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                           })
                         }
                         className={cn(
-                          "flex h-ctl-md items-center justify-between gap-1.5 rounded-xl border px-3 text-left text-fs-sm font-bold transition-colors",
+                          "flex h-ctl-md items-center justify-between gap-1.5 rounded-row border px-3 text-left text-fs-sm font-bold transition-colors",
                           on
                             ? "border-accent bg-accent/10 text-foreground"
                             : "border-border bg-surface text-foreground",
@@ -246,7 +246,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                   onClick={() => setDiscountOpen(true)}
                   aria-label="Apply discount"
                   className={cn(
-                    "grid size-10 shrink-0 place-items-center rounded-full border",
+                    "grid size-10 shrink-0 place-items-center rounded-pill border tap-safe",
                     discount
                       ? "border-accent bg-accent text-accent-foreground"
                       : "border-border text-foreground",
@@ -271,7 +271,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                     reset();
                     onClose();
                   }}
-                  className="h-ctl-lg flex-1 rounded-full bg-primary text-fs-sm font-extrabold uppercase tracking-[0.06em] text-primary-foreground disabled:opacity-40"
+                  className="h-ctl-lg flex-1 rounded-pill bg-primary text-fs-sm font-extrabold uppercase tracking-[0.06em] text-primary-foreground disabled:opacity-40"
                 >
                   Add · {money(lineTotal)}
                 </button>

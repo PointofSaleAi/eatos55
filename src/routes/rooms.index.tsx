@@ -1,5 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Circle, CircleDot } from "lucide-react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
+
 import { money } from "@/lib/demo-data";
 import { rooms } from "@/lib/floor-data";
 import { usePos } from "@/lib/pos-store";
@@ -39,25 +41,37 @@ function Rooms() {
                 startOrder(r.name);
                 navigate({ to: "/order/new" });
               }}
-              className="overflow-hidden rounded-2xl border border-border bg-surface text-left transition-transform active:scale-[0.98]"
+              className="overflow-hidden rounded-card border border-border bg-surface text-left transition-transform active:scale-[0.98]"
             >
               <div className="flex h-tile flex-col items-center justify-center gap-1 px-3 text-center">
-                <p className="text-sm font-extrabold leading-tight text-foreground">{r.name}</p>
-                {r.guest ? <p className="text-xs text-muted-foreground">{r.guest}</p> : null}
+                <p className="text-fs-sm font-extrabold leading-tight text-foreground">{r.name}</p>
+                {r.guest ? <p className="text-fs-xs text-muted-foreground">{r.guest}</p> : null}
                 {typeof r.amount === "number" ? (
-                  <p className="mt-1 text-sm font-bold text-foreground">{money(r.amount)}</p>
+                  <p className="mt-1 text-fs-sm font-bold text-foreground">{money(r.amount)}</p>
                 ) : null}
               </div>
               <div
                 className={cn(
-                  "px-3 py-2 text-center text-sm font-extrabold",
+                  "flex items-center justify-center gap-1 px-3 py-2 text-center t-badge",
                   r.state === "occupied"
-                    ? "bg-emerald-100 text-emerald-600"
+                    ? "bg-success/20 text-foreground"
                     : "bg-muted text-muted-foreground",
                 )}
               >
-                {r.state === "occupied" ? "Occupied" : "Available"}
+                {/* Status never relies on colour alone. */}
+                {r.state === "occupied" ? (
+                  <>
+                    <CircleDot className="size-3.5 shrink-0" aria-hidden />
+                    Occupied
+                  </>
+                ) : (
+                  <>
+                    <Circle className="size-3.5 shrink-0" aria-hidden />
+                    Available
+                  </>
+                )}
               </div>
+
             </button>
           ))}
         </div>

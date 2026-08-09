@@ -60,7 +60,7 @@ function NewOrder() {
               title="Search products"
               onClick={() => setSearching((s) => !s)}
               className={cn(
-                "grid size-10 shrink-0 place-items-center rounded-full transition-colors hover:bg-muted",
+                "grid size-10 shrink-0 place-items-center rounded-pill transition-colors hover:bg-muted tap-safe",
                 searching ? "bg-muted text-accent" : "text-foreground",
               )}
             >
@@ -71,7 +71,7 @@ function NewOrder() {
               aria-label="Add custom item"
               title="Custom item"
               onClick={() => navigate({ to: "/order/custom-item" })}
-              className="grid size-10 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+              className="grid size-10 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
             >
               <Tag className="size-5" />
             </button>
@@ -80,7 +80,7 @@ function NewOrder() {
               aria-label="More options"
               title="More options"
               onClick={() => setMoreOpen(true)}
-              className="-mr-2 grid size-10 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+              className="-mr-2 grid size-10 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
             >
               <MoreVertical className="size-5" />
             </button>
@@ -94,7 +94,7 @@ function NewOrder() {
               type="button"
               onClick={() => setTab(t)}
               className={cn(
-                "min-h-ctl-lg rounded-full text-sm font-extrabold uppercase transition-colors",
+                "min-h-ctl-lg rounded-pill text-fs-sm font-extrabold uppercase transition-colors",
                 t === tab
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -116,7 +116,7 @@ function NewOrder() {
                   setActiveMenu(next.id);
                   setCategory(next.categories[0]!);
                 }}
-                className="h-11 appearance-none rounded-xl border border-border bg-surface pl-3 pr-8 text-sm font-bold text-foreground outline-none"
+                className="h-11 appearance-none rounded-row border border-border bg-surface pl-3 pr-8 text-fs-sm font-bold text-foreground outline-none"
               >
                 {menus.map((m) => (
                   <option key={m.id} value={m.id}>
@@ -132,7 +132,7 @@ function NewOrder() {
                 type="button"
                 onClick={() => setCategory(c)}
                 className={cn(
-                  "min-h-ctl-md shrink-0 rounded-full px-3.5 text-fs-sm font-bold transition-colors",
+                  "min-h-ctl-md shrink-0 rounded-pill px-3.5 text-fs-sm font-bold transition-colors",
                   c === category
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -155,7 +155,7 @@ function NewOrder() {
       >
         {tab === "order" ? (
           cart.length === 0 ? (
-            <p className="px-4 py-24 text-center text-sm text-muted-foreground">
+            <p className="px-4 py-24 text-center text-fs-sm text-muted-foreground">
               No items yet — add products from the menu
             </p>
           ) : (
@@ -163,29 +163,29 @@ function NewOrder() {
               {cart.map((l) => (
                 <div
                   key={l.id}
-                  className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-3"
+                  className="flex items-center gap-3 rounded-card border border-border bg-surface p-3"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-extrabold text-foreground">{l.name}</p>
-                    <p className="text-xs text-muted-foreground">{money(l.price)}</p>
+                    <p className="truncate text-fs-sm font-extrabold text-foreground">{l.name}</p>
+                    <p className="text-fs-xs text-muted-foreground">{money(l.price)}</p>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
                     <button
                       type="button"
                       aria-label={`Remove one ${l.name}`}
                       onClick={() => changeQty(l.id, -1)}
-                      className="grid size-11 place-items-center rounded-full border border-border text-sm font-bold text-foreground"
+                      className="grid size-11 place-items-center rounded-pill border border-border text-fs-sm font-bold text-foreground"
                     >
                       −
                     </button>
-                    <span className="w-6 text-center text-sm font-bold text-foreground">
+                    <span className="w-6 text-center text-fs-sm font-bold text-foreground">
                       {l.qty}
                     </span>
                     <button
                       type="button"
                       aria-label={`Add one ${l.name}`}
                       onClick={() => changeQty(l.id, 1)}
-                      className="grid size-11 place-items-center rounded-full border border-border text-sm font-bold text-foreground"
+                      className="grid size-11 place-items-center rounded-pill border border-border text-fs-sm font-bold text-foreground"
                     >
                       +
                     </button>
@@ -195,7 +195,7 @@ function NewOrder() {
             </div>
           )
         ) : items.length === 0 ? (
-          <p className="px-4 py-24 text-center text-sm text-muted-foreground">No Active Menu</p>
+          <p className="px-4 py-24 text-center text-fs-sm text-muted-foreground">No Active Menu</p>
         ) : (
 
           <div className="grid grid-cols-[repeat(auto-fill,minmax(8.25rem,1fr))] gap-3">
@@ -221,25 +221,25 @@ function NewOrder() {
                   setSheetItem(item);
                 }}
                 className={cn(
-                  "relative flex min-h-tile flex-col justify-between rounded-2xl border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
+                  "relative flex min-h-tile flex-col justify-between rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
                   item.outOfStock && "opacity-50",
                 )}
               >
                 <span className="flex items-start gap-1.5">
-                  <span className="min-w-0 flex-1 text-sm font-extrabold leading-tight text-foreground">
+                  <span className="min-w-0 flex-1 text-fs-sm font-extrabold leading-tight text-foreground">
                     {item.name}
                   </span>
                   {item.outOfStock ? (
                     <span
                       title="Out of stock"
-                      className="grid size-5 shrink-0 place-items-center rounded-full bg-destructive/10 text-destructive"
+                      className="grid size-5 shrink-0 place-items-center rounded-pill bg-destructive/10 text-destructive tap-safe"
                     >
                       <Ban className="size-3.5" />
                     </span>
                   ) : item.openPrice ? (
                     <span
                       title="Open price"
-                      className="grid size-5 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground"
+                      className="grid size-5 shrink-0 place-items-center rounded-pill bg-muted text-muted-foreground tap-safe"
                     >
                       <Tag className="size-3.5" />
                     </span>
@@ -247,7 +247,7 @@ function NewOrder() {
                     <span
                       title={`${item.stock} in stock`}
                       className={cn(
-                        "shrink-0 rounded-full px-1.5 text-fs-xs font-extrabold leading-5",
+                        "shrink-0 rounded-pill px-1.5 text-fs-xs font-extrabold leading-5",
                         low
                           ? "bg-destructive/10 text-destructive"
                           : "bg-muted text-muted-foreground",
@@ -258,7 +258,7 @@ function NewOrder() {
                   ) : null}
                 </span>
                 <span className="mt-2 flex items-center justify-between">
-                  <span className="text-sm font-bold text-muted-foreground">
+                  <span className="text-fs-sm font-bold text-muted-foreground">
                     {item.outOfStock
                       ? "Out of stock"
                       : item.openPrice
@@ -267,7 +267,7 @@ function NewOrder() {
                   </span>
                   <span
                     className={cn(
-                      "grid size-7 place-items-center rounded-full",
+                      "grid size-7 place-items-center rounded-pill tap-safe",
                       item.outOfStock
                         ? "bg-muted text-muted-foreground"
                         : "bg-accent text-accent-foreground",
@@ -286,7 +286,7 @@ function NewOrder() {
       {totals.count > 0 ? (
         <div className="shrink-0 border-t border-border bg-surface px-4 pb-2 pt-2">
           <Button
-            className="h-12 w-full rounded-full bg-accent text-base font-bold text-accent-foreground transition-colors hover:bg-accent/90"
+            className="h-12 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground transition-colors hover:bg-accent/90"
             onClick={() => navigate({ to: "/order/review" })}
           >
             Review order · {totals.count} item{totals.count === 1 ? "" : "s"} ·{" "}

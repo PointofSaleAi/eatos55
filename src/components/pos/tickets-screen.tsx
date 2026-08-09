@@ -154,7 +154,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               type="button"
               aria-label="Sort tickets"
               onClick={() => setOverlay((o) => (o === "sort" ? "none" : "sort"))}
-              className="grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+              className="grid size-11 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
             >
               <ListFilter className="size-5" />
             </button>
@@ -162,7 +162,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               type="button"
               aria-label="Filter tickets"
               onClick={() => setOverlay("filter")}
-              className="grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+              className="grid size-11 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
             >
               <Settings2 className="size-5" />
             </button>
@@ -190,17 +190,17 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                 type="button"
                 aria-label="Previous day"
                 onClick={() => shiftTicketDate(-1)}
-                className="grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+                className="grid size-11 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
               >
                 <ChevronLeft className="size-5" />
               </button>
               <Calendar className="size-4 shrink-0 text-muted-foreground" />
-              <span className="truncate text-sm font-bold text-foreground">{dateLabel}</span>
+              <span className="truncate text-fs-sm font-bold text-foreground">{dateLabel}</span>
               <button
                 type="button"
                 aria-label="Next day"
                 onClick={() => shiftTicketDate(1)}
-                className="grid size-11 shrink-0 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
+                className="grid size-11 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
               >
                 <ChevronRight className="size-5" />
               </button>
@@ -209,7 +209,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               type="button"
               aria-label="Search tickets"
               onClick={() => setOverlay("search")}
-              className="grid size-11 shrink-0 place-items-center rounded-2xl border border-border text-foreground transition-colors hover:bg-muted"
+              className="grid size-11 shrink-0 place-items-center rounded-card border border-border text-foreground transition-colors hover:bg-muted"
             >
               <Search className="size-5" />
             </button>
@@ -224,7 +224,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               type="button"
               onClick={() => setTab(t.id)}
               className={cn(
-                "min-h-ctl-sm shrink-0 rounded-full px-3.5 text-fs-sm font-bold transition-colors",
+                "min-h-ctl-sm shrink-0 rounded-pill px-3.5 text-fs-sm font-bold transition-colors",
                 tab === t.id
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -236,8 +236,8 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
         </div>
 
         <div className="flex items-center justify-between gap-3 border-t border-border py-3">
-          <p className="text-sm font-bold text-muted-foreground">Amount Due</p>
-          <p className="text-sm font-extrabold text-accent">{money(amountDue)}</p>
+          <p className="text-fs-sm font-bold text-muted-foreground">Amount Due</p>
+          <p className="text-fs-sm font-extrabold text-accent">{money(amountDue)}</p>
         </div>
       </div>
 
@@ -327,7 +327,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
           startOrder();
           navigate({ to: "/order/new" });
         }}
-        className="absolute bottom-24 right-5 grid size-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
+        className="absolute bottom-24 right-5 grid size-14 place-items-center rounded-pill bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
       >
         <FilePlus2 className="size-6" />
       </button>
@@ -341,7 +341,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
             onClick={() => setOverlay("none")}
             className="absolute inset-0 z-20 cursor-default"
           />
-          <div className="absolute left-1/2 top-[60px] z-30 w-[68%] -translate-x-1/4 overflow-hidden rounded-2xl border border-border bg-surface py-1 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.45)]">
+          <div className="absolute left-1/2 top-[60px] z-30 w-[68%] -translate-x-1/4 overflow-hidden rounded-card border border-border bg-surface py-1 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.45)]">
             {sortOptions.map((o) => {
               const Icon = o.icon;
               const active = sortKey === o.id;
@@ -364,7 +364,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                       active ? "text-accent" : "text-muted-foreground",
                     )}
                   />
-                  <span className="truncate text-sm text-foreground">
+                  <span className="truncate text-fs-sm text-foreground">
                     <span className="font-extrabold">{o.strong}</span> {o.rest}
                   </span>
                 </button>
@@ -384,7 +384,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
           className="rounded-t-3xl border-t border-border bg-surface p-0 pb-6"
         >
           <SheetHeader className="px-4 pb-2 pt-5">
-            <SheetTitle className="text-center text-xl font-extrabold text-foreground">
+            <SheetTitle className="text-center text-fs-xl font-extrabold text-foreground">
               Filters
             </SheetTitle>
           </SheetHeader>
@@ -403,11 +403,11 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                     <span className="shrink-0 text-accent">
                       <Icon className="size-5" />
                     </span>
-                    <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">
+                    <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
                       {f.label}
                     </span>
                     {selected.length ? (
-                      <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-primary-foreground">
+                      <span className="shrink-0 rounded-pill bg-primary px-2 py-0.5 text-fs-xs font-bold text-primary-foreground">
                         {selected.length}
                       </span>
                     ) : null}
@@ -435,7 +435,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                               }))
                             }
                             className={cn(
-                              "min-h-ctl-sm rounded-full px-3.5 text-fs-sm font-bold transition-colors",
+                              "min-h-ctl-sm rounded-pill px-3.5 text-fs-sm font-bold transition-colors",
                               active
                                 ? "bg-primary text-primary-foreground"
                                 : "bg-muted text-muted-foreground",
@@ -455,14 +455,14 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
             <button
               type="button"
               onClick={() => setFilters(emptyFilters)}
-              className="min-h-ctl-lg flex-1 rounded-2xl border border-border text-sm font-bold text-foreground"
+              className="min-h-ctl-lg flex-1 rounded-card border border-border text-fs-sm font-bold text-foreground"
             >
               Clear all
             </button>
             <button
               type="button"
               onClick={() => setOverlay("none")}
-              className="min-h-ctl-lg flex-1 rounded-2xl bg-primary text-sm font-bold text-primary-foreground"
+              className="min-h-ctl-lg flex-1 rounded-card bg-primary text-fs-sm font-bold text-primary-foreground"
             >
               Apply
             </button>

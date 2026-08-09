@@ -30,7 +30,7 @@ function TicketDetail() {
       <>
         <ScreenHeader eyebrow="Tickets" title="Ticket" back />
         <ScreenBody>
-          <Card className="p-6 text-center text-sm text-muted-foreground">
+          <Card className="p-6 text-center text-fs-sm text-muted-foreground">
             This ticket is no longer in the queue.
           </Card>
         </ScreenBody>
@@ -47,14 +47,14 @@ function TicketDetail() {
         <Card className="p-4">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
             <div className="min-w-0">
-              <p className="truncate text-sm font-extrabold text-foreground">
+              <p className="truncate text-fs-sm font-extrabold text-foreground">
                 {ticket.seats} guest{ticket.seats > 1 ? "s" : ""} · {ticket.mode.replace("-", " ")}
               </p>
-              <p className="truncate text-xs text-muted-foreground">
+              <p className="truncate text-fs-xs text-muted-foreground">
                 Arrived {ticket.arrivedAt} · {ticket.server}
               </p>
             </div>
-            <span className={cn("shrink-0 text-xs font-bold", meta.tone)}>{meta.label}</span>
+            <span className={cn("shrink-0 text-fs-xs font-bold", meta.tone)}>{meta.label}</span>
           </div>
         </Card>
 
@@ -65,13 +65,13 @@ function TicketDetail() {
               key={l.id}
               className="flex items-center gap-3 border-b border-border px-4 py-3 last:border-b-0"
             >
-              <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-muted text-xs font-extrabold">
+              <span className="grid size-8 tap-safe shrink-0 place-items-center rounded-row bg-muted text-fs-xs font-extrabold">
                 {l.qty}
               </span>
-              <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">
+              <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
                 {l.name}
               </span>
-              <span className="shrink-0 text-sm font-extrabold text-foreground">
+              <span className="shrink-0 text-fs-sm font-extrabold text-foreground">
                 {money(l.price * l.qty)}
               </span>
             </div>
@@ -81,8 +81,8 @@ function TicketDetail() {
         <SectionLabel>Total</SectionLabel>
         <Card className="px-4 py-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-bold text-foreground">Ticket total</span>
-            <span className="text-lg font-extrabold text-foreground">{money(ticket.total)}</span>
+            <span className="text-fs-sm font-bold text-foreground">Ticket total</span>
+            <span className="text-fs-lg font-extrabold text-foreground">{money(ticket.total)}</span>
           </div>
         </Card>
       </ScreenBody>
@@ -90,7 +90,7 @@ function TicketDetail() {
         <div className="flex gap-2">
           <Button
             variant="outline"
-            className="h-12 flex-1 rounded-full font-bold"
+            className="h-12 flex-1 rounded-pill font-bold"
             onClick={() => {
               openTicket(ticket.id);
               navigate({ to: "/order/new" });
@@ -100,7 +100,7 @@ function TicketDetail() {
           </Button>
           {ticket.status === "paid" ? (
             <Button
-              className="h-12 flex-1 rounded-full bg-primary font-bold text-primary-foreground"
+              className="h-12 flex-1 rounded-pill bg-primary font-bold text-primary-foreground"
               onClick={() => {
                 setTicketStatus(ticket.id, "ready");
                 toast.success("Ticket marked ready for pickup");
@@ -111,7 +111,7 @@ function TicketDetail() {
             </Button>
           ) : (
             <Button
-              className="h-12 flex-1 rounded-full bg-accent font-bold text-accent-foreground hover:bg-accent/90"
+              className="h-12 flex-1 rounded-pill bg-accent font-bold text-accent-foreground hover:bg-accent/90"
               onClick={() => {
                 openTicket(ticket.id);
                 navigate({ to: "/order/review" });

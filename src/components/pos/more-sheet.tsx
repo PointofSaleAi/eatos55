@@ -68,7 +68,7 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
         <SheetContent side="bottom" style={dragStyle} className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]">
           <SheetGrabber handleProps={handleProps} />
           <SheetHeader className="px-4 pb-1.5 pt-1" {...handleProps}>
-            <SheetTitle className="text-center text-base font-extrabold text-foreground">
+            <SheetTitle className="text-center text-fs-base font-extrabold text-foreground">
               More
             </SheetTitle>
           </SheetHeader>
@@ -85,7 +85,7 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
                     i % 2 === 0 ? "bg-muted/40" : "bg-surface",
                   )}
                 >
-                  <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-muted text-muted-foreground">
+                  <span className="grid size-9 tap-safe shrink-0 place-items-center rounded-row bg-muted text-muted-foreground">
                     <Icon className="size-5" />
                   </span>
                   <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
@@ -110,7 +110,7 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
         <SheetContent side="bottom" style={charge2.dragStyle} className="mx-auto w-full max-w-[420px] rounded-t-3xl border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]">
           <SheetGrabber handleProps={charge2.handleProps} />
           <SheetHeader className="px-4 pb-1.5 pt-1" {...charge2.handleProps}>
-            <SheetTitle className="text-center text-base font-extrabold text-foreground">
+            <SheetTitle className="text-center text-fs-base font-extrabold text-foreground">
               Service Charge
             </SheetTitle>
           </SheetHeader>
@@ -123,7 +123,7 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
               onChange={(e) => setCharge(e.target.value)}
               placeholder="0.00"
               aria-label="Service charge amount"
-              className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-base font-bold text-foreground outline-none"
+              className="h-12 w-full rounded-row border border-border bg-surface px-4 text-fs-base font-bold text-foreground outline-none"
             />
             <button
               type="button"
@@ -132,7 +132,7 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
                 setChargeOpen(false);
                 toast.success("Service charge updated");
               }}
-              className="mt-3 h-ctl-lg w-full rounded-full bg-primary text-fs-sm font-extrabold uppercase text-primary-foreground"
+              className="mt-3 h-ctl-lg w-full rounded-pill bg-primary text-fs-sm font-extrabold uppercase text-primary-foreground"
             >
               Apply
             </button>

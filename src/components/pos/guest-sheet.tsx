@@ -46,13 +46,13 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
       >
         <SheetGrabber handleProps={handleProps} />
         <SheetHeader className="px-4 pb-2 pt-1 text-left">
-          <SheetTitle className="text-base font-extrabold uppercase text-foreground">
+          <SheetTitle className="text-fs-base font-extrabold uppercase text-foreground">
             Guest Details
           </SheetTitle>
         </SheetHeader>
 
         <div className="space-y-2 px-4">
-          <div className="flex items-center gap-2 rounded-xl border border-border bg-surface px-3">
+          <div className="flex items-center gap-2 rounded-row border border-border bg-surface px-3">
             <User className="size-4 shrink-0 text-muted-foreground" />
             <input
               value={name}
@@ -64,7 +64,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
           </div>
           <div
             className={cn(
-              "flex items-center gap-2 rounded-xl border bg-surface px-3",
+              "flex items-center gap-2 rounded-row border bg-surface px-3",
               needsPhone && !phone ? "border-accent" : "border-border",
             )}
           >
@@ -78,7 +78,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
               className="h-ctl-lg min-w-0 flex-1 bg-transparent text-fs-sm text-foreground outline-none"
             />
           </div>
-          <div className="flex items-center gap-2 rounded-xl border border-border bg-surface px-3">
+          <div className="flex items-center gap-2 rounded-row border border-border bg-surface px-3">
             <Users className="size-4 shrink-0 text-muted-foreground" />
             <span className="min-w-0 flex-1 text-fs-sm text-muted-foreground">Party Size</span>
             <select
@@ -96,7 +96,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
           </div>
         </div>
 
-        <p className="px-4 pb-1.5 pt-3 text-xs font-bold text-muted-foreground">Order Type</p>
+        <p className="px-4 pb-1.5 pt-3 text-fs-xs font-bold text-muted-foreground">Order Type</p>
         <div className="flex flex-wrap gap-2 px-4">
           {serviceOrderTypes.map((t) => (
             <button
@@ -105,7 +105,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
               aria-pressed={t === type}
               onClick={() => setType(t)}
               className={cn(
-                "min-h-ctl-sm rounded-full px-3.5 text-fs-sm font-bold transition-colors",
+                "min-h-ctl-sm rounded-pill px-3.5 text-fs-sm font-bold transition-colors",
                 t === type
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -129,7 +129,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
               setOrderType("Dine In");
               onClose();
             }}
-            className="h-ctl-lg shrink-0 rounded-full border border-border px-4 text-fs-sm font-bold text-foreground"
+            className="h-ctl-lg shrink-0 rounded-pill border border-border px-4 text-fs-sm font-bold text-foreground"
           >
             Clear
           </button>
@@ -141,7 +141,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
               toast.success("Guest details saved");
               onClose();
             }}
-            className="h-ctl-lg flex-1 rounded-full bg-primary text-fs-sm font-extrabold uppercase tracking-[0.06em] text-primary-foreground"
+            className="h-ctl-lg flex-1 rounded-pill bg-primary text-fs-sm font-extrabold uppercase tracking-[0.06em] text-primary-foreground"
           >
             Save
           </button>

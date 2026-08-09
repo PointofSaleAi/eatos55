@@ -40,7 +40,7 @@ export function ClockPullDown() {
           aria-label={open ? "Close clock pad" : "Open clock pad"}
           aria-expanded={open}
           onClick={() => (open ? close() : setOpen(true))}
-          className="mx-auto flex h-7 w-32 items-center justify-center rounded-b-xl border border-t-0 border-border bg-surface text-muted-foreground"
+          className="mx-auto flex h-7 tap-safe w-32 items-center justify-center rounded-b-xl border border-t-0 border-border bg-surface text-muted-foreground"
         >
           {open ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
         </button>
@@ -49,7 +49,7 @@ export function ClockPullDown() {
       {open ? (
         <div className="absolute inset-0 z-30 flex flex-col bg-shell/80 px-3 pb-4 pt-8">
           <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto">
-            <div className="rounded-2xl border border-border bg-surface px-4 py-4">
+            <div className="rounded-card border border-border bg-surface px-4 py-4">
               <div className="flex items-center justify-center gap-4">
                 {[0, 1, 2, 3].map((i) => (
                   <span
@@ -71,7 +71,7 @@ export function ClockPullDown() {
                   key={k}
                   type="button"
                   onClick={() => setPin((p) => (p.length < 4 ? p + k : p))}
-                  className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]"
+                  className="grid min-h-row place-items-center rounded-card bg-surface text-fs-xl font-extrabold text-foreground elev-1 transition-transform active:scale-[0.97]"
                 >
                   {k}
                 </button>
@@ -79,14 +79,14 @@ export function ClockPullDown() {
               <button
                 type="button"
                 onClick={() => setPin("")}
-                className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-destructive shadow-sm"
+                className="grid min-h-row place-items-center rounded-card bg-surface text-fs-xl font-extrabold text-destructive elev-1"
               >
                 C
               </button>
               <button
                 type="button"
                 onClick={() => setPin((p) => (p.length < 4 ? `${p}0` : p))}
-                className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-xl font-extrabold text-foreground shadow-sm"
+                className="grid min-h-row place-items-center rounded-card bg-surface text-fs-xl font-extrabold text-foreground elev-1"
               >
                 0
               </button>
@@ -98,7 +98,7 @@ export function ClockPullDown() {
                     navigate({ to: "/floor" });
                   }, "PIN accepted")
                 }
-                className="grid min-h-[56px] place-items-center rounded-2xl bg-shell text-lg font-extrabold text-shell-foreground shadow-sm"
+                className="grid min-h-row place-items-center rounded-card bg-shell text-fs-lg font-extrabold text-shell-foreground elev-1"
               >
                 ENTER
               </button>
@@ -106,21 +106,21 @@ export function ClockPullDown() {
               <button
                 type="button"
                 onClick={() => requirePin(clockOut, "Clocked out")}
-                className="grid min-h-[56px] place-items-center rounded-2xl bg-destructive text-base font-extrabold text-destructive-foreground shadow-sm"
+                className="grid min-h-row place-items-center rounded-card bg-destructive text-fs-base font-extrabold text-destructive-foreground elev-1"
               >
                 Clock Out
               </button>
               <button
                 type="button"
                 onClick={() => requirePin(() => undefined, "Break started")}
-                className="grid min-h-[56px] place-items-center rounded-2xl bg-surface text-base font-extrabold text-foreground shadow-sm"
+                className="grid min-h-row place-items-center rounded-card bg-surface text-fs-base font-extrabold text-foreground elev-1"
               >
                 Break
               </button>
               <button
                 type="button"
                 onClick={() => requirePin(clockIn, `Clocked in at ${settings.clockedInAt}`)}
-                className="grid min-h-[56px] place-items-center rounded-2xl bg-emerald-600 text-base font-extrabold text-white shadow-sm"
+                className="grid min-h-row place-items-center rounded-card bg-success text-fs-base font-extrabold text-success-foreground elev-1"
               >
                 Clock In
               </button>
@@ -129,18 +129,18 @@ export function ClockPullDown() {
                 type="button"
                 aria-label="Fingerprint sign in"
                 onClick={() => toast.info("Fingerprint not enrolled on this device")}
-                className="grid min-h-[56px] place-items-center rounded-2xl bg-shell text-shell-foreground shadow-sm"
+                className="grid min-h-row place-items-center rounded-card bg-shell text-shell-foreground elev-1"
               >
                 <Fingerprint className="size-6" />
               </button>
-              <span className="grid min-h-[56px] place-items-center rounded-2xl bg-surface px-2 text-center text-xs font-bold leading-tight text-foreground">
+              <span className="grid min-h-row place-items-center rounded-card bg-surface px-2 text-center text-fs-xs font-bold leading-tight text-foreground">
                 {session.station ?? "Test Revenue Center"}
               </span>
               <button
                 type="button"
                 aria-label="Face ID sign in"
                 onClick={() => toast.info("Face ID not enrolled on this device")}
-                className="grid min-h-[56px] place-items-center rounded-2xl bg-shell text-shell-foreground shadow-sm"
+                className="grid min-h-row place-items-center rounded-card bg-shell text-shell-foreground elev-1"
               >
                 <ScanFace className="size-6" />
               </button>
@@ -153,7 +153,7 @@ export function ClockPullDown() {
                 close();
                 navigate({ to: "/" });
               }}
-              className="mt-3 min-h-[52px] w-full rounded-2xl border border-shell-foreground/60 text-base font-extrabold uppercase tracking-[0.08em] text-shell-foreground"
+              className="mt-3 min-h-[52px] w-full rounded-card border border-shell-foreground/60 text-fs-base font-extrabold uppercase tracking-[0.08em] text-shell-foreground"
             >
               Log out
             </button>

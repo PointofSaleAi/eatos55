@@ -70,7 +70,7 @@ function Board() {
               type="button"
               aria-label="Pick board date"
               onClick={() => toast.info("Showing today's orders")}
-              className="grid size-10 place-items-center rounded-full border border-border text-foreground transition-colors hover:bg-muted"
+              className="grid size-10 tap-safe place-items-center rounded-pill border border-border text-foreground transition-colors hover:bg-muted"
             >
               <CalendarDays className="size-5" />
             </button>
@@ -82,7 +82,7 @@ function Board() {
                 announce("Board refreshed");
                 toast.success("Board refreshed");
               }}
-              className="grid size-10 place-items-center rounded-full border border-border text-foreground transition-colors hover:bg-muted"
+              className="grid size-10 tap-safe place-items-center rounded-pill border border-border text-foreground transition-colors hover:bg-muted"
             >
               <RefreshCw className="size-5" />
             </button>
@@ -94,23 +94,23 @@ function Board() {
                 setAsc({});
                 toast.success("Board filters cleared");
               }}
-              className="grid size-10 place-items-center rounded-full border border-border text-foreground transition-colors hover:bg-muted"
+              className="grid size-10 tap-safe place-items-center rounded-pill border border-border text-foreground transition-colors hover:bg-muted"
             >
               <XCircle className="size-5" />
             </button>
-            <p className="ml-1 text-sm font-bold text-muted-foreground">
+            <p className="ml-1 text-fs-sm font-bold text-muted-foreground">
               {new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
             </p>
           </div>
         </div>
-        <div className="mt-3 inline-flex rounded-full bg-muted p-1">
+        <div className="mt-3 inline-flex rounded-pill bg-muted p-1">
           {boardChannels.map((c) => (
             <button
               key={c}
               type="button"
               onClick={() => setChannel(c)}
               className={cn(
-                "min-h-ctl-sm rounded-full px-4 text-sm font-bold transition-colors",
+                "min-h-ctl-sm rounded-pill px-4 text-fs-sm font-bold transition-colors",
                 c === channel ? "bg-primary text-primary-foreground" : "text-muted-foreground",
               )}
             >
@@ -127,12 +127,12 @@ function Board() {
             return (
               <section key={col.id} className="flex w-[220px] flex-col">
                 <div className="mb-3 flex items-center justify-between gap-2 border-b border-border pb-2">
-                  <h2 className="text-sm font-extrabold text-foreground">{col.label}</h2>
+                  <h2 className="text-fs-sm font-extrabold text-foreground">{col.label}</h2>
                   <button
                     type="button"
                     aria-label={`Sort ${col.label}`}
                     onClick={() => setAsc((s) => ({ ...s, [col.id]: !s[col.id] }))}
-                    className="grid size-11 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted"
+                    className="grid size-11 place-items-center rounded-pill text-muted-foreground transition-colors hover:bg-muted"
                   >
                     <ArrowDownUp className="size-4" />
                   </button>
@@ -149,15 +149,15 @@ function Board() {
                           openTicket(t.id);
                           navigate({ to: "/tickets/$ticketId", params: { ticketId: t.id } });
                         }}
-                        className="w-full rounded-2xl border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]"
+                        className="w-full rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]"
                       >
-                        <p className="text-sm font-extrabold text-foreground">
+                        <p className="text-fs-sm font-extrabold text-foreground">
                           #{t.number} · {t.label}
                         </p>
-                        <p className="mt-1 text-xs text-muted-foreground">
+                        <p className="mt-1 text-fs-xs text-muted-foreground">
                           {t.arrivedAt} · {t.seats} guest{t.seats === 1 ? "" : "s"}
                         </p>
-                        <p className="mt-2 text-sm font-bold text-foreground">{money(t.total)}</p>
+                        <p className="mt-2 text-fs-sm font-bold text-foreground">{money(t.total)}</p>
                       </button>
                     ))
                   )}

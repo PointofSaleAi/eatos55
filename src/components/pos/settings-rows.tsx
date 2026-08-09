@@ -35,7 +35,7 @@ export function IconTile({ icon: Icon }: { icon: LucideIcon; color?: TileColor |
 
 export function GroupCard({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("overflow-hidden rounded-2xl border border-border bg-surface", className)}>
+    <div className={cn("overflow-hidden rounded-card border border-border bg-surface elev-1", className)}>
       {children}
     </div>
   );
@@ -45,7 +45,7 @@ export function Caption({ children, tone }: { children: ReactNode; tone?: "dange
   return (
     <p
       className={cn(
-        "px-1 pt-2 text-xs leading-snug",
+        "px-1 pt-2 t-caption",
         tone === "danger" ? "text-destructive" : "text-muted-foreground",
       )}
     >
@@ -56,7 +56,7 @@ export function Caption({ children, tone }: { children: ReactNode; tone?: "dange
 
 export function GroupLabel({ children }: { children: ReactNode }) {
   return (
-    <p className="px-1 pb-2 pt-4 text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
+    <p className="px-1 pb-2 pt-4 t-section text-muted-foreground">
       {children}
     </p>
   );
@@ -75,9 +75,9 @@ function RowInner({ icon, color, title, value, right, chevron }: RowShellProps) 
   return (
     <>
       {icon ? <IconTile icon={icon} color={color} /> : null}
-      <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">{title}</span>
+      <span className="min-w-0 flex-1 truncate t-row text-foreground">{title}</span>
       {value ? (
-        <span className="shrink-0 truncate text-sm text-muted-foreground">{value}</span>
+        <span className="shrink-0 truncate t-value text-muted-foreground">{value}</span>
       ) : null}
       {right}
       {chevron ? <ChevronRight className="size-4 shrink-0 text-muted-foreground" /> : null}
@@ -86,7 +86,7 @@ function RowInner({ icon, color, title, value, right, chevron }: RowShellProps) 
 }
 
 const rowBase =
-  "flex min-h-[60px] w-full items-center gap-3 border-b border-border px-4 py-3 text-left last:border-b-0";
+  "flex min-h-row w-full items-center gap-row border-b border-border px-4 py-3 text-left last:border-b-0";
 
 export function IconNavRow({
   to,
@@ -164,17 +164,20 @@ export function IconToggleRow({
       <RowInner
         {...rest}
         right={
-          <Switch
-            checked={checked}
-            onCheckedChange={onChange}
-            aria-label={rest.title}
-            className="shrink-0"
-          />
+          <span className="grid size-11 shrink-0 place-items-center">
+            <Switch
+              checked={checked}
+              onCheckedChange={onChange}
+              aria-label={rest.title}
+              className="tap-safe shrink-0"
+            />
+          </span>
         }
       />
     </div>
   );
 }
+
 
 /** Either/or row: exactly one of the options is selected. */
 export function SegmentRow({
@@ -190,11 +193,11 @@ export function SegmentRow({
 }) {
   return (
     <div className={cn(rowBase, "flex-col items-stretch gap-2 sm:flex-row sm:items-center")}>
-      <span className="min-w-0 flex-1 truncate text-sm font-bold text-foreground">{title}</span>
+      <span className="min-w-0 flex-1 truncate t-row text-foreground">{title}</span>
       <div
         role="radiogroup"
         aria-label={title}
-        className="flex shrink-0 gap-1 rounded-full bg-muted p-1"
+        className="flex shrink-0 gap-1 rounded-pill bg-muted p-1"
       >
         {options.map((option) => {
           const active = option === value;
@@ -206,7 +209,7 @@ export function SegmentRow({
               aria-checked={active}
               onClick={() => onChange(option)}
               className={cn(
-                "min-h-ctl-sm flex-1 whitespace-nowrap rounded-full px-3 text-xs font-bold transition-colors",
+                "min-h-ctl-sm flex-1 whitespace-nowrap rounded-pill px-3 t-badge transition-colors",
                 active
                   ? "bg-accent text-accent-foreground"
                   : "text-muted-foreground hover:text-foreground",

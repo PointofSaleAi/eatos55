@@ -43,7 +43,7 @@ function HelpCenter() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search guides"
-            className="h-12 rounded-xl bg-background pl-9"
+            className="h-12 rounded-row bg-background pl-9"
           />
         </div>
       </div>
