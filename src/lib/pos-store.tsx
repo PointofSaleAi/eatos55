@@ -703,6 +703,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
     activeTable,
     floor,
     tableStates,
+    tableSince,
+    roomStates,
+
     guest,
     orderType,
     noTax,
