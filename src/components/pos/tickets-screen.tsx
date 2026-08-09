@@ -27,6 +27,7 @@ import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { usePos, emptyFilters, type SortKey } from "@/lib/pos-store";
 import {
   employees,
+  paymentTypes,
   revenueCenters,
   ticketOrderTypes,
   type TicketStatus,
