@@ -1,11 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Circle, CircleDot } from "lucide-react";
+import { ChevronDown, Circle, CircleDot } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
+import { StatusSheet, type StatusOption } from "@/components/pos/status-sheet";
 
 import { money } from "@/lib/demo-data";
 import { rooms } from "@/lib/floor-data";
-import { usePos } from "@/lib/pos-store";
+import { usePos, type RoomState } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/rooms/")({
   head: () => ({
