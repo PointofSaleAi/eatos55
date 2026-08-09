@@ -203,9 +203,10 @@ export type Guest = { name: string; phone: string; partySize: number };
 const PosContext = createContext<Store | null>(null);
 
 export function PosProvider({ children }: { children: ReactNode }) {
+  // TEMP DEMO BYPASS: start pre-authenticated so Sign in / PIN screens are skipped.
   const [session, setSession] = useState<Session>({
-    signedIn: false,
-    clockedIn: false,
+    signedIn: true,
+    clockedIn: true,
     name: "Elizer Cruz",
     role: "Supervisor",
     station: null,
@@ -215,7 +216,14 @@ export function PosProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem("eatos.pos.session");
-      if (raw) setSession((s) => ({ ...s, ...(JSON.parse(raw) as Partial<Session>) }));
+      if (raw)
+        setSession((s) => ({
+          ...s,
+          ...(JSON.parse(raw) as Partial<Session>),
+          // TEMP DEMO BYPASS: never restore a signed-out/clocked-out state.
+          signedIn: true,
+          clockedIn: true,
+        }));
     } catch {
       /* ignore unreadable storage */
     }
