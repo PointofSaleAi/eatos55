@@ -67,7 +67,7 @@ function TenderRoute() {
         announce("Payment complete");
         commitPayment(cfg.method, amount);
         toast.success(cfg.success);
-        navigate({ to: "/tickets" });
+        navigate({ to: "/payment/success" });
       }}
     />
   );

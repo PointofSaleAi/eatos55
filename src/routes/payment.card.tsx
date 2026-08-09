@@ -38,7 +38,7 @@ function PayByCard() {
       onCommit={(amount) => {
         commitPayment("card", amount);
         toast.success("Card payment approved");
-        navigate({ to: "/tickets" });
+        navigate({ to: "/payment/success" });
       }}
     />
   );
