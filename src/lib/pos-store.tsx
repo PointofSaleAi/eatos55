@@ -695,34 +695,47 @@ export function PosProvider({ children }: { children: ReactNode }) {
           minute: "2-digit",
         });
         let id = activeTicketId;
+        let orderNumber = 0;
+        let guestName = guest.name;
         if (id) {
           const ticketId = id;
           setTickets((list) =>
-            list.map((t) =>
-              t.id === ticketId
-                ? {
-                    ...t,
-                    status: "paid",
-                    total,
-                    lines: cart.map((l) => ({ ...l })),
-                    paymentType: paymentLabel,
-                    checkNumber: t.checkNumber ?? Number(t.id.replace("t-", "")),
-                    revenueCenter: t.revenueCenter ?? session.station ?? "Main dining",
-                    payments: [
-                      ...(t.payments ?? []),
-                      {
-                        no: String((t.payments?.length ?? 0) + 1),
-                        method: paymentLabel,
-                        amount: total,
-                        at,
-                      },
-                    ],
-                  }
-                : t,
-            ),
+            list.map((t) => {
+              if (t.id !== ticketId) return t;
+              orderNumber = t.number;
+              guestName = guest.name || t.label;
+              return {
+                ...t,
+                status: "paid",
+                total,
+                lines: cart.map((l) => ({ ...l })),
+                paymentType: paymentLabel,
+                checkNumber: t.checkNumber ?? Number(t.id.replace("t-", "")),
+                revenueCenter: t.revenueCenter ?? session.station ?? "Main dining",
+                orderType,
+                guestEmail: guest.email,
+                notes: guest.notes,
+                vehicle: guest.vehicle,
+                payments: [
+                  ...(t.payments ?? []),
+                  {
+                    no: String((t.payments?.length ?? 0) + 1),
+                    method: paymentLabel,
+                    amount: total,
+                    at,
+                  },
+                ],
+              };
+            }),
           );
+          const existing = tickets.find((t) => t.id === ticketId);
+          if (existing) {
+            orderNumber = existing.number;
+            guestName = guest.name || existing.label;
+          }
         } else {
           id = `t-${1047 + tickets.length}`;
+          orderNumber = tickets.length + 1;
           const created: Ticket = {
             id,
             number: tickets.length + 1,
@@ -743,11 +756,24 @@ export function PosProvider({ children }: { children: ReactNode }) {
             tips: 0,
             revenueCenter: session.station ?? "Main dining",
             paymentType: paymentLabel,
+            orderType,
+            guestEmail: guest.email,
+            notes: guest.notes,
+            vehicle: guest.vehicle,
             payments: [{ no: "1", method: paymentLabel, amount: total, at }],
           };
           setTickets((list) => [created, ...list]);
         }
-        setLastPayment({ ticketId: id, method, total, tendered, change });
+        setLastPayment({
+          ticketId: id,
+          method,
+          total,
+          tendered,
+          change,
+          orderNumber,
+          guestName,
+        });
+
         setPaidSoFar(0);
         setCart([]);
         setActiveTicketId(null);
