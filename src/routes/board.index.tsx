@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowDownUp, CalendarDays, RefreshCw, XCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
