@@ -519,11 +519,20 @@ export function PosProvider({ children }: { children: ReactNode }) {
         if (filters.employees.length) {
           list = list.filter((t) => filters.employees.includes(t.server));
         }
-        if (filters.payments.length) {
+        if (filters.revenueCenters.length) {
           list = list.filter((t) =>
-            filters.payments.includes(t.status === "paid" ? "Card" : "Unpaid"),
+            filters.revenueCenters.includes(t.revenueCenter ?? "Main dining"),
           );
         }
+        if (filters.orderTypes.length) {
+          list = list.filter((t) => filters.orderTypes.includes(modeOrderType(t.mode)));
+        }
+        if (filters.payments.length) {
+          list = list.filter((t) =>
+            filters.payments.includes(t.paymentType ?? (t.status === "paid" ? "Card" : "Unpaid")),
+          );
+        }
+
         if (filters.mineOnly) {
           list = list.filter((t) => t.server === session.name);
         }
