@@ -43,6 +43,13 @@ function ManagerPin() {
     }
   };
 
+  // TEMP DEMO BYPASS: auto-approve instead of asking for a PIN.
+  useEffect(() => {
+    approve();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
   return (
     <>
       <ScreenHeader eyebrow="Access" title="Manager PIN" back />
