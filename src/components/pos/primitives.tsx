@@ -1,5 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronDown, ChevronRight, Delete, Inbox, Table2, Utensils } from "lucide-react";
+import {
+  Bike,
+  Car,
+  ChevronDown,
+  ChevronRight,
+  Delete,
+  Globe,
+  Inbox,
+  ShoppingBag,
+  Store,
+  Table2,
+  Utensils,
+} from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
@@ -210,6 +222,17 @@ function Cell({ label, value, tone }: { label: string; value: string; tone?: str
   );
 }
 
+/** Icon that matches the guest-facing order type shown on a ticket. */
+function orderTypeIcon(label: string) {
+  const l = label.toLowerCase();
+  if (l.includes("take")) return ShoppingBag;
+  if (l.includes("delivery")) return Bike;
+  if (l.includes("drive")) return Car;
+  if (l.includes("pickup")) return Store;
+  if (l.includes("online")) return Globe;
+  return Utensils;
+}
+
 export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () => void }) {
   const meta = statusMeta[ticket.status];
   const timer = useTicketTimer(ticket.arrivedMinutesAgo);
@@ -221,18 +244,29 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
   });
 
   const orderTypeLabel = ticket.orderType ?? modeOrderType(ticket.mode);
+  const OrderTypeIcon = orderTypeIcon(orderTypeLabel);
+  const orderNo = ticket.orderNo ?? ticket.number;
 
   return (
     <div className="@container w-full overflow-hidden rounded-card border border-border bg-surface">
       <div className="flex items-center gap-2 px-2 py-1.5">
         <button
           type="button"
-          aria-label={`Open ticket ${ticket.number}`}
+          aria-label={
+            ticket.table ? `Open table ${ticket.table} ticket` : `Open ${orderTypeLabel} ticket`
+          }
+          title={ticket.table ? `Table ${ticket.table}` : orderTypeLabel}
           onClick={onClick}
           className="flex shrink-0 items-center gap-1.5 rounded-row bg-muted px-2 py-1.5 t-row text-foreground transition-colors hover:bg-secondary"
         >
-          <Table2 className="size-4" aria-hidden />
-          {ticket.number}
+          {ticket.table ? (
+            <>
+              <Table2 className="size-4" aria-hidden />
+              {ticket.table}
+            </>
+          ) : (
+            <OrderTypeIcon className="size-4" aria-hidden />
+          )}
         </button>
         <button
           type="button"
@@ -242,7 +276,8 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
         >
           <span className="flex min-w-0 items-center gap-2">
             <span className="shrink-0 t-row text-muted-foreground">
-              Order No <span className="text-foreground">{ticket.number}</span>
+              Order No{" "}
+              <span className="tabular-nums text-foreground">{orderNo}</span>
             </span>
             <span className="min-w-0 flex-1 truncate t-row text-foreground">{ticket.label}</span>
             <span className="shrink-0 t-row text-foreground">{money(ticket.total)}</span>
@@ -257,7 +292,7 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
           </span>
           <span className="mt-0.5 flex min-w-0 items-center gap-2 @[34rem]:mt-0 @[34rem]:shrink-0">
             <span className="flex shrink-0 items-center gap-1 t-caption text-muted-foreground">
-              <Utensils className="size-3.5" aria-hidden />
+              <OrderTypeIcon className="size-3.5" aria-hidden />
               {orderTypeLabel}
             </span>
             <span className="min-w-0 truncate t-caption text-muted-foreground">
@@ -279,9 +314,9 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
       {open ? (
         <div className="border-t border-border px-3 py-3">
           <div className="grid grid-cols-2 gap-x-3 gap-y-2 @[30rem]:grid-cols-4 @[46rem]:grid-cols-6">
-            <Cell label="Check" value={String(ticket.checkNumber ?? ticket.number)} />
+            <Cell label="Check" value={String(ticket.checkNumber ?? orderNo)} />
             <Cell label="Tips" value={money(ticket.tips ?? 0)} />
-            <Cell label="Order No" value={String(ticket.number)} />
+            <Cell label="Order No" value={String(orderNo)} />
             <Cell label="Arrived At" value={ticket.arrivedAt} />
             <Cell label="Date" value={dateLabel} />
             <Cell label="Employee" value={ticket.server} />
