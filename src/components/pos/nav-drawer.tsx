@@ -1,68 +1,74 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { LogOut, ShieldCheck, X } from "lucide-react";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import {
+  ChevronRight,
+  ClipboardList,
+  Clock,
+  CreditCard,
+  FileText,
+  Grid2x2,
+  Headset,
+  LayoutGrid,
+  LogOut,
+  Receipt,
+  ShieldCheck,
+  Settings as SettingsIcon,
+  Sofa,
+  Tag,
+  Utensils,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
+import { useConfirm } from "@/components/pos/confirm-sheet";
 import { cn } from "@/lib/utils";
 
-type NavLink = { to: string; label: string };
+type NavLink = { to: string; label: string; icon: LucideIcon };
 
+/**
+ * Top-level destinations only. Deeper screens are reached by drilling in from
+ * their own section (Settings has its own tree), so this list never scrolls.
+ */
 const groups: { title: string; links: NavLink[] }[] = [
   {
     title: "Ordering",
     links: [
-      { to: "/order/new", label: "New Order" },
-      { to: "/order/review", label: "Order Review" },
-      { to: "/order/custom-item", label: "Custom Item" },
-      { to: "/order/menu", label: "Menus" },
+      { to: "/order/new", label: "New Order", icon: ClipboardList },
+      { to: "/order/menu", label: "Menus", icon: Utensils },
+      { to: "/order/custom-item", label: "Custom Item", icon: Tag },
     ],
   },
   {
     title: "Service",
     links: [
-      { to: "/floor", label: "Floor Plan" },
-      { to: "/rooms", label: "Rooms" },
-      { to: "/tickets", label: "Tickets" },
-      { to: "/board", label: "Order Status Board" },
+      { to: "/floor", label: "Floor Plan", icon: Sofa },
+      { to: "/rooms", label: "Rooms", icon: Grid2x2 },
+      { to: "/tickets", label: "Tickets", icon: Receipt },
+      { to: "/board", label: "Order Status Board", icon: LayoutGrid },
     ],
   },
   {
     title: "Money",
     links: [
-      { to: "/payment/method", label: "Payments" },
-      { to: "/settings/sales-summary", label: "Sales Summary" },
-      { to: "/orders", label: "Shift Summary" },
+      { to: "/payment/method", label: "Payments", icon: CreditCard },
+      { to: "/settings/sales-summary", label: "Sales Summary", icon: FileText },
+      { to: "/orders", label: "Shift Summary", icon: Clock },
     ],
   },
   {
-    title: "Settings",
+    title: "App",
     links: [
-      { to: "/settings", label: "All Settings" },
-      { to: "/settings/general", label: "General" },
-      { to: "/settings/control-center", label: "Control Center" },
-      { to: "/settings/menu", label: "Menu" },
-      { to: "/settings/payments", label: "Payments" },
-      { to: "/settings/workforce", label: "Workforce" },
-      { to: "/settings/network", label: "Network" },
-      { to: "/settings/hardware", label: "Hardware" },
-      { to: "/settings/notifications", label: "Notifications" },
-      { to: "/settings/more", label: "More" },
-    ],
-  },
-  {
-    title: "System",
-    links: [
-      { to: "/system/customer-support", label: "Customer Support" },
-      { to: "/system/contact-us", label: "Contact Us" },
-      { to: "/system/help-center", label: "Help Center" },
-      { to: "/system/integrations", label: "Integrations" },
-      { to: "/tickets/whats-new", label: "What's New" },
+      { to: "/settings", label: "Settings", icon: SettingsIcon },
+      { to: "/system/customer-support", label: "Support", icon: Headset },
     ],
   },
 ];
 
-/** Full app map, opened from the burger button in any screen header. */
+/** App map, opened from the burger button in any screen header. */
 export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { clockOut } = usePos();
+  const { clockOut, signOut } = usePos();
+  const confirm = useConfirm();
+  const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useBackDismiss(open, onClose);
@@ -78,25 +84,21 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
         className="absolute inset-0 bg-black/60 animate-in fade-in duration-150 motion-reduce:animate-none"
       />
       <div className="absolute inset-y-0 left-0 flex w-[86%] max-w-[20rem] flex-col bg-surface shadow-2xl animate-in slide-in-from-left duration-200 ease-out motion-reduce:animate-none">
-
-        <div className="grid shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-b border-border px-4 py-3">
-          <p className="truncate text-fs-lg font-extrabold text-foreground">Navigation</p>
+        <div className="flex shrink-0 justify-end px-2 pt-[calc(0.5rem+env(safe-area-inset-top))]">
           <button
             type="button"
             aria-label="Close navigation"
             onClick={onClose}
-            className="grid size-9 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+            className="grid size-11 tap-safe place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
           >
             <X className="size-5" />
           </button>
         </div>
 
-        <nav className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 py-2">
+        <nav className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 pb-2">
           {groups.map((g) => (
-            <div key={g.title} className="pb-2">
-              <p className="px-2 pb-1 pt-2 text-fs-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
-                {g.title}
-              </p>
+            <div key={g.title} className="pb-1">
+              <p className="px-2 pb-1 pt-2 t-section text-muted-foreground">{g.title}</p>
               <ul>
                 {g.links.map((l) => {
                   const active = pathname === l.to;
@@ -106,13 +108,23 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
                         to={l.to}
                         onClick={onClose}
                         className={cn(
-                          "flex min-h-ctl-md items-center rounded-row px-2 text-fs-sm font-bold transition-colors",
+                          "flex min-h-ctl-md items-center gap-3 rounded-row px-2 t-row transition-colors",
                           active
                             ? "bg-primary text-primary-foreground"
                             : "text-foreground hover:bg-muted",
                         )}
                       >
-                        <span className="min-w-0 truncate">{l.label}</span>
+                        <l.icon
+                          className={cn("size-5 shrink-0", active ? "" : "text-accent")}
+                          strokeWidth={2}
+                        />
+                        <span className="min-w-0 flex-1 truncate">{l.label}</span>
+                        <ChevronRight
+                          className={cn(
+                            "size-4 shrink-0",
+                            active ? "opacity-70" : "text-muted-foreground",
+                          )}
+                        />
                       </Link>
                     </li>
                   );
@@ -122,11 +134,11 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
           ))}
         </nav>
 
-        <div className="shrink-0 space-y-2 border-t border-border p-3">
+        <div className="shrink-0 space-y-2 border-t border-border p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
           <Link
             to="/tickets/manager-controls"
             onClick={onClose}
-            className="flex min-h-ctl-md items-center gap-2 rounded-row border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="flex min-h-ctl-md items-center gap-2 rounded-row border border-border px-3 t-row text-foreground transition-colors hover:bg-muted"
           >
             <ShieldCheck className="size-4" />
             Manager Controls
@@ -137,10 +149,29 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
               onClose();
               clockOut();
             }}
-            className="flex min-h-ctl-md w-full items-center gap-2 rounded-row border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
+            className="flex min-h-ctl-md w-full items-center gap-2 rounded-row border border-border px-3 t-row text-foreground transition-colors hover:bg-muted"
+          >
+            <Clock className="size-4" />
+            Clock Out
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              const ok = await confirm({
+                title: "Sign out?",
+                message: "You will need to sign in again to use this device.",
+                confirmLabel: "Sign Out",
+                destructive: true,
+              });
+              if (!ok) return;
+              onClose();
+              signOut();
+              navigate({ to: "/" });
+            }}
+            className="flex min-h-ctl-md w-full items-center gap-2 rounded-row border border-border px-3 t-row text-destructive transition-colors hover:bg-muted"
           >
             <LogOut className="size-4" />
-            Clock Out
+            Sign Out
           </button>
         </div>
       </div>
