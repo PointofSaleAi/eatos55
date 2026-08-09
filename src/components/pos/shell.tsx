@@ -226,14 +226,29 @@ export function SubHeader({
 }
 
 
-export function ScreenBody({ children, className }: { children: ReactNode; className?: string }) {
+export function ScreenBody({
+  children,
+  className,
+  hug,
+}: {
+  children: ReactNode;
+  className?: string;
+  /**
+   * Set on screens that render their own `ScreenFooter`: the footer already
+   * reserves room for the floating tab bar, so the body must not do it again
+   * (double reservation makes short pages scroll for no reason).
+   */
+  hug?: boolean;
+}) {
   return (
     <div
       className={cn("no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4", className)}
       // Inline so a route-level `py-*`/`pb-*` cannot merge away the space that
       // keeps the last row clear of the floating tab bar and the keyboard.
       style={{
-        paddingBottom: "calc(1rem + var(--kb-inset, 0px) + var(--tabs-h, 0px))",
+        paddingBottom: hug
+          ? "calc(1rem + var(--kb-inset, 0px))"
+          : "calc(1rem + var(--kb-inset, 0px) + var(--tabs-h, 0px))",
       }}
     >
       {children}

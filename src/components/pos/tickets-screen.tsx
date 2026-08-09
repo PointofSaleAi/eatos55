@@ -110,7 +110,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
     ticketDate,
     setTicketDate,
     shiftTicketDate,
-    setTicketStatus,
+    cancelTicket,
   } = usePos();
   const confirm = useConfirm();
   const announce = useAnnounce();
@@ -414,7 +414,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                               destructive: true,
                             });
                             if (ok) {
-                              setTicketStatus(t.id, "paid");
+                              cancelTicket(t.id);
                               announce(`${t.label} voided`);
                             }
                           })();
