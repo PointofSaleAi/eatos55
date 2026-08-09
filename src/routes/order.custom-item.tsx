@@ -62,6 +62,7 @@ function CustomItem() {
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
+          aria-label="Item name"
           placeholder="Item Name"
           className="h-11 w-full shrink-0 rounded-row border border-border bg-surface px-4 text-fs-sm text-foreground outline-none focus:border-accent placeholder:text-muted-foreground"
         />

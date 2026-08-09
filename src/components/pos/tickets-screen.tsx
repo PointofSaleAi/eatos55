@@ -341,7 +341,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
             onClick={() => setOverlay("none")}
             className="absolute inset-0 z-20 cursor-default"
           />
-          <div className="absolute left-1/2 top-[60px] z-30 w-[68%] -translate-x-1/4 overflow-hidden rounded-card border border-border bg-surface py-1 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.45)]">
+          <div className="absolute right-3 top-[60px] z-30 w-[68%] max-w-[17rem] overflow-hidden rounded-card border border-border bg-surface py-1 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.45)]">
             {sortOptions.map((o) => {
               const Icon = o.icon;
               const active = sortKey === o.id;

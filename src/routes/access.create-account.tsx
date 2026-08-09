@@ -30,12 +30,12 @@ function Field({
   children: ReactNode;
 }) {
   return (
-    <div className="relative rounded-row border border-input bg-surface">
+    <label className="relative block rounded-row border border-input bg-surface">
       <span className="absolute -top-2 left-3 bg-surface px-1 text-fs-xs font-extrabold text-foreground">
         {label}
       </span>
       {children}
-    </div>
+    </label>
   );
 }
 
