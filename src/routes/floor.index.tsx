@@ -140,6 +140,11 @@ function FloorPlan() {
                   <button
                     type="button"
                     onClick={() => {
+                      // Occupied tables resume; free tables ask how many are seated first.
+                      if (t.state === "available" || t.state === "reserved") {
+                        setGuestsFor({ name: t.name, seats: t.seats });
+                        return;
+                      }
                       startOrder(t.name);
                       navigate({ to: "/order/new" });
                     }}
@@ -171,7 +176,6 @@ function FloorPlan() {
                     )}
                   >
                     {meta.label}
-                    <ChevronDown className="size-3.5 shrink-0" aria-hidden />
                   </button>
                 </div>
               );
@@ -179,6 +183,20 @@ function FloorPlan() {
           </div>
         )}
       </ScreenBody>
+
+      <GuestsSheet
+        open={guestsFor !== null}
+        table={guestsFor?.name ?? null}
+        seats={guestsFor?.seats ?? 1}
+        onClose={() => setGuestsFor(null)}
+        onStart={(count) => {
+          if (guestsFor) {
+            startOrder(guestsFor.name, count);
+            setGuestsFor(null);
+            navigate({ to: "/order/new" });
+          }
+        }}
+      />
 
       <StatusSheet
         open={statusFor !== null}
@@ -194,6 +212,7 @@ function FloorPlan() {
           setStatusFor(null);
         }}
       />
+
     </div>
   );
 }
