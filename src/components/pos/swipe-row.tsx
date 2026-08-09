@@ -18,8 +18,8 @@ export function SwipeRow({
   className,
 }: {
   children: ReactNode;
-  action?: SwipeAction;
-  className?: string;
+  action?: SwipeAction | undefined;
+  className?: string | undefined;
 }) {
   const [dx, setDx] = useState(0);
   const startX = useRef<number | null>(null);

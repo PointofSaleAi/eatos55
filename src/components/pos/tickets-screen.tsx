@@ -109,7 +109,10 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
     setFilters,
     ticketDate,
     shiftTicketDate,
+    setTicketStatus,
   } = usePos();
+  const confirm = useConfirm();
+  const announce = useAnnounce();
   const [tab, setTab] = useState<Tab>("all");
   const [overlay, setOverlay] = useState<TicketsOverlay>(initialOverlay);
   const [openFacet, setOpenFacet] = useState<string | null>(null);
