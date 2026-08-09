@@ -283,6 +283,8 @@
     --ctl-md: 2.75rem;
     --ctl-lg: 2.75rem;
     --tile-h: 5.5rem;
+    --key-h: 3rem;
+    --row-h: 3.25rem;
     --gap-sec: 0.5rem;
   }
 }
@@ -307,6 +309,22 @@
 }
 @utility min-h-ctl-lg {
   min-height: var(--ctl-lg);
+}
+@utility min-h-key {
+  min-height: var(--key-h);
+}
+@utility h-key {
+  height: var(--key-h);
+}
+@utility min-h-row {
+  min-height: var(--row-h);
+}
+@utility max-w-sheet {
+  max-width: var(--sheet-w);
+}
+@utility rounded-t-sheet {
+  border-top-left-radius: 1.75rem;
+  border-top-right-radius: 1.75rem;
 }
 @utility h-tile {
   height: var(--tile-h);
