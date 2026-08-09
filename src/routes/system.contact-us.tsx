@@ -63,9 +63,10 @@ function ContactUs() {
             </div>
           </div>
 
-          <h2 className="mt-6 text-center text-fs-xl font-extrabold text-surface">
+          <h2 className="mt-6 text-center text-fs-xl font-extrabold text-shell-foreground">
             How can we help you?
           </h2>
+
           <label className="mt-4 flex min-h-ctl-lg items-center gap-3 rounded-full bg-surface px-4">
             <Search className="size-6 shrink-0 text-foreground" />
             <input
