@@ -12,53 +12,53 @@ const whatsNew = [
   "POS UI bug fixes",
 ];
 
-/**
- * Screens 63 / 65 — collapsible account top bar with the "what's new" popover.
- * Collapsed by default; the handle expands it on every screen size.
- */
-export function AccountBar() {
+/** Initials chip + name / role / clock-in time, sized for the thin top band. */
+export function AccountInfo() {
   const { session, settings } = usePos();
-  const [news, setNews] = useState(false);
-
   const initials = session.name
     .split(" ")
     .map((p) => p[0])
     .join("");
 
   return (
-    <div className="relative z-20 shrink-0 bg-background px-3 pt-2">
-      <div className="flex items-center gap-3 rounded-card border border-border bg-surface px-3 py-3">
+    <div className="flex min-w-0 items-center gap-2 pl-1">
+      <span className="grid size-7 shrink-0 place-items-center rounded-row bg-muted text-[0.625rem] font-extrabold text-foreground">
+        {initials}
+      </span>
+      <p className="min-w-0 truncate text-fs-xs font-extrabold leading-tight text-foreground">
+        {session.name}
+        <span className="hidden font-semibold text-muted-foreground xs:inline">
+          {" "}
+          · {session.role} ({settings.clockedInAt})
+        </span>
+      </p>
+    </div>
+  );
+}
 
-          <span className="grid size-10 tap-safe shrink-0 place-items-center rounded-row bg-muted text-fs-sm font-extrabold text-foreground">
-            {initials}
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-fs-sm font-extrabold leading-tight text-foreground">
-              {session.name}
-            </p>
-            <p className="truncate text-fs-xs text-muted-foreground">
-              {session.role} ({settings.clockedInAt})
-            </p>
-          </div>
-          <button
-            type="button"
-            aria-label="What's new"
-            onClick={() => setNews((n) => !n)}
-            className="grid size-9 tap-safe shrink-0 place-items-center rounded-pill bg-muted text-foreground transition-colors hover:bg-secondary"
-          >
-            <Bell className="size-4" />
-          </button>
-          <button
-            type="button"
-            aria-label="Refresh tickets"
-            onClick={() => toast.success("Tickets refreshed")}
-            className="grid size-9 tap-safe shrink-0 place-items-center rounded-pill bg-muted text-foreground transition-colors hover:bg-secondary"
-          >
-            <RotateCw className="size-4" />
-          </button>
-      </div>
+/** What's-new bell + refresh, right side of the thin top band. */
+export function AccountActions() {
+  const { settings } = usePos();
+  const [news, setNews] = useState(false);
 
-
+  return (
+    <div className="relative flex shrink-0 items-center justify-end">
+      <button
+        type="button"
+        aria-label="What's new"
+        onClick={() => setNews((n) => !n)}
+        className="grid size-9 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+      >
+        <Bell className="size-4" />
+      </button>
+      <button
+        type="button"
+        aria-label="Refresh tickets"
+        onClick={() => toast.success("Tickets refreshed")}
+        className="grid size-9 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+      >
+        <RotateCw className="size-4" />
+      </button>
 
       {news ? (
         <>
@@ -70,11 +70,13 @@ export function AccountBar() {
           />
           <div
             className={cn(
-              "absolute left-3 right-3 top-[calc(100%+6px)] z-40 rounded-card border border-border bg-surface p-4",
+              "absolute right-0 top-[calc(100%+6px)] z-40 w-[min(20rem,calc(100vw-1.5rem))] rounded-card border border-border bg-surface p-4",
               "shadow-[0_18px_60px_-12px_rgba(0,0,0,0.45)]",
             )}
           >
-            <p className="text-center text-fs-xs font-bold uppercase tracking-[0.14em] text-accent">what&apos;s new</p>
+            <p className="text-center text-fs-xs font-bold uppercase tracking-[0.14em] text-accent">
+              what&apos;s new
+            </p>
             <div className="mt-3 flex items-start gap-3">
               <span className="mt-1 grid size-8 tap-safe shrink-0 place-items-center rounded-row bg-muted text-fs-sm font-extrabold text-foreground">
                 e
@@ -102,6 +104,7 @@ export function AccountBar() {
             </ul>
             <Link
               to="/tickets/whats-new"
+              onClick={() => setNews(false)}
               className="mt-3 flex min-h-tap w-full items-center justify-center text-fs-sm font-extrabold text-accent"
             >
               See more
