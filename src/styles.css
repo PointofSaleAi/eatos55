@@ -248,3 +248,48 @@
     display: none;
   }
 }
+
+/* Short viewports (small Androids, 568-620px tall): compact step, taps stay 44px. */
+@media (max-height: 620px) {
+  :root {
+    --ctl-sm: 2.25rem;
+    --ctl-md: 2.375rem;
+    --ctl-lg: 2.75rem;
+    --tile-h: 5.5rem;
+    --gap-sec: 0.5rem;
+  }
+}
+
+@utility min-h-tap {
+  min-height: var(--tap);
+}
+@utility h-ctl-sm {
+  height: var(--ctl-sm);
+}
+@utility min-h-ctl-sm {
+  min-height: var(--ctl-sm);
+}
+@utility h-ctl-md {
+  height: var(--ctl-md);
+}
+@utility min-h-ctl-md {
+  min-height: var(--ctl-md);
+}
+@utility h-ctl-lg {
+  height: var(--ctl-lg);
+}
+@utility min-h-ctl-lg {
+  min-height: var(--ctl-lg);
+}
+@utility h-tile {
+  height: var(--tile-h);
+}
+@utility min-h-tile {
+  min-height: var(--tile-h);
+}
+@utility gap-sec {
+  gap: var(--gap-sec);
+}
+@utility px-screen {
+  padding-inline: var(--pad-screen);
+}
