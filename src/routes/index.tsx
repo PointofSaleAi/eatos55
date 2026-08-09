@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -10,10 +10,6 @@ import { APP_VERSION } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/")({
-  // TEMP DEMO BYPASS: skip the Sign in screen and land straight in the app.
-  beforeLoad: () => {
-    throw redirect({ to: "/tickets" });
-  },
   head: () => ({
     meta: [
       { title: "Point of Purchase — eatOS Sign in" },
