@@ -108,7 +108,15 @@ export function ToggleRow({
         <p className="truncate t-row text-foreground">{title}</p>
         {detail ? <p className="truncate t-caption text-muted-foreground">{detail}</p> : null}
       </div>
-      <Switch checked={checked} onCheckedChange={onChange} className="shrink-0" />
+      <span className="grid size-11 shrink-0 place-items-center">
+        <Switch
+          checked={checked}
+          onCheckedChange={onChange}
+          aria-label={title}
+          className="shrink-0"
+        />
+      </span>
+
     </div>
   );
 }
