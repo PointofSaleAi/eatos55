@@ -6,6 +6,7 @@ import {
   initialTickets,
   liveMenu,
   menu,
+  modeOrderType,
   type CartLine,
   type MenuMode,
   type ServiceOrderType,

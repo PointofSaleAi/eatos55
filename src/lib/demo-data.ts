@@ -323,7 +323,11 @@ export const barcodeCategories = ["B", "C", "A", "TEST BARCODE"];
 
 /** Filter sheet facets on the ticket list. */
 export const revenueCenters = ["Main dining", "Patio", "Bar", "Counter pickup"];
-export const ticketOrderTypes = orderTypes;
+export const ticketOrderTypes = [...serviceOrderTypes];
+
+/** Maps the internal menu mode onto the guest-facing order type shown on tickets. */
+export const modeOrderType = (m: MenuMode): string =>
+  m === "takeaway" ? "Take Away" : m === "delivery" ? "Delivery" : "Dine In";
 export const paymentTypes = ["Card", "Cash", "QR Code", "Unpaid"];
 
 /** Quick tender denominations on the cash payment screen. */
