@@ -26,6 +26,7 @@ import { PinSheet } from "@/components/pos/pin-sheet";
 import { cn } from "@/lib/utils";
 import { SearchDock } from "@/components/pos/search-dock";
 import { usePos } from "@/lib/pos-store";
+import { useConfirm } from "@/components/pos/confirm-sheet";
 
 export const Route = createFileRoute("/settings/")({
   head: () => ({
@@ -104,7 +105,7 @@ function SettingsHub() {
           color: "red",
           onClick: () => {
             void (async () => {
-              const ok = await confirm({
+              const ok = await confirmAction({
                 title: "Sign out?",
                 message: "You will need to sign in again to use this device.",
                 confirmLabel: "Sign Out",
