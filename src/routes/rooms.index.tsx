@@ -1,5 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Circle, CircleDot } from "lucide-react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
+
 import { money } from "@/lib/demo-data";
 import { rooms } from "@/lib/floor-data";
 import { usePos } from "@/lib/pos-store";
