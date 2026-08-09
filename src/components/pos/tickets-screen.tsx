@@ -143,23 +143,74 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
     year: "numeric",
   });
 
+  const activeFacetCount = filterFacets.reduce(
+    (s, f) => s + (filters[f.key] as string[]).length,
+    0,
+  ) + (filters.mineOnly ? 1 : 0);
+
   return (
     <div className="relative flex min-h-0 flex-1 flex-col bg-background">
       <AccountBar />
 
-      {/* Title bar */}
-      <div className="shrink-0 border-b border-border bg-surface px-4 py-3">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-1">
-            <MenuButton className="-ml-2" />
-            <h1 className="truncate text-fs-xl font-extrabold text-foreground">Tickets</h1>
+      {/* Title + date + controls in one band */}
+      <div className="shrink-0 bg-surface px-2 pt-1.5">
+        <div className="flex items-center gap-1">
+          <MenuButton />
+          <h1 className="shrink-0 text-fs-lg font-extrabold text-foreground">Tickets</h1>
+          <div className="mx-auto flex min-w-0 items-center">
+            <button
+              type="button"
+              aria-label="Previous day"
+              onClick={() => shiftTicketDate(-1)}
+              className="grid size-9 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+            >
+              <ChevronLeft className="size-4" />
+            </button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Pick a date"
+                  className="flex min-w-0 items-center gap-1.5 rounded-pill px-1.5 py-2 transition-colors hover:bg-muted"
+                >
+                  <Calendar className="size-4 shrink-0 text-muted-foreground" />
+                  <span className="truncate text-fs-xs font-bold text-foreground">{dateLabel}</span>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="center" className="w-auto p-0">
+                <CalendarPicker
+                  mode="single"
+                  selected={new Date(`${ticketDate}T12:00:00`)}
+                  onSelect={(d) => {
+                    if (d) setTicketDate(d.toISOString().slice(0, 10));
+                  }}
+                  className={cn("pointer-events-auto p-3")}
+                />
+              </PopoverContent>
+            </Popover>
+            <button
+              type="button"
+              aria-label="Next day"
+              onClick={() => shiftTicketDate(1)}
+              className="grid size-9 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+            >
+              <ChevronRight className="size-4" />
+            </button>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center">
+            <button
+              type="button"
+              aria-label="Search tickets"
+              onClick={() => setOverlay((o) => (o === "search" ? "none" : "search"))}
+              className="grid size-9 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+            >
+              <Search className="size-5" />
+            </button>
             <button
               type="button"
               aria-label="Sort tickets"
               onClick={() => setOverlay((o) => (o === "sort" ? "none" : "sort"))}
-              className="grid size-11 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+              className="grid size-9 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
             >
               <ListFilter className="size-5" />
             </button>
@@ -167,168 +218,56 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               type="button"
               aria-label="Filter tickets"
               onClick={() => setOverlay("filter")}
-              className="grid size-11 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+              className="relative grid size-9 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
             >
               <Settings2 className="size-5" />
+              {activeFacetCount ? (
+                <span className="absolute right-1 top-1 grid size-4 place-items-center rounded-pill bg-accent text-[0.625rem] font-bold text-accent-foreground">
+                  {activeFacetCount}
+                </span>
+              ) : null}
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Date stepper or search field */}
-      <div className="shrink-0 bg-surface px-4 pt-3">
         {overlay === "search" ? (
-          <SearchDock
-            open
-            value={search}
-            onChange={setSearch}
-            onClose={() => {
-              setSearch("");
-              setOverlay("none");
-            }}
-            placeholder="Search by order number..."
-          />
-        ) : (
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2">
-              <button
-                type="button"
-                aria-label="Previous day"
-                onClick={() => shiftTicketDate(-1)}
-                className="grid size-11 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
-              >
-                <ChevronLeft className="size-5" />
-              </button>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button
-                    type="button"
-                    aria-label="Pick a date"
-                    className="flex min-w-0 items-center gap-2 rounded-pill px-2 py-2 transition-colors hover:bg-muted"
-                  >
-                    <Calendar className="size-4 shrink-0 text-muted-foreground" />
-                    <span className="truncate text-fs-sm font-bold text-foreground">
-                      {dateLabel}
-                    </span>
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent align="start" className="w-auto p-0">
-                  <CalendarPicker
-                    mode="single"
-                    selected={new Date(`${ticketDate}T12:00:00`)}
-                    onSelect={(d) => {
-                      if (d) setTicketDate(d.toISOString().slice(0, 10));
-                    }}
-                    className={cn("pointer-events-auto p-3")}
-                  />
-                </PopoverContent>
-              </Popover>
-              <button
-                type="button"
-                aria-label="Next day"
-                onClick={() => shiftTicketDate(1)}
-                className="grid size-11 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
-              >
-                <ChevronRight className="size-5" />
-              </button>
-            </div>
-            <button
-              type="button"
-              aria-label="Search tickets"
-              onClick={() => setOverlay("search")}
-              className="grid size-11 shrink-0 place-items-center rounded-card border border-border text-foreground transition-colors hover:bg-muted"
-            >
-              <Search className="size-5" />
-            </button>
+          <div className="px-2 pt-1.5">
+            <SearchDock
+              open
+              value={search}
+              onChange={setSearch}
+              onClose={() => {
+                setSearch("");
+                setOverlay("none");
+              }}
+              placeholder="Search by order number..."
+            />
           </div>
-        )}
+        ) : null}
 
-        {/* Facet shortcuts — same functions as the live app's header icons */}
-        <div className="no-scrollbar -mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4">
-          {filterFacets.map((f) => {
-            const Icon = f.icon;
-            const selected = filters[f.key] as string[];
-            return (
+        {/* Status chips + amount due */}
+        <div className="flex items-center gap-2 border-b border-border pb-2 pt-1.5">
+          <div className="no-scrollbar flex min-w-0 flex-1 gap-2 overflow-x-auto">
+            {tabs.map((t) => (
               <button
-                key={f.id}
+                key={t.id}
                 type="button"
-                aria-label={
-                  selected.length ? `Clear ${f.label} filter` : `Filter by ${f.label}`
-                }
-                title={f.label}
-                onClick={() => {
-                  if (selected.length) {
-                    setFilters((prev) => ({ ...prev, [f.key]: [] }));
-                    return;
-                  }
-                  setOpenFacet(f.id);
-                  setOverlay("filter");
-                }}
+                onClick={() => setTab(t.id)}
                 className={cn(
-                  "relative grid size-11 shrink-0 place-items-center rounded-card border transition-colors",
-                  selected.length
-                    ? "border-accent bg-accent/10 text-accent"
-                    : "border-border text-foreground hover:bg-muted",
+                  "min-h-ctl-sm shrink-0 rounded-pill px-3 text-fs-xs font-bold transition-colors",
+                  tab === t.id
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:bg-secondary",
                 )}
               >
-                <Icon className="size-5" />
-                {selected.length ? (
-                  <span className="absolute -right-1 -top-1 grid size-4 place-items-center rounded-pill bg-accent text-[0.625rem] font-bold text-accent-foreground">
-                    {selected.length}
-                  </span>
-                ) : null}
+                {t.label}
               </button>
-            );
-          })}
-          <button
-            type="button"
-            aria-label={filters.mineOnly ? "Show all employees" : "Show only my tickets"}
-            title="My tickets"
-            onClick={() => setFilters((prev) => ({ ...prev, mineOnly: !prev.mineOnly }))}
-            className={cn(
-              "grid size-11 shrink-0 place-items-center rounded-card border transition-colors",
-              filters.mineOnly
-                ? "border-accent bg-accent/10 text-accent"
-                : "border-border text-foreground hover:bg-muted",
-            )}
-          >
-            <User className="size-5" />
-          </button>
-          <button
-            type="button"
-            aria-label="Refresh tickets"
-            title="Sync"
-            onClick={() => announce("Tickets refreshed")}
-            className="grid size-11 shrink-0 place-items-center rounded-card border border-border text-foreground transition-colors hover:bg-muted"
-          >
-            <RefreshCcwDot className="size-5" />
-          </button>
-        </div>
-
-        {/* Status chips */}
-        <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-3">
-          {tabs.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => setTab(t.id)}
-              className={cn(
-                "min-h-ctl-sm shrink-0 rounded-pill px-3.5 text-fs-sm font-bold transition-colors",
-                tab === t.id
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-secondary",
-              )}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center justify-between gap-3 border-t border-border py-3">
-          <p className="text-fs-sm font-bold text-muted-foreground">Amount Due</p>
-          <p className="text-fs-sm font-extrabold text-accent">{money(amountDue)}</p>
+            ))}
+          </div>
+          <p className="shrink-0 pr-1 text-fs-xs font-extrabold text-accent">{money(amountDue)}</p>
         </div>
       </div>
+
 
       {/* List */}
       <div
