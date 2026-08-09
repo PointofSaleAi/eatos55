@@ -3,7 +3,9 @@ import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
+import { GuestsSheet } from "@/components/pos/guests-sheet";
 import { StatusSheet, type StatusOption } from "@/components/pos/status-sheet";
+
 import { MenuButton, ScreenBody } from "@/components/pos/shell";
 
 import {
@@ -56,9 +58,10 @@ const statusOptions: StatusOption<TableState>[] = [
 
 function FloorPlan() {
   const navigate = useNavigate();
-  const { floor, setFloor, tableStates, tableSince, setTableState, startOrder } = usePos();
+  const { floor, setFloor, tableStates, tableSince, setTableState, startOrder, settings } = usePos();
   const [tab, setTab] = useState<TableState | "all">("all");
   const [statusFor, setStatusFor] = useState<{ name: string; state: TableState } | null>(null);
+  const [guestsFor, setGuestsFor] = useState<{ name: string; seats: number } | null>(null);
 
   const tables = floorTables
     .filter((t) => t.floor === floor)
@@ -93,13 +96,17 @@ function FloorPlan() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <Link
-            to="/rooms"
-            className="min-h-ctl-sm shrink-0 rounded-pill border border-border px-3.5 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted"
-          >
-            Rooms
-          </Link>
+          {/* Rooms is a hotel module: only shown when room service is switched on. */}
+          {settings.roomService ? (
+            <Link
+              to="/rooms"
+              className="inline-flex h-ctl-sm min-h-ctl-sm shrink-0 items-center justify-center rounded-pill border border-border px-3.5 text-fs-sm font-bold leading-none text-foreground transition-colors hover:bg-muted"
+            >
+              Rooms
+            </Link>
+          ) : null}
         </div>
+
 
         <div className="no-scrollbar -mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4">
           {tableStateTabs.map((s) => (
@@ -135,6 +142,11 @@ function FloorPlan() {
                   <button
                     type="button"
                     onClick={() => {
+                      // Occupied tables resume; free tables ask how many are seated first.
+                      if (t.state === "available" || t.state === "reserved") {
+                        setGuestsFor({ name: t.name, seats: t.seats });
+                        return;
+                      }
                       startOrder(t.name);
                       navigate({ to: "/order/new" });
                     }}
@@ -166,7 +178,6 @@ function FloorPlan() {
                     )}
                   >
                     {meta.label}
-                    <ChevronDown className="size-3.5 shrink-0" aria-hidden />
                   </button>
                 </div>
               );
@@ -174,6 +185,20 @@ function FloorPlan() {
           </div>
         )}
       </ScreenBody>
+
+      <GuestsSheet
+        open={guestsFor !== null}
+        table={guestsFor?.name ?? null}
+        seats={guestsFor?.seats ?? 1}
+        onClose={() => setGuestsFor(null)}
+        onStart={(count) => {
+          if (guestsFor) {
+            startOrder(guestsFor.name, count);
+            setGuestsFor(null);
+            navigate({ to: "/order/new" });
+          }
+        }}
+      />
 
       <StatusSheet
         open={statusFor !== null}
@@ -189,6 +214,7 @@ function FloorPlan() {
           setStatusFor(null);
         }}
       />
+
     </div>
   );
 }

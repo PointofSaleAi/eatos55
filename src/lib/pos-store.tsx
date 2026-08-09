@@ -78,7 +78,10 @@ export type AppSettings = {
   hapticFeedback: boolean;
   deviceName: string;
   deviceService: "Table Service" | "Quick Service";
+  /** Rooms / room-service module: hides the Rooms screen when off. */
+  roomService: boolean;
   language: string;
+
   taxAlias: string;
   appVersion: string;
   restartApp: boolean;
@@ -149,6 +152,8 @@ const defaultSettings: AppSettings = {
   hapticFeedback: true,
   deviceName: "aurora 22",
   deviceService: "Table Service",
+  roomService: false,
+
   language: "English",
   taxAlias: "Tax",
   appVersion: "5.200.27",
@@ -268,7 +273,7 @@ type Store = {
   setTableState: (table: string, state: TableState) => void;
   roomStates: Record<string, RoomState>;
   setRoomState: (room: string, state: RoomState) => void;
-  startOrder: (table?: string) => void;
+  startOrder: (table?: string, partySize?: number) => void;
 
   guest: Guest;
   setGuest: (patch: Partial<Guest>) => void;
@@ -568,16 +573,19 @@ export function PosProvider({ children }: { children: ReactNode }) {
       setGuest: (patch) => setGuestState((g) => ({ ...g, ...patch })),
       orderType,
       setOrderType,
-      startOrder: (table) => {
+      startOrder: (table, partySize) => {
         setCart([]);
         setActiveTicketId(null);
         setActiveTable(table ?? null);
+        if (partySize && partySize > 0) {
+          setGuestState((g) => ({ ...g, partySize }));
+        }
         if (table) {
           setTableStates((s) => ({ ...s, [table]: "ordering" }));
           setTableSince((s) => ({ ...s, [table]: new Date().toISOString() }));
         }
-
       },
+
 
       openTicket: (id) => {
         const ticket = tickets.find((t) => t.id === id);

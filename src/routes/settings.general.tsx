@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   BarChart3,
+  BedDouble,
   CalendarClock,
   CircleDollarSign,
   Globe,
@@ -16,6 +17,7 @@ import {
   GroupCard,
   GroupLabel,
   IconNavRow,
+  IconToggleRow,
   IconValueRow,
   SegmentRow,
 } from "@/components/pos/settings-rows";
@@ -40,7 +42,7 @@ export const Route = createFileRoute("/settings/general")({
 });
 
 function GeneralSettings() {
-  const { settings, updateSettings } = usePos();
+  const { settings, updateSettings, canManageSettings } = usePos();
 
   return (
     <>
@@ -54,11 +56,32 @@ function GeneralSettings() {
             options={["Table Service", "Quick Service"]}
             value={settings.deviceService}
             onChange={(v) => {
+              if (!canManageSettings) {
+                toast.error("Only managers can change these settings.");
+                return;
+              }
               updateSettings({ deviceService: v as typeof settings.deviceService });
               toast.success(`${v} selected`);
             }}
           />
+          {/* Rooms / room service is a hotel module, off unless switched on here. */}
+          <IconToggleRow
+            title="Room Service"
+            value="Show the Rooms screen"
+            icon={BedDouble}
+            color="sky"
+            checked={settings.roomService}
+            onChange={(v) => {
+              if (!canManageSettings) {
+                toast.error("Only managers can change these settings.");
+                return;
+              }
+              updateSettings({ roomService: v });
+              toast.success(v ? "Room service on" : "Room service off");
+            }}
+          />
         </GroupCard>
+
 
         <GroupCard className="mt-6">
           <IconNavRow
