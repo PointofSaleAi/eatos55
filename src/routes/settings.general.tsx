@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   BarChart3,
+  BedDouble,
   CalendarClock,
   CircleDollarSign,
   Globe,
@@ -16,6 +17,7 @@ import {
   GroupCard,
   GroupLabel,
   IconNavRow,
+  IconToggleRow,
   IconValueRow,
   SegmentRow,
 } from "@/components/pos/settings-rows";
