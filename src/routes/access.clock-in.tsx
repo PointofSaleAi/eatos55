@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { Fingerprint, ScanFace, ChevronDown, ReceiptText } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -8,6 +8,10 @@ import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/access/clock-in")({
+  // TEMP DEMO BYPASS: skip the Clock In / PIN keypad.
+  beforeLoad: () => {
+    throw redirect({ to: "/tickets" });
+  },
   head: () => ({
     meta: [
       { title: "Clock In — eatOS Point of Purchase" },
