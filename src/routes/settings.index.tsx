@@ -8,7 +8,6 @@ import {
   Search,
   Settings2,
   SmartphoneNfc,
-  SquarePen,
   Tablet,
   UserRoundCog,
   Utensils,
@@ -53,7 +52,7 @@ type Row = {
 
 function SettingsHub() {
   const navigate = useNavigate();
-  const { session, settings, signOut, startOrder } = usePos();
+  const { session, settings, signOut } = usePos();
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [pinOpen, setPinOpen] = useState(false);
@@ -170,20 +169,7 @@ function SettingsHub() {
             </GroupCard>
           ))
         )}
-        <div className="h-24" />
       </ScreenBody>
-
-      <button
-        type="button"
-        aria-label="New ticket"
-        onClick={() => {
-          startOrder();
-          navigate({ to: "/order/new" });
-        }}
-        className="absolute bottom-24 right-4 z-10 grid size-14 place-items-center rounded-pill bg-primary text-primary-foreground shadow-lg transition-transform active:scale-95"
-      >
-        <SquarePen className="size-6" />
-      </button>
 
       <PinSheet
         open={pinOpen}
