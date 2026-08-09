@@ -485,6 +485,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
     };
   }, [
     session,
+    sessionReady,
+
     tickets,
     sortKey,
     filters,
