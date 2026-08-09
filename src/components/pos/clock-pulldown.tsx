@@ -2,6 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { AccountActions, AccountInfo } from "@/components/pos/account-bar";
 import { PinPad } from "@/components/pos/pin-pad";
 import { usePos } from "@/lib/pos-store";
 
