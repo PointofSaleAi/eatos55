@@ -85,7 +85,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
               value={party}
               onChange={(e) => setParty(Number(e.target.value))}
               aria-label="Party size"
-              className="h-ctl-lg shrink-0 bg-transparent text-fs-sm font-bold text-foreground outline-none"
+              className="h-ctl-lg min-h-tap min-w-[3rem] shrink-0 bg-transparent px-1 text-center text-fs-sm font-bold text-foreground outline-none"
             >
               {Array.from({ length: 12 }, (_, i) => i + 1).map((n) => (
                 <option key={n} value={n}>

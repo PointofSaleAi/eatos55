@@ -42,6 +42,7 @@ function HelpCenter() {
           <Input
             value={q}
             onChange={(e) => setQ(e.target.value)}
+            aria-label="Search guides"
             placeholder="Search guides"
             className="h-12 rounded-row bg-background pl-9"
           />
