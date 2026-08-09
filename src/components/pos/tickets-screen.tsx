@@ -147,7 +147,10 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
       {/* Title bar */}
       <div className="shrink-0 border-b border-border bg-surface px-4 py-3">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-fs-xl font-extrabold text-foreground">Tickets</h1>
+          <div className="flex min-w-0 items-center gap-1">
+            <MenuButton className="-ml-2" />
+            <h1 className="truncate text-fs-xl font-extrabold text-foreground">Tickets</h1>
+          </div>
           <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
