@@ -50,14 +50,26 @@ function Rooms() {
               </div>
               <div
                 className={cn(
-                  "px-3 py-2 text-center text-fs-sm font-extrabold",
+                  "flex items-center justify-center gap-1 px-3 py-2 text-center t-badge",
                   r.state === "occupied"
-                    ? "bg-emerald-100 text-emerald-600"
+                    ? "bg-success/20 text-foreground"
                     : "bg-muted text-muted-foreground",
                 )}
               >
-                {r.state === "occupied" ? "Occupied" : "Available"}
+                {/* Status never relies on colour alone. */}
+                {r.state === "occupied" ? (
+                  <>
+                    <CircleDot className="size-3.5 shrink-0" aria-hidden />
+                    Occupied
+                  </>
+                ) : (
+                  <>
+                    <Circle className="size-3.5 shrink-0" aria-hidden />
+                    Available
+                  </>
+                )}
               </div>
+
             </button>
           ))}
         </div>
