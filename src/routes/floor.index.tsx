@@ -62,11 +62,15 @@ function FloorPlan() {
 
   const tables = floorTables
     .filter((t) => t.floor === floor)
-    .map((t) => ({
-      ...t,
-      state: (tableStates[t.name] ?? t.state) as TableState,
-      since: tableSince[t.name] ? elapsed(tableSince[t.name]) : t.since,
-    }))
+    .map((t) => {
+      const started = tableSince[t.name];
+      return {
+        ...t,
+        state: (tableStates[t.name] ?? t.state) as TableState,
+        since: started ? elapsed(started) : t.since,
+      };
+    })
+
     .filter((t) => (tab === "all" ? true : t.state === tab));
 
   return (
