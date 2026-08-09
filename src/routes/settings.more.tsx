@@ -21,12 +21,44 @@ export const Route = createFileRoute("/settings/more")({
 
 function MoreSettings() {
   const { settings, updateSettings } = usePos();
+  const { appearance, setAppearance } = useAppearance();
 
   return (
     <>
       <ScreenHeader eyebrow="Settings" title="More" back />
       <ScreenBody>
+        <SectionLabel>Appearance</SectionLabel>
+        <Card className="overflow-hidden p-3">
+          <div
+            role="radiogroup"
+            aria-label="Appearance"
+            className="grid grid-cols-3 gap-1 rounded-2xl bg-muted p-1"
+          >
+            {(["light", "dark", "system"] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                role="radio"
+                aria-checked={appearance === mode}
+                onClick={() => setAppearance(mode)}
+                className={
+                  "min-h-ctl-sm rounded-xl text-fs-sm font-extrabold capitalize transition-colors " +
+                  (appearance === mode
+                    ? "bg-surface text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground")
+                }
+              >
+                {mode}
+              </button>
+            ))}
+          </div>
+          <p className="px-1 pt-2 text-fs-xs text-muted-foreground">
+            System follows your phone&apos;s light or dark setting.
+          </p>
+        </Card>
+
         <SectionLabel>Device behaviour</SectionLabel>
+
         <Card className="overflow-hidden">
           <ToggleRow
             title="Offline mode"
