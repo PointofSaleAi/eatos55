@@ -551,6 +551,19 @@ export function PosProvider({ children }: { children: ReactNode }) {
       floor,
       setFloor,
       tableStates,
+      tableSince,
+      setTableState: (table, state) => {
+        setTableStates((s) => ({ ...s, [table]: state }));
+        setTableSince((s) => {
+          const next = { ...s };
+          if (state === "available" || state === "reserved") delete next[table];
+          else next[table] = new Date().toISOString();
+          return next;
+        });
+      },
+      roomStates,
+      setRoomState: (room, state) => setRoomStates((s) => ({ ...s, [room]: state })),
+
       guest,
       setGuest: (patch) => setGuestState((g) => ({ ...g, ...patch })),
       orderType,
