@@ -15,6 +15,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -97,6 +98,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
   const closeNav = useCallback(() => setNavOpen(false), []);
   const navCtx = useMemo(() => ({ open: () => setNavOpen(true) }), []);
   const appChrome = useAppChrome();
+  useSessionGate();
   useGlobalKeyboardAware();
   // Follows the system light/dark appearance unless overridden in Settings.
   useAppearance();
