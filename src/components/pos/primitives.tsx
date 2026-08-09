@@ -252,21 +252,29 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
       <div className="flex items-center gap-2 px-2 py-1.5">
         <button
           type="button"
-          aria-label={
-            ticket.table ? `Open table ${ticket.table} ticket` : `Open ${orderTypeLabel} ticket`
-          }
-          title={ticket.table ? `Table ${ticket.table}` : orderTypeLabel}
+          aria-label={`Open order ${orderNo} — ${orderTypeLabel}${ticket.table ? `, table ${ticket.table}` : ""}`}
+          title={ticket.table ? `Table ${ticket.table} · ${orderTypeLabel}` : orderTypeLabel}
           onClick={onClick}
-          className="flex shrink-0 items-center gap-1.5 rounded-row bg-muted px-2 py-1.5 t-row text-foreground transition-colors hover:bg-secondary"
+          className="flex shrink-0 items-center gap-2 rounded-row bg-muted px-2 py-1.5 text-left transition-colors hover:bg-secondary"
         >
-          {ticket.table ? (
-            <>
-              <Table2 className="size-4" aria-hidden />
-              {ticket.table}
-            </>
-          ) : (
-            <OrderTypeIcon className="size-4" aria-hidden />
-          )}
+          <span className="flex shrink-0 items-center gap-1 text-foreground">
+            {ticket.table ? (
+              <>
+                <Table2 className="size-4" aria-hidden />
+                <span className="t-row tabular-nums">{ticket.table}</span>
+              </>
+            ) : (
+              <OrderTypeIcon className="size-4" aria-hidden />
+            )}
+          </span>
+          <span className="block min-w-0">
+            <span className="block whitespace-nowrap t-row tabular-nums text-foreground">
+              {orderNo}
+            </span>
+            <span className="block whitespace-nowrap t-caption text-muted-foreground">
+              {orderTypeLabel}
+            </span>
+          </span>
         </button>
         <button
           type="button"
@@ -275,10 +283,6 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
           className="min-h-row min-w-0 flex-1 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted @[34rem]:flex @[34rem]:items-center @[34rem]:gap-2"
         >
           <span className="flex min-w-0 items-center gap-2">
-            <span className="shrink-0 t-row text-muted-foreground">
-              Order No{" "}
-              <span className="tabular-nums text-foreground">{orderNo}</span>
-            </span>
             <span className="min-w-0 flex-1 truncate t-row text-foreground">{ticket.label}</span>
             <span className="shrink-0 t-row text-foreground">{money(ticket.total)}</span>
             <span className={cn("shrink-0 t-badge", meta.tone)}>{meta.label}</span>
@@ -291,10 +295,6 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
             />
           </span>
           <span className="mt-0.5 flex min-w-0 items-center gap-2 @[34rem]:mt-0 @[34rem]:shrink-0">
-            <span className="flex shrink-0 items-center gap-1 t-caption text-muted-foreground">
-              <OrderTypeIcon className="size-3.5" aria-hidden />
-              {orderTypeLabel}
-            </span>
             <span className="min-w-0 truncate t-caption text-muted-foreground">
               Arrived At {ticket.arrivedAt}
             </span>
@@ -309,6 +309,7 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
           </span>
         </button>
       </div>
+
 
 
       {open ? (
