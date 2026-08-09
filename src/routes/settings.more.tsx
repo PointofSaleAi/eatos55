@@ -4,6 +4,7 @@ import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
 import { ActionRow, Card, NavRow, SectionLabel, ToggleRow } from "@/components/pos/primitives";
 import { usePos } from "@/lib/pos-store";
 import { useAppearance } from "@/hooks/use-appearance";
+import { useConfirm } from "@/components/pos/confirm-sheet";
 
 export const Route = createFileRoute("/settings/more")({
   head: () => ({
