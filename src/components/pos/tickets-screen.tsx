@@ -22,6 +22,8 @@ import { useConfirm } from "@/components/pos/confirm-sheet";
 import { useAnnounce } from "@/components/pos/live-region";
 import { usePullToRefresh } from "@/hooks/use-pull-to-refresh";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { usePos, emptyFilters, type SortKey } from "@/lib/pos-store";
 import {
   employees,
@@ -107,6 +109,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
     filters,
     setFilters,
     ticketDate,
+    setTicketDate,
     shiftTicketDate,
     setTicketStatus,
   } = usePos();
@@ -196,8 +199,30 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
               >
                 <ChevronLeft className="size-5" />
               </button>
-              <Calendar className="size-4 shrink-0 text-muted-foreground" />
-              <span className="truncate text-fs-sm font-bold text-foreground">{dateLabel}</span>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label="Pick a date"
+                    className="flex min-w-0 items-center gap-2 rounded-pill px-2 py-2 transition-colors hover:bg-muted"
+                  >
+                    <Calendar className="size-4 shrink-0 text-muted-foreground" />
+                    <span className="truncate text-fs-sm font-bold text-foreground">
+                      {dateLabel}
+                    </span>
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent align="start" className="w-auto p-0">
+                  <CalendarPicker
+                    mode="single"
+                    selected={new Date(`${ticketDate}T12:00:00`)}
+                    onSelect={(d) => {
+                      if (d) setTicketDate(d.toISOString().slice(0, 10));
+                    }}
+                    className={cn("pointer-events-auto p-3")}
+                  />
+                </PopoverContent>
+              </Popover>
               <button
                 type="button"
                 aria-label="Next day"
@@ -217,6 +242,68 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
             </button>
           </div>
         )}
+
+        {/* Facet shortcuts — same functions as the live app's header icons */}
+        <div className="no-scrollbar -mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4">
+          {filterFacets.map((f) => {
+            const Icon = f.icon;
+            const selected = filters[f.key] as string[];
+            return (
+              <button
+                key={f.id}
+                type="button"
+                aria-label={
+                  selected.length ? `Clear ${f.label} filter` : `Filter by ${f.label}`
+                }
+                title={f.label}
+                onClick={() => {
+                  if (selected.length) {
+                    setFilters((prev) => ({ ...prev, [f.key]: [] }));
+                    return;
+                  }
+                  setOpenFacet(f.id);
+                  setOverlay("filter");
+                }}
+                className={cn(
+                  "relative grid size-11 shrink-0 place-items-center rounded-card border transition-colors",
+                  selected.length
+                    ? "border-accent bg-accent/10 text-accent"
+                    : "border-border text-foreground hover:bg-muted",
+                )}
+              >
+                <Icon className="size-5" />
+                {selected.length ? (
+                  <span className="absolute -right-1 -top-1 grid size-4 place-items-center rounded-pill bg-accent text-[0.625rem] font-bold text-accent-foreground">
+                    {selected.length}
+                  </span>
+                ) : null}
+              </button>
+            );
+          })}
+          <button
+            type="button"
+            aria-label={filters.mineOnly ? "Show all employees" : "Show only my tickets"}
+            title="My tickets"
+            onClick={() => setFilters((prev) => ({ ...prev, mineOnly: !prev.mineOnly }))}
+            className={cn(
+              "grid size-11 shrink-0 place-items-center rounded-card border transition-colors",
+              filters.mineOnly
+                ? "border-accent bg-accent/10 text-accent"
+                : "border-border text-foreground hover:bg-muted",
+            )}
+          >
+            <User className="size-5" />
+          </button>
+          <button
+            type="button"
+            aria-label="Refresh tickets"
+            title="Sync"
+            onClick={() => announce("Tickets refreshed")}
+            className="grid size-11 shrink-0 place-items-center rounded-card border border-border text-foreground transition-colors hover:bg-muted"
+          >
+            <RefreshCcwDot className="size-5" />
+          </button>
+        </div>
 
         {/* Status chips */}
         <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-3">
