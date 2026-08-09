@@ -220,6 +220,8 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
     year: "numeric",
   });
 
+  const orderTypeLabel = ticket.orderType ?? modeOrderType(ticket.mode);
+
   return (
     <div className="@container w-full overflow-hidden rounded-card border border-border bg-surface">
       <div className="flex items-center gap-2 px-2 py-1.5">
@@ -236,21 +238,43 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
           type="button"
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="flex min-h-row min-w-0 flex-1 items-center gap-2 rounded-row px-1 text-left transition-colors hover:bg-muted"
+          className="min-h-row min-w-0 flex-1 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted @[34rem]:flex @[34rem]:items-center @[34rem]:gap-2"
         >
-          <span className="min-w-0 flex-1 truncate t-row text-foreground">{ticket.label}</span>
-          <span className="shrink-0 t-caption text-muted-foreground">{timer}</span>
-          <span className="shrink-0 t-row text-foreground">{money(ticket.total)}</span>
-          <span className={cn("shrink-0 t-badge", meta.tone)}>{meta.label}</span>
-          <ChevronDown
-            className={cn(
-              "size-4 shrink-0 text-muted-foreground transition-transform",
-              open && "rotate-180",
-            )}
-            aria-hidden
-          />
+          <span className="flex min-w-0 items-center gap-2">
+            <span className="shrink-0 t-row text-muted-foreground">
+              Order No <span className="text-foreground">{ticket.number}</span>
+            </span>
+            <span className="min-w-0 flex-1 truncate t-row text-foreground">{ticket.label}</span>
+            <span className="shrink-0 t-row text-foreground">{money(ticket.total)}</span>
+            <span className={cn("shrink-0 t-badge", meta.tone)}>{meta.label}</span>
+            <ChevronDown
+              className={cn(
+                "size-4 shrink-0 text-muted-foreground transition-transform @[34rem]:hidden",
+                open && "rotate-180",
+              )}
+              aria-hidden
+            />
+          </span>
+          <span className="mt-0.5 flex min-w-0 items-center gap-2 @[34rem]:mt-0 @[34rem]:shrink-0">
+            <span className="flex shrink-0 items-center gap-1 t-caption text-muted-foreground">
+              <Utensils className="size-3.5" aria-hidden />
+              {orderTypeLabel}
+            </span>
+            <span className="min-w-0 truncate t-caption text-muted-foreground">
+              Arrived At {ticket.arrivedAt}
+            </span>
+            <span className="shrink-0 t-caption text-muted-foreground">{timer}</span>
+            <ChevronDown
+              className={cn(
+                "ml-auto hidden size-4 shrink-0 text-muted-foreground transition-transform @[34rem]:block",
+                open && "rotate-180",
+              )}
+              aria-hidden
+            />
+          </span>
         </button>
       </div>
+
 
       {open ? (
         <div className="border-t border-border px-3 py-3">
