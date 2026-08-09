@@ -84,6 +84,8 @@ function SettingsHub() {
       [
         { title: "Notifications", icon: Bell, color: "grey", to: "/settings/notifications" },
         { title: "Customer Support", icon: Headset, color: "red", to: "/system/customer-support" },
+        { title: "Contact Us", icon: Mail, color: "blue", to: "/system/contact-us" },
+        { title: "Help Center", icon: LifeBuoy, color: "sky", to: "/system/help-center" },
       ],
       [
         {
@@ -91,6 +93,24 @@ function SettingsHub() {
           icon: Settings2,
           color: "slate",
           onClick: () => setPinOpen(true),
+        },
+        {
+          title: "Sign Out",
+          icon: LogOut,
+          color: "red",
+          onClick: () => {
+            void (async () => {
+              const ok = await confirm({
+                title: "Sign out?",
+                message: "You will need to sign in again to use this device.",
+                confirmLabel: "Sign Out",
+                destructive: true,
+              });
+              if (!ok) return;
+              signOut();
+              navigate({ to: "/" });
+            })();
+          },
         },
       ],
     ],
