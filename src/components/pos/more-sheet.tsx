@@ -1,9 +1,11 @@
-import { BadgePercent, Check, Percent, Receipt, Wallet } from "lucide-react";
+import { BadgePercent, Check, Percent, Receipt, Trash2, Wallet } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useConfirm } from "@/components/pos/confirm-sheet";
 import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
@@ -18,7 +20,11 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
     setServiceCharge,
     orderDiscountPercent,
     setOrderDiscountPercent,
+    cart,
+    cancelOrder,
   } = usePos();
+  const confirm = useConfirm();
+  const router = useRouter();
   const [chargeOpen, setChargeOpen] = useState(false);
   const [charge, setCharge] = useState(String(serviceCharge || ""));
   const [discountOpen, setDiscountOpen] = useState(false);
@@ -49,6 +55,29 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
       icon: BadgePercent,
       value: orderDiscountPercent ? `${orderDiscountPercent}%` : "",
       onClick: () => setDiscountOpen(true),
+    },
+    {
+      id: "cancel-order",
+      label: "Cancel Order",
+      icon: Trash2,
+      value: "",
+      onClick: () => {
+        void (async () => {
+          const ok = await confirm({
+            title: "Cancel this order?",
+            message: cart.length
+              ? "This cannot be undone — every item on the order is removed."
+              : "The order in progress is discarded.",
+            confirmLabel: "Cancel order",
+            destructive: true,
+          });
+          if (!ok) return;
+          cancelOrder();
+          onClose();
+          toast.success("Order cancelled");
+          router.navigate({ to: "/tickets" });
+        })();
+      },
     },
     {
       id: "open-register",
@@ -85,10 +114,20 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
                     i % 2 === 0 ? "bg-muted/40" : "bg-surface",
                   )}
                 >
-                  <span className="grid size-9 tap-safe shrink-0 place-items-center rounded-row bg-muted text-muted-foreground">
+                  <span
+                    className={cn(
+                      "grid size-9 tap-safe shrink-0 place-items-center rounded-row bg-muted",
+                      r.id === "cancel-order" ? "text-destructive" : "text-muted-foreground",
+                    )}
+                  >
                     <Icon className="size-5" />
                   </span>
-                  <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
+                  <span
+                    className={cn(
+                      "min-w-0 flex-1 truncate text-fs-sm font-bold",
+                      r.id === "cancel-order" ? "text-destructive" : "text-foreground",
+                    )}
+                  >
                     {r.label}
                   </span>
                   {r.value ? (

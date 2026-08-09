@@ -299,6 +299,10 @@ type Store = {
   changeQty: (id: string, delta: number) => void;
   removeLine: (id: string) => void;
   clearCart: () => void;
+  /** Abandon the order in progress: cart, payments and table hold are cleared. */
+  cancelOrder: () => void;
+  /** Cancel an existing ticket and remove it from the queue. */
+  cancelTicket: (id: string) => void;
   noTax: boolean;
   setNoTax: (v: boolean) => void;
   serviceCharge: number;
@@ -671,6 +675,39 @@ export function PosProvider({ children }: { children: ReactNode }) {
         ),
       removeLine: (id) => setCart((list) => list.filter((l) => l.id !== id)),
       clearCart: () => setCart([]),
+      cancelOrder: () => {
+        setCart([]);
+        setActiveTicketId(null);
+        setPaidSoFar(0);
+        if (activeTable) {
+          setTableStates((s) => ({ ...s, [activeTable]: "available" }));
+          setTableSince((s) => {
+            const next = { ...s };
+            delete next[activeTable];
+            return next;
+          });
+        }
+        setActiveTable(null);
+      },
+      cancelTicket: (id) => {
+        const ticket = tickets.find((t) => t.id === id);
+        setTickets((list) => list.filter((t) => t.id !== id));
+        const table = ticket?.table ? String(ticket.table) : null;
+        if (table) {
+          setTableStates((s) => ({ ...s, [table]: "available" }));
+          setTableSince((s) => {
+            const next = { ...s };
+            delete next[table];
+            return next;
+          });
+        }
+        if (activeTicketId === id) {
+          setCart([]);
+          setActiveTicketId(null);
+          setPaidSoFar(0);
+          setActiveTable(null);
+        }
+      },
       noTax,
       setNoTax,
       serviceCharge,

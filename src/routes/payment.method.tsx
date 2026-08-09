@@ -73,7 +73,7 @@ function PaymentMethod() {
       id: "split",
       label: "Split",
       icon: Split,
-      onPick: () => navigate({ to: "/payment/tender/$kind", params: { kind: "split" } }),
+      onPick: () => navigate({ to: "/payment/split" }),
     },
     {
       id: "house",
@@ -145,7 +145,7 @@ function PaymentMethod() {
         ) : null}
       </div>
 
-      <div className="shrink-0 rounded-t-sheet border-t border-border bg-surface px-3 pb-[max(0.75rem,var(--kb-inset,0px))] pt-4">
+      <div className="shrink-0 rounded-t-sheet border-t border-border bg-surface px-3 pb-[calc(0.75rem+var(--kb-inset,0px)+var(--tabs-h,0px))] pt-4">
         <p className="text-center text-fs-lg font-extrabold text-foreground">Select Payment Method</p>
         <p className="pb-3 text-center text-fs-sm text-muted-foreground">
           Total due <span className="tap-safe font-extrabold text-foreground">{money(due)}</span>

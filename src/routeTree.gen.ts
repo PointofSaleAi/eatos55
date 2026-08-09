@@ -25,6 +25,7 @@ import { Route as OrdersIndexRouteImport } from './routes/orders.index'
 import { Route as PaymentCardRouteImport } from './routes/payment.card'
 import { Route as PaymentCashRouteImport } from './routes/payment.cash'
 import { Route as PaymentMethodRouteImport } from './routes/payment.method'
+import { Route as PaymentSplitRouteImport } from './routes/payment.split'
 import { Route as PaymentSuccessRouteImport } from './routes/payment.success'
 import { Route as RoomsIndexRouteImport } from './routes/rooms.index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
@@ -136,6 +137,11 @@ const PaymentCashRoute = PaymentCashRouteImport.update({
 const PaymentMethodRoute = PaymentMethodRouteImport.update({
   id: '/payment/method',
   path: '/payment/method',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentSplitRoute = PaymentSplitRouteImport.update({
+  id: '/payment/split',
+  path: '/payment/split',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
@@ -314,6 +320,7 @@ export interface FileRoutesByFullPath {
   '/payment/card': typeof PaymentCardRoute
   '/payment/cash': typeof PaymentCashRoute
   '/payment/method': typeof PaymentMethodRoute
+  '/payment/split': typeof PaymentSplitRoute
   '/payment/success': typeof PaymentSuccessRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
@@ -364,6 +371,7 @@ export interface FileRoutesByTo {
   '/payment/card': typeof PaymentCardRoute
   '/payment/cash': typeof PaymentCashRoute
   '/payment/method': typeof PaymentMethodRoute
+  '/payment/split': typeof PaymentSplitRoute
   '/payment/success': typeof PaymentSuccessRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
@@ -415,6 +423,7 @@ export interface FileRoutesById {
   '/payment/card': typeof PaymentCardRoute
   '/payment/cash': typeof PaymentCashRoute
   '/payment/method': typeof PaymentMethodRoute
+  '/payment/split': typeof PaymentSplitRoute
   '/payment/success': typeof PaymentSuccessRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
@@ -467,6 +476,7 @@ export interface FileRouteTypes {
     | '/payment/card'
     | '/payment/cash'
     | '/payment/method'
+    | '/payment/split'
     | '/payment/success'
     | '/settings/control-center'
     | '/settings/general'
@@ -517,6 +527,7 @@ export interface FileRouteTypes {
     | '/payment/card'
     | '/payment/cash'
     | '/payment/method'
+    | '/payment/split'
     | '/payment/success'
     | '/settings/control-center'
     | '/settings/general'
@@ -567,6 +578,7 @@ export interface FileRouteTypes {
     | '/payment/card'
     | '/payment/cash'
     | '/payment/method'
+    | '/payment/split'
     | '/payment/success'
     | '/settings/control-center'
     | '/settings/general'
@@ -618,6 +630,7 @@ export interface RootRouteChildren {
   PaymentCardRoute: typeof PaymentCardRoute
   PaymentCashRoute: typeof PaymentCashRoute
   PaymentMethodRoute: typeof PaymentMethodRoute
+  PaymentSplitRoute: typeof PaymentSplitRoute
   PaymentSuccessRoute: typeof PaymentSuccessRoute
   SettingsControlCenterRoute: typeof SettingsControlCenterRoute
   SettingsGeneralRoute: typeof SettingsGeneralRoute
@@ -766,6 +779,13 @@ declare module '@tanstack/react-router' {
       path: '/payment/method'
       fullPath: '/payment/method'
       preLoaderRoute: typeof PaymentMethodRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/split': {
+      id: '/payment/split'
+      path: '/payment/split'
+      fullPath: '/payment/split'
+      preLoaderRoute: typeof PaymentSplitRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/payment/success': {
@@ -1020,6 +1040,7 @@ const rootRouteChildren: RootRouteChildren = {
   PaymentCardRoute: PaymentCardRoute,
   PaymentCashRoute: PaymentCashRoute,
   PaymentMethodRoute: PaymentMethodRoute,
+  PaymentSplitRoute: PaymentSplitRoute,
   PaymentSuccessRoute: PaymentSuccessRoute,
   SettingsControlCenterRoute: SettingsControlCenterRoute,
   SettingsGeneralRoute: SettingsGeneralRoute,
@@ -1058,13 +1079,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

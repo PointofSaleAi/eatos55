@@ -80,7 +80,7 @@ export function TenderScreen({
         />
       </div>
 
-      <div className="shrink-0 border-t border-border bg-surface p-3">
+      <div className="shrink-0 border-t border-border bg-surface p-3 pb-[calc(0.75rem+var(--kb-inset,0px)+var(--tabs-h,0px))]">
         <button
           type="button"
           disabled={entered <= 0}

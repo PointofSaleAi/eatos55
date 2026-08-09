@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
-import { ChevronDown, Printer } from "lucide-react";
+import { ChevronDown, Printer, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/pos/confirm-sheet";
 import { ScreenBody, ScreenFooter, ScreenHeader } from "@/components/pos/shell";
 import { Card } from "@/components/pos/primitives";
 import { TipSheet } from "@/components/pos/tip-sheet";
@@ -27,7 +28,8 @@ export const Route = createFileRoute("/tickets/$ticketId")({
 function TicketDetail() {
   const { ticketId } = useParams({ from: "/tickets/$ticketId" });
   const navigate = useNavigate();
-  const { tickets, session, openTicket, setTicketStatus, addTip } = usePos();
+  const { tickets, session, openTicket, setTicketStatus, addTip, cancelTicket } = usePos();
+  const confirm = useConfirm();
   const ticket = tickets.find((t) => t.id === ticketId);
   const [tipOpen, setTipOpen] = useState(false);
   const [paidOpen, setPaidOpen] = useState(false);
@@ -66,7 +68,7 @@ function TicketDetail() {
           </span>
         }
       />
-      <ScreenBody>
+      <ScreenBody hug>
         <Card className="p-4">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
             <div className="min-w-0">
@@ -200,18 +202,42 @@ function TicketDetail() {
               Close
             </Button>
           ) : (
-            <Button
-              className="h-12 flex-1 rounded-pill bg-accent font-extrabold uppercase tracking-[0.08em] text-accent-foreground hover:bg-accent/90"
-              onClick={() => {
-                openTicket(ticket.id);
-                navigate({ to: "/order/review" });
-              }}
-            >
-              Take payment
-            </Button>
+            <>
+              <Button
+                variant="outline"
+                aria-label="Cancel order"
+                className="h-12 w-14 shrink-0 rounded-pill border-destructive/40 text-destructive"
+                onClick={() => {
+                  void (async () => {
+                    const ok = await confirm({
+                      title: `Cancel order ${ticket.number}?`,
+                      message: "This cannot be undone — the ticket leaves the queue.",
+                      confirmLabel: "Cancel order",
+                      destructive: true,
+                    });
+                    if (!ok) return;
+                    cancelTicket(ticket.id);
+                    toast.success(`Order ${ticket.number} cancelled`);
+                    navigate({ to: "/tickets" });
+                  })();
+                }}
+              >
+                <Trash2 className="size-5" />
+              </Button>
+              <Button
+                className="h-12 flex-1 rounded-pill bg-accent font-extrabold uppercase tracking-[0.08em] text-accent-foreground hover:bg-accent/90"
+                onClick={() => {
+                  openTicket(ticket.id);
+                  navigate({ to: "/order/review" });
+                }}
+              >
+                Take payment
+              </Button>
+            </>
           )}
         </div>
       </ScreenFooter>
+
 
       <TipSheet
         open={tipOpen}
