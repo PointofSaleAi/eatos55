@@ -259,8 +259,13 @@ type Store = {
   activeTable: string | null;
   floor: string;
   setFloor: (f: string) => void;
-  tableStates: Record<string, "ordering">;
+  tableStates: Record<string, TableState>;
+  tableSince: Record<string, string>;
+  setTableState: (table: string, state: TableState) => void;
+  roomStates: Record<string, RoomState>;
+  setRoomState: (room: string, state: RoomState) => void;
   startOrder: (table?: string) => void;
+
   guest: Guest;
   setGuest: (patch: Partial<Guest>) => void;
   orderType: ServiceOrderType;
