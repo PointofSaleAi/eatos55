@@ -14,10 +14,20 @@ import {
   type TicketStatus,
 } from "./demo-data";
 import type { TableState } from "./floor-data";
+import {
+  inRange,
+  rangeForPreset,
+  shiftRange,
+  type RangePreset,
+  type TicketRange,
+} from "./date-range";
 
 export type RoomState = "available" | "occupied";
 
 export type SortKey = "time-late-early" | "time-early-late" | "orders-z-a" | "orders-a-z";
+
+export type SearchScope = "all" | "order" | "transaction" | "guest" | "employee" | "orderType";
+
 
 
 export type TicketFilters = {
@@ -258,10 +268,18 @@ type Store = {
   setFilters: React.Dispatch<React.SetStateAction<TicketFilters>>;
   search: string;
   setSearch: (s: string) => void;
+  searchScope: SearchScope;
+  setSearchScope: (s: SearchScope) => void;
+  searchAllDates: boolean;
+  setSearchAllDates: (v: boolean) => void;
   ticketDate: string;
   setTicketDate: (d: string) => void;
+  ticketRange: TicketRange;
+  setTicketRange: (r: TicketRange) => void;
+  applyRangePreset: (p: RangePreset) => void;
   shiftTicketDate: (days: number) => void;
   visibleTickets: (tab: TicketStatus | "all", opts?: { ignoreDate?: boolean }) => Ticket[];
+
   setTicketStatus: (id: string, status: TicketStatus) => void;
   addTip: (id: string, amount: number) => void;
 
@@ -388,8 +406,17 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [sortKey, setSortKey] = useState<SortKey>("time-early-late");
   const [filters, setFilters] = useState<TicketFilters>(emptyFilters);
   const [search, setSearch] = useState("");
-  const [ticketDate, setTicketDate] = useState(DEFAULT_TICKET_DATE);
+  const [searchScope, setSearchScope] = useState<SearchScope>("all");
+  const [searchAllDates, setSearchAllDates] = useState(true);
+  const [ticketRange, setTicketRange] = useState<TicketRange>({
+    start: DEFAULT_TICKET_DATE,
+    end: DEFAULT_TICKET_DATE,
+    preset: "day",
+  });
+  const ticketDate = ticketRange.start;
   const [mode, setMode] = useState<MenuMode>("dine-in");
+
+
   const [cart, setCart] = useState<CartLine[]>([]);
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
   const [activeTable, setActiveTable] = useState<string | null>(null);
@@ -510,19 +537,23 @@ export function PosProvider({ children }: { children: ReactNode }) {
       setFilters,
       search,
       setSearch,
+      searchScope,
+      setSearchScope,
+      searchAllDates,
+      setSearchAllDates,
       ticketDate,
-      setTicketDate,
+      setTicketDate: (d) => setTicketRange({ start: d, end: d, preset: "day" }),
+      ticketRange,
+      setTicketRange,
+      applyRangePreset: (p) => setTicketRange(rangeForPreset(p, DEFAULT_TICKET_DATE)),
       shiftTicketDate: (days) =>
-        setTicketDate((d) => {
-          const next = new Date(`${d}T12:00:00`);
-          next.setDate(next.getDate() + days);
-          return next.toISOString().slice(0, 10);
-        }),
+        setTicketRange((r) => shiftRange(r, days > 0 ? 1 : -1)),
       visibleTickets: (tab, opts) => {
         let list = [...tickets];
         if (!opts?.ignoreDate) {
-          list = list.filter((t) => t.date === ticketDate);
+          list = list.filter((t) => inRange(t.date, ticketRange));
         }
+
         if (tab !== "all") {
           list = list.filter((t) => t.status === tab);
         }
@@ -554,14 +585,44 @@ export function PosProvider({ children }: { children: ReactNode }) {
         }
         const q = search.trim().toLowerCase();
         if (q) {
-          list = list.filter(
-            (t) =>
-              t.label.toLowerCase().includes(q) ||
-              String(t.number).includes(q) ||
-              t.id.toLowerCase().includes(q) ||
-              t.id.replace("t-", "").includes(q),
-          );
+          const has = (v: string | number | undefined) =>
+            v !== undefined && String(v).toLowerCase().includes(q);
+          const matchOrder = (t: Ticket) =>
+            has(t.orderNo) ||
+            has(t.checkNumber) ||
+            has(t.number) ||
+            has(t.id) ||
+            has(t.id.replace("t-", ""));
+          const matchTxn = (t: Ticket) =>
+            (t.payments ?? []).some((p) => has(p.ref) || has(p.no) || has(p.method));
+          const matchGuest = (t: Ticket) => has(t.label) || has(t.guestEmail) || has(t.notes);
+          const matchEmployee = (t: Ticket) => has(t.server);
+          const matchOrderType = (t: Ticket) =>
+            has(t.orderType) || has(modeOrderType(t.mode)) || has(t.revenueCenter);
+          list = list.filter((t) => {
+            switch (searchScope) {
+              case "order":
+                return matchOrder(t);
+              case "transaction":
+                return matchTxn(t);
+              case "guest":
+                return matchGuest(t);
+              case "employee":
+                return matchEmployee(t);
+              case "orderType":
+                return matchOrderType(t);
+              default:
+                return (
+                  matchOrder(t) ||
+                  matchTxn(t) ||
+                  matchGuest(t) ||
+                  matchEmployee(t) ||
+                  matchOrderType(t)
+                );
+            }
+          });
         }
+
         list.sort((a, b) => {
           if (sortKey === "time-late-early") return a.arrivedMinutesAgo - b.arrivedMinutesAgo;
           if (sortKey === "time-early-late") return b.arrivedMinutesAgo - a.arrivedMinutesAgo;
@@ -840,7 +901,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
     sortKey,
     filters,
     search,
+    searchScope,
+    searchAllDates,
     ticketDate,
+    ticketRange,
+
     mode,
     cart,
     activeTicketId,

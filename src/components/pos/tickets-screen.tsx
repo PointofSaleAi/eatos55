@@ -3,6 +3,8 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+
   Clock,
   CreditCard,
   ListFilter,
@@ -12,6 +14,8 @@ import {
   User,
   ReceiptText,
   RefreshCcwDot,
+  X,
+
 } from "lucide-react";
 import { useState } from "react";
 import { MenuButton } from "@/components/pos/shell";
@@ -24,14 +28,24 @@ import { usePullToRefresh } from "@/hooks/use-pull-to-refresh";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
-import { usePos, emptyFilters, type SortKey } from "@/lib/pos-store";
+import { usePos, emptyFilters, type SortKey, type SearchScope } from "@/lib/pos-store";
 import {
+  iso,
+  parseIso,
+  presetOptions,
+  rangeLabel,
+  type RangePreset,
+} from "@/lib/date-range";
+import type { DateRange } from "react-day-picker";
+import {
+  DEFAULT_TICKET_DATE,
   employees,
   paymentTypes,
   revenueCenters,
   ticketOrderTypes,
   type TicketStatus,
 } from "@/lib/demo-data";
+
 
 import { SearchDock } from "@/components/pos/search-dock";
 import { cn } from "@/lib/utils";
@@ -57,7 +71,26 @@ const tabs: { id: Tab; label: string }[] = [
   { id: "closed", label: "Closed" },
 ];
 
+const scopeOptions: { id: SearchScope; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "order", label: "Order No" },
+  { id: "transaction", label: "Transaction" },
+  { id: "guest", label: "Guest" },
+  { id: "employee", label: "Employee" },
+  { id: "orderType", label: "Order type" },
+];
+
+const scopePlaceholder: Record<SearchScope, string> = {
+  all: "Search orders, guests, staff…",
+  order: "Search by order or check number…",
+  transaction: "Search by transaction reference…",
+  guest: "Search by guest name or email…",
+  employee: "Search by employee name…",
+  orderType: "Search by order type…",
+};
+
 const sortOptions: { id: SortKey; icon: typeof Clock; strong: string; rest: string }[] = [
+
   { id: "time-late-early", icon: Clock, strong: "Time", rest: "Late → Early" },
   { id: "time-early-late", icon: Clock, strong: "Time", rest: "Early → Late" },
   { id: "orders-z-a", icon: SoupIcon, strong: "Orders", rest: "Z → A" },
@@ -105,10 +138,15 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
     setSortKey,
     search,
     setSearch,
+    searchScope,
+    setSearchScope,
+    searchAllDates,
+    setSearchAllDates,
     filters,
     setFilters,
-    ticketDate,
-    setTicketDate,
+    ticketRange,
+    setTicketRange,
+    applyRangePreset,
     shiftTicketDate,
     cancelTicket,
   } = usePos();
@@ -117,16 +155,21 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
   const [tab, setTab] = useState<Tab>("all");
   const [overlay, setOverlay] = useState<TicketsOverlay>(initialOverlay);
   const [openFacet, setOpenFacet] = useState<string | null>(null);
+  const [rangeOpen, setRangeOpen] = useState(false);
+  const [draft, setDraft] = useState<DateRange | undefined>({
+    from: parseIso(ticketRange.start),
+    to: parseIso(ticketRange.end),
+  });
   const ptr = usePullToRefresh(async () => {
     await new Promise((r) => setTimeout(r, 600));
     announce("Tickets refreshed");
   });
 
-
+  const searching = overlay === "search" && search.trim().length > 0;
 
   const aggregate = tab === "all" || tab === "unpaid" || tab === "open" || tab === "closed";
   const baseList = visibleTickets(aggregate ? "all" : tab, {
-    ignoreDate: overlay === "search" && search.trim().length > 0,
+    ignoreDate: searching && searchAllDates,
   });
   const list =
     tab === "unpaid" || tab === "open"
@@ -135,16 +178,41 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
         ? baseList.filter((t) => t.status === "paid")
         : baseList;
 
-  const dateLabel = new Date(`${ticketDate}T12:00:00`).toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
+  const dateLabel = rangeLabel(ticketRange, DEFAULT_TICKET_DATE);
+  const isDefaultPeriod =
+    ticketRange.start === DEFAULT_TICKET_DATE && ticketRange.end === DEFAULT_TICKET_DATE;
 
   const activeFacetCount = filterFacets.reduce(
     (s, f) => s + (filters[f.key] as string[]).length,
     0,
   ) + (filters.mineOnly ? 1 : 0);
+
+  const activeChips: { id: string; label: string; clear: () => void }[] = [
+    ...(isDefaultPeriod
+      ? []
+      : [{ id: "period", label: dateLabel, clear: () => applyRangePreset("today") }]),
+    ...filterFacets.flatMap((f) =>
+      (filters[f.key] as string[]).map((opt) => ({
+        id: `${f.key}-${opt}`,
+        label: opt,
+        clear: () =>
+          setFilters((prev) => ({
+            ...prev,
+            [f.key]: (prev[f.key] as string[]).filter((s) => s !== opt),
+          })),
+      })),
+    ),
+    ...(filters.mineOnly
+      ? [
+          {
+            id: "mine",
+            label: "My tickets",
+            clear: () => setFilters((prev) => ({ ...prev, mineOnly: false })),
+          },
+        ]
+      : []),
+  ];
+
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col bg-background">
@@ -193,39 +261,31 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
           <div className="flex shrink-0 items-center">
             <button
               type="button"
-              aria-label="Previous day"
+              aria-label="Previous period"
               onClick={() => shiftTicketDate(-1)}
               className="grid size-9 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
             >
               <ChevronLeft className="size-4" />
             </button>
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  aria-label="Pick a date"
-                  className="flex shrink-0 items-center gap-1.5 rounded-pill px-2 py-2 transition-colors hover:bg-muted"
-                >
-                  <Calendar className="size-4 shrink-0 text-muted-foreground" />
-                  <span className="whitespace-nowrap text-fs-sm font-extrabold text-foreground">
-                    {dateLabel}
-                  </span>
-                </button>
-              </PopoverTrigger>
-              <PopoverContent align="center" className="w-auto p-0">
-                <CalendarPicker
-                  mode="single"
-                  selected={new Date(`${ticketDate}T12:00:00`)}
-                  onSelect={(d) => {
-                    if (d) setTicketDate(d.toISOString().slice(0, 10));
-                  }}
-                  className={cn("pointer-events-auto p-3")}
-                />
-              </PopoverContent>
-            </Popover>
             <button
               type="button"
-              aria-label="Next day"
+              aria-label="Choose period"
+              onClick={() => {
+                setDraft({ from: parseIso(ticketRange.start), to: parseIso(ticketRange.end) });
+                setRangeOpen(true);
+              }}
+              className="flex shrink-0 items-center gap-1.5 rounded-pill px-2 py-2 transition-colors hover:bg-muted"
+            >
+              <Calendar className="size-4 shrink-0 text-muted-foreground" />
+              <span className="whitespace-nowrap text-fs-sm font-extrabold text-foreground">
+                {dateLabel}
+              </span>
+              <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
+            </button>
+
+            <button
+              type="button"
+              aria-label="Next period"
               onClick={() => shiftTicketDate(1)}
               className="grid size-9 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
             >
@@ -342,10 +402,83 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
                 setSearch("");
                 setOverlay("none");
               }}
-              placeholder="Search by order number..."
+              placeholder={scopePlaceholder[searchScope]}
+              above={
+                <div className="no-scrollbar flex gap-1.5 overflow-x-auto">
+                  {scopeOptions.map((s) => (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => setSearchScope(s.id)}
+                      className={cn(
+                        "min-h-ctl-sm shrink-0 rounded-pill px-3 text-fs-xs font-bold transition-colors",
+                        searchScope === s.id
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-muted-foreground hover:bg-secondary",
+                      )}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              }
+              below={
+                search.trim() ? (
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="truncate text-fs-xs text-muted-foreground">
+                      {list.length} result{list.length === 1 ? "" : "s"}
+                      {searchAllDates ? " across all dates" : ` in ${dateLabel}`}
+                    </span>
+                    <button
+                      type="button"
+                      aria-pressed={searchAllDates}
+                      onClick={() => setSearchAllDates(!searchAllDates)}
+                      className={cn(
+                        "shrink-0 rounded-pill border px-2.5 py-1 text-fs-xs font-bold transition-colors",
+                        searchAllDates
+                          ? "border-accent bg-accent/10 text-accent"
+                          : "border-border text-foreground",
+                      )}
+                    >
+                      All dates
+                    </button>
+                  </div>
+                ) : null
+              }
             />
           </div>
         ) : null}
+
+        {activeChips.length ? (
+          <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto pt-1.5">
+            {activeChips.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={c.clear}
+                aria-label={`Clear ${c.label}`}
+                className="flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill bg-muted px-2.5 text-fs-xs font-bold text-foreground transition-colors hover:bg-secondary"
+              >
+                {c.label}
+                <X className="size-3" aria-hidden />
+              </button>
+            ))}
+            {activeChips.length > 1 ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setFilters(emptyFilters);
+                  applyRangePreset("today");
+                }}
+                className="min-h-ctl-sm shrink-0 rounded-pill px-2 text-fs-xs font-bold text-accent"
+              >
+                Clear all
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+
+
 
         {/* Status chips + amount due */}
         <div className="flex items-center gap-2 border-b border-border pb-2 pt-1.5">
@@ -610,6 +743,88 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
           </div>
         </SheetContent>
       </Sheet>
+
+      {/* Period sheet */}
+      <Sheet open={rangeOpen} onOpenChange={setRangeOpen}>
+        <SheetContent
+          side="bottom"
+          className="max-h-[92vh] overflow-y-auto rounded-t-sheet border-t border-border bg-surface p-0 pb-6"
+        >
+          <SheetHeader className="px-4 pb-2 pt-5">
+            <SheetTitle className="text-center text-fs-xl font-extrabold text-foreground">
+              Period
+            </SheetTitle>
+          </SheetHeader>
+          <div className="grid grid-cols-2 gap-2 px-4 pb-3 sm:grid-cols-3">
+            {presetOptions.map((p) => {
+              const active =
+                ticketRange.preset === p.id ||
+                (p.id === "today" && isDefaultPeriod && ticketRange.preset === "day");
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => {
+                    applyRangePreset(p.id as RangePreset);
+                    setRangeOpen(false);
+                  }}
+                  className={cn(
+                    "min-h-ctl-lg rounded-card border text-fs-sm font-bold transition-colors",
+                    active
+                      ? "border-accent bg-accent/10 text-accent"
+                      : "border-border text-foreground hover:bg-muted",
+                  )}
+                >
+                  {p.label}
+                </button>
+              );
+            })}
+          </div>
+          <div className="border-t border-border px-4 pt-3">
+            <p className="pb-1 text-fs-sm font-extrabold text-foreground">Custom range</p>
+            <p className="pb-2 text-fs-xs text-muted-foreground">
+              Tap a start day, then an end day.
+            </p>
+            <div className="flex justify-center">
+              <CalendarPicker
+                mode="range"
+                numberOfMonths={1}
+                selected={draft}
+                onSelect={setDraft}
+                className={cn("pointer-events-auto p-0")}
+              />
+            </div>
+            <div className="flex gap-3 pt-3">
+              <button
+                type="button"
+                onClick={() => {
+                  applyRangePreset("today");
+                  setDraft({ from: parseIso(DEFAULT_TICKET_DATE), to: parseIso(DEFAULT_TICKET_DATE) });
+                  setRangeOpen(false);
+                }}
+                className="min-h-ctl-lg flex-1 rounded-card border border-border text-fs-sm font-bold text-foreground"
+              >
+                Reset
+              </button>
+              <button
+                type="button"
+                disabled={!draft?.from}
+                onClick={() => {
+                  if (!draft?.from) return;
+                  const start = iso(draft.from);
+                  const end = iso(draft.to ?? draft.from);
+                  setTicketRange({ start, end, preset: start === end ? "day" : "custom" });
+                  setRangeOpen(false);
+                }}
+                className="min-h-ctl-lg flex-1 rounded-card bg-primary text-fs-sm font-bold text-primary-foreground disabled:opacity-50"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
+
   );
 }

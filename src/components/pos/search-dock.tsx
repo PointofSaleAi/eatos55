@@ -1,5 +1,5 @@
 import { Search, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +15,8 @@ export function SearchDock({
   onClose,
   onSubmit,
   placeholder = "Search",
+  above,
+  below,
 }: {
   open: boolean;
   value: string;
@@ -22,7 +24,12 @@ export function SearchDock({
   onClose: () => void;
   onSubmit?: (v: string) => void;
   placeholder?: string;
+  /** Optional row rendered above the field (e.g. scope chips). */
+  above?: ReactNode;
+  /** Optional row rendered below the field (e.g. result count). */
+  below?: ReactNode;
 }) {
+
   const [host, setHost] = useState<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -48,7 +55,9 @@ export function SearchDock({
         bottom: "max(var(--kb-inset, 0px), calc(var(--tabs-h, 0px) + var(--sab, 0px)))",
       }}
     >
+      {above ? <div className="mx-auto w-full max-w-sheet pb-2">{above}</div> : null}
       <div className="mx-auto flex w-full max-w-sheet items-center gap-2">
+
         <label className="flex min-h-ctl-lg min-w-0 flex-1 items-center gap-2 rounded-pill border border-border bg-muted px-4">
           <Search className="size-5 shrink-0 text-muted-foreground" />
           <input
@@ -86,7 +95,9 @@ export function SearchDock({
           Cancel
         </button>
       </div>
+      {below ? <div className="mx-auto w-full max-w-sheet pt-1.5">{below}</div> : null}
     </div>,
+
     host,
   );
 }

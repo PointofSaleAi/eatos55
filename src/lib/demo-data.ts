@@ -35,7 +35,10 @@ export type TicketPayment = {
   method: string;
   amount: number;
   at: string;
+  /** Processor transaction reference, searchable from the tickets screen. */
+  ref?: string;
 };
+
 
 export type Ticket = {
   id: string;
@@ -177,7 +180,7 @@ export const initialTickets: Ticket[] = [
     tips: 1.0,
     revenueCenter: "Counter pickup",
     paymentType: "Card",
-    payments: [{ no: "1", method: "Card", amount: 5.76, at: "5:46 PM" }],
+    payments: [{ no: "1", method: "Card", amount: 5.76, at: "5:46 PM", ref: "TXN-88412" }],
   },
   {
     id: "t-1044",
@@ -219,7 +222,7 @@ export const initialTickets: Ticket[] = [
     tips: 0,
     revenueCenter: "Bar",
     paymentType: "Unpaid",
-    payments: [{ no: "1", method: "Cash", amount: 10.0, at: "6:03 PM" }],
+    payments: [{ no: "1", method: "Cash", amount: 10.0, at: "6:03 PM", ref: "TXN-88415" }],
   },
   {
     id: "t-1046",
@@ -239,7 +242,7 @@ export const initialTickets: Ticket[] = [
     tips: 2.5,
     revenueCenter: "Patio",
     paymentType: "QR Code",
-    payments: [{ no: "1", method: "QR Code", amount: 16.5, at: "6:05 PM" }],
+    payments: [{ no: "1", method: "QR Code", amount: 16.5, at: "6:05 PM", ref: "TXN-88419" }],
   },
 ];
 
