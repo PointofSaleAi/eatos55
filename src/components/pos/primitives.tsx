@@ -286,7 +286,7 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
             <Cell label="Date" value={dateLabel} />
             <Cell label="Employee" value={ticket.server} />
             <Cell label="Revenue Center" value={ticket.revenueCenter ?? "Main dining"} />
-            <Cell label="Order Type" value={modeOrderType(ticket.mode)} />
+            <Cell label="Order Type" value={orderTypeLabel} />
             <Cell
               label="Payment Type"
               value={ticket.paymentType ?? (ticket.status === "paid" ? "Card" : "Unpaid")}
