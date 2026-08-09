@@ -30,6 +30,13 @@ export type CartLine = {
 };
 
 
+export type TicketPayment = {
+  no: string;
+  method: string;
+  amount: number;
+  at: string;
+};
+
 export type Ticket = {
   id: string;
   number: number;
@@ -44,7 +51,15 @@ export type Ticket = {
   mode: MenuMode;
   lines: CartLine[];
   server: string;
+  /** Check number printed on the guest copy. */
+  checkNumber?: number;
+  /** Tips recorded against the ticket. */
+  tips?: number;
+  revenueCenter?: string;
+  paymentType?: string;
+  payments?: TicketPayment[];
 };
+
 
 /** Tax is inclusive in the guest-facing totals (20%). */
 export const TAX_RATE = 0.2;
