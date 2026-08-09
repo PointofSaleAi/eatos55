@@ -80,7 +80,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
         <SheetContent
           side="bottom"
           style={dragStyle}
-          className="mx-auto flex max-h-[min(78dvh,42rem)] w-full max-w-[420px] flex-col rounded-t-3xl border-0 bg-surface p-0"
+          className="mx-auto flex max-h-[min(78dvh,42rem)] w-full max-w-sheet flex-col rounded-t-sheet border-0 bg-surface p-0"
         >
           {item ? (
             <>

@@ -34,9 +34,9 @@ export function TenderScreen({
         <h1 className="truncate text-fs-xl font-extrabold text-foreground">{title}</h1>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-2 p-3 pb-[max(0.75rem,var(--kb-inset,0px))]">
+      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-2 pb-[max(0.75rem,var(--kb-inset,0px))]">
         <div className="shrink-0 text-center">
-          <p className="text-fs-2xl font-extrabold tabular-nums text-foreground">{money(entered)}</p>
+          <p className="text-fs-xl font-extrabold tabular-nums text-foreground">{money(entered)}</p>
           <p className="text-fs-sm text-muted-foreground">
             Due {money(due)}
             {amount ? (
@@ -53,13 +53,13 @@ export function TenderScreen({
         </div>
 
         {denominations ? (
-          <div className="grid shrink-0 grid-cols-[repeat(auto-fill,minmax(6.25rem,1fr))] gap-2">
+          <div className="no-scrollbar -mx-1 flex shrink-0 snap-x gap-2 overflow-x-auto px-1 pb-1">
             {cashDenominations.map((d) => (
               <button
                 key={d}
                 type="button"
                 onClick={() => setAmount(String(Math.round((entered + d) * 100) / 100))}
-                className="min-h-ctl-lg rounded-pill border border-border bg-surface text-fs-base font-extrabold text-foreground shadow-sm transition-colors hover:bg-muted active:scale-[0.97]"
+                className="min-h-tap min-w-[4.5rem] shrink-0 snap-start rounded-pill border border-border bg-surface px-4 text-fs-base font-extrabold text-foreground shadow-sm transition-colors hover:bg-muted active:scale-[0.97]"
               >
                 ${d}
               </button>
@@ -68,7 +68,7 @@ export function TenderScreen({
         ) : null}
 
         <NumPad
-          className="min-h-0 flex-1"
+          className="min-h-[calc(4*var(--key-h)+1.5rem)] flex-1 shrink-0"
           onDigit={(d) =>
             setAmount((cur) => {
               if (d === "." && cur.includes(".")) return cur;

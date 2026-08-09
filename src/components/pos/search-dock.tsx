@@ -48,7 +48,7 @@ export function SearchDock({
         bottom: "max(var(--kb-inset, 0px), calc(var(--tabs-h, 0px) + var(--sab, 0px)))",
       }}
     >
-      <div className="mx-auto flex w-full max-w-[420px] items-center gap-2">
+      <div className="mx-auto flex w-full max-w-sheet items-center gap-2">
         <label className="flex min-h-ctl-lg min-w-0 flex-1 items-center gap-2 rounded-pill border border-border bg-muted px-4">
           <Search className="size-5 shrink-0 text-muted-foreground" />
           <input

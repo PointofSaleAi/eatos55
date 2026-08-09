@@ -23,7 +23,7 @@ export const Route = createFileRoute("/access/clock-in")({
 });
 
 const keyBase =
-  "grid min-h-[56px] place-items-center rounded-card text-fs-xl font-extrabold shadow-sm transition-transform active:scale-[0.97]";
+  "grid min-h-key place-items-center rounded-card text-fs-xl font-extrabold shadow-sm transition-transform active:scale-[0.97]";
 
 function ClockIn() {
   const navigate = useNavigate();

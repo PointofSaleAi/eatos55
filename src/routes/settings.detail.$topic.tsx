@@ -63,7 +63,7 @@ function SettingsDetail() {
                     key={option}
                     type="button"
                     onClick={() => updateSettings({ [field]: option })}
-                    className="flex min-h-[60px] w-full items-center gap-3 border-b border-border px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-muted"
+                    className="flex min-h-row w-full items-center gap-3 border-b border-border px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-muted"
                   >
                     <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
                       {option}

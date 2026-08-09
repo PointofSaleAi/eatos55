@@ -75,9 +75,10 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
         type="button"
         aria-label="Close navigation"
         onClick={onClose}
-        className="absolute inset-0 bg-black/60"
+        className="absolute inset-0 bg-black/60 animate-in fade-in duration-150 motion-reduce:animate-none"
       />
-      <div className="absolute inset-y-0 left-0 flex w-[86%] max-w-[320px] flex-col bg-surface shadow-2xl">
+      <div className="absolute inset-y-0 left-0 flex w-[86%] max-w-[20rem] flex-col bg-surface shadow-2xl animate-in slide-in-from-left duration-200 ease-out motion-reduce:animate-none">
+
         <div className="grid shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-b border-border px-4 py-3">
           <p className="truncate text-fs-lg font-extrabold text-foreground">Navigation</p>
           <button
