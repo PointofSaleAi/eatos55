@@ -30,89 +30,133 @@ import {
 
 import type { AppSettings } from "@/lib/pos-store";
 
-export type DetailRow = { label: string; value?: string };
+/**
+ * Settings rows are descriptors, not strings: the detail screen renders the
+ * right control per kind and only lets managers change them.
+ */
+export type DetailRow =
+  /** Comes from Back Office — read-only for everyone. */
+  | { kind: "readonly"; label: string; value?: string }
+  | { kind: "toggle"; label: string; field: keyof AppSettings }
+  | { kind: "choice"; label: string; field: keyof AppSettings; options: string[] }
+  | { kind: "text"; label: string; field: keyof AppSettings }
+  /** Editable collection (discounts, modifier groups, …). */
+  | { kind: "list"; label: string; field: keyof AppSettings; addLabel?: string };
 
 export type DetailScreen = {
   title: string;
   backLabel?: string;
   intro?: string;
   icon?: LucideIcon;
-  /** Read-only detail rows. */
   rows?: DetailRow[];
-  /** Optional pick list bound to a settings field. */
-  choice?: { field: keyof AppSettings; options: string[]; label: string };
-  /** Shown instead of rows when there is nothing configured. */
+  /** Shown when a collection is empty. */
   empty?: string;
   note?: string;
 };
 
-/** Content for every Settings row that used to be a toast-only tap. */
+const ro = (label: string, value?: string): DetailRow =>
+  value === undefined ? { kind: "readonly", label } : { kind: "readonly", label, value };
+
+/** Content for every Settings detail screen. */
 export const settingsDetails: Record<string, DetailScreen> = {
   "device-name": {
     title: "Device Name",
     backLabel: "General",
     icon: Tablet,
     rows: [
-      { label: "Name", value: "aurora 22" },
-      { label: "Serial", value: "HH-22-9041" },
-      { label: "Assigned To", value: "Front of house" },
+      { kind: "text", label: "Name", field: "deviceName" },
+      ro("Serial", "HH-22-9041"),
+      ro("Assigned To", "Front of house"),
     ],
-    note: "Device names are assigned in Back Office so tickets show the right terminal.",
+    note: "Serial and assignment come from Back Office.",
   },
   "restaurant-information": {
     title: "Restaurant Information",
     backLabel: "General",
     icon: Store,
     rows: [
-      { label: "Name", value: "EATOS Kitchen · Downtown" },
-      { label: "Address", value: "418 W 25th St" },
-      { label: "City", value: "New York, NY 10001" },
-      { label: "Phone", value: "(212) 555-0148" },
-      { label: "Tax ID", value: "88-4102397" },
-      { label: "Time Zone", value: "America/New_York" },
+      { kind: "text", label: "Name", field: "restaurantName" },
+      { kind: "text", label: "Address", field: "restaurantAddress" },
+      { kind: "text", label: "City", field: "restaurantCity" },
+      { kind: "text", label: "Phone", field: "restaurantPhone" },
+      { kind: "text", label: "Tax ID", field: "taxId" },
+      {
+        kind: "choice",
+        label: "Time Zone",
+        field: "timezone",
+        options: [
+          "America/New_York",
+          "America/Chicago",
+          "America/Denver",
+          "America/Los_Angeles",
+        ],
+      },
     ],
-    note: "Restaurant details are maintained in Back Office and read-only on the handheld.",
   },
   "restaurant-settings": {
     title: "Restaurant Settings",
     backLabel: "General",
     icon: SettingsIcon,
     rows: [
-      { label: "Service Mode", value: "Table Service" },
-      { label: "Auto-print Receipts", value: "On" },
-      { label: "Ask For Tip", value: "On" },
-      { label: "Cash Rounding", value: "Nearest cent" },
-      { label: "Require Manager Void", value: "Yes" },
+      {
+        kind: "choice",
+        label: "Service Mode",
+        field: "deviceService",
+        options: ["Table Service", "Quick Service"],
+      },
+      { kind: "toggle", label: "Auto-print Receipts", field: "autoPrintReceipts" },
+      { kind: "toggle", label: "Ask For Tip", field: "askForTip" },
+      {
+        kind: "choice",
+        label: "Cash Rounding",
+        field: "cashRounding",
+        options: ["Nearest cent", "Nearest 5 cents", "Nearest dollar"],
+      },
+      { kind: "toggle", label: "Require Manager Void", field: "requireManagerVoid" },
     ],
   },
   language: {
     title: "Language",
     backLabel: "General",
     icon: Globe,
-    choice: { field: "language", options: ["English"], label: "Installed languages" },
+    rows: [{ kind: "choice", label: "Language", field: "language", options: ["English"] }],
     note: "Additional language packs are installed from Back Office.",
   },
   currency: {
     title: "Currency",
     backLabel: "General",
     icon: CircleDollarSign,
-    choice: { field: "currency", options: ["USD", "CAD", "EUR", "GBP"], label: "Currency" },
+    rows: [
+      {
+        kind: "choice",
+        label: "Currency",
+        field: "currency",
+        options: ["USD", "CAD", "EUR", "GBP"],
+      },
+    ],
   },
   "tax-alias": {
     title: "Tax Alias",
     backLabel: "General",
     icon: Percent,
-    choice: { field: "taxAlias", options: ["Tax", "VAT", "GST"], label: "Alias shown on receipts" },
+    rows: [
+      {
+        kind: "choice",
+        label: "Alias shown on receipts",
+        field: "taxAlias",
+        options: ["Tax", "VAT", "GST"],
+      },
+    ],
   },
   "schedule-info": {
     title: "Schedule Info",
     backLabel: "General",
     icon: CalendarClock,
     rows: [
-      { label: "Today", value: "11:00 AM – 11:00 PM" },
-      { label: "Your Shift", value: "5:00 PM – 1:00 AM" },
-      { label: "Break", value: "30 min · unused" },
-      { label: "Next Shift", value: "Tomorrow 5:00 PM" },
+      ro("Today", "11:00 AM – 11:00 PM"),
+      ro("Your Shift", "5:00 PM – 1:00 AM"),
+      ro("Break", "30 min · unused"),
+      ro("Next Shift", "Tomorrow 5:00 PM"),
     ],
     note: "Shift schedule syncs from Back Office.",
   },
@@ -120,6 +164,9 @@ export const settingsDetails: Record<string, DetailScreen> = {
     title: "Timed Pricing",
     backLabel: "General",
     icon: Timer,
+    rows: [
+      { kind: "list", label: "Rules", field: "timedPricing", addLabel: "Add Rule" },
+    ],
     empty: "No timed pricing rules on this device.",
   },
   about: {
@@ -127,11 +174,11 @@ export const settingsDetails: Record<string, DetailScreen> = {
     backLabel: "General",
     icon: Info,
     rows: [
-      { label: "App Version", value: "5.200.27 (+11350)" },
-      { label: "Framework", value: "3.44.2" },
-      { label: "Build Date", value: "31.07.26" },
-      { label: "Device", value: "aurora 22" },
-      { label: "Platform", value: "Handheld" },
+      ro("App Version", "5.200.27 (+11350)"),
+      ro("Framework", "3.44.2"),
+      ro("Build Date", "31.07.26"),
+      ro("Device", "aurora 22"),
+      ro("Platform", "Handheld"),
     ],
   },
 
@@ -140,24 +187,23 @@ export const settingsDetails: Record<string, DetailScreen> = {
     title: "Categories",
     backLabel: "Menu",
     icon: LayoutList,
-    rows: [
-      { label: "Breakfast", value: "12 items" },
-      { label: "Sandwiches", value: "9 items" },
-      { label: "Drinks", value: "14 items" },
-      { label: "Desserts", value: "6 items" },
-    ],
-    note: "Categories sync from Back Office.",
+    rows: [{ kind: "list", label: "Categories", field: "categories", addLabel: "Add Category" }],
+    empty: "No categories on this device.",
   },
   modifiers: {
     title: "Modifiers",
     backLabel: "Menu",
     icon: CircleDot,
+    rows: [
+      { kind: "list", label: "Modifier Groups", field: "modifierGroups", addLabel: "Add Group" },
+    ],
     empty: "No modifier groups on this device.",
   },
   "add-ons": {
     title: "Add-Ons",
     backLabel: "Menu",
     icon: Grid2x2,
+    rows: [{ kind: "list", label: "Add-Ons", field: "addOns", addLabel: "Add Add-On" }],
     empty: "No add-ons configured.",
   },
   inventory: {
@@ -165,21 +211,31 @@ export const settingsDetails: Record<string, DetailScreen> = {
     backLabel: "Menu",
     icon: PencilRuler,
     rows: [
-      { label: "Tracking", value: "On" },
-      { label: "Low Stock Alerts", value: "On" },
-      { label: "Sold Out Items", value: "2" },
+      { kind: "toggle", label: "Tracking", field: "trackInventory" },
+      { kind: "toggle", label: "Low Stock Alerts", field: "lowStockAlerts" },
+      { kind: "toggle", label: "Show Sold Out Items", field: "showSoldOut" },
+      ro("Sold Out Items", "2"),
     ],
   },
   "default-modifiers": {
     title: "Default Modifiers",
     backLabel: "Menu",
     icon: Boxes,
+    rows: [
+      {
+        kind: "list",
+        label: "Default Modifiers",
+        field: "defaultModifiers",
+        addLabel: "Add Default",
+      },
+    ],
     empty: "No default modifiers set.",
   },
   groups: {
     title: "Groups",
     backLabel: "Menu",
     icon: Layers,
+    rows: [{ kind: "list", label: "Groups", field: "productGroups", addLabel: "Add Group" }],
     empty: "No product groups on this device.",
   },
 
@@ -189,9 +245,15 @@ export const settingsDetails: Record<string, DetailScreen> = {
     backLabel: "Payments",
     icon: HandCoins,
     rows: [
-      { label: "Ask For Tip", value: "On" },
-      { label: "Presets", value: "18% · 20% · 25%" },
-      { label: "Custom Tip", value: "Allowed" },
+      { kind: "toggle", label: "Ask For Tip", field: "askForTip" },
+      { kind: "text", label: "Presets", field: "tipPresets" },
+      { kind: "choice", label: "Tip Basis", field: "tipBasis", options: ["Pre-tax", "Post-tax"] },
+      {
+        kind: "choice",
+        label: "Custom Tip",
+        field: "customTip",
+        options: ["Allowed", "Not allowed"],
+      },
     ],
   },
   taxes: {
@@ -199,31 +261,49 @@ export const settingsDetails: Record<string, DetailScreen> = {
     backLabel: "Payments",
     icon: ScrollText,
     rows: [
-      { label: "Default Rate", value: "8.75%" },
-      { label: "Alias", value: "Tax" },
-      { label: "Inclusive Pricing", value: "On" },
+      { kind: "text", label: "Default Rate", field: "taxRate" },
+      { kind: "choice", label: "Alias", field: "taxAlias", options: ["Tax", "VAT", "GST"] },
+      { kind: "toggle", label: "Inclusive Pricing", field: "inclusivePricing" },
     ],
   },
   discounts: {
     title: "Discounts",
     backLabel: "Payments",
     icon: BadgePercent,
+    rows: [{ kind: "list", label: "Discounts", field: "discounts", addLabel: "Add Discount" }],
     empty: "No discounts configured.",
   },
   "service-charge": {
     title: "Service Charge",
     backLabel: "Payments",
     icon: ReceiptText,
-    empty: "No service charge on this device.",
+    rows: [
+      { kind: "toggle", label: "Enabled", field: "serviceChargeEnabled" },
+      { kind: "text", label: "Name", field: "serviceChargeName" },
+      { kind: "text", label: "Rate", field: "serviceChargeRate" },
+      {
+        kind: "choice",
+        label: "Applies To",
+        field: "serviceChargeAppliesTo",
+        options: ["All orders", "Dine-in", "Delivery"],
+      },
+      { kind: "list", label: "Rules", field: "serviceCharges", addLabel: "Add Rule" },
+    ],
   },
   "cash-management": {
     title: "Cash Management",
     backLabel: "Payments",
     icon: Coins,
     rows: [
-      { label: "Cash Drawer", value: "Not assigned" },
-      { label: "Open Register", value: "Manager only" },
-      { label: "Blind Close", value: "Off" },
+      { kind: "text", label: "Cash Drawer", field: "cashDrawerAssigned" },
+      {
+        kind: "choice",
+        label: "Open Register",
+        field: "openRegister",
+        options: ["Manager only", "Any employee"],
+      },
+      { kind: "toggle", label: "Blind Close", field: "blindClose" },
+      { kind: "toggle", label: "Open Drawer On Sale", field: "openDrawerOnSale" },
     ],
   },
   receipts: {
@@ -231,9 +311,10 @@ export const settingsDetails: Record<string, DetailScreen> = {
     backLabel: "Payments",
     icon: Receipt,
     rows: [
-      { label: "Auto-print", value: "On" },
-      { label: "Email Receipts", value: "Off" },
-      { label: "Footer Message", value: "Thank you!" },
+      { kind: "toggle", label: "Auto-print", field: "autoPrintReceipts" },
+      { kind: "toggle", label: "Email Receipts", field: "emailReceipts" },
+      { kind: "toggle", label: "Print Logo", field: "printLogo" },
+      { kind: "text", label: "Footer Message", field: "receiptFooter" },
     ],
   },
 
@@ -243,9 +324,15 @@ export const settingsDetails: Record<string, DetailScreen> = {
     backLabel: "Hardware",
     icon: Printer,
     rows: [
-      { label: "Kitchen Printer", value: "Connected" },
-      { label: "Connection", value: "Wi-Fi · 10.0.1.42" },
-      { label: "Paper Width", value: "80 mm" },
+      { kind: "text", label: "Kitchen Printer", field: "printerName" },
+      { kind: "text", label: "Connection", field: "printerConnection" },
+      {
+        kind: "choice",
+        label: "Paper Width",
+        field: "paperWidth",
+        options: ["58 mm", "80 mm"],
+      },
+      { kind: "toggle", label: "Printer Emulator", field: "printerEmulator" },
     ],
   },
   "card-reader": {
@@ -253,24 +340,29 @@ export const settingsDetails: Record<string, DetailScreen> = {
     backLabel: "Hardware",
     icon: Tablet,
     rows: [
-      { label: "Built-in Reader", value: "Ready" },
-      { label: "Contactless", value: "Enabled" },
-      { label: "Firmware", value: "2.14.0" },
+      ro("Built-in Reader", "Ready"),
+      { kind: "toggle", label: "Contactless", field: "contactless" },
+      { kind: "toggle", label: "Reader Emulator", field: "readerEmulator" },
+      ro("Firmware", "2.14.0"),
     ],
   },
   "cash-drawer": {
     title: "Cash Drawer",
     backLabel: "Hardware",
     icon: Inbox,
-    empty: "No cash drawer paired with this handheld.",
+    rows: [
+      { kind: "text", label: "Paired Drawer", field: "cashDrawerAssigned" },
+      { kind: "toggle", label: "Open Drawer On Sale", field: "openDrawerOnSale" },
+      { kind: "toggle", label: "Blind Close", field: "blindClose" },
+    ],
   },
   "hardware-emulators": {
     title: "Hardware Emulators",
     backLabel: "Hardware",
     icon: CreditCard,
     rows: [
-      { label: "Printer Emulator", value: "Enabled" },
-      { label: "Reader Emulator", value: "Enabled" },
+      { kind: "toggle", label: "Printer Emulator", field: "printerEmulator" },
+      { kind: "toggle", label: "Reader Emulator", field: "readerEmulator" },
     ],
     note: "Emulators are enabled for demo mode.",
   },
@@ -279,9 +371,9 @@ export const settingsDetails: Record<string, DetailScreen> = {
     backLabel: "Network",
     icon: Server,
     rows: [
-      { label: "Server", value: "aurora 22" },
-      { label: "Status", value: "Connected · 38 ms" },
-      { label: "Sync", value: "Up to date" },
+      { kind: "text", label: "Server", field: "deviceName" },
+      ro("Status", "Connected · 38 ms"),
+      ro("Sync", "Up to date"),
     ],
   },
 
@@ -291,10 +383,10 @@ export const settingsDetails: Record<string, DetailScreen> = {
     backLabel: "Workforce",
     icon: Users,
     rows: [
-      { label: "Elizer Cruz", value: "Supervisor" },
-      { label: "Maya Reyes", value: "Server" },
-      { label: "Tom Alvarez", value: "Bartender" },
-      { label: "Dana Whitfield", value: "Manager" },
+      ro("Elizer Cruz", "Supervisor"),
+      ro("Maya Reyes", "Server"),
+      ro("Tom Alvarez", "Bartender"),
+      ro("Dana Whitfield", "Manager"),
     ],
     note: "Employee list syncs from Back Office.",
   },
