@@ -97,7 +97,7 @@ function FloorPlan() {
         {tables.length === 0 ? (
           <p className="px-4 py-24 text-center text-sm text-muted-foreground">No Tables Found</p>
         ) : (
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(8.5rem,1fr))] gap-3">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(8.25rem,1fr))] gap-3">
             {tables.map((t) => {
               const meta = tableStateMeta[t.state];
               return (
