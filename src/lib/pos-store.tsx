@@ -152,6 +152,8 @@ const defaultSettings: AppSettings = {
   hapticFeedback: true,
   deviceName: "aurora 22",
   deviceService: "Table Service",
+  roomService: false,
+
   language: "English",
   taxAlias: "Tax",
   appVersion: "5.200.27",
