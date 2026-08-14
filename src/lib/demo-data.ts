@@ -557,3 +557,44 @@ export const discountPresets = [
   { id: "employee-shift", name: "Employee Shift", percent: 50 },
   { id: "police-fire", name: "Police & Fire", percent: 20 },
 ] as const;
+
+/* ------------------------------------------------------------------ */
+/* Which choices an item actually offers                               */
+/* ------------------------------------------------------------------ */
+
+/** Categories that come with food modifier groups. Drinks have none. */
+const foodModifiersByCategory: Record<string, string[]> = {
+  "BRUNCH SANDWICHES": ["Bread", "Course", "Temperature", "Preparation", "Allergy", "Sandwiches Sides"],
+  "BAR BITES": ["Preparation", "Allergy", "Sides"],
+  STARTERS: ["Course", "Preparation", "Allergy"],
+  MAINS: ["Course", "Temperature", "Preparation", "Allergy", "Sides"],
+  SIDES: ["Preparation", "Allergy"],
+  DESSERTS: ["Course", "Allergy"],
+};
+
+const addOnsByCategory: Record<string, string[]> = {
+  "BRUNCH SANDWICHES": ["Add-Ons", "Beverage"],
+  MAINS: ["Add-Ons"],
+  STARTERS: ["Add-Ons"],
+};
+
+/** Modifier groups (Item tab) for a given menu item. */
+export function itemModifierGroups(item: MenuItem): ModifierGroup[] {
+  const names = item.modifierGroupNames ?? foodModifiersByCategory[item.category] ?? [];
+  return modifierGroups.filter((g) => names.includes(g.name));
+}
+
+/** Add-on groups for a given menu item. */
+export function itemAddOnGroups(item: MenuItem): ModifierGroup[] {
+  const names = item.addOnGroupNames ?? addOnsByCategory[item.category] ?? [];
+  return addOnGroups.filter((g) => names.includes(g.name));
+}
+
+/**
+ * True when tapping the item must open the sheet: there is a choice to make,
+ * a required group, or a price to enter.
+ */
+export function itemNeedsSheet(item: MenuItem): boolean {
+  if (item.openPrice) return true;
+  return itemModifierGroups(item).length > 0 || itemAddOnGroups(item).length > 0;
+}
