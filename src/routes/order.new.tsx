@@ -28,7 +28,6 @@ import {
   type ServiceOrderType,
 } from "@/lib/demo-data";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
-import { GuestsSheet } from "@/components/pos/guests-sheet";
 import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { toast } from "sonner";
@@ -68,7 +67,6 @@ function NewOrder() {
   const [moreOpen, setMoreOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [discountOpen, setDiscountOpen] = useState(false);
-  const [guestsOpen, setGuestsOpen] = useState(false);
   const [discountName, setDiscountName] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
@@ -391,7 +389,7 @@ function NewOrder() {
               <PanelAction
                 label="Guests"
                 icon={<Users className="size-5" />}
-                onPress={() => setGuestsOpen(true)}
+                onPress={() => setGuestOpen(true)}
               />
               <PanelAction
                 label="Print"
@@ -500,7 +498,7 @@ function NewOrder() {
           setDiscountOpen(false);
         }}
       />
-      <GuestsSheet open={guestsOpen} onClose={() => setGuestsOpen(false)} />
+
     </div>
   );
 }
