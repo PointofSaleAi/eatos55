@@ -214,6 +214,7 @@ function ClockIn() {
         <div className="mt-3 flex justify-center text-muted-foreground">
           <ChevronDown className="size-4" />
         </div>
+        </div>
       </div>
     </div>
   );
