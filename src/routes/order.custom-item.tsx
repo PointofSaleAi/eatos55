@@ -92,7 +92,7 @@ function CustomItem() {
           disabled={price <= 0 && totals.count === 0}
           onClick={() => {
             addLine();
-            navigate({ to: "/order/review" });
+            navigate({ to: "/order/new" });
           }}
           className="h-11 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
         >

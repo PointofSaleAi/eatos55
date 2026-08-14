@@ -228,7 +228,7 @@ function TicketDetail() {
                 className="h-12 flex-1 rounded-pill bg-accent font-extrabold uppercase tracking-[0.08em] text-accent-foreground hover:bg-accent/90"
                 onClick={() => {
                   openTicket(ticket.id);
-                  navigate({ to: "/order/review" });
+                  navigate({ to: "/order/new" });
                 }}
               >
                 Take payment

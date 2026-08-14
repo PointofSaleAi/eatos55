@@ -353,7 +353,7 @@ export function BottomTabs() {
   const onOrderFlow = pathname.startsWith("/order");
 
   const action = onOrderFlow
-    ? { label: "Review order", icon: Check, run: () => router.navigate({ to: "/order/review" }) }
+    ? { label: "Charge order", icon: Check, run: () => router.navigate({ to: "/payment/method" }) }
     : {
         label: "New order",
         icon: Plus,
