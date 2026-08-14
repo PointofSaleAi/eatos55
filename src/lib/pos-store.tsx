@@ -147,6 +147,18 @@ export type AppSettings = {
   productGroups: SettingsListItem[];
 };
 
+const defaultLoginSlides: LoginSlide[] = [
+  {
+    id: "slide-1",
+    image: loginSlide1.url,
+    headline: "Make your staff measurably happy",
+    enabled: true,
+  },
+  { id: "slide-2", image: loginSlide2.url, headline: "Take orders at the table", enabled: true },
+  { id: "slide-3", image: loginSlide3.url, headline: "Serve the queue faster", enabled: true },
+  { id: "slide-4", image: loginSlide4.url, headline: "Run every service with confidence", enabled: true },
+];
+
 const defaultSettings: AppSettings = {
   restaurantName: "EATOS Kitchen · Downtown",
   restaurantAddress: "418 W 25th St",
