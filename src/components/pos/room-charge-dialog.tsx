@@ -224,7 +224,7 @@ export function RoomChargeDialog({
   if (wide) {
     return (
       <Dialog open={open} onOpenChange={(next) => (next ? null : onClose())}>
-        <DialogContent hideClose className="flex max-h-[88vh] w-[min(56rem,92vw)] max-w-none flex-col gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0">
+        <DialogContent hideClose className="flex max-h-[90vh] w-[min(56rem,94vw)] max-w-none flex-col gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0">
           <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-3">
             <DialogTitle className="min-w-0 flex-1 truncate text-fs-lg font-extrabold text-foreground">
               Select Room
@@ -249,7 +249,7 @@ export function RoomChargeDialog({
       <SheetContent
         side="bottom"
         style={dragStyle}
-        className="mx-auto flex h-[88vh] w-full max-w-sheet flex-col gap-0 rounded-t-sheet border-0 bg-surface p-0"
+        className="mx-auto flex max-h-[92dvh] w-full max-w-sheet flex-col gap-0 rounded-t-sheet border-0 bg-surface p-0"
       >
         <SheetGrabber handleProps={handleProps} />
         <SheetHeader className="shrink-0 px-4 pb-2 pt-1" {...handleProps}>
