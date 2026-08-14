@@ -45,9 +45,19 @@ function ClockIn() {
       </div>
 
       <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4">
-        {/* Keypad stays a comfortable phone-width column on tablet/desktop. */}
-        <div className="mx-auto w-full max-w-[26rem]">
+        {/* Landscape puts the date/time/weather panel beside the keypad; phones
+            keep the keypad in a comfortable single column with a compact strip. */}
+        <div
+          className={cn(
+            wide
+              ? "mx-auto grid w-full max-w-[64rem] grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)] items-center gap-10"
+              : "mx-auto w-full max-w-[26rem]",
+          )}
+        >
+          {wide ? <ClockPanel /> : <ClockPanel compact className="mb-3" />}
+          <div className="w-full">
         <div className="rounded-card border border-border bg-surface px-4 py-5">
+
           <div className="flex items-center justify-center gap-8">
             {[0, 1, 2, 3].map((i) => (
               <span
