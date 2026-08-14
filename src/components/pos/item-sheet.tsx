@@ -90,6 +90,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
         }}
       >
         <SheetContent
+        hideClose
           side="bottom"
           style={dragStyle}
           className="mx-auto flex max-h-[min(78dvh,42rem)] w-full max-w-sheet flex-col rounded-t-sheet border-0 bg-surface p-0"

@@ -36,6 +36,7 @@ export function PinSheet({
       }}
     >
       <SheetContent
+        hideClose
         side="bottom"
         className="max-h-[92dvh] overflow-y-auto rounded-t-sheet border-t border-border bg-background px-3 pb-6 pt-4"
       >

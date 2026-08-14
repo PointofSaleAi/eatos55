@@ -635,6 +635,7 @@ export function TicketsScreen({
         onOpenChange={(open) => setOverlay(open ? "filter" : "none")}
       >
         <SheetContent
+        hideClose
           side="bottom"
           className="rounded-t-sheet border-t border-border bg-surface p-0 pb-6"
         >
@@ -752,6 +753,7 @@ export function TicketsScreen({
       {/* Period sheet */}
       <Sheet open={rangeOpen} onOpenChange={setRangeOpen}>
         <SheetContent
+        hideClose
           side="bottom"
           className="max-h-[92vh] overflow-y-auto rounded-t-sheet border-t border-border bg-surface p-0 pb-6"
         >

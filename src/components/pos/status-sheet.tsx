@@ -30,6 +30,7 @@ export function StatusSheet<T extends string>({
   return (
     <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
       <SheetContent
+        hideClose
         side="bottom"
         style={dragStyle}
         className="mx-auto w-full max-w-sheet rounded-t-sheet border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]"
