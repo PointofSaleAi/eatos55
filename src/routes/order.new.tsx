@@ -473,6 +473,28 @@ function NewOrder() {
         </aside>
       </div>
 
+      {/* Phone, menu tab: keep the running total and Charge one tap away. */}
+      {!wide && tab === "menu" && totals.count > 0 ? (
+        <div className="flex shrink-0 items-center gap-2 border-t border-border bg-surface px-3 py-2">
+          <button
+            type="button"
+            onClick={() => setTab("order")}
+            className="min-h-tap min-w-0 flex-1 rounded-pill bg-muted px-3 text-left text-fs-sm font-extrabold text-foreground"
+          >
+            {totals.count} item{totals.count === 1 ? "" : "s"} · {money(totals.total)}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/payment/method" })}
+            className="min-h-tap shrink-0 rounded-pill bg-accent px-5 text-fs-sm font-extrabold text-accent-foreground"
+          >
+            Charge
+          </button>
+        </div>
+      ) : null}
+
+
+
 
       <SearchDock
         open={searching}
