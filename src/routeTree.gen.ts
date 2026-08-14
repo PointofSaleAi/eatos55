@@ -32,6 +32,7 @@ import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SettingsControlCenterRouteImport } from './routes/settings.control-center'
 import { Route as SettingsGeneralRouteImport } from './routes/settings.general'
 import { Route as SettingsHardwareRouteImport } from './routes/settings.hardware'
+import { Route as SettingsLoginScreenRouteImport } from './routes/settings.login-screen'
 import { Route as SettingsMenuRouteImport } from './routes/settings.menu'
 import { Route as SettingsMoreRouteImport } from './routes/settings.more'
 import { Route as SettingsNetworkRouteImport } from './routes/settings.network'
@@ -172,6 +173,11 @@ const SettingsGeneralRoute = SettingsGeneralRouteImport.update({
 const SettingsHardwareRoute = SettingsHardwareRouteImport.update({
   id: '/settings/hardware',
   path: '/settings/hardware',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsLoginScreenRoute = SettingsLoginScreenRouteImport.update({
+  id: '/settings/login-screen',
+  path: '/settings/login-screen',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsMenuRoute = SettingsMenuRouteImport.update({
@@ -325,6 +331,7 @@ export interface FileRoutesByFullPath {
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/hardware': typeof SettingsHardwareRouteWithChildren
+  '/settings/login-screen': typeof SettingsLoginScreenRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/network': typeof SettingsNetworkRoute
@@ -376,6 +383,7 @@ export interface FileRoutesByTo {
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/hardware': typeof SettingsHardwareRouteWithChildren
+  '/settings/login-screen': typeof SettingsLoginScreenRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/network': typeof SettingsNetworkRoute
@@ -428,6 +436,7 @@ export interface FileRoutesById {
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/hardware': typeof SettingsHardwareRouteWithChildren
+  '/settings/login-screen': typeof SettingsLoginScreenRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
   '/settings/network': typeof SettingsNetworkRoute
@@ -481,6 +490,7 @@ export interface FileRouteTypes {
     | '/settings/control-center'
     | '/settings/general'
     | '/settings/hardware'
+    | '/settings/login-screen'
     | '/settings/menu'
     | '/settings/more'
     | '/settings/network'
@@ -532,6 +542,7 @@ export interface FileRouteTypes {
     | '/settings/control-center'
     | '/settings/general'
     | '/settings/hardware'
+    | '/settings/login-screen'
     | '/settings/menu'
     | '/settings/more'
     | '/settings/network'
@@ -583,6 +594,7 @@ export interface FileRouteTypes {
     | '/settings/control-center'
     | '/settings/general'
     | '/settings/hardware'
+    | '/settings/login-screen'
     | '/settings/menu'
     | '/settings/more'
     | '/settings/network'
@@ -635,6 +647,7 @@ export interface RootRouteChildren {
   SettingsControlCenterRoute: typeof SettingsControlCenterRoute
   SettingsGeneralRoute: typeof SettingsGeneralRoute
   SettingsHardwareRoute: typeof SettingsHardwareRouteWithChildren
+  SettingsLoginScreenRoute: typeof SettingsLoginScreenRoute
   SettingsMenuRoute: typeof SettingsMenuRoute
   SettingsMoreRoute: typeof SettingsMoreRoute
   SettingsNetworkRoute: typeof SettingsNetworkRoute
@@ -828,6 +841,13 @@ declare module '@tanstack/react-router' {
       path: '/settings/hardware'
       fullPath: '/settings/hardware'
       preLoaderRoute: typeof SettingsHardwareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/login-screen': {
+      id: '/settings/login-screen'
+      path: '/settings/login-screen'
+      fullPath: '/settings/login-screen'
+      preLoaderRoute: typeof SettingsLoginScreenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings/menu': {
@@ -1045,6 +1065,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsControlCenterRoute: SettingsControlCenterRoute,
   SettingsGeneralRoute: SettingsGeneralRoute,
   SettingsHardwareRoute: SettingsHardwareRouteWithChildren,
+  SettingsLoginScreenRoute: SettingsLoginScreenRoute,
   SettingsMenuRoute: SettingsMenuRoute,
   SettingsMoreRoute: SettingsMoreRoute,
   SettingsNetworkRoute: SettingsNetworkRoute,
