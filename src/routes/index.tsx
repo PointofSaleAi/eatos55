@@ -2,22 +2,25 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { BootScreen } from "@/components/pos/boot-screen";
 import { Wordmark } from "@/components/pos/brand";
+import { LoginCarousel } from "@/components/pos/login-carousel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLayoutMode } from "@/hooks/use-layout-mode";
 import { APP_VERSION } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Point of Purchase — eatOS Sign in" },
-      { name: "description", content: "Secure team access to the eatOS Point of Purchase app." },
-      { property: "og:title", content: "Point of Purchase — eatOS Sign in" },
+      { title: "Point of Sale — eatOS Sign in" },
+      { name: "description", content: "Secure team access to the eatOS Point of Sale app." },
+      { property: "og:title", content: "Point of Sale — eatOS Sign in" },
       {
         property: "og:description",
-        content: "Secure team access to the eatOS Point of Purchase app.",
+        content: "Secure team access to the eatOS Point of Sale app.",
       },
     ],
   }),
@@ -27,17 +30,31 @@ export const Route = createFileRoute("/")({
 function SignInScreen() {
   const { signIn } = usePos();
   const navigate = useNavigate();
+  const { wide } = useLayoutMode();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
+  const [booting, setBooting] = useState(false);
 
-  return (
-    <div className="flex min-h-0 flex-1 flex-col bg-background">
-      <div className="no-scrollbar flex flex-1 flex-col justify-center overflow-y-auto px-6 pb-[calc(2rem+var(--kb-inset,0px))] pt-8 [html[data-kb=open]_&]:justify-start">
-        <div className="my-auto w-full [html[data-kb=open]_&]:my-0">
+  if (booting) {
+    return (
+      <BootScreen
+        onDone={() => {
+          toast.success("Signed in");
+          navigate({ to: "/access/clock-in" });
+        }}
+      />
+    );
+  }
+
+  const form = (
+    <div className="no-scrollbar flex flex-1 flex-col justify-center overflow-y-auto px-6 pb-[calc(2rem+var(--kb-inset,0px))] pt-8 [html[data-kb=open]_&]:justify-start">
+      <div className="my-auto w-full max-w-[26rem] [html[data-kb=open]_&]:my-0 md:mx-auto">
         <div className="flex flex-col items-center">
           <Wordmark />
-          <h1 className="mt-5 text-fs-2xl font-extrabold leading-tight text-foreground">Point of Purchase</h1>
+          <h1 className="mt-5 text-fs-2xl font-extrabold leading-tight text-foreground">
+            Point of Sale
+          </h1>
         </div>
 
         <form
@@ -45,14 +62,11 @@ function SignInScreen() {
           onSubmit={(e) => {
             e.preventDefault();
             signIn();
-            toast.success("Signed in");
-            navigate({ to: "/access/clock-in" });
+            setBooting(true);
           }}
         >
           <div className="space-y-1.5">
-            <Label htmlFor="email">
-              Email Address
-            </Label>
+            <Label htmlFor="email">Email Address</Label>
             <Input
               id="email"
               value={email}
@@ -62,9 +76,7 @@ function SignInScreen() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="password">
-              Password
-            </Label>
+            <Label htmlFor="password">Password</Label>
             <div className="relative">
               <Input
                 id="password"
@@ -108,8 +120,19 @@ function SignInScreen() {
         </Link>
 
         <p className="mt-6 text-center text-fs-xs text-muted-foreground">{APP_VERSION}</p>
-        </div>
       </div>
     </div>
   );
+
+  // Landscape tablet / web: carousel beside the form. Phones keep the single column.
+  if (wide) {
+    return (
+      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,3fr)_minmax(22rem,2fr)] bg-background">
+        <LoginCarousel />
+        <div className="flex min-h-0 flex-col">{form}</div>
+      </div>
+    );
+  }
+
+  return <div className="flex min-h-0 flex-1 flex-col bg-background">{form}</div>;
 }
