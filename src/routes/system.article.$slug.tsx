@@ -8,9 +8,9 @@ import { helpArticles } from "@/lib/help-content";
 export const Route = createFileRoute("/system/article/$slug")({
   head: () => ({
     meta: [
-      { title: "Support guide — EATOS Handheld" },
+      { title: "Support guide - EATOS Handheld" },
       { name: "description", content: "Step-by-step guidance for using the EATOS handheld." },
-      { property: "og:title", content: "Support guide — EATOS Handheld" },
+      { property: "og:title", content: "Support guide - EATOS Handheld" },
       {
         property: "og:description",
         content: "Step-by-step guidance for using the EATOS handheld.",

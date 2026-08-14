@@ -9,9 +9,9 @@ import { useConfirm } from "@/components/pos/confirm-sheet";
 export const Route = createFileRoute("/settings/more")({
   head: () => ({
     meta: [
-      { title: "More settings — EATOS Handheld" },
+      { title: "More settings - EATOS Handheld" },
       { name: "description", content: "Advanced device options, support and legal information." },
-      { property: "og:title", content: "More settings — EATOS Handheld" },
+      { property: "og:title", content: "More settings - EATOS Handheld" },
       {
         property: "og:description",
         content: "Advanced device options, support and legal information.",

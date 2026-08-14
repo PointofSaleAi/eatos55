@@ -8,9 +8,9 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/access/select-station")({
   head: () => ({
     meta: [
-      { title: "Select station — EATOS Handheld" },
+      { title: "Select station - EATOS Handheld" },
       { name: "description", content: "Choose the revenue center you are working tonight." },
-      { property: "og:title", content: "Select station — EATOS Handheld" },
+      { property: "og:title", content: "Select station - EATOS Handheld" },
       {
         property: "og:description",
         content: "Choose the revenue center you are working tonight.",

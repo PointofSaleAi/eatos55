@@ -186,7 +186,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
           </p>
         ) : null}
 
-        {/* Vehicle information — Drive Thru only */}
+        {/* Vehicle information - Drive Thru only */}
         {isDriveThru ? (
           <>
             <div className="flex items-center gap-2 px-4 pb-1.5 pt-4">

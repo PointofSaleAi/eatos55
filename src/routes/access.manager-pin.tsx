@@ -18,9 +18,9 @@ export const Route = createFileRoute("/access/manager-pin")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Manager PIN — EATOS Handheld" },
+      { title: "Manager PIN - EATOS Handheld" },
       { name: "description", content: "Manager approval for protected handheld actions." },
-      { property: "og:title", content: "Manager PIN — EATOS Handheld" },
+      { property: "og:title", content: "Manager PIN - EATOS Handheld" },
       { property: "og:description", content: "Manager approval for protected handheld actions." },
     ],
   }),

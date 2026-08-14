@@ -7,12 +7,12 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/notifications")({
   head: () => ({
     meta: [
-      { title: "Notifications — EATOS Handheld settings" },
+      { title: "Notifications - EATOS Handheld settings" },
       {
         name: "description",
         content: "Choose which order and shift alerts this handheld shows.",
       },
-      { property: "og:title", content: "Notifications — EATOS Handheld settings" },
+      { property: "og:title", content: "Notifications - EATOS Handheld settings" },
       {
         property: "og:description",
         content: "Choose which order and shift alerts this handheld shows.",

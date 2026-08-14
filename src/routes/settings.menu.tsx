@@ -15,12 +15,12 @@ import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
 export const Route = createFileRoute("/settings/menu")({
   head: () => ({
     meta: [
-      { title: "Menu — EATOS Handheld settings" },
+      { title: "Menu - EATOS Handheld settings" },
       {
         name: "description",
         content: "Menus, categories, modifiers, add-ons, products, inventory and groups.",
       },
-      { property: "og:title", content: "Menu — EATOS Handheld settings" },
+      { property: "og:title", content: "Menu - EATOS Handheld settings" },
       {
         property: "og:description",
         content: "Menus, categories, modifiers, add-ons, products, inventory and groups.",

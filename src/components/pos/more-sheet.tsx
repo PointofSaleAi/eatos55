@@ -66,7 +66,7 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
           const ok = await confirm({
             title: "Cancel this order?",
             message: cart.length
-              ? "This cannot be undone — every item on the order is removed."
+              ? "This cannot be undone - every item on the order is removed."
               : "The order in progress is discarded.",
             confirmLabel: "Cancel order",
             destructive: true,

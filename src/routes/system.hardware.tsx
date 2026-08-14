@@ -7,9 +7,9 @@ import { hardware } from "@/lib/demo-data";
 export const Route = createFileRoute("/system/hardware")({
   head: () => ({
     meta: [
-      { title: "Hardware — EATOS Handheld" },
+      { title: "Hardware - EATOS Handheld" },
       { name: "description", content: "Printers, card reader, cash drawer and display pairing." },
-      { property: "og:title", content: "Hardware — EATOS Handheld" },
+      { property: "og:title", content: "Hardware - EATOS Handheld" },
       { property: "og:description", content: "Printers, card reader, cash drawer and display pairing." },
     ],
   }),

@@ -19,9 +19,9 @@ const kinds: Record<
 export const Route = createFileRoute("/payment/tender/$kind")({
   head: () => ({
     meta: [
-      { title: "Tender Amount — eatOS Point of Sale" },
+      { title: "Tender Amount - eatOS Point of Sale" },
       { name: "description", content: "Enter the amount to tender for this payment method." },
-      { property: "og:title", content: "Tender Amount — eatOS Point of Sale" },
+      { property: "og:title", content: "Tender Amount - eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Enter the amount to tender for this payment method.",

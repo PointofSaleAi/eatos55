@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * "Split With" sheet: pick which checks an item is shared between.
- * Mirrors the handheld design — one row per check with a checkbox and SAVE.
+ * Mirrors the handheld design - one row per check with a checkbox and SAVE.
  */
 export function SplitWithSheet({
   open,

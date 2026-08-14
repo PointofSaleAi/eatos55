@@ -7,9 +7,9 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/sales-summary")({
   head: () => ({
     meta: [
-      { title: "Sales Summary Report — EATOS Handheld" },
+      { title: "Sales Summary Report - EATOS Handheld" },
       { name: "description", content: "Net sales, tickets and payment mix for the current day." },
-      { property: "og:title", content: "Sales Summary Report — EATOS Handheld" },
+      { property: "og:title", content: "Sales Summary Report - EATOS Handheld" },
       {
         property: "og:description",
         content: "Net sales, tickets and payment mix for the current day.",

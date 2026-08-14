@@ -7,9 +7,9 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/system/network")({
   head: () => ({
     meta: [
-      { title: "Network — EATOS Handheld" },
+      { title: "Network - EATOS Handheld" },
       { name: "description", content: "Wi-Fi, cellular fallback and cloud sync status." },
-      { property: "og:title", content: "Network — EATOS Handheld" },
+      { property: "og:title", content: "Network - EATOS Handheld" },
       { property: "og:description", content: "Wi-Fi, cellular fallback and cloud sync status." },
     ],
   }),

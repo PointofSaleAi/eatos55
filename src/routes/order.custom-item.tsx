@@ -10,9 +10,9 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/order/custom-item")({
   head: () => ({
     meta: [
-      { title: "Custom Item — eatOS Point of Sale" },
+      { title: "Custom Item - eatOS Point of Sale" },
       { name: "description", content: "Ring in an open priced item with a custom name and amount." },
-      { property: "og:title", content: "Custom Item — eatOS Point of Sale" },
+      { property: "og:title", content: "Custom Item - eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Ring in an open priced item with a custom name and amount.",

@@ -10,9 +10,9 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/access/create-account")({
   head: () => ({
     meta: [
-      { title: "Create an Account — eatOS Point of Sale" },
+      { title: "Create an Account - eatOS Point of Sale" },
       { name: "description", content: "Onboard a restaurant onto the eatOS Point of Sale app." },
-      { property: "og:title", content: "Create an Account — eatOS Point of Sale" },
+      { property: "og:title", content: "Create an Account - eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Onboard a restaurant onto the eatOS Point of Sale app.",
@@ -198,7 +198,7 @@ function CreateAccount() {
           className="h-12 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground hover:bg-accent/90 disabled:opacity-40"
           onClick={() => {
             signIn();
-            toast.success("Account created — welcome to eatOS");
+            toast.success("Account created - welcome to eatOS");
             navigate({ to: "/access/clock-in" });
           }}
         >

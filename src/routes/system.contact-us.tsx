@@ -7,12 +7,12 @@ import { Wordmark } from "@/components/pos/brand";
 export const Route = createFileRoute("/system/contact-us")({
   head: () => ({
     meta: [
-      { title: "Contact Us — EATOS Help Center" },
+      { title: "Contact Us - EATOS Help Center" },
       {
         name: "description",
         content: "Search the EATOS help center or browse FAQs, guides and how-to articles.",
       },
-      { property: "og:title", content: "Contact Us — EATOS Help Center" },
+      { property: "og:title", content: "Contact Us - EATOS Help Center" },
       {
         property: "og:description",
         content: "Search the EATOS help center or browse FAQs, guides and how-to articles.",

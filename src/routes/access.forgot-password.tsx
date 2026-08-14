@@ -10,9 +10,9 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/access/forgot-password")({
   head: () => ({
     meta: [
-      { title: "Forgot Password — eatOS Point of Sale" },
+      { title: "Forgot Password - eatOS Point of Sale" },
       { name: "description", content: "Recover access by email or mobile number with an OTP." },
-      { property: "og:title", content: "Forgot Password — eatOS Point of Sale" },
+      { property: "og:title", content: "Forgot Password - eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Recover access by email or mobile number with an OTP.",

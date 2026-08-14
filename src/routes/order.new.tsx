@@ -1,13 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Ban, ChevronDown, MoreVertical, Plus, Search, Tag } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GuestBlock } from "@/components/pos/guest-block";
 import { MenuButton, useWideLayout } from "@/components/pos/shell";
 import { GuestSheet } from "@/components/pos/guest-sheet";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { MoreSheet } from "@/components/pos/more-sheet";
-import { liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
+import { itemNeedsSheet, liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
+import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { toast } from "sonner";
 import { SearchDock } from "@/components/pos/search-dock";
@@ -16,9 +17,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/order/new")({
   head: () => ({
     meta: [
-      { title: "New Order — eatOS Point of Sale" },
+      { title: "New Order - eatOS Point of Sale" },
       { name: "description", content: "Add products, scan barcodes and build a guest order." },
-      { property: "og:title", content: "New Order — eatOS Point of Sale" },
+      { property: "og:title", content: "New Order - eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Add products, scan barcodes and build a guest order.",
@@ -30,7 +31,7 @@ export const Route = createFileRoute("/order/new")({
 
 function NewOrder() {
   const navigate = useNavigate();
-  const { totals, cart, changeQty } = usePos();
+  const { totals, cart, changeQty, addItem } = usePos();
   const [activeMenu, setActiveMenu] = useState(menus[1]!.id);
   const [category, setCategory] = useState<string>(menus[1]!.categories[0]!);
   const [sheetItem, setSheetItem] = useState<MenuItem | null>(null);
@@ -42,6 +43,13 @@ function NewOrder() {
   // Landscape shows the menu and the running order side by side, so the
   // Menu/Order switch is phone-only.
   const wide = useWideLayout();
+  // Long-press on a tile always opens the item sheet, even for simple items.
+  const longPress = useRef<number | null>(null);
+  const longFired = useRef(false);
+  const clearLongPress = () => {
+    if (longPress.current !== null) window.clearTimeout(longPress.current);
+    longPress.current = null;
+  };
   const showMenu = wide || tab === "menu";
   const showCart = wide || tab === "order";
 
@@ -174,7 +182,26 @@ function NewOrder() {
               <button
                 key={item.id}
                 type="button"
+                aria-label={
+                  item.outOfStock
+                    ? `${item.name}, out of stock`
+                    : itemNeedsSheet(item)
+                      ? `${item.name}, choose options`
+                      : `Add ${item.name} to the order`
+                }
+                onPointerDown={() => {
+                  longFired.current = false;
+                  longPress.current = window.setTimeout(() => {
+                    longPress.current = null;
+                    longFired.current = true;
+                    if (!item.outOfStock) setSheetItem(item);
+                  }, 500);
+                }}
+                onPointerUp={clearLongPress}
+                onPointerLeave={clearLongPress}
                 onClick={() => {
+                  clearLongPress();
+                  if (longFired.current) return;
                   if (item.outOfStock) {
                     toast.error(`${item.name} is out of stock`, {
                       action: {
@@ -184,13 +211,20 @@ function NewOrder() {
                     });
                     return;
                   }
-                  setSheetItem(item);
+                  if (itemNeedsSheet(item)) {
+                    setSheetItem(item);
+                    return;
+                  }
+                  addItem(item.id, { qty: 1 });
+                  haptic("success");
+                  toast.success(`${item.name} added`);
                 }}
                 className={cn(
                   "relative flex min-h-tile flex-col justify-between rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
                   item.outOfStock && "opacity-50",
                 )}
               >
+
                 <span className="flex items-start gap-1.5">
                   <span className="min-w-0 flex-1 text-fs-sm font-extrabold leading-tight text-foreground">
                     {item.name}
@@ -268,7 +302,7 @@ function NewOrder() {
           <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-3">
           {cart.length === 0 ? (
             <p className="px-4 py-24 text-center text-fs-sm text-muted-foreground">
-              No items yet — add products from the menu
+              No items yet - add products from the menu
             </p>
           ) : (
             <div className="space-y-3">

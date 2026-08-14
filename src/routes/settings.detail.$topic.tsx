@@ -17,12 +17,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/settings/detail/$topic")({
   head: () => ({
     meta: [
-      { title: "Settings detail — EATOS Handheld" },
+      { title: "Settings detail - EATOS Handheld" },
       {
         name: "description",
         content: "Device, menu, payment, hardware and workforce settings detail on the handheld.",
       },
-      { property: "og:title", content: "Settings detail — EATOS Handheld" },
+      { property: "og:title", content: "Settings detail - EATOS Handheld" },
       {
         property: "og:description",
         content: "Device, menu, payment, hardware and workforce settings detail on the handheld.",

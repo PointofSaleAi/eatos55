@@ -87,13 +87,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-title", content: "eatOS" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { name: "format-detection", content: "telephone=no" },
-      { title: "EATOS Handheld — Restaurant POS" },
+      { title: "EATOS Handheld - Restaurant POS" },
       {
         name: "description",
         content:
           "EATOS Handheld: a fast operator POS for tickets, orders, payments and store settings.",
       },
-      { property: "og:title", content: "EATOS Handheld — Restaurant POS" },
+      { property: "og:title", content: "EATOS Handheld - Restaurant POS" },
       {
         property: "og:description",
         content: "A faster, clearer handheld operator experience for every shift.",
