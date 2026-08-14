@@ -15,12 +15,12 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/control-center")({
   head: () => ({
     meta: [
-      { title: "Control Center — EATOS Handheld settings" },
+      { title: "Control Center - EATOS Handheld settings" },
       {
         name: "description",
         content: "Device settings, hardware control and the scheduled app restart time.",
       },
-      { property: "og:title", content: "Control Center — EATOS Handheld settings" },
+      { property: "og:title", content: "Control Center - EATOS Handheld settings" },
       {
         property: "og:description",
         content: "Device settings, hardware control and the scheduled app restart time.",

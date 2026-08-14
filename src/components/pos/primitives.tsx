@@ -252,7 +252,7 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
       <div className="flex items-center gap-2 px-2 py-1.5">
         <button
           type="button"
-          aria-label={`Open order ${orderNo} — ${orderTypeLabel}${ticket.table ? `, table ${ticket.table}` : ""}`}
+          aria-label={`Open order ${orderNo} - ${orderTypeLabel}${ticket.table ? `, table ${ticket.table}` : ""}`}
           title={ticket.table ? `Table ${ticket.table} · ${orderTypeLabel}` : orderTypeLabel}
           onClick={onClick}
           className="flex shrink-0 items-center gap-2 rounded-row bg-muted px-2 py-1.5 text-left transition-colors hover:bg-secondary"

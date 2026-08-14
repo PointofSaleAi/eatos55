@@ -13,12 +13,12 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/login-screen")({
   head: () => ({
     meta: [
-      { title: "Login Screen — eatOS Point of Sale settings" },
+      { title: "Login Screen - eatOS Point of Sale settings" },
       {
         name: "description",
         content: "Manage the sign-in carousel slides, venue label and clock-in weather panel.",
       },
-      { property: "og:title", content: "Login Screen — eatOS Point of Sale settings" },
+      { property: "og:title", content: "Login Screen - eatOS Point of Sale settings" },
       {
         property: "og:description",
         content: "Manage the sign-in carousel slides, venue label and clock-in weather panel.",

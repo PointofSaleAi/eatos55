@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { PinPad } from "@/components/pos/pin-pad";
 import { usePos } from "@/lib/pos-store";
 
-/** Screen 70 — "Enter PIN" bottom sheet using the live app's full keypad. */
+/** Screen 70 - "Enter PIN" bottom sheet using the live app's full keypad. */
 export function PinSheet({
   open,
   onOpenChange,

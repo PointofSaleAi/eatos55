@@ -8,9 +8,9 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/tickets/manager-controls")({
   head: () => ({
     meta: [
-      { title: "Manager controls — EATOS Handheld" },
+      { title: "Manager controls - EATOS Handheld" },
       { name: "description", content: "Session controls, alerts and protected shift actions." },
-      { property: "og:title", content: "Manager controls — EATOS Handheld" },
+      { property: "og:title", content: "Manager controls - EATOS Handheld" },
       {
         property: "og:description",
         content: "Session controls, alerts and protected shift actions.",

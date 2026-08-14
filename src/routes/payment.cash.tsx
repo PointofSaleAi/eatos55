@@ -9,9 +9,9 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/payment/cash")({
   head: () => ({
     meta: [
-      { title: "Pay by Cash — eatOS Point of Sale" },
+      { title: "Pay by Cash - eatOS Point of Sale" },
       { name: "description", content: "Enter cash received and calculate the change due." },
-      { property: "og:title", content: "Pay by Cash — eatOS Point of Sale" },
+      { property: "og:title", content: "Pay by Cash - eatOS Point of Sale" },
       { property: "og:description", content: "Enter cash received and calculate the change due." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -34,7 +34,7 @@ function PayByCash() {
       actionLabel={(amount) => `Charge ${money(amount || due)}`}
       onCommit={(amount) => {
         if (amount < due) {
-          toast.error(`Short ${money(due - amount)} — enter the full amount`);
+          toast.error(`Short ${money(due - amount)} - enter the full amount`);
           return;
         }
         haptic("success");

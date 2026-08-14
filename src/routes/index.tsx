@@ -15,9 +15,9 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Point of Sale — eatOS Sign in" },
+      { title: "Point of Sale - eatOS Sign in" },
       { name: "description", content: "Secure team access to the eatOS Point of Sale app." },
-      { property: "og:title", content: "Point of Sale — eatOS Sign in" },
+      { property: "og:title", content: "Point of Sale - eatOS Sign in" },
       {
         property: "og:description",
         content: "Secure team access to the eatOS Point of Sale app.",

@@ -12,13 +12,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/payment/split")({
   head: () => ({
     meta: [
-      { title: "Split Check — eatOS Point of Sale" },
+      { title: "Split Check - eatOS Point of Sale" },
       {
         name: "description",
         content:
           "Split a check evenly or item by item, review each child check and take payment on the handheld.",
       },
-      { property: "og:title", content: "Split Check — eatOS Point of Sale" },
+      { property: "og:title", content: "Split Check - eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Split a check evenly or item by item and take payment on the handheld.",
@@ -286,7 +286,7 @@ function SplitCheck() {
             const first = breakdown[0];
             toast.info(
               first
-                ? `Check ${checkNumber}-${first.letter} · ${money(first.total)} — choose a tender`
+                ? `Check ${checkNumber}-${first.letter} · ${money(first.total)} - choose a tender`
                 : "Choose a tender",
             );
             navigate({ to: "/payment/method" });

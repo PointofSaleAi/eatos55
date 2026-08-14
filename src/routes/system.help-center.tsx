@@ -8,9 +8,9 @@ import { Input } from "@/components/ui/input";
 export const Route = createFileRoute("/system/help-center")({
   head: () => ({
     meta: [
-      { title: "Help center — EATOS Handheld" },
+      { title: "Help center - EATOS Handheld" },
       { name: "description", content: "Guides for tickets, payments, hardware and shift handover." },
-      { property: "og:title", content: "Help center — EATOS Handheld" },
+      { property: "og:title", content: "Help center - EATOS Handheld" },
       {
         property: "og:description",
         content: "Guides for tickets, payments, hardware and shift handover.",

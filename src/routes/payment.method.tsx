@@ -18,12 +18,12 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/payment/method")({
   head: () => ({
     meta: [
-      { title: "Select Payment Method — eatOS Point of Sale" },
+      { title: "Select Payment Method - eatOS Point of Sale" },
       {
         name: "description",
         content: "Review the order and choose card, cash, gift card, loyalty, QR or split payment.",
       },
-      { property: "og:title", content: "Select Payment Method — eatOS Point of Sale" },
+      { property: "og:title", content: "Select Payment Method - eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Review the order and choose card, cash, gift card, loyalty, QR or split payment.",

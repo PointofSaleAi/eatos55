@@ -17,9 +17,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/order/new")({
   head: () => ({
     meta: [
-      { title: "New Order — eatOS Point of Sale" },
+      { title: "New Order - eatOS Point of Sale" },
       { name: "description", content: "Add products, scan barcodes and build a guest order." },
-      { property: "og:title", content: "New Order — eatOS Point of Sale" },
+      { property: "og:title", content: "New Order - eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Add products, scan barcodes and build a guest order.",
@@ -302,7 +302,7 @@ function NewOrder() {
           <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-3">
           {cart.length === 0 ? (
             <p className="px-4 py-24 text-center text-fs-sm text-muted-foreground">
-              No items yet — add products from the menu
+              No items yet - add products from the menu
             </p>
           ) : (
             <div className="space-y-3">

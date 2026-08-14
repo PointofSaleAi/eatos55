@@ -26,12 +26,12 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/general")({
   head: () => ({
     meta: [
-      { title: "General — EATOS Handheld settings" },
+      { title: "General - EATOS Handheld settings" },
       {
         name: "description",
         content: "Device service, restaurant information, language, currency and tax alias.",
       },
-      { property: "og:title", content: "General — EATOS Handheld settings" },
+      { property: "og:title", content: "General - EATOS Handheld settings" },
       {
         property: "og:description",
         content: "Device service, restaurant information, language, currency and tax alias.",

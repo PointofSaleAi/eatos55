@@ -35,7 +35,7 @@ import type { AppSettings } from "@/lib/pos-store";
  * right control per kind and only lets managers change them.
  */
 export type DetailRow =
-  /** Comes from Back Office — read-only for everyone. */
+  /** Comes from Back Office - read-only for everyone. */
   | { kind: "readonly"; label: string; value?: string }
   | { kind: "toggle"; label: string; field: keyof AppSettings }
   | { kind: "choice"; label: string; field: keyof AppSettings; options: string[] }

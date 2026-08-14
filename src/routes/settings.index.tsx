@@ -32,12 +32,12 @@ import { useConfirm } from "@/components/pos/confirm-sheet";
 export const Route = createFileRoute("/settings/")({
   head: () => ({
     meta: [
-      { title: "Settings — EATOS Handheld" },
+      { title: "Settings - EATOS Handheld" },
       {
         name: "description",
         content: "Device, menu, payments, workforce and hardware settings for the handheld app.",
       },
-      { property: "og:title", content: "Settings — EATOS Handheld" },
+      { property: "og:title", content: "Settings - EATOS Handheld" },
       {
         property: "og:description",
         content: "Device, menu, payments, workforce and hardware settings for the handheld app.",
@@ -212,7 +212,7 @@ function SettingsHub() {
         onSubmit={() => {
           setPinOpen(false);
           signOut();
-          toast.success("Signed out — switch user");
+          toast.success("Signed out - switch user");
           navigate({ to: "/access/clock-in", replace: true });
         }}
       />

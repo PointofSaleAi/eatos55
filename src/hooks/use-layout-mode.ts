@@ -39,7 +39,7 @@ export function useLayoutMode() {
     try {
       window.localStorage.setItem(KEY, next);
     } catch {
-      /* storage unavailable — session-only */
+      /* storage unavailable - session-only */
     }
   }, []);
 

@@ -15,12 +15,12 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/system/customer-support")({
   head: () => ({
     meta: [
-      { title: "Customer Support — EATOS Handheld" },
+      { title: "Customer Support - EATOS Handheld" },
       {
         name: "description",
         content: "User feedback tools, live chat, Live Pin and log uploads for EATOS support.",
       },
-      { property: "og:title", content: "Customer Support — EATOS Handheld" },
+      { property: "og:title", content: "Customer Support - EATOS Handheld" },
       {
         property: "og:description",
         content: "User feedback tools, live chat, Live Pin and log uploads for EATOS support.",

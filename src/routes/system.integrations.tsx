@@ -7,9 +7,9 @@ import { Card, SectionLabel, ToggleRow } from "@/components/pos/primitives";
 export const Route = createFileRoute("/system/integrations")({
   head: () => ({
     meta: [
-      { title: "Integrations — EATOS Handheld" },
+      { title: "Integrations - EATOS Handheld" },
       { name: "description", content: "Connect delivery, accounting and loyalty partners." },
-      { property: "og:title", content: "Integrations — EATOS Handheld" },
+      { property: "og:title", content: "Integrations - EATOS Handheld" },
       { property: "og:description", content: "Connect delivery, accounting and loyalty partners." },
     ],
   }),

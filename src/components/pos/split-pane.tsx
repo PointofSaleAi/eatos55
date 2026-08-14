@@ -21,7 +21,7 @@ import {
 
 /**
  * Two-pane layout for landscape tablet/web: list pane on the left, the routed
- * screen on the right. On phones the shell never renders this — the routed
+ * screen on the right. On phones the shell never renders this - the routed
  * screen keeps the whole viewport and navigation stays push/pop.
  */
 export function SplitPane({
