@@ -1,13 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Ban, ChevronDown, MoreVertical, Plus, Search, Tag } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GuestBlock } from "@/components/pos/guest-block";
 import { MenuButton, useWideLayout } from "@/components/pos/shell";
 import { GuestSheet } from "@/components/pos/guest-sheet";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { MoreSheet } from "@/components/pos/more-sheet";
-import { liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
+import { itemNeedsSheet, liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
+import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { toast } from "sonner";
 import { SearchDock } from "@/components/pos/search-dock";
@@ -30,7 +31,7 @@ export const Route = createFileRoute("/order/new")({
 
 function NewOrder() {
   const navigate = useNavigate();
-  const { totals, cart, changeQty } = usePos();
+  const { totals, cart, changeQty, addItem } = usePos();
   const [activeMenu, setActiveMenu] = useState(menus[1]!.id);
   const [category, setCategory] = useState<string>(menus[1]!.categories[0]!);
   const [sheetItem, setSheetItem] = useState<MenuItem | null>(null);
@@ -42,6 +43,12 @@ function NewOrder() {
   // Landscape shows the menu and the running order side by side, so the
   // Menu/Order switch is phone-only.
   const wide = useWideLayout();
+  // Long-press on a tile always opens the item sheet, even for simple items.
+  const longPress = useRef<number | null>(null);
+  const clearLongPress = () => {
+    if (longPress.current !== null) window.clearTimeout(longPress.current);
+    longPress.current = null;
+  };
   const showMenu = wide || tab === "menu";
   const showCart = wide || tab === "order";
 
