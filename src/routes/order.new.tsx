@@ -45,6 +45,7 @@ function NewOrder() {
   const wide = useWideLayout();
   // Long-press on a tile always opens the item sheet, even for simple items.
   const longPress = useRef<number | null>(null);
+  const longFired = useRef(false);
   const clearLongPress = () => {
     if (longPress.current !== null) window.clearTimeout(longPress.current);
     longPress.current = null;
@@ -189,16 +190,18 @@ function NewOrder() {
                       : `Add ${item.name} to the order`
                 }
                 onPointerDown={() => {
+                  longFired.current = false;
                   longPress.current = window.setTimeout(() => {
                     longPress.current = null;
+                    longFired.current = true;
                     if (!item.outOfStock) setSheetItem(item);
                   }, 500);
                 }}
                 onPointerUp={clearLongPress}
                 onPointerLeave={clearLongPress}
                 onClick={() => {
-                  if (longPress.current === null) return;
                   clearLongPress();
+                  if (longFired.current) return;
                   if (item.outOfStock) {
                     toast.error(`${item.name} is out of stock`, {
                       action: {
