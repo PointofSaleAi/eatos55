@@ -128,7 +128,14 @@ const filterFacets = [
   options: readonly string[];
 }[];
 
-export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: TicketsOverlay }) {
+export function TicketsScreen({
+  initialOverlay = "none",
+  pane = false,
+}: {
+  initialOverlay?: TicketsOverlay;
+  /** Rendered as the list pane of a landscape split layout. */
+  pane?: boolean;
+}) {
   const navigate = useNavigate();
   const {
     visibleTickets,
@@ -217,7 +224,7 @@ export function TicketsScreen({ initialOverlay = "none" }: { initialOverlay?: Ti
       {/* Title + controls */}
       <div className="shrink-0 bg-surface px-2 pt-1.5">
         <div className="flex items-center gap-1">
-          <MenuButton />
+          {pane ? null : <MenuButton />}
           <h1 className="min-w-0 flex-1 truncate text-fs-lg font-extrabold text-foreground">
             Tickets
           </h1>

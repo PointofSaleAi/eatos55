@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BackButton } from "@/components/pos/shell";
+import { BackButton, useWideLayout } from "@/components/pos/shell";
 import { NumPad } from "@/components/pos/numpad";
 import { cashDenominations, money } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
@@ -23,6 +23,7 @@ export function TenderScreen({
   actionLabel?: (amount: number) => string;
   onCommit: (amount: number) => void;
 }) {
+  const wide = useWideLayout();
   const [amount, setAmount] = useState(initialAmount);
   const entered = Number(amount || "0");
   const change = Math.round((entered - due) * 100) / 100;
@@ -34,7 +35,14 @@ export function TenderScreen({
         <h1 className="truncate text-fs-xl font-extrabold text-foreground">{title}</h1>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-2 pb-[max(0.75rem,var(--kb-inset,0px))]">
+      <div
+        className={cn(
+          "min-h-0 flex-1 gap-2 overflow-y-auto p-2 pb-[max(0.75rem,var(--kb-inset,0px))]",
+          // Landscape: readout and denominations beside the keypad.
+          wide ? "grid grid-cols-2 items-start gap-6 p-6" : "flex flex-col",
+        )}
+      >
+        <div className={cn("shrink-0 text-center", wide && "space-y-4 self-center")}>
         <div className="shrink-0 text-center">
           <p className="text-fs-xl font-extrabold tabular-nums text-foreground">{money(entered)}</p>
           <p className="text-fs-sm text-muted-foreground">
@@ -53,7 +61,14 @@ export function TenderScreen({
         </div>
 
         {denominations ? (
-          <div className="no-scrollbar -mx-1 flex shrink-0 snap-x gap-2 overflow-x-auto px-1 pb-1">
+          <div
+            className={cn(
+              "shrink-0 gap-2 pb-1",
+              wide
+                ? "mt-4 grid grid-cols-3"
+                : "no-scrollbar -mx-1 flex snap-x overflow-x-auto px-1",
+            )}
+          >
             {cashDenominations.map((d) => (
               <button
                 key={d}
@@ -66,9 +81,13 @@ export function TenderScreen({
             ))}
           </div>
         ) : null}
+        </div>
 
         <NumPad
-          className="min-h-[calc(4*var(--key-h)+1.5rem)] flex-1 shrink-0"
+          className={cn(
+            "min-h-[calc(4*var(--key-h)+1.5rem)] shrink-0",
+            wide ? "self-stretch" : "flex-1",
+          )}
           onDigit={(d) =>
             setAmount((cur) => {
               if (d === "." && cur.includes(".")) return cur;
