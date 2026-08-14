@@ -1,51 +1,23 @@
-# Landscape tablet + web version of the same app
+# Why the preview never switches to landscape
 
-Today every screen renders inside a fixed 420px handheld frame on tablet and desktop (`DeviceFrame` in `src/components/pos/shell.tsx` pins `md:w-[420px]`), so a tablet in landscape shows a phone in the middle of a dark page. This adds a real landscape layout for tablets and web while keeping the phone experience untouched.
+The screenshots show the sign-in screen ("/"). That screen is on the pre-login list, so the shell treats it as "no app chrome", and the landscape layout is gated on app chrome being present:
 
-## 1. Adaptive shell with a frame toggle
+- `landscape = wide && appChrome`
+- `appChrome` is false for `/`, `/access/create-account`, `/access/forgot-password`
 
-- Below ~768px: unchanged phone layout (bottom pill tabs, full-bleed).
-- 768px and up: the app fills the viewport — no phone frame, no letterboxing. Content is capped by a max width with generous gutters so it never stretches to unreadable line lengths on a 27" monitor.
-- A small "Handheld preview" toggle (top-right of the shell chrome, only visible at md+) switches back into the 420px framed handheld view for demos and design review. The choice is remembered locally.
+So at any width, the login screen renders the fixed 420px framed phone card, centred on a dark backdrop — exactly what the screenshots show. The wide layout only appears after you sign in (Tickets, Floor, Settings, Order).
 
-## 2. Navigation: rail + collapsible drawer
+A second contributor: the "Handheld preview" toggle stores its choice in localStorage (`pos:layout-mode`). If it was ever set to `framed`, in-app screens also stay in the phone frame until it is switched back to "Full layout". That toggle is also hidden on pre-login screens, so there is no way to tell or change it from the login page.
 
-- Landscape gets a persistent left navigation rail: compact icon rail by default (Home, Tickets, Board, Order, Settings) with the primary action button at the top.
-- Tapping the rail's expand control widens it into a full labelled sidebar with the same grouped destinations as the phone drawer; collapsing returns to icons. State persists.
-- Bottom pill tabs are phone-only; the rail is tablet/desktop-only. Never both.
-- The grey account band (name, notifications, refresh) moves to the top-right of the landscape layout.
+## Fix
 
-## 3. Two-pane screens (landscape only)
-
-Each of these keeps its current single-pane phone behaviour and gains a side-by-side layout at md+ landscape. Selecting an item updates the right pane instead of navigating away; deep links still work, and with nothing selected the right pane shows a clear empty state.
-
-```text
-┌──────┬────────────────┬──────────────────────┐
-│ rail │ list / grid    │ detail / cart        │
-└──────┴────────────────┴──────────────────────┘
-```
-
-- Tickets: ticket list left, ticket detail (items, payments, tips, actions) right.
-- Order: menu category + item grid left, running order/cart with totals and Pay pinned right. Item modifiers open as a centred dialog instead of a bottom sheet.
-- Settings: settings tree left, selected topic right (Apple-style split).
-- Floor plan: larger table grid left, selected table panel (status, guests, timer, open ticket) right.
-
-## 4. Tablet-grade density and touch
-
-- Wider breakpoints raise grid column counts (menu items, payment tiles, floor tables) and use the extra room instead of scaling everything up.
-- Bottom sheets become centred dialogs at md+ (item, discount, guests, tip, split, status, date range); drag-to-close stays phone-only.
-- Keypads (cash, custom item, PIN) get a landscape arrangement: keypad beside the summary rather than stacked.
-- Tap targets stay at 44px minimum; hover and keyboard focus states are added since landscape web has a pointer.
-- Safe-area insets kept for iPad; keyboard-inset logic unchanged.
-
-## 5. Verification
-
-Playwright pass at 320/393/430 portrait (no regression), 820x1180 and 1180x820 (iPad), 1024x768, 1280x800 and 1728x1117: no horizontal overflow, rail present, two-pane screens laid out correctly, sheets rendering as dialogs, frame toggle working both ways.
+1. Make the access screens adaptive too: at 768px and up, drop the phone frame on `/`, `/access/*` and let the sign-in / clock-in / PIN content sit in a centred max-width column on the full-bleed background (same visual language, no artificial device bezel). Keep the current framed look below 768px.
+2. Show the layout mode toggle on pre-login screens as well, so "Handheld preview" vs "Full layout" is visible and reversible from the first screen.
+3. Make "Full layout" the default when nothing is stored, and ignore a stale `framed` value if the viewport is wide and the user has not toggled during this session — no silent phone-frame lock-in.
+4. Verify at 1194x834 (tablet landscape), 1440x900 (web) and 390x844 (phone) that: login is full-width centred on wide, framed on phone; and after sign-in the nav rail + two-pane screens appear without needing a manual toggle.
 
 ## Technical notes
 
-- `src/components/pos/shell.tsx`: `DeviceFrame` gains a layout mode (`adaptive` | `framed`) from a small `useLayoutMode` hook (localStorage-backed) plus a `useLandscapeLayout` hook (`min-width: 768px`); `BottomTabs` gated to phone; rail mounted for landscape.
-- `src/components/pos/nav-rail.tsx` is revived and extended with expand/collapse and the grouped destinations from `nav-drawer.tsx` (shared destination list extracted so both stay in sync).
-- New `src/components/pos/split-pane.tsx` renders single-pane on phone and list+detail at md+; tickets, order, settings and floor routes wrap their existing components in it. Detail panes reuse the existing route components — no duplicate screens.
-- Sheet-vs-dialog handled by one shared `AdaptiveSheet` wrapper so each sheet file changes minimally.
-- Presentation only: no changes to `src/lib/pos-store.tsx` business logic beyond a selected-id for panes, no data or backend changes.
+- `src/components/pos/shell.tsx`: split the `landscape` condition so wide access screens get the full-bleed container without the nav rail / tabs; move the mode toggle out of the `appChrome` guard.
+- `src/hooks/use-layout-mode.ts`: keep `adaptive` as the default and only honour a stored `framed` value.
+- No data or business logic changes; presentation only.
