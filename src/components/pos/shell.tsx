@@ -130,12 +130,16 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
   useAppearance();
 
   const landscape = wide && appChrome;
+  // Pre-login screens have no rail/tabs but still drop the phone frame on wide
+  // viewports so the preview matches the tablet/web layout.
+  const wideAccess = wide && !appChrome;
+  const fullBleed = landscape || wideAccess;
 
   return (
     <div
       className={cn(
         "h-[100dvh] overflow-hidden bg-shell",
-        landscape
+        fullBleed
           ? "bg-background"
           : "md:flex md:h-auto md:min-h-[100dvh] md:items-center md:justify-center md:overflow-visible md:p-8",
       )}
@@ -143,7 +147,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
       <div
         className={cn(
           "relative flex h-full max-h-[100dvh] w-full overflow-hidden bg-background",
-          !landscape &&
+          !fullBleed &&
             "md:h-[860px] md:max-h-none md:w-[420px] md:rounded-[2.75rem] md:border-[10px] md:border-shell md:shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)] lg:h-[880px] lg:w-[440px]",
         )}
       >
@@ -160,7 +164,15 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
                 >
                   {appChrome && !landscape ? <ClockPullDown /> : null}
                   <OfflineBanner />
-                  {landscape ? <LandscapeContent>{children}</LandscapeContent> : children}
+                  {landscape ? (
+                    <LandscapeContent>{children}</LandscapeContent>
+                  ) : wideAccess ? (
+                    <div className="mx-auto flex min-h-0 w-full max-w-[32rem] flex-1 flex-col">
+                      {children}
+                    </div>
+                  ) : (
+                    children
+                  )}
                   {appChrome && !landscape ? <BottomTabs /> : null}
                   {appChrome && !landscape ? (
                     <NavDrawer open={navOpen} onClose={closeNav} />
@@ -173,7 +185,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
           </NavDrawerContext.Provider>
         </WideContext.Provider>
       </div>
-      {wideViewport && appChrome ? (
+      {wideViewport ? (
         <button
           type="button"
           onClick={() => setMode(mode === "framed" ? "adaptive" : "framed")}
