@@ -123,6 +123,8 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
   const closeNav = useCallback(() => setNavOpen(false), []);
   const navCtx = useMemo(() => ({ open: () => setNavOpen(true) }), []);
   const appChrome = useAppChrome();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isSignIn = (pathname.replace(/\/+$/, "") || "/") === "/";
   const { mode, setMode, wide, wideViewport } = useLayoutMode();
   useSessionGate();
   useGlobalKeyboardAware();
@@ -134,6 +136,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
   // viewports so the preview matches the tablet/web layout.
   const wideAccess = wide && !appChrome;
   const fullBleed = landscape || wideAccess;
+
 
   return (
     <div
