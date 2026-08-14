@@ -174,7 +174,24 @@ function NewOrder() {
               <button
                 key={item.id}
                 type="button"
+                aria-label={
+                  item.outOfStock
+                    ? `${item.name}, out of stock`
+                    : itemNeedsSheet(item)
+                      ? `${item.name}, choose options`
+                      : `Add ${item.name} to the order`
+                }
+                onPointerDown={() => {
+                  longPress.current = window.setTimeout(() => {
+                    longPress.current = null;
+                    if (!item.outOfStock) setSheetItem(item);
+                  }, 500);
+                }}
+                onPointerUp={clearLongPress}
+                onPointerLeave={clearLongPress}
                 onClick={() => {
+                  if (longPress.current === null) return;
+                  clearLongPress();
                   if (item.outOfStock) {
                     toast.error(`${item.name} is out of stock`, {
                       action: {
@@ -184,13 +201,20 @@ function NewOrder() {
                     });
                     return;
                   }
-                  setSheetItem(item);
+                  if (itemNeedsSheet(item)) {
+                    setSheetItem(item);
+                    return;
+                  }
+                  addItem(item.id, { qty: 1 });
+                  haptic("success");
+                  toast.success(`${item.name} added`);
                 }}
                 className={cn(
                   "relative flex min-h-tile flex-col justify-between rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
                   item.outOfStock && "opacity-50",
                 )}
               >
+
                 <span className="flex items-start gap-1.5">
                   <span className="min-w-0 flex-1 text-fs-sm font-extrabold leading-tight text-foreground">
                     {item.name}
