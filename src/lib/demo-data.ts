@@ -16,6 +16,10 @@ export type MenuItem = {
   outOfStock?: boolean;
   /** Price is entered by the server at order time. */
   openPrice?: boolean;
+  /** Modifier groups (Item tab) offered for this item. Empty means none. */
+  modifierGroupNames?: string[];
+  /** Add-on groups offered for this item. Empty means none. */
+  addOnGroupNames?: string[];
 };
 
 export type CartLine = {
