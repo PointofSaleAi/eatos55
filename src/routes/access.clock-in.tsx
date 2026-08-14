@@ -11,9 +11,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/access/clock-in")({
   head: () => ({
     meta: [
-      { title: "Clock In — eatOS Point of Purchase" },
+      { title: "Clock In — eatOS Point of Sale" },
       { name: "description", content: "PIN, biometric and break controls to run your shift." },
-      { property: "og:title", content: "Clock In — eatOS Point of Purchase" },
+      { property: "og:title", content: "Clock In — eatOS Point of Sale" },
       {
         property: "og:description",
         content: "PIN, biometric and break controls to run your shift.",

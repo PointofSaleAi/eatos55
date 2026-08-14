@@ -15,9 +15,9 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/order/review")({
   head: () => ({
     meta: [
-      { title: "Order Review — eatOS Point of Purchase" },
+      { title: "Order Review — eatOS Point of Sale" },
       { name: "description", content: "Review the guest order, adjust quantities and charge." },
-      { property: "og:title", content: "Order Review — eatOS Point of Purchase" },
+      { property: "og:title", content: "Order Review — eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Review the guest order, adjust quantities and charge.",

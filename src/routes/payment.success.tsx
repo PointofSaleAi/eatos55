@@ -16,12 +16,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/payment/success")({
   head: () => ({
     meta: [
-      { title: "Payment Successful — eatOS Point of Purchase" },
+      { title: "Payment Successful — eatOS Point of Sale" },
       {
         name: "description",
         content: "Payment confirmation with change due, receipt sharing and printing options.",
       },
-      { property: "og:title", content: "Payment Successful — eatOS Point of Purchase" },
+      { property: "og:title", content: "Payment Successful — eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Payment confirmation with change due, receipt sharing and printing options.",

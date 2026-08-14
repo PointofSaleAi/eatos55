@@ -14,12 +14,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/board/")({
   head: () => ({
     meta: [
-      { title: "Order Status — eatOS Point of Purchase" },
+      { title: "Order Status — eatOS Point of Sale" },
       {
         name: "description",
         content: "Kitchen board tracking every order from new through completed.",
       },
-      { property: "og:title", content: "Order Status — eatOS Point of Purchase" },
+      { property: "og:title", content: "Order Status — eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Kitchen board tracking every order from new through completed.",

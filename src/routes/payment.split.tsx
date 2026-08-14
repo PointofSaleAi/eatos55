@@ -12,13 +12,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/payment/split")({
   head: () => ({
     meta: [
-      { title: "Split Check — eatOS Point of Purchase" },
+      { title: "Split Check — eatOS Point of Sale" },
       {
         name: "description",
         content:
           "Split a check evenly or item by item, review each child check and take payment on the handheld.",
       },
-      { property: "og:title", content: "Split Check — eatOS Point of Purchase" },
+      { property: "og:title", content: "Split Check — eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Split a check evenly or item by item and take payment on the handheld.",

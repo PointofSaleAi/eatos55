@@ -27,12 +27,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/floor/")({
   head: () => ({
     meta: [
-      { title: "Floor Plan — eatOS Point of Purchase" },
+      { title: "Floor Plan — eatOS Point of Sale" },
       {
         name: "description",
         content: "Live table status by floor: available, ordering, ordered and reserved.",
       },
-      { property: "og:title", content: "Floor Plan — eatOS Point of Purchase" },
+      { property: "og:title", content: "Floor Plan — eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Live table status by floor: available, ordering, ordered and reserved.",

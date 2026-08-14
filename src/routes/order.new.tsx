@@ -16,9 +16,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/order/new")({
   head: () => ({
     meta: [
-      { title: "New Order — eatOS Point of Purchase" },
+      { title: "New Order — eatOS Point of Sale" },
       { name: "description", content: "Add products, scan barcodes and build a guest order." },
-      { property: "og:title", content: "New Order — eatOS Point of Purchase" },
+      { property: "og:title", content: "New Order — eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Add products, scan barcodes and build a guest order.",
