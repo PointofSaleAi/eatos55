@@ -170,12 +170,17 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
                   {landscape ? (
                     <LandscapeContent>{children}</LandscapeContent>
                   ) : wideAccess ? (
-                    <div className="mx-auto flex min-h-0 w-full max-w-[32rem] flex-1 flex-col">
-                      {children}
-                    </div>
+                    isSignIn ? (
+                      children
+                    ) : (
+                      <div className="mx-auto flex min-h-0 w-full max-w-[32rem] flex-1 flex-col">
+                        {children}
+                      </div>
+                    )
                   ) : (
                     children
                   )}
+
                   {appChrome && !landscape ? <BottomTabs /> : null}
                   {appChrome && !landscape ? (
                     <NavDrawer open={navOpen} onClose={closeNav} />
