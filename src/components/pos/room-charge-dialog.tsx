@@ -210,7 +210,7 @@ export function RoomChargeDialog({
   if (wide) {
     return (
       <Dialog open={open} onOpenChange={(next) => (next ? null : onClose())}>
-        <DialogContent className="flex max-h-[88vh] w-[min(56rem,92vw)] max-w-none flex-col gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0">
+        <DialogContent hideClose className="flex max-h-[88vh] w-[min(56rem,92vw)] max-w-none flex-col gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0">
           <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-3">
             <DialogTitle className="min-w-0 flex-1 truncate text-fs-lg font-extrabold text-foreground">
               Select Room
