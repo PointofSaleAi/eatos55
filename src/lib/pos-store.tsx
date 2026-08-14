@@ -1,4 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import loginSlide1 from "@/assets/login-1.jpg.asset.json";
+import loginSlide2 from "@/assets/login-2.jpg.asset.json";
+import loginSlide3 from "@/assets/login-3.jpg.asset.json";
+import loginSlide4 from "@/assets/login-4.jpg.asset.json";
 import { setHapticsEnabled } from "@/lib/haptics";
 import {
   DEFAULT_TICKET_DATE,
