@@ -67,6 +67,12 @@ function SettingsHub() {
       [
         { title: "General", icon: UserRoundCog, color: "green", to: "/settings/general" },
         {
+          title: "Login Screen",
+          icon: Images,
+          color: "blue",
+          to: "/settings/login-screen",
+        },
+        {
           title: "Control Center",
           icon: SmartphoneNfc,
           color: "violet",
