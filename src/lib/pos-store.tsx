@@ -178,6 +178,12 @@ const defaultSettings: AppSettings = {
   roomService: false,
 
   language: "English",
+
+  loginSlides: defaultLoginSlides,
+  venueLocation: "New York, NY",
+  weatherTemp: "24°",
+  weatherCondition: "Partly cloudy",
+
   taxAlias: "Tax",
   appVersion: "5.200.27",
   restartApp: true,
