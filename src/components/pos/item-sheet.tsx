@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { addOnGroups, modifierGroups, money, type MenuItem } from "@/lib/demo-data";
+import { itemAddOnGroups, itemModifierGroups, money, type MenuItem } from "@/lib/demo-data";
 import { useAnnounce } from "@/components/pos/live-region";
 import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
@@ -25,7 +25,8 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
   const [editingPrice, setEditingPrice] = useState(false);
   const [notes, setNotes] = useState("");
   const [tab, setTab] = useState<"item" | "addons">("item");
-  const [group, setGroup] = useState(modifierGroups[0]!.name);
+  const [group, setGroup] = useState<string>("");
+  const [page, setPage] = useState(0);
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [discount, setDiscount] = useState<{ name: string; percent: number } | null>(null);
   const [discountOpen, setDiscountOpen] = useState(false);
@@ -40,8 +41,17 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
     setEditingPrice(Boolean(item.openPrice));
   }, [item]);
 
-  const groups = tab === "item" ? modifierGroups : addOnGroups;
-  const activeGroup = groups.find((g) => g.name === group) ?? groups[0]!;
+  const itemGroups = useMemo(() => (item ? itemModifierGroups(item) : []), [item]);
+  const addOns = useMemo(() => (item ? itemAddOnGroups(item) : []), [item]);
+  const groups = tab === "item" ? itemGroups : addOns;
+  const activeGroup = groups.find((g) => g.name === group) ?? groups[0];
+
+  // Options are paged instead of scrolled so the sheet always fits its height.
+  const perPage = 8;
+  const options = activeGroup?.options ?? [];
+  const pages = Math.max(1, Math.ceil(options.length / perPage));
+  const pageIndex = Math.min(page, pages - 1);
+  const visibleOptions = options.slice(pageIndex * perPage, pageIndex * perPage + perPage);
 
   const modifierTotal = useMemo(
     () => Object.values(selected).reduce((sum, p) => sum + p, 0),
@@ -50,7 +60,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
   const lineTotal =
     (price + modifierTotal) * qty * (1 - (discount?.percent ?? 0) / 100);
 
-  const requiredMissing = modifierGroups
+  const requiredMissing = itemGroups
     .filter((g) => g.required)
     .filter((g) => !Object.keys(selected).some((k) => k.startsWith(`${g.name} · `)))
     .map((g) => g.name);
@@ -63,6 +73,8 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
     setSelected({});
     setDiscount(null);
     setTab("item");
+    setPage(0);
+    setGroup("");
     setEditingPrice(false);
   };
 
@@ -91,7 +103,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                 </SheetTitle>
               </SheetHeader>
 
-              <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto">
+              <div className="flex min-h-0 flex-1 flex-col">
                 <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 pb-2">
                   <div className="flex min-w-0 items-center gap-2">
                     {editingPrice ? (
@@ -150,7 +162,8 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                       type="button"
                       onClick={() => {
                         setTab(t);
-                        setGroup((t === "item" ? modifierGroups : addOnGroups)[0]!.name);
+                        setPage(0);
+                        setGroup((t === "item" ? itemGroups : addOns)[0]?.name ?? "");
                       }}
                       className={cn(
                         "h-ctl-sm rounded-pill text-fs-xs font-extrabold uppercase transition-colors",
@@ -172,7 +185,10 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                     <button
                       key={g.name}
                       type="button"
-                      onClick={() => setGroup(g.name)}
+                      onClick={() => {
+                        setGroup(g.name);
+                        setPage(0);
+                      }}
                       className={cn(
                         "h-ctl-sm shrink-0 rounded-pill px-3 text-fs-xs font-bold transition-colors",
                         g.name === activeGroup.name
