@@ -4,6 +4,7 @@ import {
   Briefcase,
   FileText,
   Headset,
+  Images,
   LifeBuoy,
   LogOut,
   Mail,
