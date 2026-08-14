@@ -1,4 +1,4 @@
-import { NotebookPen, Pencil, Percent } from "lucide-react";
+import { ChevronLeft, ChevronRight, NotebookPen, Pencil, Percent } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
@@ -260,7 +260,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                               })
                             }
                             className={cn(
-                              "flex min-h-ctl-md items-center justify-between gap-1.5 rounded-row border px-3 text-left text-fs-sm font-bold transition-colors",
+                              "flex min-h-11 items-center justify-between gap-1.5 rounded-row border px-3 text-left text-fs-sm font-bold transition-colors",
                               on
                                 ? "border-accent bg-accent/10 text-foreground"
                                 : "border-border bg-surface text-foreground",
