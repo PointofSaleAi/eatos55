@@ -93,6 +93,14 @@ export type AppSettings = {
   roomService: boolean;
   language: string;
 
+  /** Sign-in carousel slides shown beside the form in landscape. */
+  loginSlides: LoginSlide[];
+  /** Venue + weather panel shown on the clock-in / PIN screen. */
+  venueLocation: string;
+  weatherTemp: string;
+  weatherCondition: string;
+
+
   taxAlias: string;
   appVersion: string;
   restartApp: boolean;
