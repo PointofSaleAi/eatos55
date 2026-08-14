@@ -1,4 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import loginSlide1 from "@/assets/login-1.jpg.asset.json";
+import loginSlide2 from "@/assets/login-2.jpg.asset.json";
+import loginSlide3 from "@/assets/login-3.jpg.asset.json";
+import loginSlide4 from "@/assets/login-4.jpg.asset.json";
 import { setHapticsEnabled } from "@/lib/haptics";
 import {
   DEFAULT_TICKET_DATE,
@@ -61,6 +65,10 @@ export type Session = {
 /** Editable collection item used by list-style settings screens. */
 export type SettingsListItem = { id: string; name: string; detail: string };
 
+/** One slide of the landscape sign-in carousel (dashboard-managed later). */
+export type LoginSlide = { id: string; image: string; headline: string; enabled: boolean };
+
+
 export type AppSettings = {
   restaurantName: string;
   restaurantAddress: string;
@@ -92,6 +100,14 @@ export type AppSettings = {
   /** Rooms / room-service module: hides the Rooms screen when off. */
   roomService: boolean;
   language: string;
+
+  /** Sign-in carousel slides shown beside the form in landscape. */
+  loginSlides: LoginSlide[];
+  /** Venue + weather panel shown on the clock-in / PIN screen. */
+  venueLocation: string;
+  weatherTemp: string;
+  weatherCondition: string;
+
 
   taxAlias: string;
   appVersion: string;
@@ -135,6 +151,18 @@ export type AppSettings = {
   productGroups: SettingsListItem[];
 };
 
+const defaultLoginSlides: LoginSlide[] = [
+  {
+    id: "slide-1",
+    image: loginSlide1.url,
+    headline: "Make your staff measurably happy",
+    enabled: true,
+  },
+  { id: "slide-2", image: loginSlide2.url, headline: "Take orders at the table", enabled: true },
+  { id: "slide-3", image: loginSlide3.url, headline: "Serve the queue faster", enabled: true },
+  { id: "slide-4", image: loginSlide4.url, headline: "Run every service with confidence", enabled: true },
+];
+
 const defaultSettings: AppSettings = {
   restaurantName: "EATOS Kitchen · Downtown",
   restaurantAddress: "418 W 25th St",
@@ -166,6 +194,12 @@ const defaultSettings: AppSettings = {
   roomService: false,
 
   language: "English",
+
+  loginSlides: defaultLoginSlides,
+  venueLocation: "New York, NY",
+  weatherTemp: "24°",
+  weatherCondition: "Partly cloudy",
+
   taxAlias: "Tax",
   appVersion: "5.200.27",
   restartApp: true,

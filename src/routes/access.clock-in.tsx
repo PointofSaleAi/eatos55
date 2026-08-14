@@ -2,7 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Fingerprint, ScanFace, ChevronDown, ReceiptText } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import {} from "@/components/pos/shell";
+import { ClockPanel } from "@/components/pos/clock-panel";
+import { useLayoutMode } from "@/hooks/use-layout-mode";
 import { orderTypes } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
@@ -10,9 +11,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/access/clock-in")({
   head: () => ({
     meta: [
-      { title: "Clock In — eatOS Point of Purchase" },
+      { title: "Clock In — eatOS Point of Sale" },
       { name: "description", content: "PIN, biometric and break controls to run your shift." },
-      { property: "og:title", content: "Clock In — eatOS Point of Purchase" },
+      { property: "og:title", content: "Clock In — eatOS Point of Sale" },
       {
         property: "og:description",
         content: "PIN, biometric and break controls to run your shift.",
@@ -28,6 +29,7 @@ const keyBase =
 function ClockIn() {
   const navigate = useNavigate();
   const { clockIn, clockOut, signOut, setStation, session } = usePos();
+  const { wide } = useLayoutMode();
   const [pin, setPin] = useState("");
   const [showTypes, setShowTypes] = useState(false);
   const [orderType, setOrderType] = useState(orderTypes[0]!);
@@ -45,9 +47,19 @@ function ClockIn() {
       </div>
 
       <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4">
-        {/* Keypad stays a comfortable phone-width column on tablet/desktop. */}
-        <div className="mx-auto w-full max-w-[26rem]">
+        {/* Landscape puts the date/time/weather panel beside the keypad; phones
+            keep the keypad in a comfortable single column with a compact strip. */}
+        <div
+          className={cn(
+            wide
+              ? "mx-auto grid w-full max-w-[64rem] grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)] items-center gap-10"
+              : "mx-auto w-full max-w-[26rem]",
+          )}
+        >
+          {wide ? <ClockPanel /> : <ClockPanel compact className="mb-3" />}
+          <div className="w-full">
         <div className="rounded-card border border-border bg-surface px-4 py-5">
+
           <div className="flex items-center justify-center gap-8">
             {[0, 1, 2, 3].map((i) => (
               <span
@@ -211,11 +223,15 @@ function ClockIn() {
           </div>
         ) : null}
 
-        <div className="mt-3 flex justify-center text-muted-foreground">
-          <ChevronDown className="size-4" />
-        </div>
+        {!wide ? (
+          <div className="mt-3 flex justify-center text-muted-foreground">
+            <ChevronDown className="size-4" />
+          </div>
+        ) : null}
+          </div>
         </div>
       </div>
+
     </div>
   );
 }

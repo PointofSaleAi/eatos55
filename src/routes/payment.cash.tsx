@@ -9,9 +9,9 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/payment/cash")({
   head: () => ({
     meta: [
-      { title: "Pay by Cash — eatOS Point of Purchase" },
+      { title: "Pay by Cash — eatOS Point of Sale" },
       { name: "description", content: "Enter cash received and calculate the change due." },
-      { property: "og:title", content: "Pay by Cash — eatOS Point of Purchase" },
+      { property: "og:title", content: "Pay by Cash — eatOS Point of Sale" },
       { property: "og:description", content: "Enter cash received and calculate the change due." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

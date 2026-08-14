@@ -7,9 +7,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/order/menu")({
   head: () => ({
     meta: [
-      { title: "Menu — eatOS Point of Purchase" },
+      { title: "Menu — eatOS Point of Sale" },
       { name: "description", content: "Switch between barcode scanning and open price items." },
-      { property: "og:title", content: "Menu — eatOS Point of Purchase" },
+      { property: "og:title", content: "Menu — eatOS Point of Sale" },
       {
         property: "og:description",
         content: "Switch between barcode scanning and open price items.",
