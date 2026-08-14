@@ -481,6 +481,28 @@
   min-height: max(var(--tap), 3.5rem);
 }
 
+/* --- Receipt: torn zig-zag edge used by check cards --- */
+@utility receipt-edge {
+  height: 0.5rem;
+  background-color: currentColor;
+  mask-image: conic-gradient(
+    from -45deg at bottom,
+    transparent,
+    #000 1deg 89deg,
+    transparent 90deg
+  );
+  mask-size: 0.75rem 100%;
+  mask-repeat: repeat-x;
+}
+@utility receipt-edge-bottom {
+  height: 0.5rem;
+  background-color: currentColor;
+  mask-image: conic-gradient(from 135deg at top, transparent, #000 1deg 89deg, transparent 90deg);
+  mask-size: 0.75rem 100%;
+  mask-repeat: repeat-x;
+}
+
+
 
 /* --- Hit area: keep the drawn control small, make the touch target 44px ---
    HIG requires a 44x44pt target; this expands the tappable area with a
