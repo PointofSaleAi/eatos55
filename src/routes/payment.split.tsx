@@ -1,8 +1,19 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { BadgePercent, Minus, Plus, Printer, Receipt, Save, Split as SplitIcon, Users } from "lucide-react";
+import {
+  BadgePercent,
+  Minus,
+  Plus,
+  Printer,
+  Receipt,
+  Save,
+  Split as SplitIcon,
+  Users,
+  X,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
+import { ReceiptCard, ReceiptRow } from "@/components/pos/receipt";
 import { BackButton } from "@/components/pos/shell";
 import { PrintSplitSheet, SplitWithSheet } from "@/components/pos/split-sheets";
 import { money } from "@/lib/demo-data";
@@ -56,39 +67,93 @@ function SplitCheck() {
   const checks = letters.slice(0, count);
   const taxRatio = totals.subtotal ? totals.tax / totals.subtotal : 0;
 
-  /** Per-check {items, total} for the current mode. */
+  /** Per-check totals plus the item lines that make them up. */
   const breakdown = useMemo(() => {
     if (mode === "standard") return [];
+    const money2 = (n: number) => Math.round(n * 100) / 100;
+
     if (mode === "evenly") {
-      const each = Math.floor((totals.total / count) * 100) / 100;
-      const rows = checks.map(() => each);
-      const drift = Math.round((totals.total - each * count) * 100) / 100;
-      if (rows.length) rows[rows.length - 1] = Math.round((each + drift) * 100) / 100;
-      const items = cart.reduce((n, l) => n + l.qty, 0);
-      return checks.map((letter, i) => ({ letter, items, total: rows[i] ?? 0 }));
+      const share = 1 / count;
+      return checks.map((letter, i) => {
+        const lines = cart.map((l) => ({
+          id: l.id,
+          name: l.name,
+          modifiers: l.modifiers ?? [],
+          shareLabel: `${l.qty} / ${count} ea`,
+          amount: money2((l.price * l.qty) * share),
+        }));
+        let net = money2(totals.subtotal * share);
+        if (i === count - 1) net = money2(totals.subtotal - money2(totals.subtotal * share) * (count - 1));
+        const tax = money2(net * taxRatio);
+        return {
+          letter,
+          items: cart.reduce((n, l) => n + l.qty, 0),
+          subtotal: net,
+          tax,
+          serviceCharge: money2((totals.serviceCharge ?? 0) * share),
+          discount: money2((totals.discount ?? 0) * share),
+          total: money2(net + tax + (totals.serviceCharge ?? 0) * share),
+          lines,
+        };
+      });
     }
+
     return checks.map((letter) => {
+      const lines: {
+        id: string;
+        name: string;
+        modifiers: string[];
+        shareLabel: string;
+        amount: number;
+      }[] = [];
       let net = 0;
       let items = 0;
       for (const line of cart) {
         const on = assign[line.id] ?? [];
         if (!on.includes(letter)) continue;
-        net += (line.price * line.qty) / on.length;
+        const amount = money2((line.price * line.qty) / on.length);
+        net += amount;
         items += line.qty / on.length;
+        lines.push({
+          id: line.id,
+          name: line.name,
+          modifiers: line.modifiers ?? [],
+          shareLabel: on.length > 1 ? `${line.qty} / ${on.length} ea` : `${line.qty} ea`,
+          amount,
+        });
       }
-      const total = Math.round(net * (1 + taxRatio) * 100) / 100;
-      return { letter, items: Math.round(items * 100) / 100, total };
+      const tax = money2(net * taxRatio);
+      return {
+        letter,
+        items: money2(items),
+        subtotal: money2(net),
+        tax,
+        serviceCharge: 0,
+        discount: 0,
+        total: money2(net + tax),
+        lines,
+      };
     });
-  }, [mode, count, cart, assign, totals.total, taxRatio, checks]);
+  }, [
+    mode,
+    count,
+    cart,
+    assign,
+    totals.subtotal,
+    totals.serviceCharge,
+    totals.discount,
+    taxRatio,
+    checks,
+  ]);
 
   const assignedAll =
     mode !== "custom" || cart.every((l) => (assign[l.id] ?? []).length > 0);
   const canPay = cart.length > 0 && assignedAll;
 
   const modes: { id: Mode; label: string; icon: typeof Receipt }[] = [
-    { id: "standard", label: "Standard", icon: Receipt },
+    { id: "standard", label: "Standard Check", icon: Receipt },
     { id: "evenly", label: "Split Evenly", icon: Users },
-    { id: "custom", label: "Custom", icon: SplitIcon },
+    { id: "custom", label: "Split Custom", icon: SplitIcon },
   ];
 
   return (
@@ -241,25 +306,63 @@ function SplitCheck() {
         </div>
 
         {breakdown.length ? (
-          <div className="space-y-3 px-4 pb-4">
-            {breakdown.map((c) => (
-              <div key={c.letter} className="overflow-hidden rounded-row border border-border">
-                <div className="flex items-center gap-2 px-3 py-2.5">
-                  <Receipt className="size-5 shrink-0 text-foreground" aria-hidden />
-                  <span className="min-w-0 flex-1 truncate text-fs-base font-extrabold text-foreground">
-                    Check - {checkNumber} {c.letter}
-                  </span>
-                  <span className="shrink-0 text-fs-sm text-muted-foreground">
-                    {c.items === 1 ? "1 item" : `${c.items} items`}
-                  </span>
+          <div className="grid grid-cols-1 gap-x-3 gap-y-5 px-4 pb-6 sm:grid-cols-2 xl:grid-cols-3">
+            {breakdown.map((c, i) => (
+              <ReceiptCard
+                key={c.letter}
+                watermark={i + 1}
+                topAction={
+                  count > 2 ? (
+                    <button
+                      type="button"
+                      aria-label={`Remove check ${checkNumber} ${c.letter}`}
+                      onClick={() => setCount((n) => Math.max(2, n - 1))}
+                      className="grid size-8 place-items-center rounded-pill bg-foreground text-background transition-opacity active:opacity-80"
+                    >
+                      <X className="size-4" />
+                    </button>
+                  ) : null
+                }
+              >
+                <p className="text-center text-fs-sm font-extrabold text-foreground">
+                  Check {checkNumber} {c.letter}
+                </p>
+                <div className="mt-2 space-y-1 border-t border-dashed border-border pt-2">
+                  <ReceiptRow label="TOTAL" value={money(c.total)} strong />
+                  <ReceiptRow label="Sub Total" value={money(c.subtotal)} />
+                  <ReceiptRow label="TAX" value={`(${money(c.tax)})`} />
+                  <ReceiptRow label="Service Charge" value={`(${money(c.serviceCharge)})`} />
+                  <ReceiptRow label="Discount" value={`(-${money(c.discount)})`} tone="accent" />
                 </div>
-                <div className="flex items-center justify-between border-t border-border px-3 py-2.5">
-                  <span className="text-fs-sm font-extrabold text-foreground">Total Amount</span>
-                  <span className="text-fs-base font-extrabold tabular-nums text-foreground">
-                    {money(c.total)}
-                  </span>
-                </div>
-              </div>
+                {c.lines.length ? (
+                  <ul className="mt-2 space-y-1.5 border-t border-dashed border-border pt-2">
+                    {c.lines.map((l) => (
+                      <li key={l.id} className="flex items-start gap-2">
+                        <span className="shrink-0 text-fs-xs font-bold text-muted-foreground">
+                          {l.shareLabel}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-fs-sm font-bold text-foreground">
+                            {l.name}
+                          </span>
+                          {l.modifiers.map((m) => (
+                            <span key={m} className="block text-fs-xs text-muted-foreground">
+                              - {m}
+                            </span>
+                          ))}
+                        </span>
+                        <span className="shrink-0 text-fs-sm font-bold tabular-nums text-foreground">
+                          {l.amount.toFixed(2)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-2 border-t border-dashed border-border pt-2 text-center text-fs-xs text-muted-foreground">
+                    No items assigned yet
+                  </p>
+                )}
+              </ReceiptCard>
             ))}
           </div>
         ) : null}
