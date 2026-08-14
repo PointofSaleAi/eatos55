@@ -44,8 +44,8 @@ export function TenderScreen({
       >
         <div className={cn("shrink-0 text-center", wide && "space-y-4 self-center")}>
         <div className="shrink-0 text-center">
-          <p className="text-fs-xl font-extrabold tabular-nums text-foreground">{money(entered)}</p>
-          <p className="text-fs-sm text-muted-foreground">
+          <p className="text-fs-money font-extrabold leading-none tabular-nums text-foreground">{money(entered)}</p>
+          <p className="mt-2 text-fs-base text-muted-foreground">
             Due {money(due)}
             {amount ? (
               change >= 0 ? (

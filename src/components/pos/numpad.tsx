@@ -18,7 +18,7 @@ function Key({
       aria-label={label}
       onClick={onPress}
       className={cn(
-        "grid h-full min-h-key place-items-center rounded-card bg-surface text-fs-xl font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
+        "grid h-full min-h-key place-items-center rounded-card bg-surface text-fs-key font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
         className,
       )}
     >
@@ -72,7 +72,7 @@ export function NumPad({
           label="Backspace"
           className="col-start-4 row-start-1 row-span-2"
         >
-          <Delete className="size-5" />
+          <Delete className="size-7" />
         </Key>
         <Key
           onPress={() => onPlus?.()}
@@ -96,7 +96,7 @@ export function NumPad({
       <Key onPress={() => onDigit(".")}>.</Key>
       <Key onPress={() => onDigit("0")}>0</Key>
       <Key onPress={onBackspace} label="Backspace">
-        <Delete className="size-5" />
+        <Delete className="size-7" />
       </Key>
     </div>
   );
