@@ -18,6 +18,9 @@
   --text-fs-lg: var(--fs-lg);
   --text-fs-xl: var(--fs-xl);
   --text-fs-2xl: var(--fs-2xl);
+  --text-fs-key: var(--fs-key);
+  --text-fs-money: var(--fs-money);
+
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -100,13 +103,17 @@
   --fs-lg: clamp(1.0625rem, 0.95rem + 0.5vw, 1.25rem);
   --fs-xl: clamp(1.25rem, 1.05rem + 0.9vw, 1.625rem);
   --fs-2xl: clamp(1.5rem, 1.2rem + 1.3vw, 2.125rem);
+  /* Keypad digits and money readouts: large enough to read across a tablet. */
+  --fs-key: clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem);
+  --fs-money: clamp(1.875rem, 1.3rem + 2.6vw, 3.75rem);
 
   --tap: 2.75rem; /* 44px minimum touch target */
   --ctl-sm: clamp(2.75rem, 2.6rem + 0.6vw, 3rem);
   --ctl-md: clamp(2.75rem, 2.55rem + 0.9vw, 3.125rem);
   --ctl-lg: clamp(2.75rem, 2.4rem + 1.6vw, 3.25rem);
   --tile-h: clamp(5.75rem, 4.2rem + 7vw, 8.5rem);
-  --key-h: clamp(3rem, 2.5rem + 2.2vw, 3.75rem); /* keypad key / primary bar */
+  --key-h: clamp(3rem, 2.4rem + 3vw, 5rem); /* keypad key / primary bar */
+
   --row-h: clamp(3.25rem, 2.9rem + 1.6vw, 3.875rem); /* list row */
   --sheet-w: 26.25rem; /* one max width for sheets, docks and rails */
   --gap-sec: clamp(0.5rem, 0.3rem + 1vw, 0.875rem);
