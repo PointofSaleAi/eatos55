@@ -341,30 +341,107 @@ function NewOrder() {
             </div>
           )}
           </div>
-          {wide && totals.count > 0 ? (
-            <div className="shrink-0 border-t border-border px-4 py-3">
-              <Button
-                className="h-12 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground transition-colors hover:bg-accent/90"
-                onClick={() => navigate({ to: "/order/review" })}
-              >
-                Review order · {money(totals.subtotal)}
-              </Button>
+
+          {/* Order footer: quick actions, service type, totals and Save / Fire / Charge. */}
+          <div
+            className={cn(
+              "shrink-0 space-y-2 border-t border-border bg-surface px-3 pb-[calc(0.5rem+var(--kb-inset,0px))] pt-2",
+              wide ? "" : "pb-2",
+            )}
+          >
+            <div className="flex items-center gap-1">
+              <PanelAction
+                label="Discount"
+                icon={<Percent className="size-5" />}
+                onPress={() => setDiscountOpen(true)}
+              />
+              <PanelAction
+                label="Guests"
+                icon={<Users className="size-5" />}
+                onPress={() => setGuestsOpen(true)}
+              />
+              <PanelAction
+                label="Print"
+                icon={<Printer className="size-5" />}
+                onPress={() => toast.success("Order ticket sent to printer")}
+              />
+              <PanelAction
+                label="Void order"
+                icon={<Trash2 className="size-5" />}
+                onPress={() => {
+                  if (!cart.length) return;
+                  cancelOrder();
+                  toast.success("Order voided");
+                }}
+              />
+              <div className="relative ml-auto min-w-0">
+                <select
+                  aria-label="Order type"
+                  value={orderType}
+                  onChange={(e) => setOrderType(e.target.value as ServiceOrderType)}
+                  className="min-h-tap w-full appearance-none rounded-pill border border-border bg-background pl-3 pr-8 text-fs-sm font-extrabold text-foreground outline-none"
+                >
+                  {serviceOrderTypes.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              </div>
             </div>
-          ) : null}
+
+            <dl className="space-y-1 text-fs-sm">
+              <div className="flex items-center justify-between text-muted-foreground">
+                <dt>Sub Total</dt>
+                <dd className="tabular-nums">{money(totals.subtotal)}</dd>
+              </div>
+              <div className="flex items-center justify-between text-muted-foreground">
+                <dt>Tax</dt>
+                <dd className="tabular-nums">{money(totals.tax)}</dd>
+              </div>
+              {totals.discount ? (
+                <div className="flex items-center justify-between text-muted-foreground">
+                  <dt>Discount</dt>
+                  <dd className="tabular-nums">-{money(totals.discount)}</dd>
+                </div>
+              ) : null}
+              <div className="flex items-center justify-between pt-0.5 text-fs-lg font-extrabold text-foreground">
+                <dt>Total</dt>
+                <dd className="tabular-nums">{money(totals.total)}</dd>
+              </div>
+            </dl>
+
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                disabled={!totals.count}
+                onClick={() => toast.success("Order saved")}
+                className="min-h-ctl-lg rounded-pill border border-border bg-background text-fs-sm font-extrabold text-foreground transition-colors hover:bg-muted disabled:opacity-40"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                disabled={!totals.count}
+                onClick={() => toast.success("Order fired to the kitchen")}
+                className="min-h-ctl-lg rounded-pill bg-tile-orange text-fs-sm font-extrabold text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+              >
+                Fire
+              </button>
+              <button
+                type="button"
+                disabled={!totals.count}
+                onClick={() => navigate({ to: "/payment/method" })}
+                className="min-h-ctl-lg rounded-pill bg-accent text-fs-sm font-extrabold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
+              >
+                Charge
+              </button>
+            </div>
+          </div>
         </aside>
       </div>
 
-      {!wide && totals.count > 0 ? (
-        <div className="shrink-0 border-t border-border bg-surface px-4 pb-2 pt-2">
-          <Button
-            className="h-12 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground transition-colors hover:bg-accent/90"
-            onClick={() => navigate({ to: "/order/review" })}
-          >
-            Review order · {totals.count} item{totals.count === 1 ? "" : "s"} ·{" "}
-            {money(totals.subtotal)}
-          </Button>
-        </div>
-      ) : null}
 
       <SearchDock
         open={searching}
