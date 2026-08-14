@@ -61,6 +61,10 @@ export type Session = {
 /** Editable collection item used by list-style settings screens. */
 export type SettingsListItem = { id: string; name: string; detail: string };
 
+/** One slide of the landscape sign-in carousel (dashboard-managed later). */
+export type LoginSlide = { id: string; image: string; headline: string; enabled: boolean };
+
+
 export type AppSettings = {
   restaurantName: string;
   restaurantAddress: string;
