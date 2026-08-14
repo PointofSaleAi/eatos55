@@ -45,7 +45,9 @@ export function useNavDrawer() {
 export function MenuButton({ className }: { className?: string }) {
   const drawer = useNavDrawer();
   const appChrome = useAppChrome();
-  if (!drawer || !appChrome) return null;
+  const wide = useWideLayout();
+  // Landscape has the persistent nav rail, so the burger is phone-only.
+  if (!drawer || !appChrome || wide) return null;
   return (
     <button
       type="button"
@@ -175,7 +177,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
         <button
           type="button"
           onClick={() => setMode(mode === "framed" ? "adaptive" : "framed")}
-          className="fixed right-3 top-3 z-[60] hidden rounded-pill border border-border bg-surface/90 px-3 py-1.5 text-fs-xs font-bold text-muted-foreground shadow-sm backdrop-blur transition-colors hover:text-foreground md:block"
+          className="fixed bottom-3 right-3 z-[60] hidden rounded-pill border border-border bg-surface/90 px-3 py-1.5 text-fs-xs font-bold text-muted-foreground shadow-sm backdrop-blur transition-colors hover:text-foreground md:block"
         >
           {mode === "framed" ? "Full layout" : "Handheld preview"}
         </button>
