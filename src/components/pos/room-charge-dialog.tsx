@@ -94,8 +94,8 @@ export function RoomChargeDialog({
         ) : null}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4">
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-2">
+      <div className="min-h-0 flex-1 flex flex-col gap-3 px-4 pb-3">
+        <div className="shrink-0 -mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-1">
           {list.map((r) => {
             const active = r.id === pickedId;
             const spare = creditLeft(r);
@@ -108,7 +108,7 @@ export function RoomChargeDialog({
                 onClick={() => setPickedId(r.id)}
                 aria-pressed={active}
                 className={cn(
-                  "min-h-tile rounded-card border p-3 text-left transition-colors",
+                  "w-[10.5rem] shrink-0 snap-start rounded-card border p-3 text-left transition-colors",
                   active
                     ? "border-success bg-success/10"
                     : "border-border bg-background hover:bg-muted",
@@ -132,14 +132,14 @@ export function RoomChargeDialog({
             );
           })}
           {list.length === 0 ? (
-            <p className="col-span-full py-8 text-center text-fs-sm text-muted-foreground">
+            <p className="w-full py-6 text-center text-fs-sm text-muted-foreground">
               No rooms match that search.
             </p>
           ) : null}
         </div>
 
         {picked?.stay ? (
-          <div className="mt-4 space-y-3">
+          <div className="min-h-0 flex-1 space-y-2">
             <div className="flex items-center gap-2">
               <BedDouble className="size-5 shrink-0 text-foreground" aria-hidden />
               <div className="min-w-0">
@@ -152,7 +152,7 @@ export function RoomChargeDialog({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               <Fact label="Occupancy" value={picked.stay.occupancy} />
               <Fact
                 label="Stay Period"
@@ -164,10 +164,12 @@ export function RoomChargeDialog({
               <Fact label="Alcohol Allowed" value={picked.stay.alcoholAllowed ? "Yes" : "No"} />
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-2 sm:grid-cols-2">
               <div>
-                <p className="text-fs-sm font-extrabold text-foreground">Room Setup</p>
-                <dl className="mt-1 space-y-1 text-fs-sm">
+                <p className="text-fs-xs font-extrabold uppercase tracking-[0.06em] text-muted-foreground">
+                  Room Setup
+                </p>
+                <dl className="mt-1 grid grid-cols-2 gap-x-3 text-fs-xs">
                   <Line label="Room Type" value={picked.stay.roomType} />
                   <Line label="Bed Type" value={picked.stay.bedType} />
                   <Line label="Max Adults" value={String(picked.stay.maxAdults)} />
@@ -175,22 +177,34 @@ export function RoomChargeDialog({
                 </dl>
               </div>
               <div>
-                <p className="text-fs-sm font-extrabold text-foreground">Meal Entitlements</p>
-                <ul className="mt-1 space-y-1">
+                <p className="text-fs-xs font-extrabold uppercase tracking-[0.06em] text-muted-foreground">
+                  Meal Entitlements
+                </p>
+                <ul className="mt-1 flex flex-wrap gap-1.5">
                   {picked.stay.meals.map((m) => (
-                    <li key={m} className="flex items-center gap-2 text-fs-sm text-foreground">
-                      <Check className="size-4 shrink-0 text-success" aria-hidden />
+                    <li
+                      key={m}
+                      className="flex items-center gap-1 rounded-pill bg-muted px-2 py-1 text-fs-xs font-bold text-foreground"
+                    >
+                      <Check className="size-3.5 shrink-0 text-success" aria-hidden />
                       {m}
                     </li>
                   ))}
                 </ul>
-                <p className="mt-2 text-fs-sm font-extrabold text-foreground">Entitlements</p>
-                <p className="text-fs-xs text-muted-foreground">{picked.stay.entitlements}</p>
+                <p className="mt-1.5 text-fs-xs text-muted-foreground">
+                  <span className="font-extrabold text-foreground">Entitlements: </span>
+                  {picked.stay.entitlements}
+                </p>
               </div>
             </div>
           </div>
-        ) : null}
+        ) : (
+          <p className="min-h-0 flex-1 text-fs-sm text-muted-foreground">
+            Pick a room to see the booking, credit and entitlements.
+          </p>
+        )}
       </div>
+
 
       <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(0.75rem+var(--kb-inset,0px))] pt-3">
         <button
