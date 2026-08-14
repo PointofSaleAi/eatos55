@@ -29,14 +29,14 @@ export function ReferenceTenderDialog({
 }: {
   open: boolean;
   title: string;
-  hint?: string;
+  hint?: string | undefined;
   due: number;
   inputLabel: string;
-  placeholder?: string;
-  numeric?: boolean;
+  placeholder?: string | undefined;
+  numeric?: boolean | undefined;
   /** Optional preset reasons/quick picks shown above the field. */
-  reasons?: string[];
-  confirmLabel?: string;
+  reasons?: string[] | undefined;
+  confirmLabel?: string | undefined;
   onClose: () => void;
   onConfirm: (value: string) => void;
 }) {
