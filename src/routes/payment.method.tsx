@@ -213,7 +213,7 @@ function PaymentMethod() {
               icon: BedDouble,
               kind: "room" as const,
               unavailable: true,
-              note: "Turn on Room service",
+              note: "Enable in Settings",
               run: () => navigate({ to: "/settings/general" }),
             },
       ],
