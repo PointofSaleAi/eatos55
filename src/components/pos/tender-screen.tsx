@@ -37,7 +37,7 @@ export function TenderScreen({
 
       <div
         className={cn(
-          "min-h-0 flex-1 gap-2 overflow-y-auto p-2 pb-[max(0.75rem,var(--kb-inset,0px))]",
+          "min-h-0 flex-1 gap-2 overflow-hidden p-2 pb-[max(0.75rem,var(--kb-inset,0px))]",
           // Landscape: readout and denominations beside the keypad.
           wide ? "grid grid-cols-2 items-start gap-6 p-6" : "flex flex-col",
         )}
@@ -85,8 +85,8 @@ export function TenderScreen({
 
         <NumPad
           className={cn(
-            "min-h-[calc(4*var(--key-h)+1.5rem)] shrink-0",
-            wide ? "self-stretch" : "flex-1",
+            "min-h-0",
+            wide ? "h-full self-stretch" : "flex-1",
           )}
           onDigit={(d) =>
             setAmount((cur) => {
