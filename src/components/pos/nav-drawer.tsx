@@ -1,65 +1,10 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import {
-  ChevronRight,
-  ClipboardList,
-  Clock,
-  CreditCard,
-  FileText,
-  Grid2x2,
-  Headset,
-  LayoutGrid,
-  LogOut,
-  Receipt,
-  ShieldCheck,
-  Settings as SettingsIcon,
-  Sofa,
-  Utensils,
-  X,
-  type LucideIcon,
-} from "lucide-react";
+import { ChevronRight, Clock, LogOut, ShieldCheck, X } from "lucide-react";
+import { navGroups as groups } from "@/lib/nav-destinations";
 import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 import { cn } from "@/lib/utils";
-
-type NavLink = { to: string; label: string; icon: LucideIcon };
-
-/**
- * Top-level destinations only. Deeper screens are reached by drilling in from
- * their own section (Settings has its own tree), so this list never scrolls.
- */
-const groups: { title: string; links: NavLink[] }[] = [
-  {
-    title: "Ordering",
-    links: [
-      { to: "/order/new", label: "New Order", icon: ClipboardList },
-      { to: "/order/menu", label: "Menus", icon: Utensils },
-    ],
-  },
-  {
-    title: "Service",
-    links: [
-      { to: "/floor", label: "Floor Plan", icon: Sofa },
-      { to: "/rooms", label: "Rooms", icon: Grid2x2 },
-      { to: "/tickets", label: "Tickets", icon: Receipt },
-      { to: "/board", label: "Order Status Board", icon: LayoutGrid },
-    ],
-  },
-  {
-    title: "Money",
-    links: [
-      { to: "/payment/method", label: "Payments", icon: CreditCard },
-      { to: "/settings/sales-summary", label: "Sales Summary", icon: FileText },
-    ],
-  },
-  {
-    title: "App",
-    links: [
-      { to: "/settings", label: "Settings", icon: SettingsIcon },
-      { to: "/system/customer-support", label: "Support", icon: Headset },
-    ],
-  },
-];
 
 /** App map, opened from the burger button in any screen header. */
 export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {

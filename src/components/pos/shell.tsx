@@ -24,6 +24,9 @@ import { ClockPullDown } from "@/components/pos/clock-pulldown";
 import { ConfirmProvider } from "@/components/pos/confirm-sheet";
 import { LiveRegionProvider } from "@/components/pos/live-region";
 import { NavDrawer } from "@/components/pos/nav-drawer";
+import { NavRail } from "@/components/pos/nav-rail";
+import { SplitPane, useSectionPane } from "@/components/pos/split-pane";
+import { useLayoutMode } from "@/hooks/use-layout-mode";
 import { OfflineBanner } from "@/components/pos/offline-banner";
 import { useAppearance } from "@/hooks/use-appearance";
 import { useGlobalKeyboardAware } from "@/hooks/use-keyboard-inset";
@@ -42,7 +45,9 @@ export function useNavDrawer() {
 export function MenuButton({ className }: { className?: string }) {
   const drawer = useNavDrawer();
   const appChrome = useAppChrome();
-  if (!drawer || !appChrome) return null;
+  const wide = useWideLayout();
+  // Landscape has the persistent nav rail, so the burger is phone-only.
+  if (!drawer || !appChrome || wide) return null;
   return (
     <button
       type="button"
@@ -92,49 +97,93 @@ function useSessionGate() {
   }, [router, isAccess, sessionReady, session.signedIn, session.clockedIn]);
 }
 
+/** Landscape body: list pane beside the routed screen when the section has one. */
+function LandscapeContent({ children }: { children: ReactNode }) {
+  const pane = useSectionPane();
+  if (!pane) return <>{children}</>;
+  return <SplitPane list={pane.list}>{pane.replaceChildren ?? children}</SplitPane>;
+}
 
-/** Device frame: full-bleed on phones, framed handheld on tablet/desktop. */
+const WideContext = createContext(false);
+
+/** True when the landscape tablet/web layout is active. */
+export function useWideLayout() {
+  return useContext(WideContext);
+}
+
+/**
+ * Device frame.
+ * Phone (<768px): full-bleed single pane with floating tab bar.
+ * Landscape tablet/web (>=768px): fills the viewport with a nav rail and, where
+ * a section has one, a list pane beside the routed screen.
+ * "Handheld preview" pins the 420px framed phone view on big screens.
+ */
 export function DeviceFrame({ children }: { children: ReactNode }) {
   const [navOpen, setNavOpen] = useState(false);
   const closeNav = useCallback(() => setNavOpen(false), []);
   const navCtx = useMemo(() => ({ open: () => setNavOpen(true) }), []);
   const appChrome = useAppChrome();
+  const { mode, setMode, wide, wideViewport } = useLayoutMode();
   useSessionGate();
   useGlobalKeyboardAware();
   // Follows the system light/dark appearance unless overridden in Settings.
   useAppearance();
 
+  const landscape = wide && appChrome;
+
   return (
-    <div className="h-[100dvh] overflow-hidden bg-shell md:flex md:h-auto md:min-h-[100dvh] md:items-center md:justify-center md:overflow-visible md:p-8">
+    <div
+      className={cn(
+        "h-[100dvh] overflow-hidden bg-shell",
+        landscape
+          ? "bg-background"
+          : "md:flex md:h-auto md:min-h-[100dvh] md:items-center md:justify-center md:overflow-visible md:p-8",
+      )}
+    >
       <div
         className={cn(
           "relative flex h-full max-h-[100dvh] w-full overflow-hidden bg-background",
-          "md:h-[860px] md:max-h-none md:w-[420px] md:rounded-[2.75rem] md:border-[10px] md:border-shell md:shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)]",
-          "lg:h-[880px] lg:w-[440px]",
+          !landscape &&
+            "md:h-[860px] md:max-h-none md:w-[420px] md:rounded-[2.75rem] md:border-[10px] md:border-shell md:shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)] lg:h-[880px] lg:w-[440px]",
         )}
       >
-        <NavDrawerContext.Provider value={navCtx}>
-          <LiveRegionProvider>
-            <ConfirmProvider>
-              <div
-                className="relative flex min-h-0 min-w-0 flex-1 flex-col pt-[var(--sat,0px)]"
-                style={{ ["--tabs-h" as string]: appChrome ? "6rem" : "0px" }}
-              >
-                {appChrome ? <ClockPullDown /> : null}
-                <OfflineBanner />
-                {children}
-                {appChrome ? <BottomTabs /> : null}
-                {appChrome ? (
-                  <NavDrawer open={navOpen} onClose={closeNav} />
-                ) : null}
-                {/* Portal host for keyboard-docked UI (search bar). */}
-                <div id="pos-dock-root" className="pointer-events-none absolute inset-0 z-40" />
-              </div>
-            </ConfirmProvider>
-          </LiveRegionProvider>
-        </NavDrawerContext.Provider>
+        <WideContext.Provider value={landscape}>
+          <NavDrawerContext.Provider value={navCtx}>
+            <LiveRegionProvider>
+              <ConfirmProvider>
+                {landscape ? <NavRail /> : null}
+                <div
+                  className="relative flex min-h-0 min-w-0 flex-1 flex-col pt-[var(--sat,0px)]"
+                  style={{
+                    ["--tabs-h" as string]: appChrome && !landscape ? "6rem" : "0px",
+                  }}
+                >
+                  {appChrome && !landscape ? <ClockPullDown /> : null}
+                  <OfflineBanner />
+                  {landscape ? <LandscapeContent>{children}</LandscapeContent> : children}
+                  {appChrome && !landscape ? <BottomTabs /> : null}
+                  {appChrome && !landscape ? (
+                    <NavDrawer open={navOpen} onClose={closeNav} />
+                  ) : null}
+                  {/* Portal host for keyboard-docked UI (search bar). */}
+                  <div id="pos-dock-root" className="pointer-events-none absolute inset-0 z-40" />
+                </div>
+              </ConfirmProvider>
+            </LiveRegionProvider>
+          </NavDrawerContext.Provider>
+        </WideContext.Provider>
       </div>
+      {wideViewport && appChrome ? (
+        <button
+          type="button"
+          onClick={() => setMode(mode === "framed" ? "adaptive" : "framed")}
+          className="fixed bottom-3 right-3 z-[60] hidden rounded-pill border border-border bg-surface/90 px-3 py-1.5 text-fs-xs font-bold text-muted-foreground shadow-sm backdrop-blur transition-colors hover:text-foreground md:block"
+        >
+          {mode === "framed" ? "Full layout" : "Handheld preview"}
+        </button>
+      ) : null}
     </div>
+
   );
 }
 

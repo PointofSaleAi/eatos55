@@ -3,7 +3,7 @@ import { Ban, ChevronDown, MoreVertical, Plus, Search, Tag } from "lucide-react"
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GuestBlock } from "@/components/pos/guest-block";
-import { MenuButton } from "@/components/pos/shell";
+import { MenuButton, useWideLayout } from "@/components/pos/shell";
 import { GuestSheet } from "@/components/pos/guest-sheet";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { MoreSheet } from "@/components/pos/more-sheet";
@@ -39,6 +39,11 @@ function NewOrder() {
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [tab, setTab] = useState<"menu" | "order">("menu");
+  // Landscape shows the menu and the running order side by side, so the
+  // Menu/Order switch is phone-only.
+  const wide = useWideLayout();
+  const showMenu = wide || tab === "menu";
+  const showCart = wide || tab === "order";
 
   const currentMenu = menus.find((m) => m.id === activeMenu) ?? menus[0]!;
   const chips = currentMenu.categories;
@@ -87,7 +92,7 @@ function NewOrder() {
           </div>
         </div>
 
-        <div className="mt-3 grid grid-cols-2 gap-2">
+        <div className={cn("mt-3 grid grid-cols-2 gap-2", wide && "hidden")}>
           {(["menu", "order"] as const).map((t) => (
             <button
               key={t}
@@ -105,7 +110,7 @@ function NewOrder() {
           ))}
         </div>
 
-        {tab === "menu" ? (
+        {showMenu ? (
           <div className="no-scrollbar -mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4">
             <div className="relative shrink-0">
               <select
@@ -145,56 +150,17 @@ function NewOrder() {
         ) : null}
       </div>
 
-      <div
-        className={cn(
-          "no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pt-3",
-          searching
-            ? "pb-[calc(5rem+var(--kb-inset,0px))]"
-            : "pb-[calc(1rem+var(--kb-inset,0px))]",
-        )}
-      >
-        {tab === "order" ? (
-          cart.length === 0 ? (
-            <p className="px-4 py-24 text-center text-fs-sm text-muted-foreground">
-              No items yet — add products from the menu
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {cart.map((l) => (
-                <div
-                  key={l.id}
-                  className="flex items-center gap-3 rounded-card border border-border bg-surface p-3"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-fs-sm font-extrabold text-foreground">{l.name}</p>
-                    <p className="text-fs-xs text-muted-foreground">{money(l.price)}</p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-2">
-                    <button
-                      type="button"
-                      aria-label={`Remove one ${l.name}`}
-                      onClick={() => changeQty(l.id, -1)}
-                      className="grid size-11 place-items-center rounded-pill border border-border text-fs-sm font-bold text-foreground"
-                    >
-                      −
-                    </button>
-                    <span className="w-6 text-center text-fs-sm font-bold text-foreground">
-                      {l.qty}
-                    </span>
-                    <button
-                      type="button"
-                      aria-label={`Add one ${l.name}`}
-                      onClick={() => changeQty(l.id, 1)}
-                      className="grid size-11 place-items-center rounded-pill border border-border text-fs-sm font-bold text-foreground"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )
-        ) : items.length === 0 ? (
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <div
+          className={cn(
+            "no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pt-3",
+            searching
+              ? "pb-[calc(5rem+var(--kb-inset,0px))]"
+              : "pb-[calc(1rem+var(--kb-inset,0px))]",
+            showMenu ? "" : "hidden",
+          )}
+        >
+        {items.length === 0 ? (
           <p className="px-4 py-24 text-center text-fs-sm text-muted-foreground">No Active Menu</p>
         ) : (
 
@@ -281,9 +247,80 @@ function NewOrder() {
             })}
           </div>
         )}
+        </div>
+
+        <aside
+          className={cn(
+            "flex min-h-0 flex-col overflow-hidden",
+            showCart ? "" : "hidden",
+            wide
+              ? "w-[21rem] shrink-0 border-l border-border bg-surface lg:w-[24rem]"
+              : "min-w-0 flex-1 bg-background",
+          )}
+        >
+          {wide ? (
+            <div className="shrink-0 border-b border-border px-4 py-3">
+              <h2 className="truncate t-title text-foreground">
+                Order{totals.count ? ` · ${totals.count}` : ""}
+              </h2>
+            </div>
+          ) : null}
+          <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-3">
+          {cart.length === 0 ? (
+            <p className="px-4 py-24 text-center text-fs-sm text-muted-foreground">
+              No items yet — add products from the menu
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {cart.map((l) => (
+                <div
+                  key={l.id}
+                  className="flex items-center gap-3 rounded-card border border-border bg-surface p-3"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-fs-sm font-extrabold text-foreground">{l.name}</p>
+                    <p className="text-fs-xs text-muted-foreground">{money(l.price)}</p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <button
+                      type="button"
+                      aria-label={`Remove one ${l.name}`}
+                      onClick={() => changeQty(l.id, -1)}
+                      className="grid size-11 place-items-center rounded-pill border border-border text-fs-sm font-bold text-foreground"
+                    >
+                      −
+                    </button>
+                    <span className="w-6 text-center text-fs-sm font-bold text-foreground">
+                      {l.qty}
+                    </span>
+                    <button
+                      type="button"
+                      aria-label={`Add one ${l.name}`}
+                      onClick={() => changeQty(l.id, 1)}
+                      className="grid size-11 place-items-center rounded-pill border border-border text-fs-sm font-bold text-foreground"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          </div>
+          {wide && totals.count > 0 ? (
+            <div className="shrink-0 border-t border-border px-4 py-3">
+              <Button
+                className="h-12 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground transition-colors hover:bg-accent/90"
+                onClick={() => navigate({ to: "/order/review" })}
+              >
+                Review order · {money(totals.subtotal)}
+              </Button>
+            </div>
+          ) : null}
+        </aside>
       </div>
 
-      {totals.count > 0 ? (
+      {!wide && totals.count > 0 ? (
         <div className="shrink-0 border-t border-border bg-surface px-4 pb-2 pt-2">
           <Button
             className="h-12 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground transition-colors hover:bg-accent/90"

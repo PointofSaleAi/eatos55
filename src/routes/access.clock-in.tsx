@@ -45,6 +45,8 @@ function ClockIn() {
       </div>
 
       <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4">
+        {/* Keypad stays a comfortable phone-width column on tablet/desktop. */}
+        <div className="mx-auto w-full max-w-[26rem]">
         <div className="rounded-card border border-border bg-surface px-4 py-5">
           <div className="flex items-center justify-center gap-8">
             {[0, 1, 2, 3].map((i) => (
@@ -211,6 +213,7 @@ function ClockIn() {
 
         <div className="mt-3 flex justify-center text-muted-foreground">
           <ChevronDown className="size-4" />
+        </div>
         </div>
       </div>
     </div>
