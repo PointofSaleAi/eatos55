@@ -155,95 +155,130 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 px-4">
-                  {(["item", "addons"] as const).map((t) => (
-                    <button
-                      key={t}
-                      type="button"
-                      onClick={() => {
-                        setTab(t);
-                        setPage(0);
-                        setGroup((t === "item" ? itemGroups : addOns)[0]?.name ?? "");
-                      }}
-                      className={cn(
-                        "h-ctl-sm rounded-pill text-fs-xs font-extrabold uppercase transition-colors",
-                        t === tab
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground hover:bg-secondary",
-                      )}
-                    >
-                      {t === "item" ? "Item" : "Add-Ons"}
-                    </button>
-                  ))}
-                </div>
-
-                <p className="px-4 pb-1.5 pt-3 text-fs-xs font-bold text-muted-foreground">
-                  Additional Modifiers
-                </p>
-                <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto px-4">
-                  {groups.map((g) => (
-                    <button
-                      key={g.name}
-                      type="button"
-                      onClick={() => {
-                        setGroup(g.name);
-                        setPage(0);
-                      }}
-                      className={cn(
-                        "h-ctl-sm shrink-0 rounded-pill px-3 text-fs-xs font-bold transition-colors",
-                        g.name === activeGroup.name
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground hover:bg-secondary",
-                      )}
-                    >
-                      {g.name}
-                      {g.required ? <span className="text-accent"> *</span> : null}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 px-4 py-2.5">
-                  {activeGroup.options.map((o) => {
-                    const key = `${activeGroup.name} · ${o.name}`;
-                    const on = key in selected;
-                    return (
+                {itemGroups.length && addOns.length ? (
+                  <div className="grid shrink-0 grid-cols-2 gap-2 px-4">
+                    {(["item", "addons"] as const).map((t) => (
                       <button
-                        key={key}
+                        key={t}
                         type="button"
-                        aria-pressed={on}
-                        onClick={() =>
-                          setSelected((s) => {
-                            const next = { ...s };
-                            if (on) {
-                              delete next[key];
-                              return next;
-                            }
-                            if ((activeGroup.select ?? "multi") === "single") {
-                              for (const existing of Object.keys(next)) {
-                                if (existing.startsWith(`${activeGroup.name} · `)) delete next[existing];
-                              }
-                            }
-                            next[key] = o.price;
-                            return next;
-                          })
-                        }
+                        onClick={() => {
+                          setTab(t);
+                          setPage(0);
+                          setGroup((t === "item" ? itemGroups : addOns)[0]?.name ?? "");
+                        }}
                         className={cn(
-                          "flex h-ctl-md items-center justify-between gap-1.5 rounded-row border px-3 text-left text-fs-sm font-bold transition-colors",
-                          on
-                            ? "border-accent bg-accent/10 text-foreground"
-                            : "border-border bg-surface text-foreground",
+                          "h-ctl-sm rounded-pill text-fs-xs font-extrabold uppercase transition-colors",
+                          t === tab
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-muted-foreground hover:bg-secondary",
                         )}
                       >
-                        <span className="min-w-0 truncate">{o.name}</span>
-                        {o.price ? (
-                          <span className="shrink-0 text-fs-xs text-muted-foreground">
-                            +{money(o.price)}
-                          </span>
-                        ) : null}
+                        {t === "item" ? "Item" : "Add-Ons"}
                       </button>
-                    );
-                  })}
-                </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                {activeGroup ? (
+                  <>
+                    <div className="flex shrink-0 items-center justify-between gap-2 px-4 pb-1.5 pt-3">
+                      <p className="text-fs-xs font-bold text-muted-foreground">
+                        Additional Modifiers
+                      </p>
+                      {pages > 1 ? (
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            aria-label="Previous options"
+                            onClick={() => setPage((p) => Math.max(0, p - 1))}
+                            disabled={pageIndex === 0}
+                            className="grid size-7 place-items-center rounded-pill border border-border text-foreground disabled:opacity-40"
+                          >
+                            <ChevronLeft className="size-3.5" />
+                          </button>
+                          <span className="text-fs-xs font-bold text-muted-foreground">
+                            {pageIndex + 1} / {pages}
+                          </span>
+                          <button
+                            type="button"
+                            aria-label="More options"
+                            onClick={() => setPage((p) => Math.min(pages - 1, p + 1))}
+                            disabled={pageIndex >= pages - 1}
+                            className="grid size-7 place-items-center rounded-pill border border-border text-foreground disabled:opacity-40"
+                          >
+                            <ChevronRight className="size-3.5" />
+                          </button>
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="no-scrollbar flex shrink-0 items-center gap-1.5 overflow-x-auto px-4">
+                      {groups.map((g) => (
+                        <button
+                          key={g.name}
+                          type="button"
+                          onClick={() => {
+                            setGroup(g.name);
+                            setPage(0);
+                          }}
+                          className={cn(
+                            "h-ctl-sm shrink-0 rounded-pill px-3 text-fs-xs font-bold transition-colors",
+                            g.name === activeGroup.name
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted text-muted-foreground hover:bg-secondary",
+                          )}
+                        >
+                          {g.name}
+                          {g.required ? <span className="text-accent"> *</span> : null}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-2 gap-2 px-4 py-2.5 sm:grid-cols-3 lg:grid-cols-4">
+                      {visibleOptions.map((o) => {
+                        const key = `${activeGroup.name} · ${o.name}`;
+                        const on = key in selected;
+                        return (
+                          <button
+                            key={key}
+                            type="button"
+                            aria-pressed={on}
+                            onClick={() =>
+                              setSelected((s) => {
+                                const next = { ...s };
+                                if (on) {
+                                  delete next[key];
+                                  return next;
+                                }
+                                if ((activeGroup.select ?? "multi") === "single") {
+                                  for (const existing of Object.keys(next)) {
+                                    if (existing.startsWith(`${activeGroup.name} · `))
+                                      delete next[existing];
+                                  }
+                                }
+                                next[key] = o.price;
+                                return next;
+                              })
+                            }
+                            className={cn(
+                              "flex min-h-ctl-md items-center justify-between gap-1.5 rounded-row border px-3 text-left text-fs-sm font-bold transition-colors",
+                              on
+                                ? "border-accent bg-accent/10 text-foreground"
+                                : "border-border bg-surface text-foreground",
+                            )}
+                          >
+                            <span className="min-w-0 truncate">{o.name}</span>
+                            {o.price ? (
+                              <span className="shrink-0 text-fs-xs text-muted-foreground">
+                                +{money(o.price)}
+                              </span>
+                            ) : null}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : null}
+
               </div>
 
               <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-2.5">
