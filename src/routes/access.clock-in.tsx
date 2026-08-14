@@ -29,6 +29,7 @@ const keyBase =
 function ClockIn() {
   const navigate = useNavigate();
   const { clockIn, clockOut, signOut, setStation, session } = usePos();
+  const { wide } = useLayoutMode();
   const [pin, setPin] = useState("");
   const [showTypes, setShowTypes] = useState(false);
   const [orderType, setOrderType] = useState(orderTypes[0]!);
