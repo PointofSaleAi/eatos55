@@ -221,11 +221,15 @@ function ClockIn() {
           </div>
         ) : null}
 
-        <div className="mt-3 flex justify-center text-muted-foreground">
-          <ChevronDown className="size-4" />
-        </div>
+        {!wide ? (
+          <div className="mt-3 flex justify-center text-muted-foreground">
+            <ChevronDown className="size-4" />
+          </div>
+        ) : null}
+          </div>
         </div>
       </div>
+
     </div>
   );
 }
