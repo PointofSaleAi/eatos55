@@ -1,5 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Ban, ChevronDown, MoreVertical, Plus, Search, Tag } from "lucide-react";
+import {
+  Ban,
+  ChevronDown,
+  MoreVertical,
+  Percent,
+  Plus,
+  Printer,
+  Search,
+  Tag,
+  Trash2,
+  Users,
+} from "lucide-react";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GuestBlock } from "@/components/pos/guest-block";
@@ -7,7 +18,16 @@ import { MenuButton, useWideLayout } from "@/components/pos/shell";
 import { GuestSheet } from "@/components/pos/guest-sheet";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { MoreSheet } from "@/components/pos/more-sheet";
-import { itemNeedsSheet, liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
+import {
+  itemNeedsSheet,
+  liveMenu,
+  menus,
+  money,
+  serviceOrderTypes,
+  type MenuItem,
+  type ServiceOrderType,
+} from "@/lib/demo-data";
+import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { toast } from "sonner";
@@ -31,12 +51,23 @@ export const Route = createFileRoute("/order/new")({
 
 function NewOrder() {
   const navigate = useNavigate();
-  const { totals, cart, changeQty, addItem } = usePos();
+  const {
+    totals,
+    cart,
+    changeQty,
+    addItem,
+    cancelOrder,
+    orderType,
+    setOrderType,
+    setOrderDiscountPercent,
+  } = usePos();
   const [activeMenu, setActiveMenu] = useState(menus[1]!.id);
   const [category, setCategory] = useState<string>(menus[1]!.categories[0]!);
   const [sheetItem, setSheetItem] = useState<MenuItem | null>(null);
   const [moreOpen, setMoreOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
+  const [discountOpen, setDiscountOpen] = useState(false);
+  const [discountName, setDiscountName] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [tab, setTab] = useState<"menu" | "order">("menu");
@@ -341,30 +372,131 @@ function NewOrder() {
             </div>
           )}
           </div>
-          {wide && totals.count > 0 ? (
-            <div className="shrink-0 border-t border-border px-4 py-3">
-              <Button
-                className="h-12 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground transition-colors hover:bg-accent/90"
-                onClick={() => navigate({ to: "/order/review" })}
-              >
-                Review order · {money(totals.subtotal)}
-              </Button>
+
+          {/* Order footer: quick actions, service type, totals and Save / Fire / Charge. */}
+          <div
+            className={cn(
+              "shrink-0 space-y-2 border-t border-border bg-surface px-3 pt-2",
+              wide
+                ? "pb-[calc(0.5rem+var(--kb-inset,0px))]"
+                : "pb-[calc(0.5rem+var(--kb-inset,0px)+var(--tabs-h,0px))]",
+            )}
+          >
+            <div className="flex items-center gap-1">
+              <PanelAction
+                label="Discount"
+                icon={<Percent className="size-5" />}
+                onPress={() => setDiscountOpen(true)}
+              />
+              <PanelAction
+                label="Guests"
+                icon={<Users className="size-5" />}
+                onPress={() => setGuestOpen(true)}
+              />
+              <PanelAction
+                label="Print"
+                icon={<Printer className="size-5" />}
+                onPress={() => toast.success("Order ticket sent to printer")}
+              />
+              <PanelAction
+                label="Void order"
+                icon={<Trash2 className="size-5" />}
+                onPress={() => {
+                  if (!cart.length) return;
+                  cancelOrder();
+                  toast.success("Order voided");
+                }}
+              />
+              <div className="relative ml-auto min-w-0">
+                <select
+                  aria-label="Order type"
+                  value={orderType}
+                  onChange={(e) => setOrderType(e.target.value as ServiceOrderType)}
+                  className="min-h-tap w-full appearance-none rounded-pill border border-border bg-background pl-3 pr-8 text-fs-sm font-extrabold text-foreground outline-none"
+                >
+                  {serviceOrderTypes.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              </div>
             </div>
-          ) : null}
+
+            <dl className="space-y-1 text-fs-sm">
+              <div className="flex items-center justify-between text-muted-foreground">
+                <dt>Sub Total</dt>
+                <dd className="tabular-nums">{money(totals.subtotal)}</dd>
+              </div>
+              <div className="flex items-center justify-between text-muted-foreground">
+                <dt>Tax</dt>
+                <dd className="tabular-nums">{money(totals.tax)}</dd>
+              </div>
+              {totals.discount ? (
+                <div className="flex items-center justify-between text-muted-foreground">
+                  <dt>Discount</dt>
+                  <dd className="tabular-nums">-{money(totals.discount)}</dd>
+                </div>
+              ) : null}
+              <div className="flex items-center justify-between pt-0.5 text-fs-lg font-extrabold text-foreground">
+                <dt>Total</dt>
+                <dd className="tabular-nums">{money(totals.total)}</dd>
+              </div>
+            </dl>
+
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                disabled={!totals.count}
+                onClick={() => toast.success("Order saved")}
+                className="min-h-ctl-lg rounded-pill border border-border bg-background text-fs-sm font-extrabold text-foreground transition-colors hover:bg-muted disabled:opacity-40"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                disabled={!totals.count}
+                onClick={() => toast.success("Order fired to the kitchen")}
+                className="min-h-ctl-lg rounded-pill bg-tile-orange text-fs-sm font-extrabold text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+              >
+                Fire
+              </button>
+              <button
+                type="button"
+                disabled={!totals.count}
+                onClick={() => navigate({ to: "/payment/method" })}
+                className="min-h-ctl-lg rounded-pill bg-accent text-fs-sm font-extrabold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
+              >
+                Charge
+              </button>
+            </div>
+          </div>
         </aside>
       </div>
 
-      {!wide && totals.count > 0 ? (
-        <div className="shrink-0 border-t border-border bg-surface px-4 pb-2 pt-2">
-          <Button
-            className="h-12 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground transition-colors hover:bg-accent/90"
-            onClick={() => navigate({ to: "/order/review" })}
+      {/* Phone, menu tab: keep the running total and Charge one tap away. */}
+      {!wide && tab === "menu" && totals.count > 0 ? (
+        <div className="flex shrink-0 items-center gap-2 border-t border-border bg-surface px-3 pb-[calc(0.5rem+var(--tabs-h,0px))] pt-2">
+          <button
+            type="button"
+            onClick={() => setTab("order")}
+            className="min-h-tap min-w-0 flex-1 rounded-pill bg-muted px-3 text-left text-fs-sm font-extrabold text-foreground"
           >
-            Review order · {totals.count} item{totals.count === 1 ? "" : "s"} ·{" "}
-            {money(totals.subtotal)}
-          </Button>
+            {totals.count} item{totals.count === 1 ? "" : "s"} · {money(totals.total)}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/payment/method" })}
+            className="min-h-tap shrink-0 rounded-pill bg-accent px-5 text-fs-sm font-extrabold text-accent-foreground"
+          >
+            Charge
+          </button>
         </div>
       ) : null}
+
+
+
 
       <SearchDock
         open={searching}
@@ -380,6 +512,39 @@ function NewOrder() {
       <ItemSheet item={sheetItem} onClose={() => setSheetItem(null)} />
       <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
       <GuestSheet open={guestOpen} onClose={() => setGuestOpen(false)} />
+      <DiscountSheet
+        open={discountOpen}
+        selected={discountName}
+        onClose={() => setDiscountOpen(false)}
+        onPick={(d) => {
+          setDiscountName(d.name);
+          setOrderDiscountPercent(d.percent);
+          setDiscountOpen(false);
+        }}
+      />
+
     </div>
+  );
+}
+
+function PanelAction({
+  label,
+  icon,
+  onPress,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  onPress: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      onClick={onPress}
+      className="grid size-11 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+    >
+      {icon}
+    </button>
   );
 }

@@ -86,13 +86,13 @@ function CustomItem() {
         />
       </div>
 
-      <div className="shrink-0 border-t border-border bg-surface px-3 py-2">
+      <div className="shrink-0 border-t border-border bg-surface px-3 pb-[calc(0.5rem+var(--kb-inset,0px)+var(--tabs-h,0px))] pt-2">
         <button
           type="button"
           disabled={price <= 0 && totals.count === 0}
           onClick={() => {
             addLine();
-            navigate({ to: "/order/review" });
+            navigate({ to: "/order/new" });
           }}
           className="h-11 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
         >

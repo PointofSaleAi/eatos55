@@ -83,6 +83,7 @@ export function GuestSheet({ open, onClose }: { open: boolean; onClose: () => vo
   return (
     <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
       <SheetContent
+        hideClose
         side="bottom"
         style={dragStyle}
         className="mx-auto flex max-h-[min(88dvh,44rem)] w-full max-w-sheet flex-col overflow-y-auto rounded-t-sheet border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]"

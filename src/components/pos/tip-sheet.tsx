@@ -41,6 +41,7 @@ export function TipSheet({
   return (
     <Sheet open={open} onOpenChange={(o) => (o ? onOpenChange(true) : close())}>
       <SheetContent
+        hideClose
         side="bottom"
         className="max-h-[92dvh] overflow-y-auto rounded-t-sheet border-t border-border bg-background px-4 pb-6 pt-4"
       >

@@ -466,7 +466,7 @@ function PaymentMethod() {
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <div className="grid shrink-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 border-b border-border bg-surface px-2 py-3 md:grid-cols-[auto_minmax(0,1fr)_auto]">
-        <BackButton fallbackTo="/order/review" label="Back to order review" />
+        <BackButton fallbackTo="/order/new" label="Back to order" />
         <div className="min-w-0">
           <h1 className="truncate text-fs-xl font-extrabold text-foreground">
             Total Due <span className="text-accent">{money(due)}</span>
