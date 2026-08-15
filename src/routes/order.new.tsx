@@ -376,8 +376,10 @@ function NewOrder() {
           {/* Order footer: quick actions, service type, totals and Save / Fire / Charge. */}
           <div
             className={cn(
-              "shrink-0 space-y-2 border-t border-border bg-surface px-3 pb-[calc(0.5rem+var(--kb-inset,0px))] pt-2",
-              wide ? "" : "pb-2",
+              "shrink-0 space-y-2 border-t border-border bg-surface px-3 pt-2",
+              wide
+                ? "pb-[calc(0.5rem+var(--kb-inset,0px))]"
+                : "pb-[calc(0.5rem+var(--kb-inset,0px)+var(--tabs-h,0px))]",
             )}
           >
             <div className="flex items-center gap-1">
@@ -475,7 +477,7 @@ function NewOrder() {
 
       {/* Phone, menu tab: keep the running total and Charge one tap away. */}
       {!wide && tab === "menu" && totals.count > 0 ? (
-        <div className="flex shrink-0 items-center gap-2 border-t border-border bg-surface px-3 py-2">
+        <div className="flex shrink-0 items-center gap-2 border-t border-border bg-surface px-3 pb-[calc(0.5rem+var(--tabs-h,0px))] pt-2">
           <button
             type="button"
             onClick={() => setTab("order")}
