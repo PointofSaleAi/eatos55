@@ -225,7 +225,7 @@ export function RoomChargeDialog({
                   </div>
                 </div>
 
-                <ul className="flex min-w-0 flex-nowrap gap-1.5 overflow-hidden">
+                <ul className="flex min-w-0 flex-nowrap gap-1.5 overflow-hidden [@media(max-height:780px)]:hidden">
                   {picked.stay.meals.slice(0, 3).map((m) => (
                     <li
                       key={m}
