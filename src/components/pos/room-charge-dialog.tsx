@@ -2,12 +2,6 @@ import { BedDouble, Check, Search, X } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useWideViewport } from "@/hooks/use-layout-mode";
 import { money } from "@/lib/demo-data";
