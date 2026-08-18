@@ -64,7 +64,13 @@ function NewOrder() {
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
         <div className="flex items-center gap-1">
           <MenuButton className="-ml-2 size-11" />
-          <GuestBlock onEdit={() => setGuestOpen(true)} />
+          {wide ? (
+            <span className="min-w-0 flex-1 truncate text-fs-sm font-extrabold text-foreground">
+              Menu
+            </span>
+          ) : (
+            <GuestBlock onEdit={() => setGuestOpen(true)} />
+          )}
 
           <div className="ml-auto flex shrink-0 items-center gap-0.5">
             <button
