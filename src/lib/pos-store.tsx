@@ -357,6 +357,14 @@ type Store = {
   cancelTicket: (id: string) => void;
   noTax: boolean;
   setNoTax: (v: boolean) => void;
+  /** Comped order: nothing is charged to the guest. */
+  comped: boolean;
+  setComped: (v: boolean) => void;
+  /** Free-text note attached to the whole order. */
+  orderNotes: string;
+  setOrderNotes: (v: string) => void;
+  /** Wall-clock label for when the guest arrived, e.g. "8:01 AM". */
+  arrivedAt: string;
   serviceCharge: number;
   setServiceCharge: (v: number) => void;
   orderDiscountPercent: number;
@@ -463,6 +471,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [floorReady, setFloorReady] = useState(false);
 
   const [noTax, setNoTax] = useState(false);
+  const [comped, setComped] = useState(false);
+  const [orderNotes, setOrderNotes] = useState("");
+  const [arrivedAt, setArrivedAt] = useState("");
   const [serviceCharge, setServiceCharge] = useState(0);
   const [orderDiscountPercent, setOrderDiscountPercent] = useState(0);
 
@@ -546,7 +557,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     const net = round(gross - discount + serviceCharge);
     const subtotal = noTax ? net : round(net / (1 + TAX_RATE));
     const tax = round(net - subtotal);
-    const total = net;
+    const total = comped ? 0 : net;
 
     return {
       session,
@@ -721,6 +732,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setCart([]);
         setActiveTicketId(null);
         setActiveTable(table ?? null);
+        setOrderNotes("");
+        setComped(false);
+        setArrivedAt(
+          new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+        );
         if (partySize && partySize > 0) {
           setGuestState((g) => ({ ...g, partySize }));
         }
@@ -741,6 +757,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
       addItem: (menuId, opts) => {
         const item = [...menu, ...liveMenu].find((m) => m.id === menuId);
         if (!item) return;
+        setArrivedAt((a) =>
+          a || new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+        );
         const qty = opts?.qty ?? 1;
         const price = opts?.price ?? item.price;
         const mods = opts?.modifiers ?? [];
@@ -774,6 +793,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setCart([]);
         setActiveTicketId(null);
         setPaidSoFar(0);
+        setOrderNotes("");
+        setComped(false);
+        setNoTax(false);
+        setArrivedAt("");
         if (activeTable) {
           setTableStates((s) => ({ ...s, [activeTable]: "available" }));
           setTableSince((s) => {
@@ -805,6 +828,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
       },
       noTax,
       setNoTax,
+      comped,
+      setComped,
+      orderNotes,
+      setOrderNotes,
+      arrivedAt,
       serviceCharge,
       setServiceCharge,
       orderDiscountPercent,
@@ -952,6 +980,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
     guest,
     orderType,
     noTax,
+    comped,
+    orderNotes,
+    arrivedAt,
     serviceCharge,
     orderDiscountPercent,
 
