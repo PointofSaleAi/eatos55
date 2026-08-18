@@ -364,18 +364,11 @@ export function RoomChargeDialog({
 
 function Fact({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-row border border-border px-3 py-2">
-      <p className="truncate text-fs-xs text-muted-foreground">{label}</p>
-      <p className="truncate text-fs-sm font-bold text-foreground">{value}</p>
-    </div>
-  );
-}
-
-function Line({ label, value }: { label: string; value: string }): ReactNode {
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <dt className="text-muted-foreground">{label}</dt>
-      <dd className="font-bold text-foreground">{value}</dd>
+    <div className="min-w-0">
+      <p className="truncate text-fs-xs font-extrabold uppercase tracking-[0.06em] text-muted-foreground">
+        {label}
+      </p>
+      <p className="mt-0.5 text-fs-sm font-bold text-foreground">{value}</p>
     </div>
   );
 }
