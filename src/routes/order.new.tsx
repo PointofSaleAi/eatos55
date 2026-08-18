@@ -1,33 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import {
-  Ban,
-  ChevronDown,
-  MoreVertical,
-  Percent,
-  Plus,
-  Printer,
-  Search,
-  Tag,
-  Trash2,
-  Users,
-} from "lucide-react";
+import { Ban, ChevronDown, MoreVertical, Plus, Search, Tag } from "lucide-react";
 import { useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { GuestBlock } from "@/components/pos/guest-block";
 import { MenuButton, useWideLayout } from "@/components/pos/shell";
 import { GuestSheet } from "@/components/pos/guest-sheet";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { MoreSheet } from "@/components/pos/more-sheet";
-import {
-  itemNeedsSheet,
-  liveMenu,
-  menus,
-  money,
-  serviceOrderTypes,
-  type MenuItem,
-  type ServiceOrderType,
-} from "@/lib/demo-data";
-import { DiscountSheet } from "@/components/pos/discount-sheet";
+import { OrderPanel } from "@/components/pos/order-panel";
+import { itemNeedsSheet, liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
 import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { toast } from "sonner";
@@ -364,39 +344,6 @@ function NewOrder() {
       <ItemSheet item={sheetItem} onClose={() => setSheetItem(null)} />
       <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
       <GuestSheet open={guestOpen} onClose={() => setGuestOpen(false)} />
-      <DiscountSheet
-        open={discountOpen}
-        selected={discountName}
-        onClose={() => setDiscountOpen(false)}
-        onPick={(d) => {
-          setDiscountName(d.name);
-          setOrderDiscountPercent(d.percent);
-          setDiscountOpen(false);
-        }}
-      />
-
     </div>
-  );
-}
-
-function PanelAction({
-  label,
-  icon,
-  onPress,
-}: {
-  label: string;
-  icon: React.ReactNode;
-  onPress: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      title={label}
-      onClick={onPress}
-      className="grid size-11 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
-    >
-      {icon}
-    </button>
   );
 }
