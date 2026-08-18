@@ -146,8 +146,8 @@ export function OrderPanel({ wide }: { wide: boolean }) {
                   : "text-muted-foreground hover:bg-secondary",
               )}
             >
-              <span className="shrink-0">{q.icon}</span>
-              <span className="min-w-0">{q.label}</span>
+              <span className="hidden shrink-0 xl:inline-flex">{q.icon}</span>
+              <span className="whitespace-nowrap">{q.label}</span>
             </button>
           ))}
         </div>
