@@ -140,14 +140,14 @@ export function OrderPanel({ wide }: { wide: boolean }) {
               type="button"
               onClick={() => setOrderType(q.type)}
               className={cn(
-                "flex min-h-tap items-center justify-center gap-1.5 rounded-pill px-2 text-fs-xs font-extrabold uppercase transition-colors",
+                "flex min-h-tap items-center justify-center gap-1 rounded-pill px-1 text-fs-xs font-extrabold uppercase tracking-tight transition-colors",
                 orderType === q.type
                   ? "bg-surface text-foreground shadow-sm"
                   : "text-muted-foreground hover:bg-secondary",
               )}
             >
-              {q.icon}
-              <span className="truncate">{q.label}</span>
+              <span className="shrink-0">{q.icon}</span>
+              <span className="min-w-0">{q.label}</span>
             </button>
           ))}
         </div>
