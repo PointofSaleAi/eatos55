@@ -1,5 +1,5 @@
 import { BedDouble, Check, Search, X } from "lucide-react";
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
