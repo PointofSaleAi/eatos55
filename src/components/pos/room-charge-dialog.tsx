@@ -96,11 +96,11 @@ export function RoomChargeDialog({
         </label>
       </div>
 
-      <div className="shrink-0 bg-muted/40 px-4 py-3">
-        <p className="mb-2 text-fs-xs font-extrabold uppercase tracking-[0.14em] text-muted-foreground">
+      <div className="shrink-0 bg-muted/40 px-4 py-2">
+        <p className="mb-1.5 text-fs-xs font-extrabold uppercase tracking-[0.14em] text-muted-foreground">
           Rooms
         </p>
-        <div className="no-scrollbar -mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-1">
+        <div className="no-scrollbar -mx-1 flex snap-x gap-2.5 overflow-x-auto px-1 pb-1">
           {list.map((r) => {
             const active = r.id === pickedId;
             const spare = creditLeft(r);
@@ -113,25 +113,27 @@ export function RoomChargeDialog({
                 onClick={() => setPickedId(r.id)}
                 aria-pressed={active}
                 className={cn(
-                  "flex w-[10rem] shrink-0 snap-start flex-col justify-between gap-3 rounded-card p-3 text-left transition-colors",
+                  "flex w-[9.5rem] shrink-0 snap-start flex-col gap-1 rounded-card px-2.5 py-2 text-left transition-colors",
                   active
                     ? "border-2 border-primary bg-surface shadow-md"
                     : "border border-border bg-surface hover:border-muted-foreground/40",
                   blocked && "border-dashed opacity-60",
                 )}
               >
-                <span
-                  className={cn(
-                    "grid min-h-8 min-w-8 shrink-0 place-items-center self-start rounded-row px-2 text-fs-sm font-extrabold",
-                    active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
-                  )}
-                >
-                  {r.number}
-                </span>
-                <span className="min-w-0">
+                <span className="flex min-w-0 items-center gap-2">
                   <span
                     className={cn(
-                      "block truncate text-fs-xs font-extrabold uppercase tracking-[0.08em]",
+                      "grid min-h-7 min-w-7 shrink-0 place-items-center rounded-row px-1.5 text-fs-xs font-extrabold",
+                      active
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground",
+                    )}
+                  >
+                    {r.number}
+                  </span>
+                  <span
+                    className={cn(
+                      "min-w-0 truncate text-fs-xs font-extrabold uppercase tracking-[0.06em]",
                       blocked ? "text-destructive" : "text-muted-foreground",
                     )}
                   >
@@ -141,36 +143,36 @@ export function RoomChargeDialog({
                         : "No booking"
                       : (r.stay?.roomType ?? r.name)}
                   </span>
-                  <span className="mt-0.5 block truncate text-fs-sm font-bold text-foreground">
-                    {r.guest ?? "Vacant"}
-                  </span>
-                  <span className="mt-0.5 block truncate text-fs-xs font-bold text-muted-foreground">
-                    {r.stay ? `Credit ${money(spare)}` : r.name}
-                  </span>
+                </span>
+                <span className="block truncate text-fs-sm font-bold text-foreground">
+                  {r.guest ?? "Vacant"}
+                </span>
+                <span className="block truncate text-fs-xs font-bold text-muted-foreground">
+                  {r.stay ? `Credit ${money(spare)}` : r.name}
                 </span>
               </button>
             );
           })}
           {list.length === 0 ? (
-            <p className="w-full py-6 text-center text-fs-sm text-muted-foreground">
+            <p className="w-full py-4 text-center text-fs-sm text-muted-foreground">
               No rooms match that search.
             </p>
           ) : null}
         </div>
       </div>
 
-      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto">
+      <div className="min-h-0 flex-1 overflow-hidden">
         {picked?.stay ? (
-          <div className="grid gap-4 p-4 lg:grid-cols-12">
-            <div className="space-y-4 lg:col-span-7">
+          <div className="grid h-full min-h-0 gap-3 p-3 lg:grid-cols-12">
+            <div className="flex min-h-0 flex-col gap-2.5 lg:col-span-7">
               <div className="flex items-center gap-2">
-                <BedDouble className="size-5 shrink-0 text-foreground" aria-hidden />
+                <BedDouble className="size-4 shrink-0 text-foreground" aria-hidden />
                 <p className="min-w-0 truncate text-fs-sm font-extrabold text-foreground">
                   {picked.name} · {picked.number}
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 rounded-card border border-border bg-muted/40 p-3">
+              <div className="grid grid-cols-2 gap-2 rounded-card border border-border bg-muted/40 p-2.5">
                 <Fact label="Booking number" value={picked.stay.bookingNumber} />
                 <Fact
                   label="Stay dates"
@@ -186,13 +188,13 @@ export function RoomChargeDialog({
                 />
               </div>
 
-              <section className="space-y-2">
+              <section className="min-h-0 space-y-2">
                 <p className="flex items-center gap-2 text-fs-xs font-extrabold uppercase tracking-[0.14em] text-muted-foreground">
                   Allowances
                   <span className="h-px flex-1 bg-border" />
                 </p>
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="min-w-0 rounded-card border border-border p-3">
+                  <div className="min-w-0 rounded-card border border-border px-2.5 py-2">
                     <p className="truncate text-fs-xs font-extrabold uppercase tracking-[0.06em] text-muted-foreground">
                       Daily food
                     </p>
@@ -200,7 +202,7 @@ export function RoomChargeDialog({
                       {money(picked.stay.foodAllowancePerDay)}
                     </p>
                   </div>
-                  <div className="min-w-0 rounded-card border border-border p-3">
+                  <div className="min-w-0 rounded-card border border-border px-2.5 py-2">
                     <p className="truncate text-fs-xs font-extrabold uppercase tracking-[0.06em] text-muted-foreground">
                       Alcohol
                     </p>
@@ -213,7 +215,7 @@ export function RoomChargeDialog({
                       {picked.stay.alcoholAllowed ? "Allowed" : "Not allowed"}
                     </p>
                   </div>
-                  <div className="min-w-0 rounded-card border border-border p-3">
+                  <div className="min-w-0 rounded-card border border-border px-2.5 py-2">
                     <p className="truncate text-fs-xs font-extrabold uppercase tracking-[0.06em] text-muted-foreground">
                       Meals
                     </p>
@@ -222,35 +224,38 @@ export function RoomChargeDialog({
                     </p>
                   </div>
                 </div>
-              </section>
 
-              <section className="space-y-2">
-                <p className="flex items-center gap-2 text-fs-xs font-extrabold uppercase tracking-[0.14em] text-muted-foreground">
-                  Meal entitlements
-                  <span className="h-px flex-1 bg-border" />
-                </p>
-                <ul className="flex flex-wrap gap-1.5">
-                  {picked.stay.meals.map((m) => (
+                <ul className="flex min-w-0 flex-nowrap gap-1.5 overflow-hidden">
+                  {picked.stay.meals.slice(0, 3).map((m) => (
                     <li
                       key={m}
-                      className="flex items-center gap-1 rounded-pill bg-muted px-2.5 py-1 text-fs-xs font-bold text-foreground"
+                      className="flex min-w-0 shrink items-center gap-1 rounded-pill bg-muted px-2 py-1 text-fs-xs font-bold text-foreground"
                     >
                       <Check className="size-3.5 shrink-0 text-success" aria-hidden />
-                      {m}
+                      <span className="truncate">{m}</span>
                     </li>
                   ))}
+                  {picked.stay.meals.length > 3 ? (
+                    <li className="shrink-0 rounded-pill bg-muted px-2 py-1 text-fs-xs font-bold text-muted-foreground">
+                      +{picked.stay.meals.length - 3}
+                    </li>
+                  ) : null}
                 </ul>
-                <p className="text-fs-xs text-muted-foreground">
+
+                <p
+                  title={picked.stay.entitlements}
+                  className="truncate text-fs-xs text-muted-foreground [@media(max-height:760px)]:hidden"
+                >
                   <span className="font-extrabold text-foreground">Entitlements: </span>
                   {picked.stay.entitlements}
                 </p>
               </section>
             </div>
 
-            <div className="lg:col-span-5">
-              <div className="flex h-full flex-col justify-between gap-4 rounded-card bg-foreground p-4 text-background">
+            <div className="min-h-0 lg:col-span-5">
+              <div className="flex h-full min-h-0 flex-col justify-between gap-3 rounded-card bg-foreground p-3 text-background">
                 <div>
-                  <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
+                  <div className="mb-2.5 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
                     <div className="min-w-0">
                       <p className="truncate text-fs-xs font-extrabold uppercase tracking-[0.14em] text-background/60">
                         Available credit
@@ -273,7 +278,7 @@ export function RoomChargeDialog({
                   </div>
                 </div>
 
-                <div className="border-t border-background/20 pt-3">
+                <div className="border-t border-background/20 pt-2.5">
                   <div className="mb-1 flex justify-between gap-2 text-fs-xs font-bold text-background/60">
                     <span>Transaction total</span>
                     <span>{money(due)}</span>
@@ -283,7 +288,7 @@ export function RoomChargeDialog({
                     <span>{money(due)}</span>
                   </div>
                   {!canCharge ? (
-                    <p className="mt-2 text-fs-xs font-bold text-destructive">
+                    <p className="mt-1.5 text-fs-xs font-bold text-destructive">
                       Not enough credit left on this stay.
                     </p>
                   ) : null}
@@ -292,11 +297,12 @@ export function RoomChargeDialog({
             </div>
           </div>
         ) : (
-          <p className="px-4 py-6 text-fs-sm text-muted-foreground">
+          <p className="px-4 py-5 text-fs-sm text-muted-foreground">
             Pick a room to see the booking, credit and entitlements.
           </p>
         )}
       </div>
+
 
       <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(0.75rem+var(--kb-inset,0px))] pt-3">
         <button
@@ -321,7 +327,7 @@ export function RoomChargeDialog({
   if (wide) {
     return (
       <Dialog open={open} onOpenChange={(next) => (next ? null : onClose())}>
-        <DialogContent hideClose className="flex max-h-[90vh] w-[min(56rem,94vw)] max-w-none flex-col gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0">
+        <DialogContent hideClose className="flex h-[min(46rem,90dvh)] max-h-[90dvh] w-[min(56rem,94vw)] max-w-none flex-col gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0">
           <div className="flex shrink-0 items-center gap-3 border-b border-border px-4 py-3">
             <DialogTitle className="min-w-0 shrink-0 truncate text-fs-lg font-extrabold text-foreground">
               Select Room
