@@ -58,44 +58,55 @@ export function RoomChargeDialog({
   const left = picked ? creditLeft(picked) : 0;
   const canCharge = Boolean(picked && picked.stay && left >= due);
 
+  const pct = picked?.stay
+    ? Math.min(
+        100,
+        Math.round((picked.stay.creditUsed / Math.max(1, picked.stay.creditLimit)) * 100),
+      )
+    : 0;
+
+  const floorPills = (
+    <div className="no-scrollbar flex shrink-0 gap-1 overflow-x-auto rounded-pill bg-muted p-1">
+      {["All floors", ...floors].map((f) => (
+        <button
+          key={f}
+          type="button"
+          onClick={() => setFloor(f)}
+          aria-pressed={f === floor}
+          className={cn(
+            "shrink-0 whitespace-nowrap rounded-pill px-3.5 py-2 text-fs-xs font-extrabold uppercase tracking-[0.06em] transition-colors",
+            f === floor
+              ? "bg-surface text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          {f}
+        </button>
+      ))}
+    </div>
+  );
+
   const body = (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 space-y-2 px-4 pb-3">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
-          <label className="flex min-w-0 items-center gap-2 rounded-row border border-border bg-background px-3 min-h-ctl-md">
-            <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by room number or guest name"
-              aria-label="Search rooms"
-              className="min-w-0 flex-1 bg-transparent py-2 text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
-            />
-          </label>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex h-ctl-md min-h-ctl-md shrink-0 items-center gap-1 rounded-row border border-border px-3 text-fs-sm font-bold text-foreground">
-              {floor === "All floors" ? "All floors" : floor}
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {["All floors", ...floors].map((f) => (
-                <DropdownMenuItem key={f} onClick={() => setFloor(f)}>
-                  {f}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
-        {picked?.stay ? (
-          <p className="rounded-row border border-success/40 bg-success/10 px-3 py-2 text-fs-xs font-bold text-foreground">
-            Booking No: {picked.stay.bookingNumber} · {picked.stay.stayFrom} - {picked.stay.stayTo} ·
-            Credit: {money(left)}
-          </p>
-        ) : null}
+      <div className="shrink-0 space-y-3 border-b border-border px-4 pb-3">
+        <div className={cn(wide && "hidden")}>{floorPills}</div>
+        <label className="flex min-w-0 items-center gap-2 rounded-row border border-border bg-background px-3 min-h-ctl-md">
+          <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search by room number or guest name"
+            aria-label="Search rooms"
+            className="min-w-0 flex-1 bg-transparent py-2 text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
+          />
+        </label>
       </div>
 
-      <div className="min-h-0 flex-1 flex flex-col gap-3 px-4 pb-3">
-        <div className="shrink-0 -mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-1">
+      <div className="shrink-0 bg-muted/40 px-4 py-3">
+        <p className="mb-2 text-fs-xs font-extrabold uppercase tracking-[0.14em] text-muted-foreground">
+          Rooms
+        </p>
+        <div className="no-scrollbar -mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-1">
           {list.map((r) => {
             const active = r.id === pickedId;
             const spare = creditLeft(r);
@@ -108,26 +119,41 @@ export function RoomChargeDialog({
                 onClick={() => setPickedId(r.id)}
                 aria-pressed={active}
                 className={cn(
-                  "w-[10.5rem] shrink-0 snap-start rounded-card border p-3 text-left transition-colors",
+                  "flex w-[10rem] shrink-0 snap-start flex-col justify-between gap-3 rounded-card p-3 text-left transition-colors",
                   active
-                    ? "border-success bg-success/10"
-                    : "border-border bg-background hover:bg-muted",
-                  blocked && "opacity-45",
+                    ? "border-2 border-primary bg-surface shadow-md"
+                    : "border border-border bg-surface hover:border-muted-foreground/40",
+                  blocked && "border-dashed opacity-60",
                 )}
               >
-                <p className="text-fs-sm font-extrabold text-foreground">
-                  {r.name} - {r.number}
-                </p>
-                {r.guest ? (
-                  <p className="mt-0.5 truncate text-fs-xs text-muted-foreground">{r.guest}</p>
-                ) : null}
-                <p className="mt-1 text-fs-xs font-bold text-muted-foreground">
-                  {blocked
-                    ? r.stay
-                      ? `No credit left (${money(spare)})`
-                      : "No active booking"
-                    : `Credit ${money(spare)}`}
-                </p>
+                <span
+                  className={cn(
+                    "grid min-h-8 min-w-8 shrink-0 place-items-center self-start rounded-row px-2 text-fs-sm font-extrabold",
+                    active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
+                  )}
+                >
+                  {r.number}
+                </span>
+                <span className="min-w-0">
+                  <span
+                    className={cn(
+                      "block truncate text-fs-xs font-extrabold uppercase tracking-[0.08em]",
+                      blocked ? "text-destructive" : "text-muted-foreground",
+                    )}
+                  >
+                    {blocked
+                      ? r.stay
+                        ? "Low credit"
+                        : "No booking"
+                      : (r.stay?.roomType ?? r.name)}
+                  </span>
+                  <span className="mt-0.5 block truncate text-fs-sm font-bold text-foreground">
+                    {r.guest ?? "Vacant"}
+                  </span>
+                  <span className="mt-0.5 block truncate text-fs-xs font-bold text-muted-foreground">
+                    {r.stay ? `Credit ${money(spare)}` : r.name}
+                  </span>
+                </span>
               </button>
             );
           })}
@@ -137,74 +163,146 @@ export function RoomChargeDialog({
             </p>
           ) : null}
         </div>
+      </div>
 
+      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto">
         {picked?.stay ? (
-          <div className="min-h-0 flex-1 space-y-2">
-            <div className="flex items-center gap-2">
-              <BedDouble className="size-5 shrink-0 text-foreground" aria-hidden />
-              <div className="min-w-0">
-                <p className="truncate text-fs-sm font-extrabold text-foreground">
+          <div className="grid gap-4 p-4 lg:grid-cols-12">
+            <div className="space-y-4 lg:col-span-7">
+              <div className="flex items-center gap-2">
+                <BedDouble className="size-5 shrink-0 text-foreground" aria-hidden />
+                <p className="min-w-0 truncate text-fs-sm font-extrabold text-foreground">
                   {picked.name} · {picked.number}
                 </p>
-                <p className="truncate text-fs-xs text-muted-foreground">
-                  Booking: {picked.stay.bookingNumber}
-                </p>
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              <Fact label="Occupancy" value={picked.stay.occupancy} />
-              <Fact
-                label="Stay Period"
-                value={`${picked.stay.nights} Night${picked.stay.nights === 1 ? "" : "s"}`}
-              />
-              <Fact label="Credit limit" value={money(picked.stay.creditLimit)} />
-              <Fact label="Used" value={money(picked.stay.creditUsed)} />
-              <Fact label="Food Allowance / day" value={money(picked.stay.foodAllowancePerDay)} />
-              <Fact label="Alcohol Allowed" value={picked.stay.alcoholAllowed ? "Yes" : "No"} />
-            </div>
-
-            <div className="grid gap-2 sm:grid-cols-2">
-              <div>
-                <p className="text-fs-xs font-extrabold uppercase tracking-[0.06em] text-muted-foreground">
-                  Room Setup
-                </p>
-                <dl className="mt-1 grid grid-cols-2 gap-x-3 text-fs-xs">
-                  <Line label="Room Type" value={picked.stay.roomType} />
-                  <Line label="Bed Type" value={picked.stay.bedType} />
-                  <Line label="Max Adults" value={String(picked.stay.maxAdults)} />
-                  <Line label="Max Children" value={String(picked.stay.maxChildren)} />
-                </dl>
+              <div className="grid grid-cols-2 gap-3 rounded-card border border-border bg-muted/40 p-3">
+                <Fact label="Booking number" value={picked.stay.bookingNumber} />
+                <Fact
+                  label="Stay dates"
+                  value={`${picked.stay.stayFrom} - ${picked.stay.stayTo} (${picked.stay.nights} Night${picked.stay.nights === 1 ? "" : "s"})`}
+                />
+                <Fact
+                  label="Occupancy"
+                  value={`${picked.stay.occupancy} (Max ${picked.stay.maxAdults}A, ${picked.stay.maxChildren}C)`}
+                />
+                <Fact
+                  label="Room / bed type"
+                  value={`${picked.stay.roomType} / ${picked.stay.bedType}`}
+                />
               </div>
-              <div>
-                <p className="text-fs-xs font-extrabold uppercase tracking-[0.06em] text-muted-foreground">
-                  Meal Entitlements
+
+              <section className="space-y-2">
+                <p className="flex items-center gap-2 text-fs-xs font-extrabold uppercase tracking-[0.14em] text-muted-foreground">
+                  Allowances
+                  <span className="h-px flex-1 bg-border" />
                 </p>
-                <ul className="mt-1 flex flex-wrap gap-1.5">
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="min-w-0 rounded-card border border-border p-3">
+                    <p className="truncate text-fs-xs font-extrabold uppercase tracking-[0.06em] text-muted-foreground">
+                      Daily food
+                    </p>
+                    <p className="truncate text-fs-sm font-extrabold text-primary">
+                      {money(picked.stay.foodAllowancePerDay)}
+                    </p>
+                  </div>
+                  <div className="min-w-0 rounded-card border border-border p-3">
+                    <p className="truncate text-fs-xs font-extrabold uppercase tracking-[0.06em] text-muted-foreground">
+                      Alcohol
+                    </p>
+                    <p
+                      className={cn(
+                        "truncate text-fs-sm font-extrabold",
+                        picked.stay.alcoholAllowed ? "text-success" : "text-destructive",
+                      )}
+                    >
+                      {picked.stay.alcoholAllowed ? "Allowed" : "Not allowed"}
+                    </p>
+                  </div>
+                  <div className="min-w-0 rounded-card border border-border p-3">
+                    <p className="truncate text-fs-xs font-extrabold uppercase tracking-[0.06em] text-muted-foreground">
+                      Meals
+                    </p>
+                    <p className="truncate text-fs-sm font-extrabold text-foreground">
+                      {picked.stay.meals.length} included
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              <section className="space-y-2">
+                <p className="flex items-center gap-2 text-fs-xs font-extrabold uppercase tracking-[0.14em] text-muted-foreground">
+                  Meal entitlements
+                  <span className="h-px flex-1 bg-border" />
+                </p>
+                <ul className="flex flex-wrap gap-1.5">
                   {picked.stay.meals.map((m) => (
                     <li
                       key={m}
-                      className="flex items-center gap-1 rounded-pill bg-muted px-2 py-1 text-fs-xs font-bold text-foreground"
+                      className="flex items-center gap-1 rounded-pill bg-muted px-2.5 py-1 text-fs-xs font-bold text-foreground"
                     >
                       <Check className="size-3.5 shrink-0 text-success" aria-hidden />
                       {m}
                     </li>
                   ))}
                 </ul>
-                <p className="mt-1.5 text-fs-xs text-muted-foreground">
+                <p className="text-fs-xs text-muted-foreground">
                   <span className="font-extrabold text-foreground">Entitlements: </span>
                   {picked.stay.entitlements}
                 </p>
+              </section>
+            </div>
+
+            <div className="lg:col-span-5">
+              <div className="flex h-full flex-col justify-between gap-4 rounded-card bg-foreground p-4 text-background">
+                <div>
+                  <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-fs-xs font-extrabold uppercase tracking-[0.14em] text-background/60">
+                        Available credit
+                      </p>
+                      <p className="truncate text-fs-money font-extrabold">{money(left)}</p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="text-fs-xs font-extrabold uppercase tracking-[0.14em] text-background/60">
+                        Limit
+                      </p>
+                      <p className="text-fs-sm font-bold">{money(picked.stay.creditLimit)}</p>
+                    </div>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-pill bg-background/20">
+                    <div className="h-full bg-success" style={{ width: `${pct}%` }} />
+                  </div>
+                  <div className="mt-1.5 flex justify-between gap-2 text-fs-xs font-bold text-background/60">
+                    <span className="truncate">Used {money(picked.stay.creditUsed)}</span>
+                    <span className="shrink-0">{pct}% used</span>
+                  </div>
+                </div>
+
+                <div className="border-t border-background/20 pt-3">
+                  <div className="mb-1 flex justify-between gap-2 text-fs-xs font-bold text-background/60">
+                    <span>Transaction total</span>
+                    <span>{money(due)}</span>
+                  </div>
+                  <div className="flex justify-between gap-2 text-fs-base font-extrabold uppercase tracking-[0.06em]">
+                    <span>Due today</span>
+                    <span>{money(due)}</span>
+                  </div>
+                  {!canCharge ? (
+                    <p className="mt-2 text-fs-xs font-bold text-destructive">
+                      Not enough credit left on this stay.
+                    </p>
+                  ) : null}
+                </div>
               </div>
             </div>
           </div>
         ) : (
-          <p className="min-h-0 flex-1 text-fs-sm text-muted-foreground">
+          <p className="px-4 py-6 text-fs-sm text-muted-foreground">
             Pick a room to see the booking, credit and entitlements.
           </p>
         )}
       </div>
-
 
       <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(0.75rem+var(--kb-inset,0px))] pt-3">
         <button
@@ -213,9 +311,14 @@ export function RoomChargeDialog({
           onClick={() => {
             if (picked) onCharge(picked);
           }}
-          className="h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold uppercase tracking-[0.06em] text-primary-foreground transition-colors disabled:opacity-40"
+          className="flex h-ctl-lg w-full items-center justify-center gap-3 rounded-row bg-primary px-4 text-fs-base font-extrabold uppercase tracking-[0.06em] text-primary-foreground transition-colors disabled:opacity-40"
         >
-          {picked ? `Charge to room · ${money(due)}` : "Select a room"}
+          <span className="min-w-0 truncate">
+            {picked ? `Post charge to room ${picked.number}` : "Select a room"}
+          </span>
+          <span className="shrink-0 rounded-row bg-primary-foreground/20 px-2.5 py-0.5 text-fs-sm">
+            {money(due)}
+          </span>
         </button>
       </div>
     </div>
