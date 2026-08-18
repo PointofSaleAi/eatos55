@@ -328,19 +328,21 @@ export function RoomChargeDialog({
     return (
       <Dialog open={open} onOpenChange={(next) => (next ? null : onClose())}>
         <DialogContent hideClose className="flex max-h-[90vh] w-[min(56rem,94vw)] max-w-none flex-col gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0">
-          <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-3">
-            <DialogTitle className="min-w-0 flex-1 truncate text-fs-lg font-extrabold text-foreground">
+          <div className="flex shrink-0 items-center gap-3 border-b border-border px-4 py-3">
+            <DialogTitle className="min-w-0 shrink-0 truncate text-fs-lg font-extrabold text-foreground">
               Select Room
             </DialogTitle>
+            <div className="min-w-0 flex-1 overflow-hidden">{floorPills}</div>
             <button
               type="button"
               onClick={onClose}
               aria-label="Close room charge"
-              className="grid size-10 place-items-center rounded-pill text-muted-foreground transition-colors hover:bg-muted"
+              className="grid size-10 shrink-0 place-items-center rounded-pill text-muted-foreground transition-colors hover:bg-muted"
             >
               <X className="size-5" />
             </button>
           </div>
+
           {body}
         </DialogContent>
       </Dialog>
