@@ -1,5 +1,5 @@
-import { BedDouble, Check, Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { BedDouble, Check, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -14,9 +14,27 @@ function creditLeft(room: Room) {
   return Math.max(0, Math.round((room.stay.creditLimit - room.stay.creditUsed) * 100) / 100);
 }
 
+/** Column and row count for the room grid so it never needs a scrollbar. */
+function useGridShape() {
+  const [shape, setShape] = useState({ cols: 2, rows: 3 });
+  useEffect(() => {
+    const read = () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const cols = w >= 1024 ? 4 : w >= 640 ? 3 : 2;
+      const rows = h >= 900 ? 3 : h >= 700 ? 2 : 2;
+      setShape((prev) => (prev.cols === cols && prev.rows === rows ? prev : { cols, rows }));
+    };
+    read();
+    window.addEventListener("resize", read);
+    return () => window.removeEventListener("resize", read);
+  }, []);
+  return shape;
+}
+
 /**
- * Room charge picker. Sheet on phones, centred dialog on tablet and desktop,
- * so the payment grid behind it is never pushed off-screen.
+ * Room charge picker. Two steps: pick a room from a paged grid, then review the
+ * booking, credit and entitlements before posting the charge.
  */
 export function RoomChargeDialog({
   open,
@@ -33,7 +51,10 @@ export function RoomChargeDialog({
   const [query, setQuery] = useState("");
   const [floor, setFloor] = useState<string>("All floors");
   const [pickedId, setPickedId] = useState<string | null>(null);
+  const [page, setPage] = useState(0);
   const { dragStyle, handleProps } = useSheetDrag(onClose);
+  const { cols, rows } = useGridShape();
+  const pageSize = cols * rows;
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -47,6 +68,23 @@ export function RoomChargeDialog({
       );
     });
   }, [query, floor]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [query, floor, pageSize]);
+
+  useEffect(() => {
+    if (!open) {
+      setPickedId(null);
+      setPage(0);
+      setQuery("");
+      setFloor("All floors");
+    }
+  }, [open]);
+
+  const pages = Math.max(1, Math.ceil(list.length / pageSize));
+  const safePage = Math.min(page, pages - 1);
+  const visible = list.slice(safePage * pageSize, safePage * pageSize + pageSize);
 
   const picked = rooms.find((r) => r.id === pickedId) ?? null;
   const left = picked ? creditLeft(picked) : 0;
@@ -80,7 +118,7 @@ export function RoomChargeDialog({
     </div>
   );
 
-  const body = (
+  const pickStep = (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="shrink-0 space-y-3 border-b border-border px-4 pb-3">
         <div className={cn(wide && "hidden")}>{floorPills}</div>
@@ -96,82 +134,113 @@ export function RoomChargeDialog({
         </label>
       </div>
 
-      <div className="shrink-0 bg-muted/40 px-4 py-2">
-        <p className="mb-1.5 text-fs-xs font-extrabold uppercase tracking-[0.14em] text-muted-foreground">
-          Rooms
-        </p>
-        <div className="no-scrollbar -mx-1 flex snap-x gap-2.5 overflow-x-auto px-1 pb-1">
-          {list.map((r) => {
-            const active = r.id === pickedId;
-            const spare = creditLeft(r);
-            const blocked = !r.stay || spare < due;
-            return (
-              <button
-                key={r.id}
-                type="button"
-                disabled={blocked}
-                onClick={() => setPickedId(r.id)}
-                aria-pressed={active}
-                className={cn(
-                  "flex w-[9.5rem] shrink-0 snap-start flex-col gap-1 rounded-card px-2.5 py-2 text-left transition-colors",
-                  active
-                    ? "border-2 border-primary bg-surface shadow-md"
-                    : "border border-border bg-surface hover:border-muted-foreground/40",
-                  blocked && "border-dashed opacity-60",
-                )}
-              >
-                <span className="flex min-w-0 items-center gap-2">
-                  <span
-                    className={cn(
-                      "grid min-h-7 min-w-7 shrink-0 place-items-center rounded-row px-1.5 text-fs-xs font-extrabold",
-                      active
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground",
-                    )}
-                  >
-                    {r.number}
+      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-hidden p-3">
+        {list.length === 0 ? (
+          <p className="flex flex-1 items-center justify-center text-fs-sm text-muted-foreground">
+            No rooms match that search.
+          </p>
+        ) : (
+          <div
+            className="grid min-h-0 flex-1 content-start gap-2"
+            style={{
+              gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+              gridAutoRows: "max-content",
+            }}
+          >
+            {visible.map((r) => {
+              const spare = creditLeft(r);
+              const blocked = !r.stay || spare < due;
+              return (
+                <button
+                  key={r.id}
+                  type="button"
+                  disabled={blocked}
+                  onClick={() => setPickedId(r.id)}
+                  className={cn(
+                    "flex min-h-ctl-lg min-w-0 flex-col gap-1 rounded-card border border-border bg-surface px-2.5 py-2 text-left transition-colors hover:border-muted-foreground/40",
+                    blocked && "border-dashed opacity-60",
+                  )}
+                >
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span className="grid min-h-7 min-w-7 shrink-0 place-items-center rounded-row bg-muted px-1.5 text-fs-xs font-extrabold text-muted-foreground">
+                      {r.number}
+                    </span>
+                    <span
+                      className={cn(
+                        "min-w-0 truncate text-fs-xs font-extrabold uppercase tracking-[0.06em]",
+                        blocked ? "text-destructive" : "text-muted-foreground",
+                      )}
+                    >
+                      {blocked
+                        ? r.stay
+                          ? "Low credit"
+                          : "No booking"
+                        : (r.stay?.roomType ?? r.name)}
+                    </span>
                   </span>
-                  <span
-                    className={cn(
-                      "min-w-0 truncate text-fs-xs font-extrabold uppercase tracking-[0.06em]",
-                      blocked ? "text-destructive" : "text-muted-foreground",
-                    )}
-                  >
-                    {blocked
-                      ? r.stay
-                        ? "Low credit"
-                        : "No booking"
-                      : (r.stay?.roomType ?? r.name)}
+                  <span className="block truncate text-fs-sm font-bold text-foreground">
+                    {r.guest ?? "Vacant"}
                   </span>
-                </span>
-                <span className="block truncate text-fs-sm font-bold text-foreground">
-                  {r.guest ?? "Vacant"}
-                </span>
-                <span className="block truncate text-fs-xs font-bold text-muted-foreground">
-                  {r.stay ? `Credit ${money(spare)}` : r.name}
-                </span>
-              </button>
-            );
-          })}
-          {list.length === 0 ? (
-            <p className="w-full py-4 text-center text-fs-sm text-muted-foreground">
-              No rooms match that search.
-            </p>
-          ) : null}
-        </div>
-      </div>
+                  <span className="block truncate text-fs-xs font-bold text-muted-foreground">
+                    {r.stay ? `Credit ${money(spare)}` : r.name}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
-      <div className="min-h-0 flex-1 overflow-hidden">
-        {picked?.stay ? (
+        {pages > 1 ? (
+          <div className="flex shrink-0 items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => setPage(Math.max(0, safePage - 1))}
+              disabled={safePage === 0}
+              aria-label="Previous rooms"
+              className="grid size-10 place-items-center rounded-pill border border-border text-foreground transition-colors hover:bg-muted disabled:opacity-40"
+            >
+              <ChevronLeft className="size-5" />
+            </button>
+            <p className="text-fs-xs font-extrabold uppercase tracking-[0.14em] text-muted-foreground">
+              {list.length} rooms · page {safePage + 1} of {pages}
+            </p>
+            <button
+              type="button"
+              onClick={() => setPage(Math.min(pages - 1, safePage + 1))}
+              disabled={safePage >= pages - 1}
+              aria-label="More rooms"
+              className="grid size-10 place-items-center rounded-pill border border-border text-foreground transition-colors hover:bg-muted disabled:opacity-40"
+            >
+              <ChevronRight className="size-5" />
+            </button>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+
+  const detailStep =
+    picked && picked.stay ? (
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex shrink-0 items-center gap-2 border-b border-border px-3 py-2">
+          <button
+            type="button"
+            onClick={() => setPickedId(null)}
+            aria-label="Back to room list"
+            title="Back to room list"
+            className="grid size-10 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+          >
+            <ChevronLeft className="size-5" />
+          </button>
+          <BedDouble className="size-4 shrink-0 text-foreground" aria-hidden />
+          <p className="min-w-0 truncate text-fs-sm font-extrabold text-foreground">
+            {picked.guest ?? picked.name} · {picked.number}
+          </p>
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-hidden">
           <div className="grid h-full min-h-0 gap-3 p-3 lg:grid-cols-12">
             <div className="flex min-h-0 flex-col gap-2.5 lg:col-span-7">
-              <div className="flex items-center gap-2">
-                <BedDouble className="size-4 shrink-0 text-foreground" aria-hidden />
-                <p className="min-w-0 truncate text-fs-sm font-extrabold text-foreground">
-                  {picked.name} · {picked.number}
-                </p>
-              </div>
-
               <div className="grid grid-cols-2 gap-2 rounded-card border border-border bg-muted/40 p-2.5">
                 <Fact label="Booking number" value={picked.stay.bookingNumber} />
                 <Fact
@@ -244,7 +313,7 @@ export function RoomChargeDialog({
 
                 <p
                   title={picked.stay.entitlements}
-                  className="truncate text-fs-xs text-muted-foreground [@media(max-height:760px)]:hidden"
+                  className="truncate text-fs-xs text-muted-foreground [@media(max-height:820px)]:hidden"
                 >
                   <span className="font-extrabold text-foreground">Entitlements: </span>
                   {picked.stay.entitlements}
@@ -296,43 +365,39 @@ export function RoomChargeDialog({
               </div>
             </div>
           </div>
-        ) : (
-          <p className="px-4 py-5 text-fs-sm text-muted-foreground">
-            Pick a room to see the booking, credit and entitlements.
-          </p>
-        )}
-      </div>
+        </div>
 
-
-      <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(0.75rem+var(--kb-inset,0px))] pt-3">
-        <button
-          type="button"
-          disabled={!canCharge}
-          onClick={() => {
-            if (picked) onCharge(picked);
-          }}
-          className="flex h-ctl-lg w-full items-center justify-center gap-3 rounded-row bg-primary px-4 text-fs-base font-extrabold uppercase tracking-[0.06em] text-primary-foreground transition-colors disabled:opacity-40"
-        >
-          <span className="min-w-0 truncate">
-            {picked ? `Post charge to room ${picked.number}` : "Select a room"}
-          </span>
-          <span className="shrink-0 rounded-row bg-primary-foreground/20 px-2.5 py-0.5 text-fs-sm">
-            {money(due)}
-          </span>
-        </button>
+        <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(0.75rem+var(--kb-inset,0px))] pt-3">
+          <button
+            type="button"
+            disabled={!canCharge}
+            onClick={() => onCharge(picked)}
+            className="flex h-ctl-lg w-full items-center justify-center gap-3 rounded-row bg-primary px-4 text-fs-base font-extrabold uppercase tracking-[0.06em] text-primary-foreground transition-colors disabled:opacity-40"
+          >
+            <span className="min-w-0 truncate">Post charge to room {picked.number}</span>
+            <span className="shrink-0 rounded-row bg-primary-foreground/20 px-2.5 py-0.5 text-fs-sm">
+              {money(due)}
+            </span>
+          </button>
+        </div>
       </div>
-    </div>
-  );
+    ) : null;
+
+  const body = detailStep ?? pickStep;
+  const title = picked ? `Room ${picked.number}` : "Select Room";
 
   if (wide) {
     return (
       <Dialog open={open} onOpenChange={(next) => (next ? null : onClose())}>
-        <DialogContent hideClose className="flex h-[min(46rem,90dvh)] max-h-[90dvh] w-[min(56rem,94vw)] max-w-none flex-col gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0">
+        <DialogContent
+          hideClose
+          className="flex h-[min(46rem,90dvh)] max-h-[90dvh] w-[min(56rem,94vw)] max-w-none flex-col gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0"
+        >
           <div className="flex shrink-0 items-center gap-3 border-b border-border px-4 py-3">
             <DialogTitle className="min-w-0 shrink-0 truncate text-fs-lg font-extrabold text-foreground">
-              Select Room
+              {title}
             </DialogTitle>
-            <div className="min-w-0 flex-1 overflow-hidden">{floorPills}</div>
+            <div className="min-w-0 flex-1 overflow-hidden">{picked ? null : floorPills}</div>
             <button
               type="button"
               onClick={onClose}
@@ -359,7 +424,7 @@ export function RoomChargeDialog({
         <SheetGrabber handleProps={handleProps} />
         <SheetHeader className="shrink-0 px-4 pb-2 pt-1" {...handleProps}>
           <SheetTitle className="text-center text-fs-base font-extrabold text-foreground">
-            Select Room
+            {title}
           </SheetTitle>
         </SheetHeader>
         {body}
