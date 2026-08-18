@@ -557,7 +557,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     const net = round(gross - discount + serviceCharge);
     const subtotal = noTax ? net : round(net / (1 + TAX_RATE));
     const tax = round(net - subtotal);
-    const total = net;
+    const total = comped ? 0 : net;
 
     return {
       session,
@@ -816,6 +816,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
       },
       noTax,
       setNoTax,
+      comped,
+      setComped,
+      orderNotes,
+      setOrderNotes,
+      arrivedAt,
       serviceCharge,
       setServiceCharge,
       orderDiscountPercent,
@@ -963,6 +968,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
     guest,
     orderType,
     noTax,
+    comped,
+    orderNotes,
+    arrivedAt,
     serviceCharge,
     orderDiscountPercent,
 
