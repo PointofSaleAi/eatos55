@@ -732,6 +732,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setCart([]);
         setActiveTicketId(null);
         setActiveTable(table ?? null);
+        setOrderNotes("");
+        setComped(false);
+        setArrivedAt(
+          new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+        );
         if (partySize && partySize > 0) {
           setGuestState((g) => ({ ...g, partySize }));
         }
@@ -752,6 +757,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
       addItem: (menuId, opts) => {
         const item = [...menu, ...liveMenu].find((m) => m.id === menuId);
         if (!item) return;
+        setArrivedAt((a) =>
+          a || new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+        );
         const qty = opts?.qty ?? 1;
         const price = opts?.price ?? item.price;
         const mods = opts?.modifiers ?? [];
@@ -785,6 +793,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setCart([]);
         setActiveTicketId(null);
         setPaidSoFar(0);
+        setOrderNotes("");
+        setComped(false);
+        setNoTax(false);
+        setArrivedAt("");
         if (activeTable) {
           setTableStates((s) => ({ ...s, [activeTable]: "available" }));
           setTableSince((s) => {
