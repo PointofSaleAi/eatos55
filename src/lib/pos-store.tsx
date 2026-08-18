@@ -357,6 +357,14 @@ type Store = {
   cancelTicket: (id: string) => void;
   noTax: boolean;
   setNoTax: (v: boolean) => void;
+  /** Comped order: nothing is charged to the guest. */
+  comped: boolean;
+  setComped: (v: boolean) => void;
+  /** Free-text note attached to the whole order. */
+  orderNotes: string;
+  setOrderNotes: (v: string) => void;
+  /** Wall-clock label for when the guest arrived, e.g. "8:01 AM". */
+  arrivedAt: string;
   serviceCharge: number;
   setServiceCharge: (v: number) => void;
   orderDiscountPercent: number;
