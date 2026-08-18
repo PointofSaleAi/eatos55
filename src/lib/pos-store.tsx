@@ -471,6 +471,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [floorReady, setFloorReady] = useState(false);
 
   const [noTax, setNoTax] = useState(false);
+  const [comped, setComped] = useState(false);
+  const [orderNotes, setOrderNotes] = useState("");
+  const [arrivedAt, setArrivedAt] = useState("");
   const [serviceCharge, setServiceCharge] = useState(0);
   const [orderDiscountPercent, setOrderDiscountPercent] = useState(0);
 
