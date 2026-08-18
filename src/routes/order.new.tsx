@@ -31,23 +31,12 @@ export const Route = createFileRoute("/order/new")({
 
 function NewOrder() {
   const navigate = useNavigate();
-  const {
-    totals,
-    cart,
-    changeQty,
-    addItem,
-    cancelOrder,
-    orderType,
-    setOrderType,
-    setOrderDiscountPercent,
-  } = usePos();
+  const { totals, addItem } = usePos();
   const [activeMenu, setActiveMenu] = useState(menus[1]!.id);
   const [category, setCategory] = useState<string>(menus[1]!.categories[0]!);
   const [sheetItem, setSheetItem] = useState<MenuItem | null>(null);
   const [moreOpen, setMoreOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
-  const [discountOpen, setDiscountOpen] = useState(false);
-  const [discountName, setDiscountName] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [tab, setTab] = useState<"menu" | "order">("menu");
