@@ -146,10 +146,10 @@ export function SplitPayments({
     });
   };
 
-  const modes: { id: SplitMode; label: string; icon: typeof ReceiptIcon }[] = [
-    { id: "standard", label: "Standard Check", icon: ReceiptIcon },
-    { id: "evenly", label: "Split Evenly", icon: Users },
-    { id: "custom", label: "Split Custom", icon: SplitIcon },
+  const modes: { id: SplitMode; label: string; short: string; icon: typeof ReceiptIcon }[] = [
+    { id: "standard", label: "Standard Check", short: "Standard", icon: ReceiptIcon },
+    { id: "evenly", label: "Split Evenly", short: "Evenly", icon: Users },
+    { id: "custom", label: "Split Custom", short: "Custom", icon: SplitIcon },
   ];
 
   return (
@@ -208,7 +208,8 @@ export function SplitPayments({
                       )}
                     >
                       <Icon className={cn("size-4 shrink-0", active && "text-accent")} aria-hidden />
-                      <span className="truncate">{m.label}</span>
+                      <span className="truncate sm:hidden">{m.short}</span>
+                      <span className="hidden truncate sm:inline">{m.label}</span>
                     </button>
                   );
                 })}
