@@ -189,7 +189,11 @@ export function SplitPayments({
           {/* Modes, stepper and child checks */}
           <div className="flex min-h-0 flex-1 flex-col gap-3">
             <div className="flex shrink-0 flex-wrap items-center gap-2">
-              <div role="tablist" aria-label="Split mode" className="flex min-w-0 flex-1 flex-wrap gap-2">
+              <div
+                role="tablist"
+                aria-label="Split mode"
+                className="flex min-w-0 basis-full flex-wrap gap-2 sm:flex-1 sm:basis-auto"
+              >
                 {modes.map((m) => {
                   const Icon = m.icon;
                   const active = mode === m.id;
