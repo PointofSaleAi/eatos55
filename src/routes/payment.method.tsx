@@ -25,7 +25,9 @@ import { ReceiptCard, ReceiptRow } from "@/components/pos/receipt";
 import { ReferenceTenderDialog } from "@/components/pos/reference-tender-dialog";
 import { RoomChargeDialog } from "@/components/pos/room-charge-dialog";
 import { BackButton } from "@/components/pos/shell";
+import { SplitPayments } from "@/components/pos/split-payments";
 import { X } from "lucide-react";
+
 import { haptic } from "@/lib/haptics";
 import { TAX_RATE, money } from "@/lib/demo-data";
 import type { Room } from "@/lib/floor-data";
@@ -103,6 +105,8 @@ function PaymentMethod() {
 
   const [selected, setSelected] = useState<string | null>(null);
   const [roomOpen, setRoomOpen] = useState(false);
+  const [splitOpen, setSplitOpen] = useState(false);
+
   const [room, setRoom] = useState<Room | null>(null);
   const [refConfig, setRefConfig] = useState<RefConfig | null>(null);
   const [pinFor, setPinFor] = useState<{ cfg: RefConfig; value: string } | null>(null);
@@ -191,8 +195,9 @@ function PaymentMethod() {
           label: "Split Check",
           icon: Split,
           kind: "split",
-          run: () => navigate({ to: "/payment/split" }),
+          run: () => setSplitOpen(true),
         },
+
       ],
     },
     {
@@ -671,6 +676,22 @@ function PaymentMethod() {
           if (pending) finish(pending.cfg, pending.value);
         }}
       />
+
+      {splitOpen ? (
+        <SplitPayments
+          onClose={() => setSplitOpen(false)}
+          onProceed={(result) => {
+            setSplitOpen(false);
+            setSelected("split");
+            if (result.mode !== "standard") {
+              toast.info(
+                `${result.checks} checks · first check ${money(result.firstTotal)} · choose a tender`,
+              );
+            }
+          }}
+        />
+      ) : null}
     </div>
+
   );
 }
