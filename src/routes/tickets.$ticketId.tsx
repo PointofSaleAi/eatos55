@@ -83,6 +83,13 @@ function TicketDetail() {
             </div>
             <span className={cn("shrink-0 text-fs-xs font-bold", meta.tone)}>{meta.label}</span>
           </div>
+          {ticket.roomNumber ? (
+            <p className="mt-2 truncate border-t border-border pt-2 text-fs-xs text-muted-foreground">
+              <span className="font-extrabold text-foreground">Room {ticket.roomNumber}</span>
+              {ticket.bookingNumber ? ` · Booking ${ticket.bookingNumber}` : ""}
+              {ticket.signedBill ? " · signed bill posted" : ""}
+            </p>
+          ) : null}
         </Card>
 
         <Card className="mt-3 overflow-hidden">

@@ -74,6 +74,12 @@ export type Ticket = {
   guestEmail?: string;
   notes?: string;
   vehicle?: { type: string; color: string; brand?: string; plate?: string };
+  /** Room number the charge was posted to, for room-charge tickets. */
+  roomNumber?: string;
+  /** Booking reference of the stay the charge was posted to. */
+  bookingNumber?: string;
+  /** True when the guest bill was printed for signature before posting. */
+  signedBill?: boolean;
 };
 
 
