@@ -1,6 +1,14 @@
-import { Link } from "@tanstack/react-router";
-import { Bell, RotateCw } from "lucide-react";
-import { useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import {
+  ArrowLeftRight,
+  Bell,
+  Headphones,
+  RotateCw,
+  Timer,
+  Wifi,
+  WifiOff,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
@@ -12,8 +20,40 @@ const whatsNew = [
   "POS UI bug fixes",
 ];
 
-/** Initials chip + name / role / clock-in time, sized for the thin top band. */
-export function AccountInfo() {
+const iconBtn =
+  "grid size-9 tap-safe shrink-0 place-items-center rounded-pill text-shell-foreground transition-colors hover:bg-white/10";
+
+/** Live wall clock, formatted like the design ("08 : 31 AM"). */
+function useClock() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+  const h = now.getHours() % 12 || 12;
+  const m = String(now.getMinutes()).padStart(2, "0");
+  const suffix = now.getHours() >= 12 ? "PM" : "AM";
+  return `${String(h).padStart(2, "0")} : ${m} ${suffix}`;
+}
+
+/** True while the device reports no network. */
+function useOnline() {
+  const [online, setOnline] = useState(true);
+  useEffect(() => {
+    const update = () => setOnline(window.navigator.onLine);
+    update();
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+    return () => {
+      window.removeEventListener("online", update);
+      window.removeEventListener("offline", update);
+    };
+  }, []);
+  return online;
+}
+
+/** Switch user + avatar, staff name, divider and the shift role pill. */
+export function AccountInfo({ onSwitchUser }: { onSwitchUser?: () => void }) {
   const { session, settings } = usePos();
   const initials = session.name
     .split(" ")
@@ -21,45 +61,94 @@ export function AccountInfo() {
     .join("");
 
   return (
-    <div className="flex min-w-0 items-center gap-2 pl-1">
-      <span className="grid size-7 shrink-0 place-items-center rounded-row bg-muted text-[0.625rem] font-extrabold text-foreground">
+    <div className="flex min-w-0 items-center gap-1.5">
+      <button
+        type="button"
+        aria-label="Switch user"
+        title="Switch user"
+        onClick={onSwitchUser}
+        className={cn(iconBtn, "hidden sm:grid")}
+      >
+        <ArrowLeftRight className="size-5" />
+      </button>
+      <span className="grid size-7 shrink-0 place-items-center rounded-pill bg-white/15 text-[0.625rem] font-extrabold text-shell-foreground">
         {initials}
       </span>
-      <p className="min-w-0 truncate text-fs-xs font-extrabold leading-tight text-foreground">
+      <p className="min-w-0 truncate text-fs-sm font-extrabold leading-tight text-shell-foreground">
         {session.name}
-        <span className="font-semibold text-muted-foreground">
-          {" "}
-          · {session.role} ({settings.clockedInAt})
-        </span>
       </p>
-
+      <span aria-hidden className="mx-1 hidden h-5 w-px shrink-0 bg-white/25 sm:block" />
+      <span
+        title={`Clocked in at ${settings.clockedInAt}`}
+        className="flex min-w-0 shrink items-center gap-1.5 rounded-pill bg-white/12 px-2.5 py-1 text-fs-xs font-bold text-shell-foreground"
+      >
+        <Timer className="size-4 shrink-0" />
+        <span className="truncate">{session.role}</span>
+      </span>
     </div>
   );
 }
 
-/** What's-new bell + refresh, right side of the thin top band. */
+/** eatOS badge, refresh, support, what's new, network and the live clock. */
 export function AccountActions() {
   const { settings } = usePos();
+  const navigate = useNavigate();
   const [news, setNews] = useState(false);
+  const [seen, setSeen] = useState(false);
+  const clock = useClock();
+  const online = useOnline();
 
   return (
-    <div className="relative flex shrink-0 items-center justify-end">
-      <button
-        type="button"
-        aria-label="What's new"
-        onClick={() => setNews((n) => !n)}
-        className="grid size-9 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+    <div className="relative flex shrink-0 items-center justify-end gap-0.5">
+      <span
+        aria-hidden
+        className="hidden size-6 shrink-0 place-items-center rounded-pill bg-accent text-[0.625rem] font-extrabold text-accent-foreground sm:grid"
       >
-        <Bell className="size-4" />
-      </button>
+        e
+      </span>
       <button
         type="button"
         aria-label="Refresh tickets"
+        title="Refresh"
         onClick={() => toast.success("Tickets refreshed")}
-        className="grid size-9 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+        className={cn(iconBtn, "hidden sm:grid")}
       >
         <RotateCw className="size-4" />
       </button>
+      <button
+        type="button"
+        aria-label="Customer support"
+        title="Support"
+        onClick={() => navigate({ to: "/system/customer-support" })}
+        className={cn(iconBtn, "hidden sm:grid")}
+      >
+        <Headphones className="size-4" />
+      </button>
+      <button
+        type="button"
+        aria-label="What's new"
+        title="What's new"
+        onClick={() => {
+          setNews((n) => !n);
+          setSeen(true);
+        }}
+        className={cn(iconBtn, "relative")}
+      >
+        <Bell className="size-4" />
+        {seen ? null : (
+          <span className="absolute right-1.5 top-1.5 size-2 rounded-pill bg-tile-blue" />
+        )}
+      </button>
+      <span
+        aria-label={online ? "Online" : "Offline"}
+        title={online ? "Online" : "Offline"}
+        className="grid size-9 shrink-0 place-items-center text-shell-foreground"
+      >
+        {online ? <Wifi className="size-4" /> : <WifiOff className="size-4 text-destructive" />}
+      </span>
+      <p className="shrink-0 pl-1 pr-1 text-fs-sm font-extrabold tabular-nums text-shell-foreground">
+        {clock}
+      </p>
 
       {news ? (
         <>
