@@ -3,19 +3,20 @@ import {
   BadgeDollarSign,
   BedDouble,
   Bike,
+  ChevronLeft,
+  ChevronRight,
   CreditCard,
   Gift,
   HandHeart,
   Heart,
   Landmark,
-  Settings,
   Split,
   SquareUser,
   UploadCloud,
   Utensils,
   Wallet,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useAnnounce } from "@/components/pos/live-region";
 import { PinSheet } from "@/components/pos/pin-sheet";
@@ -26,7 +27,7 @@ import { BackButton } from "@/components/pos/shell";
 import { haptic } from "@/lib/haptics";
 import { TAX_RATE, money } from "@/lib/demo-data";
 import type { Room } from "@/lib/floor-data";
-import { usePos, type TenderMethod } from "@/lib/pos-store";
+import { usePos, type TenderId, type TenderMethod } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/payment/method")({
@@ -112,7 +113,7 @@ function PaymentMethod() {
     success: (v) => `${brand} charge recorded · ref ${v}`,
   });
 
-  const groups: { title: string; items: Tender[] }[] = [
+  const allGroups: { title: string; items: Tender[] }[] = [
     {
       title: "Standard",
       items: [
@@ -134,6 +135,13 @@ function PaymentMethod() {
           label: "External CC",
           icon: UploadCloud,
           run: () => navigate({ to: "/payment/tender/$kind", params: { kind: "other" } }),
+        },
+        {
+          id: "split",
+          label: "Split Check",
+          icon: Split,
+          kind: "split",
+          run: () => navigate({ to: "/payment/split" }),
         },
       ],
     },
@@ -199,23 +207,13 @@ function PaymentMethod() {
     {
       title: "Lodging",
       items: [
-        settings.roomService
-          ? {
-              id: "room",
-              label: "Room Charge",
-              icon: BedDouble,
-              kind: "room" as const,
-              run: () => setRoomOpen(true),
-            }
-          : {
-              id: "room",
-              label: "Room Charge",
-              icon: BedDouble,
-              kind: "room" as const,
-              unavailable: true,
-              note: "Enable in Settings",
-              run: () => navigate({ to: "/settings/general" }),
-            },
+        {
+          id: "room",
+          label: "Room Charge",
+          icon: BedDouble,
+          kind: "room" as const,
+          run: () => setRoomOpen(true),
+        },
       ],
     },
     {
@@ -245,6 +243,65 @@ function PaymentMethod() {
       ],
     },
   ];
+
+  // Only enabled tenders are offered; Room Charge also needs the room module.
+  const enabled = (id: string) => {
+    const on = settings.tenders?.[id as TenderId] ?? true;
+    if (id === "room") return on && settings.roomService;
+    return on;
+  };
+  const groups = allGroups
+    .map((g) => ({ title: g.title, items: g.items.filter((t) => enabled(t.id)) }))
+    .filter((g) => g.items.length > 0);
+
+  // Tiles page instead of scrolling: pack whole groups into the measured pane.
+  const paneRef = useRef<HTMLDivElement | null>(null);
+  const [box, setBox] = useState({ w: 0, h: 0 });
+  useEffect(() => {
+    const el = paneRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const r = entry?.contentRect;
+      if (r) setBox({ w: r.width, h: r.height });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const cols = box.w >= 1024 ? 4 : box.w >= 620 ? 3 : 2;
+  const pages = useMemo(() => {
+    const ROW = 52;
+    const HEAD = 24;
+    const GAP = 8;
+    const SECTION_GAP = 8;
+    const height = box.h || 999;
+    const out: { title: string; items: Tender[] }[][] = [];
+    let current: { title: string; items: Tender[] }[] = [];
+    let used = 0;
+    for (const g of groups) {
+      const rows = Math.ceil(g.items.length / cols);
+      const h = HEAD + rows * ROW + (rows - 1) * GAP + (current.length ? SECTION_GAP : 0);
+      if (current.length && used + h > height) {
+        out.push(current);
+        current = [];
+        used = 0;
+      }
+      current.push(g);
+      used += h;
+    }
+    if (current.length) out.push(current);
+    return out;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [box.h, cols, JSON.stringify(groups.map((g) => [g.title, g.items.length]))]);
+
+  const [page, setPage] = useState(0);
+  useEffect(() => {
+    setPage((p) => Math.min(p, Math.max(0, pages.length - 1)));
+  }, [pages.length]);
+
+
+
+
 
   const allTenders = groups.flatMap((g) => g.items);
   const activeTender = allTenders.find((t) => t.id === selected) ?? null;
@@ -346,44 +403,52 @@ function PaymentMethod() {
   );
 
   const grid = (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
-        <h2 className="text-fs-lg font-extrabold text-foreground">Payment Method</h2>
-        <p className="mt-1 text-fs-xs text-muted-foreground">
-          Point of Sale online supports cash, manual card entry and Pay by Link. For Tap to Pay and
-          Card Sale, connect a card reader or download the iOS or Android app.
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="shrink-0 px-4 pt-3">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+          <h2 className="truncate text-fs-lg font-extrabold text-foreground">Payment Method</h2>
+          {pages.length > 1 ? (
+            <div className="flex shrink-0 items-center gap-1">
+              <button
+                type="button"
+                aria-label="Previous payment methods"
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                disabled={page === 0}
+                className="grid size-9 place-items-center rounded-pill border border-border text-foreground disabled:opacity-40"
+              >
+                <ChevronLeft className="size-4" />
+              </button>
+              <span className="text-fs-xs tabular-nums text-muted-foreground">
+                {page + 1}/{pages.length}
+              </span>
+              <button
+                type="button"
+                aria-label="More payment methods"
+                onClick={() => setPage((p) => Math.min(pages.length - 1, p + 1))}
+                disabled={page >= pages.length - 1}
+                className="grid size-9 place-items-center rounded-pill border border-border text-foreground disabled:opacity-40"
+              >
+                <ChevronRight className="size-4" />
+              </button>
+            </div>
+          ) : null}
+        </div>
+        <p className="mt-1 hidden text-fs-xs text-muted-foreground lg:block">
+          Cash, manual card entry and Pay by Link are supported online. Connect a card reader for Tap
+          to Pay.
         </p>
+      </div>
 
-        <button
-          type="button"
-          disabled={nothingToPay}
-          onClick={() => {
-            setSelected("split");
-            setRoom(null);
-            navigate({ to: "/payment/split" });
-          }}
-          className={cn(
-            "mt-3 flex min-h-ctl-lg w-full items-center gap-2.5 rounded-row border px-3 py-3 text-left transition-colors disabled:opacity-40",
-            selected === "split"
-              ? "border-success bg-success/10"
-              : "border-border bg-surface hover:bg-muted",
-          )}
-        >
-          <Split className="size-5 shrink-0 text-foreground" aria-hidden />
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-fs-sm font-bold text-foreground">Split Check</span>
-            <span className="block truncate text-fs-xs text-muted-foreground">
-              Split evenly, by item or by amount
-            </span>
-          </span>
-        </button>
-
-        {groups.map((group) => (
-          <section key={group.title} className="mt-4">
+      <div ref={paneRef} className="min-h-0 flex-1 overflow-hidden px-4 py-2">
+        {(pages[page] ?? []).map((group) => (
+          <section key={group.title} className="mt-2 first:mt-0">
             <h3 className="text-fs-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
               {group.title}
             </h3>
-            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
+            <div
+              className="mt-1.5 grid gap-2"
+              style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+            >
               {group.items.map((t) => {
                 const Icon = t.icon;
                 const active = selected === t.id;
@@ -391,47 +456,28 @@ function PaymentMethod() {
                   <button
                     key={t.id}
                     type="button"
-                    disabled={nothingToPay && !t.unavailable}
+                    disabled={nothingToPay}
                     onClick={() => {
-                      if (t.unavailable) {
-                        t.run();
-                        return;
-                      }
                       setSelected(t.id);
                       if (t.kind !== "room") setRoom(null);
                       t.run();
                     }}
                     aria-pressed={active}
                     className={cn(
-                      "flex min-h-ctl-lg items-center gap-2.5 rounded-row border px-3 py-3 text-left transition-colors disabled:opacity-40",
+                      "flex min-h-tap items-center gap-2.5 rounded-row border px-3 py-2.5 text-left transition-colors disabled:opacity-40",
                       active
                         ? "border-success bg-success/10"
                         : "border-border bg-surface hover:bg-muted",
-                      t.unavailable && "border-dashed",
                     )}
                   >
-                    <Icon
-                      className={cn(
-                        "size-5 shrink-0",
-                        t.unavailable ? "text-muted-foreground" : "text-foreground",
-                      )}
-                      aria-hidden
-                    />
+                    <Icon className="size-5 shrink-0 text-foreground" aria-hidden />
                     <span className="min-w-0 flex-1">
-                      <span
-                        className={cn(
-                          "block truncate text-fs-sm font-bold",
-                          t.unavailable ? "text-muted-foreground" : "text-foreground",
-                        )}
-                      >
+                      <span className="block truncate text-fs-sm font-bold text-foreground">
                         {t.label}
                       </span>
                       {t.note ? (
-                        <span className="flex min-w-0 items-center gap-1 text-fs-xs text-muted-foreground">
-                          {t.unavailable ? (
-                            <Settings className="size-3 shrink-0" aria-hidden />
-                          ) : null}
-                          <span className="truncate">{t.note}</span>
+                        <span className="block truncate text-fs-xs text-muted-foreground">
+                          {t.note}
                         </span>
                       ) : null}
                     </span>
@@ -442,6 +488,7 @@ function PaymentMethod() {
           </section>
         ))}
       </div>
+
 
       <div className="shrink-0 border-t border-border bg-surface px-3 pb-[calc(0.75rem+var(--kb-inset,0px)+var(--tabs-h,0px))] pt-3">
         <button
