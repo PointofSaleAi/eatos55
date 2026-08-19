@@ -68,6 +68,59 @@ export type SettingsListItem = { id: string; name: string; detail: string };
 /** One slide of the landscape sign-in carousel (dashboard-managed later). */
 export type LoginSlide = { id: string; image: string; headline: string; enabled: boolean };
 
+/** Tenders that can be switched on or off per venue. */
+export type TenderId =
+  | "cash"
+  | "manual-card"
+  | "manual-cc"
+  | "external"
+  | "split"
+  | "account"
+  | "house"
+  | "gift"
+  | "loyalty"
+  | "in-kind"
+  | "room"
+  | "uber"
+  | "doordash"
+  | "grubhub";
+
+export const TENDER_LABELS: Record<TenderId, string> = {
+  cash: "Cash",
+  "manual-card": "Manual Card",
+  "manual-cc": "Manual CC",
+  external: "External CC",
+  split: "Split Check",
+  account: "Account",
+  house: "House",
+  gift: "Gift Card",
+  loyalty: "Loyalty",
+  "in-kind": "In-kind",
+  room: "Room Charge",
+  uber: "Uber Eats",
+  doordash: "Doordash",
+  grubhub: "Grubhub",
+};
+
+const defaultTenders: Record<TenderId, boolean> = {
+  cash: true,
+  "manual-card": true,
+  "manual-cc": true,
+  external: true,
+  split: true,
+  account: true,
+  house: true,
+  gift: true,
+  loyalty: true,
+  "in-kind": true,
+  room: true,
+  uber: true,
+  doordash: true,
+  grubhub: true,
+};
+
+
+
 
 export type AppSettings = {
   restaurantName: string;
@@ -99,6 +152,9 @@ export type AppSettings = {
   deviceService: "Table Service" | "Quick Service";
   /** Rooms / room-service module: hides the Rooms screen when off. */
   roomService: boolean;
+  /** Which tenders appear on the payment method screen. */
+  tenders: Record<TenderId, boolean>;
+
   language: string;
 
   /** Sign-in carousel slides shown beside the form in landscape. */
@@ -192,6 +248,8 @@ const defaultSettings: AppSettings = {
   deviceName: "aurora 22",
   deviceService: "Table Service",
   roomService: false,
+  tenders: defaultTenders,
+
 
   language: "English",
 
@@ -487,8 +545,15 @@ export function PosProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem("eatos.pos.settings");
-      if (raw)
-        setSettings((s) => ({ ...s, ...(JSON.parse(raw) as Partial<AppSettings>) }));
+      if (raw) {
+        const saved = JSON.parse(raw) as Partial<AppSettings>;
+        setSettings((s) => ({
+          ...s,
+          ...saved,
+          tenders: { ...defaultTenders, ...(saved.tenders ?? {}) },
+        }));
+      }
+
     } catch {
       /* ignore unreadable storage */
     }

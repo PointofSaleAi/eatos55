@@ -38,7 +38,14 @@ function PaymentsSettings() {
       <SubHeader title="Payments" />
       <ScreenBody className="py-2">
         <GroupCard>
+          <IconNavRow
+            title="Payment Methods"
+            icon={CreditCard}
+            color="blue"
+            to="/settings/payment-methods"
+          />
           <IconNavRow title="Gratuity" icon={HandCoins} color="magenta" topic="gratuity" />
+
           <IconNavRow title="Taxes" icon={ScrollText} color="violet" topic="taxes" />
           <IconNavRow title="Discounts" icon={BadgePercent} color="sky" topic="discounts" />
           <IconNavRow
