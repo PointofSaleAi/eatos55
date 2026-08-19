@@ -253,7 +253,7 @@ export function SplitPayments({
               </div>
             ) : (
               <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto pr-1 pt-2">
-                <div className="grid grid-cols-1 gap-x-3 gap-y-6 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-x-3 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {breakdown.map((c, i) => (
                     <ReceiptCard
                       key={c.letter}
