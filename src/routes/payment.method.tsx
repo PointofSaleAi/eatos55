@@ -18,12 +18,14 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { AmountEntry } from "@/components/pos/amount-entry";
 import { useAnnounce } from "@/components/pos/live-region";
 import { PinSheet } from "@/components/pos/pin-sheet";
 import { ReceiptCard, ReceiptRow } from "@/components/pos/receipt";
 import { ReferenceTenderDialog } from "@/components/pos/reference-tender-dialog";
 import { RoomChargeDialog } from "@/components/pos/room-charge-dialog";
 import { BackButton } from "@/components/pos/shell";
+import { X } from "lucide-react";
 import { haptic } from "@/lib/haptics";
 import { TAX_RATE, money } from "@/lib/demo-data";
 import type { Room } from "@/lib/floor-data";
@@ -80,8 +82,20 @@ type RefConfig = {
 
 function PaymentMethod() {
   const navigate = useNavigate();
-  const { cart, totals, tickets, guest, orderType, activeTable, paidSoFar, settings, commitPayment } =
-    usePos();
+  const {
+    cart,
+    totals,
+    tickets,
+    guest,
+    orderType,
+    activeTable,
+    paidSoFar,
+    partialPayments,
+    addPartialPayment,
+    removePartialPayment,
+    settings,
+    commitPayment,
+  } = usePos();
   const announce = useAnnounce();
   const orderNumber = tickets.length + 1;
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
@@ -92,10 +106,37 @@ function PaymentMethod() {
   const [room, setRoom] = useState<Room | null>(null);
   const [refConfig, setRefConfig] = useState<RefConfig | null>(null);
   const [pinFor, setPinFor] = useState<{ cfg: RefConfig; value: string } | null>(null);
+  const [amountFor, setAmountFor] = useState<{
+    label: string;
+    method: TenderMethod;
+    denominations?: boolean;
+  } | null>(null);
+
+  /** Same screen for every tender: part payments stack up until the check clears. */
+  const takeAmount = (amount: number) => {
+    const cfg = amountFor;
+    if (!cfg) return;
+    setAmountFor(null);
+    if (amount < due) {
+      haptic("medium");
+      addPartialPayment(amount, cfg.method, cfg.label);
+      announce("Partial payment applied");
+      toast.success(`${cfg.label} ${money(amount)} applied · ${money(due - amount)} remaining`);
+      return;
+    }
+    haptic("success");
+    commitPayment(cfg.method, amount, { label: cfg.label });
+    announce("Payment complete");
+    toast.success(`Paid in full with ${cfg.label}`);
+    navigate({ to: "/payment/success" });
+  };
+
+  const openAmount = (label: string, method: TenderMethod, denominations = false) =>
+    setAmountFor({ label, method, denominations });
 
   const finish = (cfg: RefConfig, value: string) => {
     haptic("success");
-    commitPayment(cfg.method, due);
+    commitPayment(cfg.method, due, { label: cfg.title });
     announce("Payment complete");
     toast.success(cfg.success(value));
     navigate({ to: "/payment/success" });
@@ -117,24 +158,33 @@ function PaymentMethod() {
     {
       title: "Standard",
       items: [
-        { id: "cash", label: "Cash", icon: Wallet, run: () => navigate({ to: "/payment/cash" }) },
+        {
+          id: "cash",
+          label: "Cash",
+          icon: Wallet,
+          kind: "dialog",
+          run: () => openAmount("Cash", "cash", true),
+        },
         {
           id: "manual-card",
           label: "Manual Card",
           icon: CreditCard,
-          run: () => navigate({ to: "/payment/card" }),
+          kind: "dialog",
+          run: () => openAmount("Manual Card", "card"),
         },
         {
           id: "manual-cc",
           label: "Manual CC",
           icon: BadgeDollarSign,
-          run: () => navigate({ to: "/payment/card" }),
+          kind: "dialog",
+          run: () => openAmount("Manual CC", "card"),
         },
         {
           id: "external",
           label: "External CC",
           icon: UploadCloud,
-          run: () => navigate({ to: "/payment/tender/$kind", params: { kind: "other" } }),
+          kind: "dialog",
+          run: () => openAmount("External CC", "other"),
         },
         {
           id: "split",
@@ -152,19 +202,22 @@ function PaymentMethod() {
           id: "account",
           label: "Account",
           icon: SquareUser,
-          run: () => navigate({ to: "/payment/tender/$kind", params: { kind: "house" } }),
+          kind: "dialog",
+          run: () => openAmount("Account", "house"),
         },
         {
           id: "house",
           label: "House",
           icon: Landmark,
-          run: () => navigate({ to: "/payment/tender/$kind", params: { kind: "house" } }),
+          kind: "dialog",
+          run: () => openAmount("House Account", "house"),
         },
         {
           id: "gift",
           label: "Gift Card",
           icon: Gift,
-          run: () => navigate({ to: "/payment/tender/$kind", params: { kind: "gift" } }),
+          kind: "dialog",
+          run: () => openAmount("Gift Card", "gift"),
         },
         {
           id: "loyalty",
@@ -306,7 +359,7 @@ function PaymentMethod() {
   const allTenders = groups.flatMap((g) => g.items);
   const activeTender = allTenders.find((t) => t.id === selected) ?? null;
   const actionLabel = room
-    ? `Print Bill · ${room.name} - ${room.number}`
+    ? `Room charge posted · ${room.number}`
     : activeTender && !activeTender.unavailable
       ? activeTender.kind === "split"
         ? "Split this check"
@@ -367,6 +420,29 @@ function PaymentMethod() {
               {paidSoFar > 0 ? <ReceiptRow label="Paid so far" value={money(paidSoFar)} /> : null}
             </div>
           </div>
+
+          {partialPayments.length ? (
+            <ul className="mt-3 space-y-1.5 border-t border-dashed border-border pt-3">
+              {partialPayments.map((p) => (
+                <li key={p.id} className="flex items-center gap-2">
+                  <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
+                    {p.label}
+                  </span>
+                  <span className="shrink-0 text-fs-sm font-extrabold tabular-nums text-success">
+                    {money(p.amount)}
+                  </span>
+                  <button
+                    type="button"
+                    aria-label={`Remove ${p.label} payment`}
+                    onClick={() => removePartialPayment(p.id)}
+                    className="grid size-8 shrink-0 place-items-center rounded-pill text-muted-foreground transition-colors hover:bg-muted"
+                  >
+                    <X className="size-4" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
 
           <ul className="mt-3 space-y-1.5 border-t border-dashed border-border pt-3">
             {cart.map((line) => (
@@ -496,8 +572,7 @@ function PaymentMethod() {
           disabled={nothingToPay || (!activeTender && !room) || Boolean(activeTender?.unavailable)}
           onClick={() => {
             if (room) {
-              toast.success(`Bill printed and charged to ${room.name} - ${room.number}`);
-              navigate({ to: "/payment/success" });
+              setRoomOpen(true);
               return;
             }
             activeTender?.run();
@@ -532,6 +607,15 @@ function PaymentMethod() {
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">{grid}</div>
       </div>
 
+      <AmountEntry
+        open={amountFor !== null}
+        title={amountFor?.label ?? "Amount"}
+        due={due}
+        denominations={amountFor?.denominations ?? false}
+        onClose={() => setAmountFor(null)}
+        onCommit={takeAmount}
+      />
+
       <RoomChargeDialog
         open={roomOpen}
         due={due}
@@ -540,7 +624,16 @@ function PaymentMethod() {
           setRoom(r);
           setRoomOpen(false);
           setSelected("room");
-          toast.success(`${r.name} - ${r.number} selected for room charge`);
+          haptic("success");
+          commitPayment("other", due, {
+            label: "Room Charge",
+            roomNumber: r.number,
+            ...(r.stay ? { bookingNumber: r.stay.bookingNumber } : {}),
+            signedBill: true,
+          });
+          announce("Charge posted to room");
+          toast.success(`Signed bill posted to room ${r.number} · add the tip from Tickets`);
+          navigate({ to: "/payment/success" });
         }}
       />
 
