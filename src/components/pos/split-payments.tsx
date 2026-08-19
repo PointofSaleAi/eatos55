@@ -219,7 +219,7 @@ export function SplitPayments({
                 })}
               </div>
               {mode !== "standard" ? (
-                <div className="flex shrink-0 items-center gap-1 rounded-row border border-border px-1">
+                <div className="ml-auto flex shrink-0 items-center gap-1 rounded-row border border-border px-1">
                   <button
                     type="button"
                     aria-label="Fewer checks"
