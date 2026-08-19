@@ -335,6 +335,14 @@ export type TenderMethod =
   | "qr"
   | "other";
 
+/** One tender already taken against the order in progress. */
+export type PartialPayment = {
+  id: string;
+  method: TenderMethod;
+  label: string;
+  amount: number;
+};
+
 export type LastPayment = {
   ticketId: string;
   method: TenderMethod;
@@ -436,11 +444,18 @@ type Store = {
     discount: number;
   };
 
-  commitPayment: (method: TenderMethod, tendered: number) => string;
+  commitPayment: (
+    method: TenderMethod,
+    tendered: number,
+    opts?: { label?: string; roomNumber?: string; bookingNumber?: string; signedBill?: boolean },
+  ) => string;
   lastPayment: LastPayment;
-  /** Amount already tendered on the current order through split payments. */
+  /** Amount already tendered on the current order through partial payments. */
   paidSoFar: number;
-  addPartialPayment: (amount: number) => void;
+  /** Every tender already taken on the order in progress. */
+  partialPayments: PartialPayment[];
+  addPartialPayment: (amount: number, method?: TenderMethod, label?: string) => void;
+  removePartialPayment: (id: string) => void;
   resetPayments: () => void;
 
   settings: AppSettings;
@@ -539,7 +554,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [settingsReady, setSettingsReady] = useState(false);
   const [managerUnlocked, setManagerUnlocked] = useState(false);
   const [lastPayment, setLastPayment] = useState<LastPayment>(null);
-  const [paidSoFar, setPaidSoFar] = useState(0);
+  const [partialPayments, setPartialPayments] = useState<PartialPayment[]>([]);
+  const paidSoFar =
+    Math.round(partialPayments.reduce((n, p) => n + p.amount, 0) * 100) / 100;
 
   // Settings are device-local: read them back, then persist every change.
   useEffect(() => {
@@ -857,7 +874,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
       cancelOrder: () => {
         setCart([]);
         setActiveTicketId(null);
-        setPaidSoFar(0);
+        setPartialPayments([]);
         setOrderNotes("");
         setComped(false);
         setNoTax(false);
@@ -887,7 +904,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         if (activeTicketId === id) {
           setCart([]);
           setActiveTicketId(null);
-          setPaidSoFar(0);
+          setPartialPayments([]);
           setActiveTable(null);
         }
       },
@@ -999,7 +1016,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
           guestName,
         });
 
-        setPaidSoFar(0);
+        setPartialPayments([]);
         setCart([]);
         setActiveTicketId(null);
         return id;
@@ -1008,7 +1025,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
       paidSoFar,
       addPartialPayment: (amount) =>
         setPaidSoFar((p) => Math.round((p + amount) * 100) / 100),
-      resetPayments: () => setPaidSoFar(0),
+      resetPayments: () => setPartialPayments([]),
 
       settings,
       updateSettings: (patch) => setSettings((s) => ({ ...s, ...patch })),
@@ -1055,6 +1072,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     managerUnlocked,
     lastPayment,
     paidSoFar,
+    partialPayments,
   ]);
 
   return <PosContext.Provider value={value}>{children}</PosContext.Provider>;
