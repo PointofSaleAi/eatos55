@@ -928,14 +928,25 @@ export function PosProvider({ children }: { children: ReactNode }) {
         discount,
       },
 
-      commitPayment: (method, tendered) => {
-        const change = Math.max(0, Math.round((tendered - total) * 100) / 100);
+      commitPayment: (method, tendered, opts) => {
+        const change = Math.max(0, Math.round((tendered - (total - paidSoFar)) * 100) / 100);
         const paymentLabel =
-          method === "cash" ? "Cash" : method === "qr" ? "QR Code" : "Card";
+          opts?.label ?? (method === "cash" ? "Cash" : method === "qr" ? "QR Code" : "Card");
         const at = new Date().toLocaleTimeString("en-US", {
           hour: "numeric",
           minute: "2-digit",
         });
+        const finalAmount = Math.max(0, Math.round((total - paidSoFar) * 100) / 100);
+        // Every tender taken on this order, earlier partials first.
+        const rows = [
+          ...partialPayments.map((p) => ({ method: p.label, amount: p.amount, at })),
+          { method: paymentLabel, amount: finalAmount, at },
+        ];
+        const extra = {
+          ...(opts?.roomNumber ? { roomNumber: opts.roomNumber } : {}),
+          ...(opts?.bookingNumber ? { bookingNumber: opts.bookingNumber } : {}),
+          ...(opts?.signedBill ? { signedBill: true } : {}),
+        };
         let id = activeTicketId;
         let orderNumber = 0;
         let guestName = guest.name;
@@ -946,6 +957,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
               if (t.id !== ticketId) return t;
               orderNumber = t.number;
               guestName = guest.name || t.label;
+              const base = t.payments?.length ?? 0;
               return {
                 ...t,
                 status: "paid",
@@ -958,14 +970,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
                 ...(guest.email ? { guestEmail: guest.email } : {}),
                 ...(guest.notes ? { notes: guest.notes } : {}),
                 ...(guest.vehicle ? { vehicle: guest.vehicle } : {}),
+                ...extra,
                 payments: [
                   ...(t.payments ?? []),
-                  {
-                    no: String((t.payments?.length ?? 0) + 1),
-                    method: paymentLabel,
-                    amount: total,
-                    at,
-                  },
+                  ...rows.map((r, i) => ({ no: String(base + i + 1), ...r })),
                 ],
               };
             }),
@@ -1002,7 +1010,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
             ...(guest.email ? { guestEmail: guest.email } : {}),
             ...(guest.notes ? { notes: guest.notes } : {}),
             ...(guest.vehicle ? { vehicle: guest.vehicle } : {}),
-            payments: [{ no: "1", method: paymentLabel, amount: total, at }],
+            ...extra,
+            payments: rows.map((r, i) => ({ no: String(i + 1), ...r })),
           };
           setTickets((list) => [created, ...list]);
         }
@@ -1023,8 +1032,14 @@ export function PosProvider({ children }: { children: ReactNode }) {
       },
       lastPayment,
       paidSoFar,
-      addPartialPayment: (amount) =>
-        setPaidSoFar((p) => Math.round((p + amount) * 100) / 100),
+      partialPayments,
+      addPartialPayment: (amount, method = "other", label = "Payment") =>
+        setPartialPayments((list) => [
+          ...list,
+          { id: `pp-${Date.now()}-${list.length}`, method, label, amount },
+        ]),
+      removePartialPayment: (id) =>
+        setPartialPayments((list) => list.filter((p) => p.id !== id)),
       resetPayments: () => setPartialPayments([]),
 
       settings,
