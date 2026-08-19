@@ -149,7 +149,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
     >
       <div
         className={cn(
-          "relative flex h-full max-h-[100dvh] w-full overflow-hidden bg-background",
+          "relative flex h-full max-h-[100dvh] w-full flex-col overflow-hidden bg-background",
           !fullBleed &&
             "md:h-[860px] md:max-h-none md:w-[420px] md:rounded-[2.75rem] md:border-[10px] md:border-shell md:shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)] lg:h-[880px] lg:w-[440px]",
         )}
@@ -158,36 +158,40 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
           <NavDrawerContext.Provider value={navCtx}>
             <LiveRegionProvider>
               <ConfirmProvider>
-                {landscape ? <NavRail /> : null}
-                <div
-                  className="relative flex min-h-0 min-w-0 flex-1 flex-col pt-[var(--sat,0px)]"
-                  style={{
-                    ["--tabs-h" as string]: appChrome && !landscape ? "6rem" : "0px",
-                  }}
-                >
-                  {appChrome && !landscape ? <ClockPullDown /> : null}
-                  <OfflineBanner />
-                  {landscape ? (
-                    <LandscapeContent>{children}</LandscapeContent>
-                  ) : wideAccess ? (
-                    isSignIn ? (
-                      children
+                {/* Full-width dark top bar spans the rail in landscape, per design. */}
+                {appChrome ? <ClockPullDown /> : null}
+                <div className="relative flex min-h-0 min-w-0 flex-1">
+                  {landscape ? <NavRail /> : null}
+                  <div
+                    className="relative flex min-h-0 min-w-0 flex-1 flex-col pt-[var(--sat,0px)]"
+                    style={{
+                      ["--tabs-h" as string]: appChrome && !landscape ? "6rem" : "0px",
+                    }}
+                  >
+                    <OfflineBanner />
+                    {landscape ? (
+                      <LandscapeContent>{children}</LandscapeContent>
+                    ) : wideAccess ? (
+                      isSignIn ? (
+                        children
+                      ) : (
+                        <div className="mx-auto flex min-h-0 w-full max-w-[32rem] flex-1 flex-col">
+                          {children}
+                        </div>
+                      )
                     ) : (
-                      <div className="mx-auto flex min-h-0 w-full max-w-[32rem] flex-1 flex-col">
-                        {children}
-                      </div>
-                    )
-                  ) : (
-                    children
-                  )}
+                      children
+                    )}
 
-                  {appChrome && !landscape ? <BottomTabs /> : null}
-                  {appChrome && !landscape ? (
-                    <NavDrawer open={navOpen} onClose={closeNav} />
-                  ) : null}
-                  {/* Portal host for keyboard-docked UI (search bar). */}
-                  <div id="pos-dock-root" className="pointer-events-none absolute inset-0 z-40" />
+                    {appChrome && !landscape ? <BottomTabs /> : null}
+                    {appChrome && !landscape ? (
+                      <NavDrawer open={navOpen} onClose={closeNav} />
+                    ) : null}
+                    {/* Portal host for keyboard-docked UI (search bar). */}
+                    <div id="pos-dock-root" className="pointer-events-none absolute inset-0 z-40" />
+                  </div>
                 </div>
+
               </ConfirmProvider>
             </LiveRegionProvider>
           </NavDrawerContext.Provider>
