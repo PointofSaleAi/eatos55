@@ -1,4 +1,5 @@
-import { BedDouble, Check, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { BedDouble, Check, ChevronLeft, ChevronRight, Printer, Search, X } from "lucide-react";
+import { toast } from "sonner";
 import { useEffect, useMemo, useState } from "react";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -52,6 +53,8 @@ export function RoomChargeDialog({
   const [floor, setFloor] = useState<string>("All floors");
   const [pickedId, setPickedId] = useState<string | null>(null);
   const [page, setPage] = useState(0);
+  /** Time the guest bill was printed for signature; posting waits for it. */
+  const [printedAt, setPrintedAt] = useState<string | null>(null);
   const { dragStyle, handleProps } = useSheetDrag(onClose);
   const { cols, rows } = useGridShape();
   const pageSize = cols * rows;
@@ -79,6 +82,7 @@ export function RoomChargeDialog({
       setPage(0);
       setQuery("");
       setFloor("All floors");
+      setPrintedAt(null);
     }
   }, [open]);
 
@@ -225,7 +229,10 @@ export function RoomChargeDialog({
         <div className="flex shrink-0 items-center gap-2 border-b border-border px-3 py-2">
           <button
             type="button"
-            onClick={() => setPickedId(null)}
+            onClick={() => {
+              setPickedId(null);
+              setPrintedAt(null);
+            }}
             aria-label="Back to room list"
             title="Back to room list"
             className="grid size-10 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
@@ -367,10 +374,33 @@ export function RoomChargeDialog({
           </div>
         </div>
 
-        <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(0.75rem+var(--kb-inset,0px))] pt-3">
+        <div className="shrink-0 space-y-2 border-t border-border bg-surface px-4 pb-[calc(0.75rem+var(--kb-inset,0px))] pt-3">
           <button
             type="button"
             disabled={!canCharge}
+            onClick={() => {
+              const at = new Date().toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "2-digit",
+              });
+              setPrintedAt(at);
+              toast.success(`Bill printed for signature at ${at}`);
+            }}
+            className={cn(
+              "flex h-ctl-lg w-full items-center justify-center gap-2 rounded-row border px-4 text-fs-sm font-extrabold uppercase tracking-[0.06em] transition-colors disabled:opacity-40",
+              printedAt
+                ? "border-success bg-success/10 text-foreground"
+                : "border-border bg-surface text-foreground hover:bg-muted",
+            )}
+          >
+            {printedAt ? <Check className="size-4 shrink-0" /> : <Printer className="size-4 shrink-0" />}
+            <span className="min-w-0 truncate">
+              {printedAt ? `Bill printed ${printedAt} · reprint` : "Print bill for signature"}
+            </span>
+          </button>
+          <button
+            type="button"
+            disabled={!canCharge || !printedAt}
             onClick={() => onCharge(picked)}
             className="flex h-ctl-lg w-full items-center justify-center gap-3 rounded-row bg-primary px-4 text-fs-base font-extrabold uppercase tracking-[0.06em] text-primary-foreground transition-colors disabled:opacity-40"
           >
@@ -379,6 +409,9 @@ export function RoomChargeDialog({
               {money(due)}
             </span>
           </button>
+          <p className="truncate text-center text-fs-xs text-muted-foreground">
+            {printedAt ? "Tips are added later from the ticket." : "Guest signs the printed bill before it posts."}
+          </p>
         </div>
       </div>
     ) : null;
