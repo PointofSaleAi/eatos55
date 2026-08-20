@@ -3,7 +3,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ClockPanel } from "@/components/pos/clock-panel";
 import { PinPad } from "@/components/pos/pin-pad";
-import { useLayoutMode } from "@/hooks/use-layout-mode";
+import { useLandscapeWide, useLayoutMode } from "@/hooks/use-layout-mode";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/access/clock-in")({
@@ -26,7 +26,9 @@ export const Route = createFileRoute("/access/clock-in")({
 function ClockIn() {
   const navigate = useNavigate();
   const { clockIn, clockOut, signOut, session, settings, resumeAfterUnlock } = usePos();
-  const { wide } = useLayoutMode();
+  const { wide: wideLayout } = useLayoutMode();
+  const landscape = useLandscapeWide();
+  const wide = wideLayout && landscape;
   const [pin, setPin] = useState("");
 
   /**
@@ -71,7 +73,6 @@ function ClockIn() {
           <ClockPanel gate compact={!wide} className="min-w-0" />
           <div className="flex min-h-0 flex-col justify-center">
           <PinPad
-              gate
             pin={pin}
             onDigit={(d) => setPin((p) => (p.length < 4 ? p + d : p))}
             onClear={() => setPin("")}
