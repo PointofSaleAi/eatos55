@@ -74,7 +74,7 @@ export function AccountInfo({ onSwitchUser }: { onSwitchUser?: () => void }) {
       >
         <ArrowLeftRight className="size-5" />
       </button>
-      <span className="grid size-7 shrink-0 place-items-center rounded-pill bg-white/15 text-[0.625rem] font-extrabold text-shell-foreground">
+      <span className="grid size-8 shrink-0 place-items-center overflow-hidden rounded-full bg-white/15 text-[0.625rem] font-extrabold text-shell-foreground">
         {initials}
       </span>
       <p className="min-w-0 truncate text-fs-sm font-extrabold leading-tight text-shell-foreground">
@@ -86,8 +86,11 @@ export function AccountInfo({ onSwitchUser }: { onSwitchUser?: () => void }) {
         className="flex min-w-0 shrink items-center gap-1.5 rounded-pill bg-white/12 px-2.5 py-1 text-fs-xs font-bold text-shell-foreground"
       >
         <Timer className="size-4 shrink-0" />
-        <span className="truncate">{session.role}</span>
+        <span className="truncate">
+          {session.role} ({settings.clockedInAt})
+        </span>
       </span>
+
     </div>
   );
 }
