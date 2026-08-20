@@ -66,7 +66,13 @@ function NewOrder() {
           <MenuButton className="-ml-2 size-11 shrink-0 rounded-card border border-border" />
 
           {showMenu ? (
-            <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
+            <div
+              className={cn(
+                "no-scrollbar flex min-w-0 flex-1 items-center gap-1.5",
+                wide ? "flex-wrap" : "flex-nowrap overflow-x-auto",
+              )}
+            >
+
               {menus.map((m) => (
                 <button
                   key={m.id}
