@@ -1,18 +1,18 @@
 import {
+  ArrowLeftRight,
+  BadgePercent,
   Bike,
   ChevronDown,
   CircleDollarSign,
+  Flame,
+  Inbox,
   NotebookPen,
-  Percent,
-  Printer,
-  Save,
-
   ReceiptText,
+  Save,
   ShoppingBag,
-  Trash2,
-  Users,
   Utensils,
 } from "lucide-react";
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
