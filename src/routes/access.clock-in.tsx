@@ -25,9 +25,20 @@ export const Route = createFileRoute("/access/clock-in")({
 
 function ClockIn() {
   const navigate = useNavigate();
-  const { clockIn, clockOut, signOut, session, settings } = usePos();
+  const { clockIn, clockOut, signOut, session, settings, resumeAfterUnlock } = usePos();
   const { wide } = useLayoutMode();
   const [pin, setPin] = useState("");
+
+  /**
+   * Unlock, then land back on the screen this PIN was last using (with its order
+   * restored). Falls back to Tickets when there is nothing saved or the saved
+   * screen no longer exists.
+   */
+  const unlock = (enteredPin?: string) => {
+    clockIn(enteredPin);
+    const target = resumeAfterUnlock(enteredPin);
+    navigate({ to: target ?? "/tickets" }).catch(() => navigate({ to: "/tickets" }));
+  };
 
   /** Nothing on this gate acts without a full 4-digit PIN. */
   const withPin = (action: () => void, message: string) => {
