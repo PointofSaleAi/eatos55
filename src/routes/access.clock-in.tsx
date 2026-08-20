@@ -54,7 +54,12 @@ function ClockIn() {
         ) : (
           <ClockPanel compact className="shrink-0" />
         )}
-        <div className={cn("flex min-h-0 flex-col", wide ? "w-[26rem] shrink-0" : "flex-1")}>
+        <div
+          className={cn(
+            "flex min-h-0 flex-col justify-center",
+            wide ? "w-[26rem] shrink-0" : "flex-1",
+          )}
+        >
           <PinPad
             pin={pin}
             onDigit={(d) => setPin((p) => (p.length < 4 ? p + d : p))}
