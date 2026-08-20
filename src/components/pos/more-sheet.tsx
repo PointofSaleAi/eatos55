@@ -33,12 +33,23 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
 
   const rows = [
     {
+      id: "custom-item",
+      label: "Custom Item",
+      icon: Tag,
+      value: "",
+      onClick: () => {
+        onClose();
+        router.navigate({ to: "/order/custom-item" });
+      },
+    },
+    {
       id: "service-charge",
       label: "Service Charge",
       icon: Receipt,
       value: serviceCharge ? `$${serviceCharge.toFixed(2)}` : "",
       onClick: () => setChargeOpen(true),
     },
+
     {
       id: "no-tax",
       label: "No Tax",
