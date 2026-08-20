@@ -25,11 +25,14 @@ const iconBtn =
 
 /** Live wall clock, formatted like the design ("08 : 31 AM"). */
 function useClock() {
-  const [now, setNow] = useState(() => new Date());
+  // Starts null so SSR and the first client render agree (no locale/time skew).
+  const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {
+    setNow(new Date());
     const id = window.setInterval(() => setNow(new Date()), 1000);
     return () => window.clearInterval(id);
   }, []);
+  if (!now) return "";
   const h = now.getHours() % 12 || 12;
   const m = String(now.getMinutes()).padStart(2, "0");
   const suffix = now.getHours() >= 12 ? "PM" : "AM";
