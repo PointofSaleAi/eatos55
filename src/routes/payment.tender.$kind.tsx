@@ -54,7 +54,7 @@ function TenderRoute() {
       actionLabel={(amount) =>
         amount > 0 && amount < due ? `Pay ${money(amount)} of ${money(due)}` : `Charge ${money(amount || due)}`
       }
-      onCommit={(amount) => {
+      onCommit={(amount, notes) => {
         if (amount < due) {
           haptic("medium");
           announce(`Partial payment applied`);
@@ -65,7 +65,7 @@ function TenderRoute() {
         }
         haptic("success");
         announce("Payment complete");
-        commitPayment(cfg.method, amount);
+        commitPayment(cfg.method, amount, notes ? { notes } : undefined);
         toast.success(cfg.success);
         navigate({ to: "/payment/success" });
       }}

@@ -32,14 +32,14 @@ function PayByCash() {
       due={due}
       denominations
       actionLabel={(amount) => `Charge ${money(amount || due)}`}
-      onCommit={(amount) => {
+      onCommit={(amount, notes) => {
         if (amount < due) {
           toast.error(`Short ${money(due - amount)} - enter the full amount`);
           return;
         }
         haptic("success");
         announce("Payment complete");
-        commitPayment("cash", amount);
+        commitPayment("cash", amount, notes ? { notes } : undefined);
         const change = Math.round((amount - due) * 100) / 100;
         toast.success(
           change > 0 ? `Paid · change due ${money(change)}` : "Paid in full with cash",

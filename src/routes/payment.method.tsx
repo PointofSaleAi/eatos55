@@ -19,6 +19,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AmountEntry } from "@/components/pos/amount-entry";
+import { PaymentCompleteDialog } from "@/components/pos/payment-complete-dialog";
 import { useAnnounce } from "@/components/pos/live-region";
 import { PinSheet } from "@/components/pos/pin-sheet";
 import { ReceiptCard, ReceiptRow } from "@/components/pos/receipt";
@@ -106,6 +107,7 @@ function PaymentMethod() {
   const [selected, setSelected] = useState<string | null>(null);
   const [roomOpen, setRoomOpen] = useState(false);
   const [splitOpen, setSplitOpen] = useState(false);
+  const [doneOpen, setDoneOpen] = useState(false);
 
   const [room, setRoom] = useState<Room | null>(null);
   const [refConfig, setRefConfig] = useState<RefConfig | null>(null);
@@ -117,7 +119,7 @@ function PaymentMethod() {
   } | null>(null);
 
   /** Same screen for every tender: part payments stack up until the check clears. */
-  const takeAmount = (amount: number) => {
+  const takeAmount = (amount: number, notes?: Record<number, number>) => {
     const cfg = amountFor;
     if (!cfg) return;
     setAmountFor(null);
@@ -129,10 +131,10 @@ function PaymentMethod() {
       return;
     }
     haptic("success");
-    commitPayment(cfg.method, amount, { label: cfg.label });
+    commitPayment(cfg.method, amount, { label: cfg.label, ...(notes ? { notes } : {}) });
     announce("Payment complete");
     toast.success(`Paid in full with ${cfg.label}`);
-    navigate({ to: "/payment/success" });
+    setDoneOpen(true);
   };
 
   const openAmount = (label: string, method: TenderMethod, denominations = false) =>
@@ -143,7 +145,7 @@ function PaymentMethod() {
     commitPayment(cfg.method, due, { label: cfg.title });
     announce("Payment complete");
     toast.success(cfg.success(value));
-    navigate({ to: "/payment/success" });
+    setDoneOpen(true);
   };
 
   const openRef = (cfg: RefConfig) => setRefConfig(cfg);
@@ -621,6 +623,15 @@ function PaymentMethod() {
         onCommit={takeAmount}
       />
 
+      <PaymentCompleteDialog
+        open={doneOpen}
+        onDone={() => {
+          setDoneOpen(false);
+          setSelected(null);
+          navigate({ to: "/order/new" });
+        }}
+      />
+
       <RoomChargeDialog
         open={roomOpen}
         due={due}
@@ -638,7 +649,7 @@ function PaymentMethod() {
           });
           announce("Charge posted to room");
           toast.success(`Signed bill posted to room ${r.number} · add the tip from Tickets`);
-          navigate({ to: "/payment/success" });
+          setDoneOpen(true);
         }}
       />
 

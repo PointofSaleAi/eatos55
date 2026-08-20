@@ -34,7 +34,7 @@ export function AmountEntryPanel({
   denominations?: boolean;
   initialAmount?: string;
   actionLabel?: (amount: number) => string;
-  onCommit: (amount: number) => void;
+  onCommit: (amount: number, notes?: NoteCounts) => void;
   /** Two-column composition for landscape tablet / desktop. */
   wide?: boolean;
   className?: string;
@@ -202,7 +202,7 @@ export function AmountEntryPanel({
       <button
         type="button"
         disabled={entered <= 0}
-        onClick={() => onCommit(entered)}
+        onClick={() => onCommit(entered, denominations ? notes : undefined)}
         className="h-ctl-lg w-full shrink-0 rounded-row bg-shell text-fs-base font-extrabold uppercase tracking-[0.06em] text-shell-foreground transition-colors disabled:opacity-40"
       >
         {actionLabel
@@ -233,7 +233,7 @@ export function AmountEntry({
   due: number;
   denominations?: boolean;
   onClose: () => void;
-  onCommit: (amount: number) => void;
+  onCommit: (amount: number, notes?: Record<number, number>) => void;
 }) {
   const wide = useWideViewport();
   const { dragStyle, handleProps } = useSheetDrag(onClose);
