@@ -354,6 +354,10 @@ export type LastPayment = {
   change: number;
   orderNumber: number;
   guestName: string;
+  /** Tip taken with the final tender, when any. */
+  tip?: number;
+  /** Cash notes counted for this tender, keyed by denomination. */
+  notes?: Record<number, number>;
 } | null;
 
 type Store = {
@@ -458,7 +462,14 @@ type Store = {
   commitPayment: (
     method: TenderMethod,
     tendered: number,
-    opts?: { label?: string; roomNumber?: string; bookingNumber?: string; signedBill?: boolean },
+    opts?: {
+      label?: string;
+      roomNumber?: string;
+      bookingNumber?: string;
+      signedBill?: boolean;
+      tip?: number;
+      notes?: Record<number, number>;
+    },
   ) => string;
   lastPayment: LastPayment;
   /** Amount already tendered on the current order through partial payments. */
@@ -1087,6 +1098,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
           change,
           orderNumber,
           guestName,
+          ...(opts?.tip ? { tip: opts.tip } : {}),
+          ...(opts?.notes && Object.keys(opts.notes).length ? { notes: opts.notes } : {}),
         });
 
         setPartialPayments([]);

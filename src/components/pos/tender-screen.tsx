@@ -18,7 +18,7 @@ export function TenderScreen({
   initialAmount?: string;
   denominations?: boolean;
   actionLabel?: (amount: number) => string;
-  onCommit: (amount: number) => void;
+  onCommit: (amount: number, notes?: Record<number, number>) => void;
 }) {
   const wide = useWideLayout();
 
