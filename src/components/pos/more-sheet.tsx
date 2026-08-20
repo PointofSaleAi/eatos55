@@ -1,4 +1,4 @@
-import { BadgePercent, Check, Percent, Receipt, Trash2, Wallet } from "lucide-react";
+import { BadgePercent, Check, Percent, Receipt, Tag, Trash2, Wallet } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
