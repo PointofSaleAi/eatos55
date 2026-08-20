@@ -75,24 +75,15 @@ function ClockIn() {
             pin={pin}
             onDigit={(d) => setPin((p) => (p.length < 4 ? p + d : p))}
             onClear={() => setPin("")}
-            onEnter={() =>
-              withPin(() => {
-                clockIn();
-                navigate({ to: "/tickets" });
-              }, "PIN accepted")
-            }
+            onEnter={() => withPin(() => unlock(pin), "PIN accepted")}
             onClockOut={() => withPin(clockOut, "Clocked out")}
             onBreak={() => withPin(() => undefined, "Break started")}
             onClockIn={() =>
-              withPin(() => {
-                clockIn();
-                navigate({ to: "/tickets" });
-              }, `Clocked in at ${settings.clockedInAt}`)
+              withPin(() => unlock(pin), `Clocked in at ${settings.clockedInAt}`)
             }
             onBiometric={() => {
-              clockIn();
               toast.success("Clocked in with biometrics");
-              navigate({ to: "/tickets" });
+              unlock();
             }}
             revenueCenter={session.station ?? "Main"}
             onLogOut={() => {
