@@ -77,7 +77,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
             type="button"
             onClick={() => setGuestOpen(true)}
             aria-label="Edit guest details"
-            className="min-w-0 flex-1 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted"
+            className="min-w-[10rem] flex-1 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted"
           >
             <span className="block truncate text-fs-lg font-extrabold leading-tight text-foreground">
               {guest.name || activeTable || "Guest Name"}
@@ -89,7 +89,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
               {arrivedAt ? `Arrived at ${arrivedAt}` : "Not started"}
             </span>
           </button>
-          <div className="flex shrink-0 items-center gap-1">
+          <div className="flex shrink-0 items-center gap-0.5">
             <OrderAction
               label="Discount"
               active={totals.discount > 0}
@@ -157,7 +157,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
                   : "border border-transparent bg-muted text-muted-foreground hover:bg-secondary",
               )}
             >
-              <span className="shrink-0">{q.icon}</span>
+              <span className="hidden shrink-0 lg:inline-flex">{q.icon}</span>
               <span className="truncate">{q.label}</span>
             </button>
           ))}
@@ -361,7 +361,7 @@ function OrderAction({
       title={label}
       onClick={onPress}
       className={cn(
-        "grid size-10 shrink-0 place-items-center rounded-pill border border-border transition-colors hover:bg-muted",
+        "grid size-9 shrink-0 place-items-center rounded-pill border border-border transition-colors hover:bg-muted",
         active ? "bg-accent text-accent-foreground" : "bg-surface text-foreground",
       )}
     >
