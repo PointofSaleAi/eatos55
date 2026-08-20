@@ -53,7 +53,7 @@ export function GuestsSheet({
 
         <p
           aria-live="polite"
-          className="border-b border-border pb-3 text-center text-fs-hero font-extrabold leading-none text-foreground"
+          className="border-b border-border pb-3 text-center text-fs-2xl font-extrabold leading-none text-foreground"
         >
           {count}
         </p>
