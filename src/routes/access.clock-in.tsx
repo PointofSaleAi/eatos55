@@ -5,7 +5,6 @@ import { ClockPanel } from "@/components/pos/clock-panel";
 import { PinPad } from "@/components/pos/pin-pad";
 import { useLayoutMode } from "@/hooks/use-layout-mode";
 import { usePos } from "@/lib/pos-store";
-import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/access/clock-in")({
   head: () => ({
@@ -17,6 +16,8 @@ export const Route = createFileRoute("/access/clock-in")({
         property: "og:description",
         content: "PIN, biometric and break controls to run your shift.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: ClockIn,
@@ -40,27 +41,26 @@ function ClockIn() {
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
-      <div
-        className={cn(
-          "flex min-h-0 flex-1 gap-6 px-3 py-3",
-          wide
-            ? "mx-auto w-full max-w-[72rem] items-stretch"
-            : "mx-auto w-full max-w-[26rem] flex-col",
-        )}
-      >
-        {wide ? (
-          <ClockPanel className="min-w-0 flex-1" />
-        ) : (
-          <ClockPanel compact className="shrink-0" />
-        )}
-        <div
-          className={cn(
-            "flex min-h-0 flex-col justify-center",
-            wide ? "w-[26rem] shrink-0" : "flex-1",
-          )}
-        >
+    <div className="relative flex min-h-0 flex-1 overflow-hidden bg-background" aria-label="Locked point of sale">
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-surface opacity-50">
+        <div className="border-b border-border px-8 py-5 text-fs-xl font-extrabold uppercase text-foreground">
+          Ground Floor
+        </div>
+        <div className="grid grid-cols-4 gap-6 p-8">
+          {["Table T1", "Table T2", "Table T3", "Table T4", "Table T5"].map((table, i) => (
+            <div key={table} className="grid aspect-[1.15] place-items-center border border-border bg-background text-center">
+              <span className="font-bold text-foreground">{table}<br /><small>{i + 1} / 8</small></span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="fixed inset-0 z-[100] flex overflow-hidden bg-gate-overlay px-[clamp(1rem,6vw,6.5rem)] py-[clamp(1rem,4dvh,3rem)] pt-[calc(clamp(1rem,4dvh,3rem)+3rem)]">
+        <div className={wide ? "mx-auto grid min-h-0 w-full max-w-[68rem] grid-cols-[1fr_minmax(25rem,30rem)] gap-[clamp(3rem,8vw,9rem)]" : "mx-auto grid min-h-0 w-full max-w-[28rem] grid-rows-[4.5rem_1fr] gap-3"}>
+          <ClockPanel gate compact={!wide} className="min-w-0" />
+          <div className="flex min-h-0 flex-col justify-center">
           <PinPad
+              gate
             pin={pin}
             onDigit={(d) => setPin((p) => (p.length < 4 ? p + d : p))}
             onClear={() => setPin("")}
@@ -88,7 +88,9 @@ function ClockIn() {
               signOut();
               navigate({ to: "/" });
             }}
+              className="h-full max-h-[34rem] w-full"
           />
+          </div>
         </div>
       </div>
     </div>

@@ -164,7 +164,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
                 {/* Full-width dark top bar spans the rail in landscape, per design. */}
                 {appChrome ? <ClockPullDown /> : null}
                 <div className="relative flex min-h-0 min-w-0 flex-1">
-                  {landscape && !clockGate ? <NavRail /> : null}
+                  {landscape ? <NavRail /> : null}
                   <div
                     className="relative flex min-h-0 min-w-0 flex-1 flex-col pt-[var(--sat,0px)]"
                     style={{
@@ -203,7 +203,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
           </NavDrawerContext.Provider>
         </WideContext.Provider>
       </div>
-      {wideViewport ? (
+      {wideViewport && !clockGate ? (
         <button
           type="button"
           onClick={() => setMode(mode === "framed" ? "adaptive" : "framed")}

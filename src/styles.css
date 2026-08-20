@@ -88,6 +88,15 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-gate-overlay: var(--gate-overlay);
+  --color-gate-separator: var(--gate-separator);
+  --color-gate-key-top: var(--gate-key-top);
+  --color-gate-key-bottom: var(--gate-key-bottom);
+  --color-gate-key-foreground: var(--gate-key-foreground);
+  --color-gate-dark-top: var(--gate-dark-top);
+  --color-gate-dark-bottom: var(--gate-dark-bottom);
+  --color-gate-success: var(--gate-success);
+  --color-gate-action-foreground: var(--gate-action-foreground);
 }
 
 :root {
@@ -187,6 +196,15 @@
   --sidebar-accent-foreground: oklch(0.99 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.62 0.29 341);
+  --gate-overlay: oklch(0.32 0 0 / 94%);
+  --gate-separator: oklch(0.25 0 0);
+  --gate-key-top: oklch(1 0 0);
+  --gate-key-bottom: oklch(0.91 0 0);
+  --gate-key-foreground: oklch(0.35 0.01 270);
+  --gate-dark-top: oklch(0.25 0 0);
+  --gate-dark-bottom: oklch(0.15 0 0);
+  --gate-success: oklch(0.62 0.18 145);
+  --gate-action-foreground: oklch(0.08 0 0);
 }
 
 .dark {
