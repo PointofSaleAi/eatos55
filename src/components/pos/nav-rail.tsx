@@ -96,7 +96,7 @@ export function NavRail() {
                   title={l.label}
                   aria-label={l.label}
                   className={cn(
-                    "flex min-h-ctl-lg items-center gap-3 rounded-card px-2 t-row transition-colors",
+                    "flex min-h-ctl-lg items-center gap-3 rounded-card px-2 text-fs-sm transition-colors",
                     expanded ? "justify-start" : "flex-col justify-center gap-1 py-2",
                     active
                       ? "bg-muted font-extrabold text-foreground"
@@ -122,7 +122,7 @@ export function NavRail() {
               title="Settings"
               aria-label="Settings"
               className={cn(
-                "flex min-h-ctl-lg items-center gap-3 rounded-card px-2 t-row transition-colors",
+                "flex min-h-ctl-lg items-center gap-3 rounded-card px-2 text-fs-sm transition-colors",
                 expanded ? "justify-start" : "flex-col justify-center gap-1 py-2",
                 pathname.startsWith("/settings")
                   ? "bg-muted font-extrabold text-foreground"
