@@ -3,7 +3,9 @@ import { ChevronDown, ChevronUp, Headphones, RotateCw } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { AccountActions, AccountInfo } from "@/components/pos/account-bar";
+import { ClockPanel } from "@/components/pos/clock-panel";
 import { PinPad } from "@/components/pos/pin-pad";
+import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { usePos } from "@/lib/pos-store";
 
 /**
@@ -14,6 +16,7 @@ import { usePos } from "@/lib/pos-store";
 export function ClockPullDown() {
   const navigate = useNavigate();
   const { session, settings, clockIn, clockOut, signOut } = usePos();
+  const wide = useLandscapeWide();
   const [open, setOpen] = useState(false);
   const [pin, setPin] = useState("");
 
@@ -54,8 +57,8 @@ export function ClockPullDown() {
       </div>
 
       {open ? (
-        <div className="absolute inset-0 z-30 flex flex-col bg-shell/80 px-3 pb-4 pt-10">
-          <div className="mb-2 flex items-center justify-center gap-2 sm:hidden">
+        <div className="absolute inset-0 z-30 flex flex-col overflow-hidden bg-gate-overlay px-[clamp(0.75rem,5vw,5rem)] pb-[clamp(0.75rem,3dvh,2rem)] pt-[5.5rem] sm:pt-10">
+          <div className="mb-2 flex shrink-0 items-center justify-center gap-2 sm:hidden">
             <button
               type="button"
               onClick={() => toast.success("Tickets refreshed")}
@@ -76,31 +79,40 @@ export function ClockPullDown() {
               Support
             </button>
           </div>
-          <div className="no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto">
-            <PinPad
-              pin={pin}
-              onDigit={(d) => setPin((p) => (p.length < 4 ? p + d : p))}
-              onClear={() => setPin("")}
-              onEnter={() =>
-                requirePin(() => {
-                  clockIn();
-                  navigate({ to: "/floor" });
-                }, "PIN accepted")
-              }
-              onClockOut={() => requirePin(clockOut, "Clocked out")}
-              onBreak={() => requirePin(() => undefined, "Break started")}
-              onClockIn={() =>
-                requirePin(clockIn, `Clocked in at ${settings.clockedInAt}`)
-              }
-              onBiometric={() => toast.info("Biometrics not enrolled on this device")}
-              onShell
-              revenueCenter={session.station ?? "Test Revenue Center"}
-              onLogOut={() => {
-                signOut();
-                close();
-                navigate({ to: "/" });
-              }}
-            />
+          <div
+            className={
+              wide
+                ? "mx-auto grid min-h-0 w-full max-w-[68rem] flex-1 grid-cols-[1fr_minmax(22rem,30rem)] gap-[clamp(2rem,7vw,8rem)]"
+                : "mx-auto flex min-h-0 w-full max-w-[28rem] flex-1 flex-col"
+            }
+          >
+            {wide ? <ClockPanel gate className="min-w-0" /> : null}
+            <div className="flex min-h-0 flex-1 flex-col justify-center">
+              <PinPad
+                pin={pin}
+                onDigit={(d) => setPin((p) => (p.length < 4 ? p + d : p))}
+                onClear={() => setPin("")}
+                onEnter={() =>
+                  requirePin(() => {
+                    clockIn();
+                    navigate({ to: "/floor" });
+                  }, "PIN accepted")
+                }
+                onClockOut={() => requirePin(clockOut, "Clocked out")}
+                onBreak={() => requirePin(() => undefined, "Break started")}
+                onClockIn={() =>
+                  requirePin(clockIn, `Clocked in at ${settings.clockedInAt}`)
+                }
+                onBiometric={() => toast.info("Biometrics not enrolled on this device")}
+                revenueCenter={session.station ?? "Test Revenue Center"}
+                onLogOut={() => {
+                  signOut();
+                  close();
+                  navigate({ to: "/" });
+                }}
+                className="h-full max-h-[34rem] w-full"
+              />
+            </div>
           </div>
         </div>
       ) : null}

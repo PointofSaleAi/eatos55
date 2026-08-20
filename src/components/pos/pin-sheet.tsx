@@ -38,7 +38,7 @@ export function PinSheet({
       <SheetContent
         hideClose
         side="bottom"
-        className="max-h-[92dvh] overflow-y-auto rounded-t-sheet border-t border-border bg-background px-3 pb-6 pt-4"
+        className="flex max-h-[92dvh] flex-col overflow-hidden rounded-t-sheet border-t border-border bg-background px-3 pb-6 pt-4"
       >
         <SheetTitle className="pb-2 text-center text-fs-xl font-extrabold text-foreground">
           Enter PIN
@@ -51,6 +51,7 @@ export function PinSheet({
           onBackspace={() => setPin((p) => p.slice(0, -1))}
           onBiometric={submit}
           revenueCenter={session.station ?? "Main"}
+          className="mx-auto h-[min(28rem,68dvh)] w-full max-w-sheet"
         />
       </SheetContent>
     </Sheet>

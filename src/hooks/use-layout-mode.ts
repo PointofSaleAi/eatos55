@@ -24,6 +24,22 @@ export function useWideViewport() {
 }
 
 /**
+ * True in landscape on tablet/desktop: used by the PIN gate to place the clock
+ * panel beside the pad. Tablet portrait stacks instead.
+ */
+export function useLandscapeWide() {
+  const [landscape, setLandscape] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px) and (min-aspect-ratio: 1/1)");
+    const sync = () => setLandscape(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  return landscape;
+}
+
+/**
  * Layout mode for the shell.
  * `wide` drives the landscape tablet/web layout (rail + split panes + dialogs);
  * `framed` forces the 420px handheld preview on big screens for design review.
