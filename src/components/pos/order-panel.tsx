@@ -71,21 +71,21 @@ export function OrderPanel({ wide }: { wide: boolean }) {
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       {/* Guest identity and order level actions */}
-      <div className="shrink-0 border-b border-border px-4 pb-3 pt-3">
-        <div className="flex items-start gap-2">
+      <div className="shrink-0 border-b border-border px-4 pb-2.5 pt-2.5">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
           <button
             type="button"
             onClick={() => setGuestOpen(true)}
             aria-label="Edit guest details"
             className="min-w-0 flex-1 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted"
           >
-            <span className="block truncate text-fs-lg font-extrabold text-foreground">
+            <span className="block truncate text-fs-lg font-extrabold leading-tight text-foreground">
               {guest.name || activeTable || "Guest Name"}
             </span>
-            <span className="block truncate text-fs-sm text-muted-foreground">
+            <span className="block truncate text-fs-sm leading-tight text-muted-foreground">
               {guest.phone || "(XXX) XXX-XXXX"}
             </span>
-            <span className="block truncate text-fs-xs font-bold uppercase text-muted-foreground">
+            <span className="block truncate text-fs-xs font-bold uppercase leading-tight text-muted-foreground">
               {arrivedAt ? `Arrived at ${arrivedAt}` : "Not started"}
             </span>
           </button>
@@ -95,7 +95,16 @@ export function OrderPanel({ wide }: { wide: boolean }) {
               active={totals.discount > 0}
               onPress={() => setDiscountOpen(true)}
             >
-              <Percent className="size-4" />
+              <BadgePercent className="size-4" />
+            </OrderAction>
+            <OrderAction label="Transfer check" onPress={() => setGuestOpen(true)}>
+              <ArrowLeftRight className="size-4" />
+            </OrderAction>
+            <OrderAction
+              label="Cash drawer"
+              onPress={() => toast.success("Cash drawer opened")}
+            >
+              <Inbox className="size-4" />
             </OrderAction>
             <OrderAction
               label={noTax ? "Tax exempt on" : "Tax exempt"}
@@ -122,7 +131,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
               <span className="text-fs-sm font-extrabold leading-none">C</span>
             </OrderAction>
             <OrderAction
-              label="Void order"
+              label="No charge"
               onPress={() => {
                 if (!cart.length) return;
                 cancelOrder();
@@ -134,22 +143,22 @@ export function OrderPanel({ wide }: { wide: boolean }) {
           </div>
         </div>
 
-        {/* Service type segmented control */}
-        <div className="mt-3 grid grid-cols-3 gap-1 rounded-pill bg-muted p-1">
+        {/* Service type: three separate buttons, as on the original screen */}
+        <div className="mt-2.5 grid grid-cols-3 gap-2">
           {quickTypes.map((q) => (
             <button
               key={q.type}
               type="button"
               onClick={() => setOrderType(q.type)}
               className={cn(
-                "flex min-h-tap items-center justify-center gap-1 rounded-pill px-1 text-fs-xs font-extrabold uppercase tracking-tight transition-colors",
+                "flex min-h-tap items-center justify-center gap-1.5 rounded-row px-1 text-fs-xs font-extrabold uppercase tracking-tight transition-colors",
                 orderType === q.type
-                  ? "bg-surface text-foreground shadow-sm"
-                  : "text-muted-foreground hover:bg-secondary",
+                  ? "border-2 border-foreground bg-surface text-foreground shadow-sm"
+                  : "border border-transparent bg-muted text-muted-foreground hover:bg-secondary",
               )}
             >
-              <span className="hidden shrink-0 xl:inline-flex">{q.icon}</span>
-              <span className="whitespace-nowrap">{q.label}</span>
+              <span className="shrink-0">{q.icon}</span>
+              <span className="truncate">{q.label}</span>
             </button>
           ))}
         </div>
@@ -172,12 +181,12 @@ export function OrderPanel({ wide }: { wide: boolean }) {
         ) : null}
 
         {/* Order number and server */}
-        <div className="mt-3 flex items-center justify-between text-fs-xs font-bold uppercase text-muted-foreground">
+        <div className="mt-2 flex items-center justify-between text-fs-xs font-bold uppercase text-muted-foreground">
           <span>Order# {orderNumber ?? "--"}</span>
           <span className="truncate">{session.name}</span>
         </div>
 
-        <label className="mt-2 flex items-center gap-2 rounded-row bg-muted px-3">
+        <label className="mt-1.5 flex items-center gap-2 rounded-row bg-muted px-3">
           <NotebookPen className="size-4 shrink-0 text-muted-foreground" />
           <input
             value={orderNotes}
@@ -188,6 +197,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
           />
         </label>
       </div>
+
 
       {/* Items */}
       <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-3">
