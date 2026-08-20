@@ -107,7 +107,7 @@ export function NavRail() {
                   {expanded ? (
                     <span className="min-w-0 flex-1 truncate">{l.label}</span>
                   ) : (
-                    <span className="w-full truncate text-center text-[0.5625rem] font-bold uppercase leading-none">
+                    <span className="w-full text-center text-[0.5rem] font-bold uppercase leading-tight">
                       {l.label.split(" ")[0]}
                     </span>
                   )}
@@ -138,7 +138,7 @@ export function NavRail() {
               {expanded ? (
                 <span className="min-w-0 flex-1 truncate">Settings</span>
               ) : (
-                <span className="w-full truncate text-center text-[0.5625rem] font-bold uppercase leading-none">
+                <span className="w-full text-center text-[0.5rem] font-bold uppercase leading-tight">
                   Settings
                 </span>
               )}

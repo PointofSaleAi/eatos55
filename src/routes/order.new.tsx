@@ -82,7 +82,7 @@ function NewOrder() {
                     setCategory(m.categories[0]!);
                   }}
                   className={cn(
-                    "min-h-ctl-md rounded-pill px-3 text-fs-xs font-extrabold uppercase tracking-tight transition-colors",
+                    "min-h-ctl-md shrink-0 whitespace-nowrap rounded-pill px-3 text-fs-xs font-extrabold uppercase tracking-tight transition-colors",
                     m.id === activeMenu
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground hover:bg-secondary",
