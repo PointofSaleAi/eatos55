@@ -21,7 +21,7 @@ export type FloorTable = {
   seats: number;
   /** Guests currently seated. */
   seated?: number;
-  since?: string;
+  since?: string | undefined;
   floor: string;
   /** Section of the floor the table belongs to. */
   section?: "B1" | "B2";
