@@ -157,7 +157,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
                   : "border border-transparent bg-muted text-muted-foreground hover:bg-secondary",
               )}
             >
-              <span className="hidden shrink-0 lg:inline-flex">{q.icon}</span>
+              <span className="hidden shrink-0 xl:inline-flex">{q.icon}</span>
               <span className="truncate">{q.label}</span>
             </button>
           ))}
