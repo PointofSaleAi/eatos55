@@ -8,7 +8,15 @@ import { cn } from "@/lib/utils";
  * Time and date are live; the venue label and weather values come from
  * Settings → Login Screen.
  */
-export function ClockPanel({ compact, className }: { compact?: boolean; className?: string }) {
+export function ClockPanel({
+  compact,
+  gate,
+  className,
+}: {
+  compact?: boolean;
+  gate?: boolean;
+  className?: string;
+}) {
   const { settings } = usePos();
   const [now, setNow] = useState<Date | null>(null);
 
@@ -29,6 +37,25 @@ export function ClockPanel({ compact, className }: { compact?: boolean; classNam
   const timeLabel = now
     ? now.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })
     : "";
+
+  if (gate) {
+    return (
+      <div className={cn("flex min-h-0 flex-col justify-center text-shell-foreground", className)}>
+        <p className="text-[clamp(0.95rem,1.8vw,1.35rem)] font-normal">{dateLabel}</p>
+        <p className="mt-[clamp(1.4rem,5dvh,3rem)] text-[clamp(3rem,7.5vw,5.5rem)] font-bold leading-none tabular-nums">
+          {timeLabel}
+        </p>
+        <div className="mt-[clamp(1.4rem,5dvh,3rem)] flex items-center gap-6">
+          <CloudSun className="size-[clamp(2.25rem,5vw,3.7rem)] fill-shell-foreground text-shell-foreground" aria-hidden />
+          <p className="text-[clamp(2.2rem,5vw,3.7rem)] font-normal leading-none">{settings.weatherTemp}</p>
+          <span className="sr-only">{settings.weatherCondition}</span>
+        </div>
+        <p className="mt-[clamp(1.4rem,5dvh,3rem)] text-[clamp(1.25rem,2.6vw,2rem)] font-bold">
+          {settings.venueLocation}
+        </p>
+      </div>
+    );
+  }
 
   if (compact) {
     return (
