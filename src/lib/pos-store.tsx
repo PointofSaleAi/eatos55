@@ -4,6 +4,7 @@ import loginSlide2 from "@/assets/login-2.jpg.asset.json";
 import loginSlide3 from "@/assets/login-3.jpg.asset.json";
 import loginSlide4 from "@/assets/login-4.jpg.asset.json";
 import { setHapticsEnabled } from "@/lib/haptics";
+import { isResumablePath, readResume, resumeKey, writeResume } from "@/lib/resume";
 import {
   DEFAULT_TICKET_DATE,
   TAX_RATE,
@@ -60,6 +61,8 @@ export type Session = {
   name: string;
   role: string;
   station: string | null;
+  /** PIN used at the gate, so "resume where I left off" is per person. */
+  pin?: string | null;
 };
 
 /** Editable collection item used by list-style settings screens. */
@@ -357,9 +360,17 @@ type Store = {
   session: Session;
   signIn: () => void;
   signOut: () => void;
-  clockIn: () => void;
+  clockIn: (pin?: string) => void;
   clockOut: () => void;
   setStation: (name: string) => void;
+
+  /** Remember the current screen and order for whoever is clocked in. */
+  saveResume: (path: string) => void;
+  /**
+   * Put back the order in progress for this PIN and return the screen to open,
+   * or null when there is nothing worth resuming.
+   */
+  resumeAfterUnlock: (pin?: string) => string | null;
 
   tickets: Ticket[];
   sortKey: SortKey;
@@ -653,9 +664,62 @@ export function PosProvider({ children }: { children: ReactNode }) {
           role: "Supervisor",
           station: null,
         }),
-      clockIn: () => setSession((s) => ({ ...s, signedIn: true, clockedIn: true })),
+      clockIn: (pin) =>
+        setSession((s) => ({
+          ...s,
+          signedIn: true,
+          clockedIn: true,
+          pin: pin ?? s.pin ?? null,
+        })),
       clockOut: () => setSession((s) => ({ ...s, clockedIn: false })),
       setStation: (name) => setSession((s) => ({ ...s, station: name })),
+
+      saveResume: (path) => {
+        if (!isResumablePath(path)) return;
+        writeResume(resumeKey(session.pin), {
+          path,
+          order: {
+            cart,
+            guest,
+            orderType,
+            orderNotes,
+            arrivedAt,
+            activeTicketId,
+            activeTable,
+            floor,
+            noTax,
+            comped,
+            serviceCharge,
+            orderDiscountPercent,
+            partialPayments,
+            mode,
+          },
+          savedAt: Date.now(),
+        });
+      },
+      resumeAfterUnlock: (pin) => {
+        const entry = readResume(resumeKey(pin ?? session.pin));
+        if (!entry || !isResumablePath(entry.path)) return null;
+        const o = entry.order;
+        if (o) {
+          setCart((o.cart as CartLine[]) ?? []);
+          setGuestState((g) => ({ ...g, ...(o.guest as Partial<Guest>) }));
+          setOrderType(o.orderType as ServiceOrderType);
+          setOrderNotes(o.orderNotes ?? "");
+          setArrivedAt(o.arrivedAt ?? "");
+          setActiveTicketId(o.activeTicketId ?? null);
+          setActiveTable(o.activeTable ?? null);
+          if (o.floor) setFloor(o.floor);
+          setNoTax(Boolean(o.noTax));
+          setComped(Boolean(o.comped));
+          setServiceCharge(o.serviceCharge ?? 0);
+          setOrderDiscountPercent(o.orderDiscountPercent ?? 0);
+          setPartialPayments((o.partialPayments as PartialPayment[]) ?? []);
+          if (o.mode) setMode(o.mode as MenuMode);
+        }
+        return entry.path;
+      },
+
 
       tickets,
       sortKey,

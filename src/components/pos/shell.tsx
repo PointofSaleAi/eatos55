@@ -80,10 +80,16 @@ export function useAppChrome() {
  */
 function useSessionGate() {
   const router = useRouter();
-  const { session, sessionReady } = usePos();
+  const { session, sessionReady, saveResume } = usePos();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const path = pathname.replace(/\/+$/, "") || "/";
   const isAccess = path === "/" || path.startsWith("/access");
+
+  // Remember where this person is, so their next PIN unlock lands right back here.
+  useEffect(() => {
+    if (!sessionReady || !session.signedIn || !session.clockedIn) return;
+    saveResume(path);
+  }, [saveResume, path, sessionReady, session.signedIn, session.clockedIn]);
 
   useEffect(() => {
     if (!sessionReady) return;
