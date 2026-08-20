@@ -60,6 +60,8 @@ export type Session = {
   name: string;
   role: string;
   station: string | null;
+  /** PIN used at the gate, so "resume where I left off" is per person. */
+  pin?: string | null;
 };
 
 /** Editable collection item used by list-style settings screens. */
