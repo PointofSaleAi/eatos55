@@ -58,27 +58,6 @@ export function ClockPullDown() {
 
       {open ? (
         <div className="absolute inset-0 z-30 flex flex-col overflow-hidden bg-gate-overlay px-[clamp(0.75rem,5vw,5rem)] pb-[clamp(0.75rem,3dvh,2rem)] pt-[5.5rem] sm:pt-10">
-          <div className="mb-2 flex shrink-0 items-center justify-center gap-2 sm:hidden">
-            <button
-              type="button"
-              onClick={() => toast.success("Tickets refreshed")}
-              className="flex min-h-ctl-sm items-center gap-2 rounded-pill bg-white/10 px-3 text-fs-xs font-bold text-shell-foreground"
-            >
-              <RotateCw className="size-4" />
-              Refresh
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                close();
-                navigate({ to: "/system/customer-support" });
-              }}
-              className="flex min-h-ctl-sm items-center gap-2 rounded-pill bg-white/10 px-3 text-fs-xs font-bold text-shell-foreground"
-            >
-              <Headphones className="size-4" />
-              Support
-            </button>
-          </div>
           <div
             className={
               wide
@@ -113,6 +92,27 @@ export function ClockPullDown() {
                 className="h-full max-h-[34rem] w-full"
               />
             </div>
+          </div>
+          <div className="mt-2 flex shrink-0 items-center justify-center gap-2 sm:hidden">
+            <button
+              type="button"
+              onClick={() => toast.success("Tickets refreshed")}
+              className="flex min-h-ctl-sm items-center gap-2 rounded-pill bg-white/10 px-3 text-fs-xs font-bold text-shell-foreground"
+            >
+              <RotateCw className="size-4" />
+              Refresh
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                close();
+                navigate({ to: "/system/customer-support" });
+              }}
+              className="flex min-h-ctl-sm items-center gap-2 rounded-pill bg-white/10 px-3 text-fs-xs font-bold text-shell-foreground"
+            >
+              <Headphones className="size-4" />
+              Support
+            </button>
           </div>
         </div>
       ) : null}
