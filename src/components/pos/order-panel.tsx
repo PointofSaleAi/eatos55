@@ -5,6 +5,8 @@ import {
   NotebookPen,
   Percent,
   Printer,
+  Save,
+
   ReceiptText,
   ShoppingBag,
   Trash2,
