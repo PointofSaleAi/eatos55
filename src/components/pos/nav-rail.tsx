@@ -106,11 +106,8 @@ export function NavRail() {
                   <l.icon className={cn("size-6 shrink-0", active ? "text-accent" : "")} />
                   {expanded ? (
                     <span className="min-w-0 flex-1 truncate">{l.label}</span>
-                  ) : (
-                    <span className="w-full text-center text-[0.5rem] font-bold uppercase leading-tight">
-                      {l.label.split(" ")[0]}
-                    </span>
-                  )}
+                  ) : null}
+
                 </Link>
               </li>
             );
