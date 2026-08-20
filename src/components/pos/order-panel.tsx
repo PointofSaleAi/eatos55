@@ -199,122 +199,102 @@ export function OrderPanel({ wide }: { wide: boolean }) {
       </div>
 
 
-      {/* Items */}
-      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-3">
+      {/* Items: flat receipt rows */}
+      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-[calc(0.5rem+var(--kb-inset,0px))] pt-2">
         {cart.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-3 py-10 text-center">
             <Utensils className="size-10 text-muted-foreground/50" />
             <p className="text-fs-sm font-bold text-muted-foreground">Let&apos;s create an order</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <ul>
             {cart.map((l) => (
-              <div
-                key={l.id}
-                className="flex items-center gap-3 rounded-card border border-border bg-surface p-3"
-              >
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-fs-sm font-extrabold text-foreground">{l.name}</p>
-                  <p className="text-fs-xs text-muted-foreground">{money(l.price)}</p>
-                  {l.modifiers?.length ? (
-                    <p className="truncate text-fs-xs text-muted-foreground">
-                      {l.modifiers.join(", ")}
-                    </p>
-                  ) : null}
-                  {l.notes ? (
-                    <p className="truncate text-fs-xs text-muted-foreground">{l.notes}</p>
-                  ) : null}
-                </div>
-                <div className="flex shrink-0 items-center gap-2">
-                  <button
-                    type="button"
-                    aria-label={`Remove one ${l.name}`}
-                    onClick={() => changeQty(l.id, -1)}
-                    className="grid size-11 place-items-center rounded-pill border border-border text-fs-sm font-bold text-foreground"
-                  >
-                    −
-                  </button>
-                  <span className="w-6 text-center text-fs-sm font-bold text-foreground">
-                    {l.qty}
+              <li key={l.id}>
+                <div className="flex items-start gap-3 py-1.5">
+                  <span className="w-10 shrink-0 pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">
+                    {l.qty} ea
                   </span>
                   <button
                     type="button"
-                    aria-label={`Add one ${l.name}`}
                     onClick={() => changeQty(l.id, 1)}
-                    className="grid size-11 place-items-center rounded-pill border border-border text-fs-sm font-bold text-foreground"
+                    aria-label={`Add one ${l.name}`}
+                    className="min-w-0 flex-1 rounded-row text-left transition-colors hover:bg-muted"
                   >
-                    +
+                    <span className="block truncate text-fs-sm font-bold text-foreground">
+                      {l.name}
+                    </span>
+                  </button>
+                  <span className="shrink-0 text-fs-sm font-bold tabular-nums text-foreground">
+                    {money(l.price * l.qty)}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => changeQty(l.id, -1)}
+                    aria-label={`Remove one ${l.name}`}
+                    className="grid size-6 shrink-0 place-items-center rounded-pill text-fs-sm font-bold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  >
+                    &minus;
                   </button>
                 </div>
-              </div>
+                {l.modifiers?.length ? (
+                  <div className="pl-10">
+                    {l.modifiers.map((m) => (
+                      <div key={m} className="flex items-start gap-2 pb-1">
+                        <span className="text-fs-xs leading-none text-muted-foreground">&#x2514;</span>
+                        <span className="min-w-0 flex-1 truncate text-fs-xs font-bold text-tile-orange">
+                          {m}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+                {l.notes ? (
+                  <p className="truncate pl-10 pb-1 text-fs-xs text-muted-foreground">{l.notes}</p>
+                ) : null}
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </div>
 
-      {/* Footer: quick actions, totals, Save / Fire / Charge */}
+      {/* Footer: totals and Save / Fire / Charge */}
       <div
         className={cn(
-          "shrink-0 space-y-2 border-t border-border bg-surface px-3 pt-2",
+          "shrink-0 border-t border-border bg-surface px-3 pt-1.5",
           wide
             ? "pb-[calc(0.5rem+var(--kb-inset,0px))]"
             : "pb-[calc(0.5rem+var(--kb-inset,0px)+var(--tabs-h,0px))]",
         )}
       >
-        <div className="flex items-center gap-1">
-          <OrderAction label="Discount" onPress={() => setDiscountOpen(true)}>
-            <Percent className="size-5" />
-          </OrderAction>
-          <OrderAction label="Guests" onPress={() => setGuestOpen(true)}>
-            <Users className="size-5" />
-          </OrderAction>
-          <OrderAction
-            label="Print"
-            onPress={() => toast.success("Order ticket sent to printer")}
-          >
-            <Printer className="size-5" />
-          </OrderAction>
-          <OrderAction
-            label="Void order"
-            onPress={() => {
-              if (!cart.length) return;
-              cancelOrder();
-              toast.success("Order voided");
-            }}
-          >
-            <Trash2 className="size-5" />
-          </OrderAction>
-        </div>
-
-        <dl className="space-y-1 text-fs-sm">
-          <div className="flex items-center justify-between text-muted-foreground">
+        <dl className="divide-y divide-border text-fs-sm">
+          <div className="flex items-center justify-between py-1 font-bold text-foreground">
             <dt>Sub Total</dt>
             <dd className="tabular-nums">{money(totals.subtotal)}</dd>
           </div>
-          <div className="flex items-center justify-between text-muted-foreground">
+          <div className="flex items-center justify-between py-1 font-bold text-foreground">
             <dt>Tax{noTax ? " (exempt)" : ""}</dt>
             <dd className="tabular-nums">{money(totals.tax)}</dd>
           </div>
           {totals.discount ? (
-            <div className="flex items-center justify-between text-muted-foreground">
+            <div className="flex items-center justify-between py-1 text-muted-foreground">
               <dt>Discount{discountName ? ` · ${discountName}` : ""}</dt>
               <dd className="tabular-nums">-{money(totals.discount)}</dd>
             </div>
           ) : null}
-          <div className="flex items-center justify-between pt-0.5 text-fs-lg font-extrabold text-foreground">
+          <div className="flex items-center justify-between py-1 text-fs-lg font-extrabold text-foreground">
             <dt>Total{comped ? " (comped)" : ""}</dt>
             <dd className="tabular-nums">{money(totals.total)}</dd>
           </div>
         </dl>
 
-        <div className="flex items-center gap-2">
+        <div className="mt-1.5 flex items-center gap-2">
           <button
             type="button"
             disabled={!totals.count}
             aria-label="Save order"
             title="Save order"
             onClick={() => toast.success("Order saved")}
-            className="grid min-h-ctl-lg w-14 shrink-0 place-items-center rounded-pill border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:opacity-40"
+            className="grid min-h-ctl-lg w-14 shrink-0 place-items-center rounded-row border border-border bg-muted text-foreground transition-colors hover:bg-secondary disabled:opacity-40"
           >
             <Save className="size-5" />
           </button>
@@ -322,21 +302,22 @@ export function OrderPanel({ wide }: { wide: boolean }) {
             type="button"
             disabled={!totals.count}
             onClick={() => toast.success("Order fired to the kitchen")}
-            className="min-h-ctl-lg shrink-0 rounded-pill bg-tile-orange px-5 text-fs-sm font-extrabold uppercase text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="flex min-h-ctl-lg shrink-0 items-center gap-1.5 rounded-row bg-tile-orange px-4 text-fs-sm font-extrabold uppercase text-white transition-opacity hover:opacity-90 disabled:opacity-40"
           >
+            <Flame className="size-4 shrink-0" />
             Fire
           </button>
           <button
             type="button"
             disabled={!totals.count}
             onClick={() => navigate({ to: "/payment/method" })}
-            className="min-h-ctl-lg min-w-0 flex-1 rounded-pill bg-accent text-fs-sm font-extrabold uppercase text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
+            className="min-h-ctl-lg min-w-0 flex-1 truncate rounded-row bg-accent px-3 text-fs-sm font-extrabold uppercase text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
           >
-            Charge
+            Charge {money(totals.total)}
           </button>
         </div>
-
       </div>
+
 
       <GuestSheet open={guestOpen} onClose={() => setGuestOpen(false)} />
       <DiscountSheet
