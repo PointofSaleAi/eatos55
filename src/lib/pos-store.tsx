@@ -359,9 +359,17 @@ type Store = {
   session: Session;
   signIn: () => void;
   signOut: () => void;
-  clockIn: () => void;
+  clockIn: (pin?: string) => void;
   clockOut: () => void;
   setStation: (name: string) => void;
+
+  /** Remember the current screen and order for whoever is clocked in. */
+  saveResume: (path: string) => void;
+  /**
+   * Put back the order in progress for this PIN and return the screen to open,
+   * or null when there is nothing worth resuming.
+   */
+  resumeAfterUnlock: (pin?: string) => string | null;
 
   tickets: Ticket[];
   sortKey: SortKey;
