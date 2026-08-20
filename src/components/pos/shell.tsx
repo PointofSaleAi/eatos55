@@ -124,7 +124,10 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
   const navCtx = useMemo(() => ({ open: () => setNavOpen(true) }), []);
   const appChrome = useAppChrome();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isSignIn = (pathname.replace(/\/+$/, "") || "/") === "/";
+  const path = pathname.replace(/\/+$/, "") || "/";
+  const isSignIn = path === "/";
+  // Clock In is an opaque gate: top bar only, no rail / tabs / drawer.
+  const clockGate = path === "/access/clock-in";
   const { mode, setMode, wide, wideViewport } = useLayoutMode();
   useSessionGate();
   useGlobalKeyboardAware();
