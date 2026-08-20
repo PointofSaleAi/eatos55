@@ -134,11 +134,8 @@ export function NavRail() {
               />
               {expanded ? (
                 <span className="min-w-0 flex-1 truncate">Settings</span>
-              ) : (
-                <span className="w-full text-center text-[0.5rem] font-bold uppercase leading-tight">
-                  Settings
-                </span>
-              )}
+              ) : null}
+
             </Link>
           </li>
         </ul>
