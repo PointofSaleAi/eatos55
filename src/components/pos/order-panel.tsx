@@ -304,7 +304,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
             aria-label="Save order"
             title="Save order"
             onClick={() => toast.success("Order saved")}
-            className="grid size-ctl-lg min-h-ctl-lg shrink-0 place-items-center rounded-pill border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:opacity-40"
+            className="grid min-h-ctl-lg w-14 shrink-0 place-items-center rounded-pill border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:opacity-40"
           >
             <Save className="size-5" />
           </button>
