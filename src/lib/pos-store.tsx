@@ -663,9 +663,62 @@ export function PosProvider({ children }: { children: ReactNode }) {
           role: "Supervisor",
           station: null,
         }),
-      clockIn: () => setSession((s) => ({ ...s, signedIn: true, clockedIn: true })),
+      clockIn: (pin) =>
+        setSession((s) => ({
+          ...s,
+          signedIn: true,
+          clockedIn: true,
+          pin: pin ?? s.pin ?? null,
+        })),
       clockOut: () => setSession((s) => ({ ...s, clockedIn: false })),
       setStation: (name) => setSession((s) => ({ ...s, station: name })),
+
+      saveResume: (path) => {
+        if (!isResumablePath(path)) return;
+        writeResume(resumeKey(session.pin), {
+          path,
+          order: {
+            cart,
+            guest,
+            orderType,
+            orderNotes,
+            arrivedAt,
+            activeTicketId,
+            activeTable,
+            floor,
+            noTax,
+            comped,
+            serviceCharge,
+            orderDiscountPercent,
+            partialPayments,
+            mode,
+          },
+          savedAt: Date.now(),
+        });
+      },
+      resumeAfterUnlock: (pin) => {
+        const entry = readResume(resumeKey(pin ?? session.pin));
+        if (!entry || !isResumablePath(entry.path)) return null;
+        const o = entry.order;
+        if (o) {
+          setCart((o.cart as CartLine[]) ?? []);
+          setGuestState((g) => ({ ...g, ...(o.guest as Partial<Guest>) }));
+          setOrderType(o.orderType as ServiceOrderType);
+          setOrderNotes(o.orderNotes ?? "");
+          setArrivedAt(o.arrivedAt ?? "");
+          setActiveTicketId(o.activeTicketId ?? null);
+          setActiveTable(o.activeTable ?? null);
+          if (o.floor) setFloor(o.floor);
+          setNoTax(Boolean(o.noTax));
+          setComped(Boolean(o.comped));
+          setServiceCharge(o.serviceCharge ?? 0);
+          setOrderDiscountPercent(o.orderDiscountPercent ?? 0);
+          setPartialPayments((o.partialPayments as PartialPayment[]) ?? []);
+          if (o.mode) setMode(o.mode as MenuMode);
+        }
+        return entry.path;
+      },
+
 
       tickets,
       sortKey,
