@@ -52,11 +52,15 @@ export const navGroups: NavGroup[] = [
   },
 ];
 
-/** Compact rail destinations: the five most used screens. */
+/**
+ * Rail destinations in the order used by the reference app:
+ * New Order, Floor Plan, Rooms, Tickets, Order Status.
+ */
 export const railPrimary: NavLink[] = [
-  { to: "/floor", label: "Home", icon: Sofa },
+  { to: "/order/new", label: "New Order", icon: ClipboardList },
+  { to: "/floor", label: "Floor Plan", icon: Sofa },
+  { to: "/rooms", label: "Rooms", icon: Grid2x2 },
   { to: "/tickets", label: "Tickets", icon: Receipt },
-  { to: "/board", label: "Board", icon: LayoutGrid },
-  { to: "/order/new", label: "Order", icon: ClipboardList },
-  { to: "/settings", label: "Settings", icon: SettingsIcon },
+  { to: "/board", label: "Order Status", icon: LayoutGrid },
 ];
+

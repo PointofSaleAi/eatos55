@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Ban, ChevronDown, MoreVertical, Plus, Search, Tag } from "lucide-react";
+import { Ban, MoreVertical, Plus, Search, Tag } from "lucide-react";
 import { useRef, useState } from "react";
 import { GuestBlock } from "@/components/pos/guest-block";
 import { MenuButton, useWideLayout } from "@/components/pos/shell";
@@ -62,17 +62,41 @@ function NewOrder() {
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
-        <div className="flex items-center gap-1">
-          <MenuButton className="-ml-2 size-11" />
-          {wide ? (
-            <span className="min-w-0 flex-1 truncate text-fs-sm font-extrabold text-foreground">
-              Menu
-            </span>
+        <div className="flex items-start gap-2">
+          <MenuButton className="-ml-2 size-11 shrink-0 rounded-card border border-border" />
+
+          {showMenu ? (
+            <div
+              className={cn(
+                "no-scrollbar flex min-w-0 flex-1 items-center gap-1.5",
+                wide ? "flex-wrap" : "flex-nowrap overflow-x-auto",
+              )}
+            >
+
+              {menus.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveMenu(m.id);
+                    setCategory(m.categories[0]!);
+                  }}
+                  className={cn(
+                    "min-h-ctl-md shrink-0 whitespace-nowrap rounded-pill px-3 text-fs-xs font-extrabold uppercase tracking-tight transition-colors",
+                    m.id === activeMenu
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:bg-secondary",
+                  )}
+                >
+                  {m.name}
+                </button>
+              ))}
+            </div>
           ) : (
             <GuestBlock onEdit={() => setGuestOpen(true)} />
           )}
 
-          <div className="ml-auto flex shrink-0 items-center gap-0.5">
+          <div className="flex shrink-0 items-center gap-0.5">
             <button
               type="button"
               aria-label="Search products"
@@ -84,15 +108,6 @@ function NewOrder() {
               )}
             >
               <Search className="size-5" />
-            </button>
-            <button
-              type="button"
-              aria-label="Add custom item"
-              title="Custom item"
-              onClick={() => navigate({ to: "/order/custom-item" })}
-              className="grid size-10 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
-            >
-              <Tag className="size-5" />
             </button>
             <button
               type="button"
@@ -125,35 +140,16 @@ function NewOrder() {
         </div>
 
         {showMenu ? (
-          <div className="no-scrollbar -mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4">
-            <div className="relative shrink-0">
-              <select
-                aria-label="Menu"
-                value={activeMenu}
-                onChange={(e) => {
-                  const next = menus.find((m) => m.id === e.target.value)!;
-                  setActiveMenu(next.id);
-                  setCategory(next.categories[0]!);
-                }}
-                className="h-11 appearance-none rounded-row border border-border bg-surface pl-3 pr-8 text-fs-sm font-bold text-foreground outline-none"
-              >
-                {menus.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            </div>
+          <div className="mt-3 flex flex-wrap items-center gap-1.5">
             {chips.map((c) => (
               <button
                 key={c}
                 type="button"
                 onClick={() => setCategory(c)}
                 className={cn(
-                  "min-h-ctl-md shrink-0 rounded-pill px-3.5 text-fs-sm font-bold transition-colors",
+                  "min-h-ctl-md rounded-pill px-3 text-fs-xs font-bold uppercase tracking-tight transition-colors",
                   c === category
-                    ? "bg-primary text-primary-foreground"
+                    ? "bg-accent text-accent-foreground"
                     : "bg-muted text-muted-foreground hover:bg-secondary",
                 )}
               >
@@ -163,6 +159,7 @@ function NewOrder() {
           </div>
         ) : null}
       </div>
+
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <div

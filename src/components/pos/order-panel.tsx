@@ -5,6 +5,8 @@ import {
   NotebookPen,
   Percent,
   Printer,
+  Save,
+
   ReceiptText,
   ShoppingBag,
   Trash2,
@@ -295,20 +297,22 @@ export function OrderPanel({ wide }: { wide: boolean }) {
           </div>
         </dl>
 
-        <div className="grid grid-cols-3 gap-2">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             disabled={!totals.count}
+            aria-label="Save order"
+            title="Save order"
             onClick={() => toast.success("Order saved")}
-            className="min-h-ctl-lg rounded-pill border border-border bg-background text-fs-sm font-extrabold text-foreground transition-colors hover:bg-muted disabled:opacity-40"
+            className="grid min-h-ctl-lg w-14 shrink-0 place-items-center rounded-pill border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:opacity-40"
           >
-            Save
+            <Save className="size-5" />
           </button>
           <button
             type="button"
             disabled={!totals.count}
             onClick={() => toast.success("Order fired to the kitchen")}
-            className="min-h-ctl-lg rounded-pill bg-tile-orange text-fs-sm font-extrabold text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="min-h-ctl-lg shrink-0 rounded-pill bg-tile-orange px-5 text-fs-sm font-extrabold uppercase text-white transition-opacity hover:opacity-90 disabled:opacity-40"
           >
             Fire
           </button>
@@ -316,11 +320,12 @@ export function OrderPanel({ wide }: { wide: boolean }) {
             type="button"
             disabled={!totals.count}
             onClick={() => navigate({ to: "/payment/method" })}
-            className="min-h-ctl-lg rounded-pill bg-accent text-fs-sm font-extrabold text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
+            className="min-h-ctl-lg min-w-0 flex-1 rounded-pill bg-accent text-fs-sm font-extrabold uppercase text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
           >
             Charge
           </button>
         </div>
+
       </div>
 
       <GuestSheet open={guestOpen} onClose={() => setGuestOpen(false)} />
