@@ -88,7 +88,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
               {arrivedAt ? `Arrived at ${arrivedAt}` : "Not started"}
             </span>
           </button>
-          <div className="grid shrink-0 grid-cols-3 gap-1 xl:flex xl:items-center">
+          <div className="grid shrink-0 grid-cols-3 gap-1">
             <OrderAction
               label="Discount"
               active={totals.discount > 0}
@@ -355,7 +355,7 @@ function OrderAction({
       title={label}
       onClick={onPress}
       className={cn(
-        "grid size-9 shrink-0 place-items-center rounded-pill transition-colors xl:size-10",
+        "grid size-9 shrink-0 place-items-center rounded-pill transition-colors",
         active ? "bg-accent text-accent-foreground" : "bg-muted text-foreground hover:bg-secondary",
       )}
 
