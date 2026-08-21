@@ -26,6 +26,12 @@ export type FloorTable = {
   /** Section of the floor the table belongs to. */
   section?: "B1" | "B2";
   shape?: "round" | "square";
+  /** Clockwise rotation in degrees applied on the layout canvas. */
+  rotation?: number;
+  /** Optional short label drawn inside the shape. */
+  label?: string;
+  /** Bar chairs render as small stools rather than tables. */
+  kind?: "table" | "booth" | "bar-chair";
   /** Position on the layout canvas, in percent of canvas width / height. */
   x?: number;
   y?: number;
