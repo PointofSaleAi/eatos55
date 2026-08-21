@@ -18,7 +18,12 @@ import {
   type Ticket,
   type TicketStatus,
 } from "./demo-data";
-import { defaultFloorLayout, type FloorObject, type TableState } from "./floor-data";
+import {
+  defaultFloorLayout,
+  type FloorObject,
+  type SavedTemplate,
+  type TableState,
+} from "./floor-data";
 import {
   inRange,
   rangeForPreset,
