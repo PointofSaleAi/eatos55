@@ -214,21 +214,21 @@ export function OrderPanel({ wide }: { wide: boolean }) {
           <ul>
             {cart.map((l) => (
               <li key={l.id}>
-                <div className="flex items-start gap-3 py-1.5">
-                  <span className="w-10 shrink-0 pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">
+                <div className="grid grid-cols-[3rem_minmax(0,1fr)_auto_1.5rem] items-start gap-2 py-1.5">
+                  <span className="pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">
                     {l.qty} ea
                   </span>
                   <button
                     type="button"
                     onClick={() => changeQty(l.id, 1)}
                     aria-label={`Add one ${l.name}`}
-                    className="min-w-0 flex-1 rounded-row text-left transition-colors hover:bg-muted"
+                    className="min-w-0 rounded-row text-left transition-colors hover:bg-muted"
                   >
-                    <span className="block truncate text-fs-sm font-bold text-foreground">
+                    <span className="block line-clamp-2 text-fs-sm font-bold text-foreground">
                       {l.name}
                     </span>
                   </button>
-                  <span className="shrink-0 text-fs-sm font-bold tabular-nums text-foreground">
+                  <span className="min-w-[4.5rem] text-right text-fs-sm font-bold tabular-nums text-foreground">
                     {money(l.price * l.qty)}
                   </span>
                   <button
@@ -241,17 +241,18 @@ export function OrderPanel({ wide }: { wide: boolean }) {
                   </button>
                 </div>
                 {l.modifiers?.length ? (
-                  <div className="pl-10">
+                  <div className="pl-12">
                     {l.modifiers.map((m) => (
                       <div key={m} className="flex items-start gap-2 pb-1">
                         <span className="text-fs-xs leading-none text-muted-foreground">&#x2514;</span>
-                        <span className="min-w-0 flex-1 truncate text-fs-xs font-bold text-tile-orange">
-                          {m}
+                        <span className="min-w-0 flex-1 truncate text-fs-xs font-bold text-tile-blue">
+                          - {m}
                         </span>
                       </div>
                     ))}
                   </div>
                 ) : null}
+
                 {l.notes ? (
                   <p className="truncate pl-10 pb-1 text-fs-xs text-muted-foreground">{l.notes}</p>
                 ) : null}
