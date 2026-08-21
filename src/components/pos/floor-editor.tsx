@@ -274,7 +274,7 @@ export function FloorEditor({
                   ) : (
                     <span
                       className={cn(
-                        "grid place-items-center border-2 border-foreground/40",
+                        "relative grid place-items-center border-2 border-foreground/40 text-foreground",
                         stool
                           ? "size-[clamp(1.5rem,3vw,2.25rem)] rounded-full"
                           : "size-[clamp(2.5rem,5.5vw,4.25rem)]",
@@ -282,6 +282,8 @@ export function FloorEditor({
                       )}
                       style={{ transform: `rotate(${o.rotation ?? 0}deg)` }}
                     >
+                      {/* Seat dots match the seats stepper, so counts never drift. */}
+                      {stool ? null : <Seats seats={o.seats} />}
                       <span
                         className="max-w-[86%] truncate text-[clamp(0.5rem,1.1vw,0.7rem)] font-bold leading-none text-foreground"
                         style={{ transform: `rotate(${uprightSpin(o.rotation)}deg)` }}
@@ -289,6 +291,7 @@ export function FloorEditor({
                         {o.label || o.name}
                       </span>
                     </span>
+
                   )}
                 </button>
 
