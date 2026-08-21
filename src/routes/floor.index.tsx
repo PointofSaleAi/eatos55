@@ -9,7 +9,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import { FloorCanvas } from "@/components/pos/floor-canvas";
@@ -43,6 +43,7 @@ import {
 
   floorSections,
   floorTables,
+  formatDwell,
   floors,
   isDecor,
   layoutTemplates,
@@ -102,6 +103,12 @@ function FloorPlan() {
     deleteFloorTemplate,
     canManageSettings,
   } = usePos();
+  // Dwell times tick once a minute so the grid and layout stay in step.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
   const [section, setSection] = useState<FloorSection>("all");
   const [view, setView] = useState<"grid" | "layout">("grid");
   const [staffOpen, setStaffOpen] = useState(false);

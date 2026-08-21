@@ -250,6 +250,17 @@ export const tableStateOrder: TableState[] = [
   "partially-seated",
 ];
 
+/**
+ * Dwell time at a table, formatted as zero-padded HH:MM, the same way times
+ * read on tickets. Hours keep counting past a day (26:10) so nothing resets.
+ */
+export function formatDwell(minutes: number): string {
+  const total = Math.max(0, Math.round(minutes));
+  const h = Math.floor(total / 60);
+  const m = total % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
 export const floorTables: FloorTable[] = [
   // Ground floor, section B1
   { id: "ft-test", name: "test", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "B1", shape: "square", x: 74, y: 46 },
