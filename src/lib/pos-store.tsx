@@ -929,6 +929,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
           delete next[f];
           return next;
         }),
+      tableSeated,
+      setTableSeated: (table, seated) =>
+        setTableSeatedMap((s) => ({ ...s, [table]: Math.max(0, seated) })),
       setTableState: (table, state) => {
         setTableStates((s) => ({ ...s, [table]: state }));
         setTableSince((s) => {
@@ -937,6 +940,14 @@ export function PosProvider({ children }: { children: ReactNode }) {
           else next[table] = new Date().toISOString();
           return next;
         });
+        // Freeing a table clears its party, so seated counts never linger.
+        if (state === "available" || state === "reserved") {
+          setTableSeatedMap((s) => {
+            const next = { ...s };
+            delete next[table];
+            return next;
+          });
+        }
       },
       roomStates,
       setRoomState: (room, state) => setRoomStates((s) => ({ ...s, [room]: state })),
