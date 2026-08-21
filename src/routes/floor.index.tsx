@@ -9,7 +9,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import { FloorCanvas } from "@/components/pos/floor-canvas";
@@ -43,6 +43,7 @@ import {
 
   floorSections,
   floorTables,
+  formatDwell,
   floors,
   isDecor,
   layoutTemplates,
@@ -76,10 +77,7 @@ export const Route = createFileRoute("/floor/")({
   component: FloorPlan,
 });
 
-function elapsed(iso: string) {
-  const mins = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
-  return mins < 60 ? `${mins}M` : `${Math.floor(mins / 60)}H`;
-}
+
 
 const statusOptions: StatusOption<TableState>[] = tableStateOrder.map((id) => ({
   id,
@@ -105,6 +103,12 @@ function FloorPlan() {
     deleteFloorTemplate,
     canManageSettings,
   } = usePos();
+  // Dwell times tick once a minute so the grid and layout stay in step.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
   const [section, setSection] = useState<FloorSection>("all");
   const [view, setView] = useState<"grid" | "layout">("grid");
   const [staffOpen, setStaffOpen] = useState(false);
@@ -140,7 +144,11 @@ function FloorPlan() {
         x: o.x,
         y: o.y,
         state: (tableStates[o.name] ?? base?.state ?? "available") as TableState,
-        since: started ? elapsed(started) : base?.since,
+        since: started
+          ? formatDwell(Math.round((now - new Date(started).getTime()) / 60000))
+          : base?.seatedMinutesAgo !== undefined
+            ? formatDwell(base.seatedMinutesAgo)
+            : undefined,
       };
     });
 
