@@ -57,13 +57,16 @@ export function FloorEditor({
       name:
         kind === "table"
           ? `T${count}`
-          : `${meta.label}${count > 1 ? ` ${count}` : ""}`,
+          : kind === "bar-chair"
+            ? `S${count}`
+            : `${meta.label}${count > 1 ? ` ${count}` : ""}`,
       seats: meta.seats,
       rotation: 0,
       shape: kind === "table" ? "round" : "square",
       section: "B1",
-      x: 50,
-      y: 50,
+      // Stagger drops so a new object never lands exactly on the last one.
+      x: snap(30 + ((objects.length * 8) % 50)),
+      y: snap(30 + ((objects.length * 6) % 40)),
       ...(hasFootprint(kind) ? { w: meta.w ?? 30, h: meta.h ?? 8 } : {}),
     };
     onChange([...objects, next]);
