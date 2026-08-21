@@ -153,7 +153,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
               type="button"
               onClick={() => setOrderType(q.type)}
               className={cn(
-                "flex min-h-tap items-center justify-center gap-1.5 rounded-row px-1 text-fs-xs font-extrabold uppercase tracking-tight transition-colors",
+                "flex min-h-tap items-center justify-center gap-1 rounded-row px-0.5 text-fs-xs font-extrabold uppercase tracking-[-0.02em] transition-colors",
                 orderType === q.type
                   ? "border-2 border-foreground bg-surface text-foreground shadow-sm"
                   : "border border-transparent bg-muted text-muted-foreground hover:bg-secondary",
