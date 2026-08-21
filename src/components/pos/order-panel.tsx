@@ -292,17 +292,8 @@ export function OrderPanel({ wide }: { wide: boolean }) {
           </div>
         </dl>
 
-        <div className="mt-1.5 flex items-center gap-2">
-          <button
-            type="button"
-            disabled={!totals.count}
-            aria-label="Save order"
-            title="Save order"
-            onClick={() => toast.success("Order saved")}
-            className="grid min-h-ctl-lg w-14 shrink-0 place-items-center rounded-row border border-border bg-muted text-foreground transition-colors hover:bg-secondary disabled:opacity-40"
-          >
-            <Save className="size-5" />
-          </button>
+        <div className="mt-1.5 grid grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] items-center gap-2">
+
           <button
             type="button"
             disabled={!totals.count}
