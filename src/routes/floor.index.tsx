@@ -182,7 +182,7 @@ function FloorPlan() {
         </div>
 
         {view === "layout" ? (
-          <div className="min-h-0 flex-1 p-3 pb-[calc(0.75rem+var(--tabs-inset,0px))]">
+          <div className="min-h-0 flex-1 p-3 pb-[calc(0.75rem+var(--tabs-h,0px))]">
             <FloorCanvas
               tables={tables}
               onOpen={(t) => openTable(t)}
