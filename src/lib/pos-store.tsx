@@ -636,12 +636,14 @@ export function PosProvider({ children }: { children: ReactNode }) {
         const saved = JSON.parse(raw) as {
           tableStates?: Record<string, TableState>;
           tableSince?: Record<string, string>;
+          tableSeated?: Record<string, number>;
           roomStates?: Record<string, RoomState>;
           floorLayouts?: Record<string, FloorObject[]>;
           floorTemplates?: SavedTemplate[];
         };
         if (saved.tableStates) setTableStates(saved.tableStates);
         if (saved.tableSince) setTableSince(saved.tableSince);
+        if (saved.tableSeated) setTableSeatedMap(saved.tableSeated);
         if (saved.roomStates) setRoomStates(saved.roomStates);
         if (saved.floorLayouts) setFloorLayouts(saved.floorLayouts);
         if (saved.floorTemplates) setFloorTemplates(saved.floorTemplates);
@@ -656,12 +658,27 @@ export function PosProvider({ children }: { children: ReactNode }) {
     try {
       window.localStorage.setItem(
         "eatos.pos.floor",
-        JSON.stringify({ tableStates, tableSince, roomStates, floorLayouts, floorTemplates }),
+        JSON.stringify({
+          tableStates,
+          tableSince,
+          tableSeated,
+          roomStates,
+          floorLayouts,
+          floorTemplates,
+        }),
       );
     } catch {
       /* ignore unwritable storage */
     }
-  }, [tableStates, tableSince, roomStates, floorLayouts, floorTemplates, floorReady]);
+  }, [
+    tableStates,
+    tableSince,
+    tableSeated,
+    roomStates,
+    floorLayouts,
+    floorTemplates,
+    floorReady,
+  ]);
 
 
 
