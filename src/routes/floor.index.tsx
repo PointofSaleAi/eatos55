@@ -181,70 +181,8 @@ function FloorPlan() {
             <div className="flex shrink-0 items-center gap-2">
               {editing ? (
                 <>
-                  {/* Templates give staff a starting arrangement to edit. */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="inline-flex h-ctl-sm min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted">
-                      Template
-                      <ChevronDown className="size-4 shrink-0" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="min-w-52">
-                      <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
-                        Starter layouts
-                      </DropdownMenuLabel>
-                      {layoutTemplates.map((t) => (
-                        <DropdownMenuItem
-                          key={t.id}
-                          className="text-fs-sm font-normal text-foreground"
-                          onClick={() => {
-                            setDraft(t.build());
-                            toast.success(`${t.label} template loaded. Save to keep it.`);
-                          }}
-                        >
-                          {t.label}
-                        </DropdownMenuItem>
-                      ))}
-                      {floorTemplates.length ? (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
-                            My templates
-                          </DropdownMenuLabel>
-                          {floorTemplates.map((t) => (
-                            <DropdownMenuItem
-                              key={t.id}
-                              className="text-fs-sm font-normal text-foreground"
-                              onClick={() => {
-                                setDraft(cloneLayout(t.objects));
-                                toast.success(`${t.label} loaded. Save to keep it.`);
-                              }}
-                            >
-                              <span className="min-w-0 flex-1 truncate">{t.label}</span>
-                              <button
-                                type="button"
-                                aria-label={`Delete ${t.label}`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  deleteFloorTemplate(t.id);
-                                  toast.success(`${t.label} deleted`);
-                                }}
-                                className="ml-2 shrink-0 text-destructive"
-                              >
-                                <Trash2 className="size-4" />
-                              </button>
-                            </DropdownMenuItem>
-                          ))}
-                        </>
-                      ) : null}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className="text-fs-sm font-bold text-foreground"
-                        onClick={() => setTemplateName("")}
-                      >
-                        Save current as template
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
                   <button
+
                     type="button"
                     onClick={() => setDraft(null)}
                     aria-label="Cancel layout edits"
