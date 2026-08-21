@@ -18,7 +18,7 @@ import {
   type Ticket,
   type TicketStatus,
 } from "./demo-data";
-import type { TableState } from "./floor-data";
+import { defaultFloorLayout, type FloorObject, type TableState } from "./floor-data";
 import {
   inRange,
   rangeForPreset,
@@ -408,6 +408,11 @@ type Store = {
   tableStates: Record<string, TableState>;
   tableSince: Record<string, string>;
   setTableState: (table: string, state: TableState) => void;
+  /** Saved layouts per floor; falls back to the seeded arrangement. */
+  floorLayouts: Record<string, FloorObject[]>;
+  getFloorLayout: (floor: string) => FloorObject[];
+  saveFloorLayout: (floor: string, objects: FloorObject[]) => void;
+  resetFloorLayout: (floor: string) => void;
   roomStates: Record<string, RoomState>;
   setRoomState: (room: string, state: RoomState) => void;
   startOrder: (table?: string, partySize?: number) => void;
@@ -563,6 +568,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [tableStates, setTableStates] = useState<Record<string, TableState>>({});
   const [tableSince, setTableSince] = useState<Record<string, string>>({});
   const [roomStates, setRoomStates] = useState<Record<string, RoomState>>({});
+  const [floorLayouts, setFloorLayouts] = useState<Record<string, FloorObject[]>>({});
   const [floorReady, setFloorReady] = useState(false);
 
   const [noTax, setNoTax] = useState(false);
@@ -616,10 +622,12 @@ export function PosProvider({ children }: { children: ReactNode }) {
           tableStates?: Record<string, TableState>;
           tableSince?: Record<string, string>;
           roomStates?: Record<string, RoomState>;
+          floorLayouts?: Record<string, FloorObject[]>;
         };
         if (saved.tableStates) setTableStates(saved.tableStates);
         if (saved.tableSince) setTableSince(saved.tableSince);
         if (saved.roomStates) setRoomStates(saved.roomStates);
+        if (saved.floorLayouts) setFloorLayouts(saved.floorLayouts);
       }
     } catch {
       /* ignore unreadable storage */
@@ -631,12 +639,12 @@ export function PosProvider({ children }: { children: ReactNode }) {
     try {
       window.localStorage.setItem(
         "eatos.pos.floor",
-        JSON.stringify({ tableStates, tableSince, roomStates }),
+        JSON.stringify({ tableStates, tableSince, roomStates, floorLayouts }),
       );
     } catch {
       /* ignore unwritable storage */
     }
-  }, [tableStates, tableSince, roomStates, floorReady]);
+  }, [tableStates, tableSince, roomStates, floorLayouts, floorReady]);
 
 
 
@@ -869,6 +877,15 @@ export function PosProvider({ children }: { children: ReactNode }) {
       setFloor,
       tableStates,
       tableSince,
+      floorLayouts,
+      getFloorLayout: (f) => floorLayouts[f] ?? defaultFloorLayout(f),
+      saveFloorLayout: (f, objects) => setFloorLayouts((m) => ({ ...m, [f]: objects })),
+      resetFloorLayout: (f) =>
+        setFloorLayouts((m) => {
+          const next = { ...m };
+          delete next[f];
+          return next;
+        }),
       setTableState: (table, state) => {
         setTableStates((s) => ({ ...s, [table]: state }));
         setTableSince((s) => {
@@ -1150,6 +1167,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     tableStates,
     tableSince,
     roomStates,
+    floorLayouts,
 
     guest,
     orderType,

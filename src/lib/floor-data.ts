@@ -31,6 +31,49 @@ export type FloorTable = {
   y?: number;
 };
 
+/** Objects that can sit on an editable floor layout. */
+export type FloorObjectKind =
+  | "table"
+  | "bar"
+  | "counter"
+  | "booth"
+  | "wall"
+  | "door"
+  | "plant";
+
+export type FloorObject = {
+  id: string;
+  kind: FloorObjectKind;
+  name: string;
+  /** Seat capacity, only meaningful for tables and booths. */
+  seats: number;
+  shape: "round" | "square";
+  section: "B1" | "B2";
+  /** Position on the canvas, in percent of canvas width / height. */
+  x: number;
+  y: number;
+  /** Footprint in percent of the canvas, used by bars, counters and walls. */
+  w?: number;
+  h?: number;
+};
+
+/** Objects that are decor: they never take orders and never show a status. */
+export const decorKinds: FloorObjectKind[] = ["bar", "counter", "wall", "door", "plant"];
+
+export const floorObjectKindMeta: Record<FloorObjectKind, { label: string; seats: number }> = {
+  table: { label: "Table", seats: 4 },
+  booth: { label: "Booth", seats: 4 },
+  bar: { label: "Bar", seats: 0 },
+  counter: { label: "Counter", seats: 0 },
+  wall: { label: "Wall", seats: 0 },
+  door: { label: "Door", seats: 0 },
+  plant: { label: "Plant", seats: 0 },
+};
+
+export function isDecor(kind: FloorObjectKind) {
+  return decorKinds.includes(kind);
+}
+
 export const floors = ["Ground Floor", "First Floor", "Patio"] as const;
 
 export const floorSections = ["all", "B2", "B1"] as const;
@@ -181,6 +224,69 @@ export const floorTables: FloorTable[] = [
   { id: "ft-p1", name: "P1", state: "available", seats: 4, seated: 0, floor: "Patio", section: "B1", shape: "round", x: 28, y: 36 },
   { id: "ft-p2", name: "P2", state: "ordering", seats: 2, seated: 2, since: "8M", floor: "Patio", section: "B1", shape: "round", x: 56, y: 36 },
   { id: "ft-p3", name: "P3", state: "partially-seated", seats: 6, seated: 3, since: "22M", floor: "Patio", section: "B2", shape: "square", x: 44, y: 72 },
+];
+
+/** The saved-layout shape a floor starts from, built out of the seeded tables. */
+export function defaultFloorLayout(floor: string): FloorObject[] {
+  return floorTables
+    .filter((t) => t.floor === floor)
+    .map((t) => ({
+      id: t.id,
+      kind: "table" as FloorObjectKind,
+      name: t.name,
+      seats: t.seats,
+      shape: t.shape ?? "round",
+      section: t.section ?? "B1",
+      x: t.x ?? 50,
+      y: t.y ?? 50,
+    }));
+}
+
+function tableAt(name: string, x: number, y: number, seats: number, shape: "round" | "square" = "round", section: "B1" | "B2" = "B1"): FloorObject {
+  return { id: `tpl-${name}-${x}-${y}`, kind: "table", name, seats, shape, section, x, y };
+}
+
+/** Starter arrangements staff can drop in and then edit. */
+export const layoutTemplates: { id: string; label: string; build: () => FloorObject[] }[] = [
+  {
+    id: "cafe",
+    label: "Cafe",
+    build: () => [
+      { id: "tpl-counter", kind: "counter", name: "Counter", seats: 0, shape: "square", section: "B1", x: 50, y: 12, w: 60, h: 8 },
+      ...[1, 2, 3, 4, 5, 6].map((n, i) =>
+        tableAt(`T${n}`, 20 + (i % 3) * 30, 40 + Math.floor(i / 3) * 28, 2, "round", i % 2 ? "B1" : "B2"),
+      ),
+    ],
+  },
+  {
+    id: "dining",
+    label: "Dining room",
+    build: () => [
+      ...Array.from({ length: 12 }).map((_, i) =>
+        tableAt(`T${i + 1}`, 16 + (i % 4) * 23, 20 + Math.floor(i / 4) * 28, i % 4 === 0 ? 6 : 4, i % 3 === 0 ? "square" : "round", i % 2 ? "B1" : "B2"),
+      ),
+    ],
+  },
+  {
+    id: "bar-lounge",
+    label: "Bar and lounge",
+    build: () => [
+      { id: "tpl-bar", kind: "bar", name: "Bar", seats: 0, shape: "square", section: "B1", x: 50, y: 16, w: 66, h: 10 },
+      ...[1, 2, 3, 4].map((n, i) => tableAt(`B${n}`, 20 + i * 20, 42, 2, "round", "B1")),
+      ...[1, 2, 3].map((n, i) => tableAt(`L${n}`, 26 + i * 24, 74, 6, "square", "B2")),
+      { id: "tpl-plant", kind: "plant", name: "Plant", seats: 0, shape: "round", section: "B1", x: 90, y: 88 },
+    ],
+  },
+  {
+    id: "patio",
+    label: "Patio",
+    build: () => [
+      ...Array.from({ length: 8 }).map((_, i) =>
+        tableAt(`P${i + 1}`, 18 + (i % 4) * 22, 30 + Math.floor(i / 4) * 36, 4, "round", i % 2 ? "B1" : "B2"),
+      ),
+      { id: "tpl-door", kind: "door", name: "Door", seats: 0, shape: "square", section: "B1", x: 8, y: 8, w: 10, h: 4 },
+    ],
+  },
 ];
 
 /** Staff roster shown in the floor plan staff panel, grouped by role. */

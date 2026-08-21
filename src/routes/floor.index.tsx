@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, LayoutGrid, Map, Users } from "lucide-react";
+import { Check, ChevronDown, LayoutGrid, Map as MapIcon, Pencil, Users, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import { FloorCanvas } from "@/components/pos/floor-canvas";
+import { FloorEditor } from "@/components/pos/floor-editor";
 import { GuestsSheet } from "@/components/pos/guests-sheet";
 import { StaffPanel } from "@/components/pos/staff-panel";
 import { StatusSheet, type StatusOption } from "@/components/pos/status-sheet";
@@ -20,9 +21,13 @@ import {
   floorSections,
   floorTables,
   floors,
+  isDecor,
+  layoutTemplates,
   tableStateMeta,
   tableStateOrder,
+  type FloorObject,
   type FloorSection,
+  type FloorTable,
   type TableState,
 } from "@/lib/floor-data";
 import { usePos } from "@/lib/pos-store";
@@ -61,24 +66,52 @@ const statusOptions: StatusOption<TableState>[] = tableStateOrder.map((id) => ({
 
 function FloorPlan() {
   const navigate = useNavigate();
-  const { floor, setFloor, tableStates, tableSince, setTableState, startOrder, settings } = usePos();
+  const {
+    floor,
+    setFloor,
+    tableStates,
+    tableSince,
+    setTableState,
+    startOrder,
+    settings,
+    getFloorLayout,
+    saveFloorLayout,
+    canManageSettings,
+  } = usePos();
   const [section, setSection] = useState<FloorSection>("all");
   const [view, setView] = useState<"grid" | "layout">("grid");
   const [staffOpen, setStaffOpen] = useState(false);
   const [statusFor, setStatusFor] = useState<{ name: string; state: TableState } | null>(null);
   const [guestsFor, setGuestsFor] = useState<{ name: string; seats: number } | null>(null);
+  const [draft, setDraft] = useState<FloorObject[] | null>(null);
+  const editing = draft !== null;
 
-  const tables = floorTables
-    .filter((t) => t.floor === floor)
-    .map((t) => {
-      const started = tableSince[t.name];
+  const layout = getFloorLayout(floor);
+  const seed = new Map(floorTables.filter((t) => t.floor === floor).map((t) => [t.name, t]));
+  const inSection = (sec: "B1" | "B2") => section === "all" || sec === section;
+
+  const tables: FloorTable[] = layout
+    .filter((o) => !isDecor(o.kind))
+    .filter((o) => inSection(o.section))
+    .map((o) => {
+      const base = seed.get(o.name);
+      const started = tableSince[o.name];
       return {
-        ...t,
-        state: (tableStates[t.name] ?? t.state) as TableState,
-        since: started ? elapsed(started) : t.since,
+        id: o.id,
+        name: o.name,
+        seats: o.seats,
+        seated: base?.seated ?? 0,
+        floor,
+        section: o.section,
+        shape: o.shape,
+        x: o.x,
+        y: o.y,
+        state: (tableStates[o.name] ?? base?.state ?? "available") as TableState,
+        since: started ? elapsed(started) : base?.since,
       };
-    })
-    .filter((t) => (section === "all" ? true : t.section === section));
+    });
+
+  const decor = layout.filter((o) => isDecor(o.kind)).filter((o) => inSection(o.section));
 
   const openTable = (t: { name: string; seats: number; state: TableState }) => {
     // Occupied tables resume; free tables ask how many are seated first.
@@ -102,10 +135,17 @@ function FloorPlan() {
                   <span className="truncate">{floor}</span>
                   <ChevronDown className="size-5 shrink-0" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
+                <DropdownMenuContent align="start" className="min-w-44">
                   {floors.map((f) => (
-                    <DropdownMenuItem key={f} onClick={() => setFloor(f)}>
-                      {f}
+                    <DropdownMenuItem
+                      key={f}
+                      onClick={() => setFloor(f)}
+                      className="text-fs-sm font-normal text-foreground"
+                    >
+                      <span className="min-w-0 flex-1 truncate">{f}</span>
+                      {f === floor ? (
+                        <Check className="size-4 shrink-0 text-primary" aria-hidden />
+                      ) : null}
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
@@ -113,52 +153,110 @@ function FloorPlan() {
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
-              {/* Grid or seating-layout view. */}
-              <div className="flex items-center gap-1 rounded-pill bg-muted p-1">
-                {(
-                  [
-                    { id: "grid" as const, label: "Grid", Icon: LayoutGrid },
-                    { id: "layout" as const, label: "Layout", Icon: Map },
-                  ] satisfies { id: "grid" | "layout"; label: string; Icon: typeof Map }[]
-                ).map(({ id, label, Icon }) => (
+              {editing ? (
+                <>
+                  {/* Templates give staff a starting arrangement to edit. */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="inline-flex h-ctl-sm min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted">
+                      Template
+                      <ChevronDown className="size-4 shrink-0" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="min-w-44">
+                      {layoutTemplates.map((t) => (
+                        <DropdownMenuItem
+                          key={t.id}
+                          className="text-fs-sm font-normal text-foreground"
+                          onClick={() => {
+                            setDraft(t.build());
+                            toast.success(`${t.label} template loaded. Save to keep it.`);
+                          }}
+                        >
+                          {t.label}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                   <button
-                    key={id}
                     type="button"
-                    onClick={() => setView(id)}
-                    aria-pressed={view === id}
-                    aria-label={`${label} view`}
+                    onClick={() => setDraft(null)}
+                    aria-label="Cancel layout edits"
+                    className="grid size-11 shrink-0 place-items-center rounded-pill border border-border text-foreground transition-colors hover:bg-muted"
+                  >
+                    <X className="size-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (draft) saveFloorLayout(floor, draft);
+                      setDraft(null);
+                      toast.success(`${floor} layout saved`);
+                    }}
+                    className="inline-flex h-ctl-sm min-h-ctl-sm shrink-0 items-center justify-center rounded-pill bg-primary px-4 text-fs-sm font-extrabold uppercase leading-none text-primary-foreground"
+                  >
+                    Save
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Grid or seating-layout view. */}
+                  <div className="flex items-center gap-1 rounded-pill bg-muted p-1">
+                    {(
+                      [
+                        { id: "grid" as const, label: "Grid", Icon: LayoutGrid },
+                        { id: "layout" as const, label: "Layout", Icon: MapIcon },
+                      ] satisfies { id: "grid" | "layout"; label: string; Icon: typeof MapIcon }[]
+                    ).map(({ id, label, Icon }) => (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => setView(id)}
+                        aria-pressed={view === id}
+                        aria-label={`${label} view`}
+                        className={cn(
+                          "grid size-9 place-items-center rounded-pill transition-colors",
+                          view === id
+                            ? "bg-surface text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        <Icon className="size-4" />
+                      </button>
+                    ))}
+                  </div>
+                  {/* Layout editing is a manager-level action. */}
+                  {view === "layout" && canManageSettings ? (
+                    <button
+                      type="button"
+                      onClick={() => setDraft(layout.map((o) => ({ ...o })))}
+                      aria-label="Edit floor layout"
+                      className="grid size-11 shrink-0 place-items-center rounded-pill border border-border text-foreground transition-colors hover:bg-muted"
+                    >
+                      <Pencil className="size-5" />
+                    </button>
+                  ) : null}
+                  <button
+                    type="button"
+                    onClick={() => setStaffOpen((v) => !v)}
+                    aria-label="Staff list"
+                    aria-pressed={staffOpen}
                     className={cn(
-                      "grid size-9 place-items-center rounded-pill transition-colors",
-                      view === id
-                        ? "bg-surface text-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground",
+                      "grid size-11 shrink-0 place-items-center rounded-pill border border-border transition-colors",
+                      staffOpen ? "bg-muted text-foreground" : "text-foreground hover:bg-muted",
                     )}
                   >
-                    <Icon className="size-4" />
+                    <Users className="size-5" />
                   </button>
-                ))}
-              </div>
-              <button
-                type="button"
-                onClick={() => setStaffOpen((v) => !v)}
-                aria-label="Staff list"
-                aria-pressed={staffOpen}
-                className={cn(
-                  "grid size-11 shrink-0 place-items-center rounded-pill border border-border transition-colors",
-                  staffOpen ? "bg-muted text-foreground" : "text-foreground hover:bg-muted",
-                )}
-              >
-                <Users className="size-5" />
-              </button>
-              {/* Rooms is a hotel module: only shown when room service is switched on. */}
-              {settings.roomService ? (
-                <Link
-                  to="/rooms"
-                  className="inline-flex h-ctl-sm min-h-ctl-sm shrink-0 items-center justify-center rounded-pill border border-border px-3.5 text-fs-sm font-bold leading-none text-foreground transition-colors hover:bg-muted"
-                >
-                  Rooms
-                </Link>
-              ) : null}
+                  {/* Rooms is a hotel module: only shown when room service is switched on. */}
+                  {settings.roomService ? (
+                    <Link
+                      to="/rooms"
+                      className="inline-flex h-ctl-sm min-h-ctl-sm shrink-0 items-center justify-center rounded-pill border border-border px-3.5 text-fs-sm font-bold leading-none text-foreground transition-colors hover:bg-muted"
+                    >
+                      Rooms
+                    </Link>
+                  ) : null}
+                </>
+              )}
             </div>
           </div>
 
@@ -181,10 +279,15 @@ function FloorPlan() {
           </div>
         </div>
 
-        {view === "layout" ? (
+        {editing ? (
+          <div className="flex min-h-0 flex-1 flex-col p-3 pb-[calc(0.75rem+var(--tabs-h,0px))]">
+            <FloorEditor objects={draft ?? []} onChange={setDraft} />
+          </div>
+        ) : view === "layout" ? (
           <div className="min-h-0 flex-1 p-3 pb-[calc(0.75rem+var(--tabs-h,0px))]">
             <FloorCanvas
               tables={tables}
+              decor={decor}
               onOpen={(t) => openTable(t)}
               onStatus={(t) => setStatusFor({ name: t.name, state: t.state })}
             />
@@ -196,10 +299,17 @@ function FloorPlan() {
                 No Tables Found
               </p>
             ) : (
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(8.25rem,1fr))] gap-3">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(9.5rem,1fr))] gap-3">
                 {tables.map((t) => {
                   const meta = tableStateMeta[t.state];
                   const seated = t.seated ?? 0;
+                  // Long names shrink instead of truncating so the number stays readable.
+                  const nameSize =
+                    t.name.length > 7
+                      ? "text-[0.6rem]"
+                      : t.name.length > 5
+                        ? "text-[0.7rem]"
+                        : "text-fs-sm";
                   return (
                     <div
                       key={t.id}
@@ -208,17 +318,20 @@ function FloorPlan() {
                       <button
                         type="button"
                         onClick={() => openTable(t)}
+                        title={t.name}
                         className="block w-full transition-transform active:scale-[0.98]"
                       >
                         <div className="relative grid h-tile place-items-center">
                           <div
                             className={cn(
-                              "grid size-[70px] place-items-center border-2 text-fs-sm font-bold text-foreground",
+                              "grid size-[76px] place-items-center border-2 font-bold text-foreground",
                               (t.shape ?? "round") === "round" ? "rounded-full" : "rounded-row",
                               meta.ring,
                             )}
                           >
-                            <span className="max-w-[85%] truncate px-1">{t.name}</span>
+                            <span className={cn("max-w-[94%] truncate px-0.5 leading-none", nameSize)}>
+                              {t.name}
+                            </span>
                           </div>
                           {t.since ? (
                             <span className="absolute bottom-2 right-3 text-fs-xs font-bold text-muted-foreground">

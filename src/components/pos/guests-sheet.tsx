@@ -42,7 +42,7 @@ export function GuestsSheet({
         hideClose
         side="bottom"
         style={dragStyle}
-        className="mx-auto w-full max-w-[22rem] rounded-t-sheet border-0 bg-surface p-0 pb-[calc(1rem+var(--kb-inset,0px))]"
+        className="mx-auto w-full max-w-[19rem] rounded-t-sheet border-0 bg-surface p-0 pb-[calc(0.75rem+var(--kb-inset,0px))]"
       >
         <SheetGrabber handleProps={handleProps} />
         <SheetHeader className="px-4 pb-1 pt-1" {...handleProps}>
@@ -53,21 +53,21 @@ export function GuestsSheet({
 
         <p
           aria-live="polite"
-          className="border-b border-border pb-3 text-center text-fs-2xl font-extrabold leading-none text-foreground"
+          className="border-b border-border pb-2 text-center text-fs-xl font-extrabold leading-none text-foreground"
         >
           {count}
         </p>
-        <p className="pt-1.5 text-center text-fs-xs text-muted-foreground">
+        <p className="pt-1 text-center text-fs-xs text-muted-foreground">
           Seats {cap} · guests seated
         </p>
 
-        <div className="grid grid-cols-3 gap-2 px-4 pt-3">
+        <div className="grid grid-cols-3 gap-1.5 px-3 pt-2">
           {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((d) => (
             <button
               key={d}
               type="button"
               onClick={() => press(d)}
-              className="grid min-h-ctl-lg place-items-center rounded-card bg-muted text-fs-lg font-extrabold text-foreground transition-transform active:scale-[0.97]"
+              className="grid min-h-ctl-sm place-items-center rounded-row bg-muted text-fs-base font-extrabold text-foreground transition-transform active:scale-[0.97]"
             >
               {d}
             </button>
@@ -75,14 +75,14 @@ export function GuestsSheet({
           <button
             type="button"
             onClick={() => setEntry("")}
-            className="grid min-h-ctl-lg place-items-center rounded-card bg-muted text-fs-sm font-extrabold uppercase text-muted-foreground transition-transform active:scale-[0.97]"
+            className="grid min-h-ctl-sm place-items-center rounded-row bg-muted text-fs-xs font-extrabold uppercase text-muted-foreground transition-transform active:scale-[0.97]"
           >
             Clear
           </button>
           <button
             type="button"
             onClick={() => press("0")}
-            className="grid min-h-ctl-lg place-items-center rounded-card bg-muted text-fs-lg font-extrabold text-foreground transition-transform active:scale-[0.97]"
+            className="grid min-h-ctl-sm place-items-center rounded-row bg-muted text-fs-base font-extrabold text-foreground transition-transform active:scale-[0.97]"
           >
             0
           </button>
@@ -90,19 +90,19 @@ export function GuestsSheet({
             type="button"
             aria-label="Backspace"
             onClick={() => setEntry((p) => p.slice(0, -1))}
-            className="grid min-h-ctl-lg place-items-center rounded-card bg-muted text-foreground transition-transform active:scale-[0.97]"
+            className="grid min-h-ctl-sm place-items-center rounded-row bg-muted text-foreground transition-transform active:scale-[0.97]"
           >
-            <Delete className="size-5" />
+            <Delete className="size-4" />
           </button>
         </div>
 
-        <div className="px-4 pt-3">
+        <div className="px-3 pt-2">
           <button
             type="button"
             disabled={!valid}
             onClick={() => onStart(count)}
             className={cn(
-              "min-h-ctl-lg w-full rounded-row bg-primary text-fs-sm font-extrabold uppercase text-primary-foreground transition-transform active:scale-[0.99]",
+              "min-h-ctl-sm w-full rounded-row bg-primary text-fs-xs font-extrabold uppercase text-primary-foreground transition-transform active:scale-[0.99]",
               !valid && "opacity-40",
             )}
           >
