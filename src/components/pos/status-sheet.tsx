@@ -54,7 +54,7 @@ export function StatusSheet<T extends string>({
             {title}
           </SheetTitle>
         </SheetHeader>
-        <div className="max-h-[min(60dvh,26rem)] overflow-y-auto overscroll-contain">
+        <div className="overscroll-contain">
           {options.map((o, i) => {
             const active = value === o.id;
             return (
@@ -65,15 +65,15 @@ export function StatusSheet<T extends string>({
                 onClick={() => onPick(o.id)}
                 aria-pressed={active}
                 className={cn(
-                  "flex min-h-tap w-full items-center gap-2.5 px-4 py-2 text-left",
+                  "flex min-h-tap w-full items-center gap-2.5 px-4 py-1.5 text-left",
                   i % 2 === 0 ? "bg-muted/40" : "bg-surface",
                 )}
               >
-                <Circle className={cn("size-3 shrink-0 fill-current", o.dot)} aria-hidden />
-                <span className="min-w-0 flex-1 truncate text-fs-xs font-bold text-foreground">
+                <Circle className={cn("size-3.5 shrink-0 fill-current", o.dot)} aria-hidden />
+                <span className="min-w-0 flex-1 truncate text-fs-base font-bold text-foreground sm:text-fs-lg">
                   {o.label}
                 </span>
-                {active ? <Check className="size-4 shrink-0 text-success" /> : null}
+                {active ? <Check className="size-5 shrink-0 text-success" /> : null}
               </button>
             );
           })}
