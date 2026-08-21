@@ -166,18 +166,23 @@ export function FloorCanvas({
                 </span>
               </button>
 
-              {/* Status is its own tap target so state can change without opening an order. */}
+              {/*
+                Status is its own tap target so state can change without opening an order.
+                Phones get a compact dot so labels never collide on a busy floor.
+              */}
               <button
                 type="button"
                 onClick={() => onStatus(t)}
                 aria-label={`Change status for ${t.name}, currently ${meta.label}`}
                 className={cn(
-                  "max-w-[5.5rem] truncate rounded-pill px-1.5 py-0.5 text-[0.5rem] font-bold uppercase tracking-wide transition-opacity active:opacity-80",
+                  "grid size-4 place-items-center rounded-pill border transition-opacity active:opacity-80 sm:size-auto sm:max-w-[5.5rem] sm:truncate sm:border-0 sm:px-1.5 sm:py-0.5 sm:text-[0.5rem] sm:font-bold sm:uppercase sm:tracking-wide",
                   meta.strip,
                   meta.text,
+                  "border-current",
                 )}
               >
-                {meta.label}
+                <span className="size-1.5 rounded-full bg-current sm:hidden" aria-hidden />
+                <span className="hidden sm:inline">{meta.label}</span>
               </button>
             </div>
           </div>
