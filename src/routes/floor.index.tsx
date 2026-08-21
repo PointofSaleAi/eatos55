@@ -289,6 +289,10 @@ function FloorPlan() {
                 {s === "all" ? "All" : s}
               </button>
             ))}
+            {/* Same helper the editor chip uses, so the views can never disagree. */}
+            <span className="ml-auto shrink-0 rounded-pill bg-muted px-2.5 py-1 text-fs-xs font-bold uppercase text-muted-foreground">
+              Tables {counts.tables} / Chairs {counts.chairs} / Seated {seatedTotal}
+            </span>
           </div>
         </div>
 
