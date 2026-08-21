@@ -146,6 +146,11 @@ function FloorPlan() {
 
   const decor = layout.filter((o) => isDecor(o.kind)).filter((o) => inSection(o.section));
 
+  const counts = floorCounts(editing ? (draft ?? []) : layout, section);
+  const seatedTotal = tables.reduce((sum, t) => sum + (t.seated ?? 0), 0);
+
+
+
   const openTable = (t: { name: string; seats: number; state: TableState }) => {
     // Occupied tables resume; free tables ask how many are seated first.
     if (t.state === "available" || t.state === "reserved") {
