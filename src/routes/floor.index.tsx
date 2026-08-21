@@ -279,10 +279,15 @@ function FloorPlan() {
           </div>
         </div>
 
-        {view === "layout" ? (
+        {editing ? (
+          <div className="flex min-h-0 flex-1 flex-col p-3 pb-[calc(0.75rem+var(--tabs-h,0px))]">
+            <FloorEditor objects={draft ?? []} onChange={setDraft} />
+          </div>
+        ) : view === "layout" ? (
           <div className="min-h-0 flex-1 p-3 pb-[calc(0.75rem+var(--tabs-h,0px))]">
             <FloorCanvas
               tables={tables}
+              decor={decor}
               onOpen={(t) => openTable(t)}
               onStatus={(t) => setStatusFor({ name: t.name, state: t.state })}
             />
