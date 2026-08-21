@@ -8,9 +8,13 @@ import {
 } from "@/lib/floor-data";
 import { cn } from "@/lib/utils";
 
-/** Seat dots drawn around a table shape so capacity reads at a glance. */
-export function Seats({ seats }: { seats: number }) {
+/**
+ * Seat dots drawn around a table shape. Filled dots are guests already seated, so a
+ * half-full six top reads at a glance without opening the table.
+ */
+export function Seats({ seats, seated = 0 }: { seats: number; seated?: number }) {
   const count = Math.min(8, Math.max(1, seats));
+  const filled = Math.min(count, Math.max(0, seated));
   return (
     <>
       {Array.from({ length: count }).map((_, i) => {
@@ -22,7 +26,10 @@ export function Seats({ seats }: { seats: number }) {
           <span
             key={i}
             aria-hidden
-            className="absolute size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-current opacity-70"
+            className={cn(
+              "absolute size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-current",
+              i < filled ? "bg-current opacity-100" : "bg-transparent opacity-50",
+            )}
             style={{ left: `${left}%`, top: `${top}%` }}
           />
         );
