@@ -409,7 +409,7 @@ export function RoomChargeDialog({
         total: due,
       }}
       orderNumber={tickets.length + 1}
-      venue={settings.venueName ?? "eatOS"}
+      venue={settings.restaurantName}
       onClose={() => setBillOpen(false)}
       onPrint={() => {
         const at = new Date().toLocaleTimeString("en-US", {
