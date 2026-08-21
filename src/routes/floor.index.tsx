@@ -38,6 +38,8 @@ import {
 import {
   cloneLayout,
   defaultFloorLayout,
+  floorCounts,
+
 
   floorSections,
   floorTables,
@@ -92,6 +94,7 @@ function FloorPlan() {
     setFloor,
     tableStates,
     tableSince,
+    tableSeated,
     setTableState,
     startOrder,
     settings,
@@ -127,7 +130,7 @@ function FloorPlan() {
         id: o.id,
         name: o.name,
         seats: o.seats,
-        seated: base?.seated ?? 0,
+        seated: tableSeated[o.name] ?? base?.seated ?? 0,
         floor,
         section: o.section,
         shape: o.shape,
@@ -142,6 +145,11 @@ function FloorPlan() {
     });
 
   const decor = layout.filter((o) => isDecor(o.kind)).filter((o) => inSection(o.section));
+
+  const counts = floorCounts(editing ? (draft ?? []) : layout, section);
+  const seatedTotal = tables.reduce((sum, t) => sum + (t.seated ?? 0), 0);
+
+
 
   const openTable = (t: { name: string; seats: number; state: TableState }) => {
     // Occupied tables resume; free tables ask how many are seated first.
@@ -270,7 +278,7 @@ function FloorPlan() {
             </div>
           </div>
 
-          <div className="no-scrollbar -mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4">
+          <div className="mt-3 flex flex-wrap items-center gap-2">
             {floorSections.map((s) => (
               <button
                 key={s}
@@ -286,6 +294,10 @@ function FloorPlan() {
                 {s === "all" ? "All" : s}
               </button>
             ))}
+            {/* Same helper the editor chip uses, so the views can never disagree. */}
+            <span className="ml-auto shrink-0 rounded-pill bg-muted px-2.5 py-1 text-fs-xs font-bold uppercase text-muted-foreground">
+              Tables {counts.tables} / Chairs {counts.chairs} / Seated {seatedTotal}
+            </span>
           </div>
         </div>
 

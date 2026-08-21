@@ -8,9 +8,13 @@ import {
 } from "@/lib/floor-data";
 import { cn } from "@/lib/utils";
 
-/** Seat dots drawn around a table shape so capacity reads at a glance. */
-export function Seats({ seats }: { seats: number }) {
+/**
+ * Seat dots drawn around a table shape. Filled dots are guests already seated, so a
+ * half-full six top reads at a glance without opening the table.
+ */
+export function Seats({ seats, seated = 0 }: { seats: number; seated?: number }) {
   const count = Math.min(8, Math.max(1, seats));
+  const filled = Math.min(count, Math.max(0, seated));
   return (
     <>
       {Array.from({ length: count }).map((_, i) => {
@@ -22,7 +26,10 @@ export function Seats({ seats }: { seats: number }) {
           <span
             key={i}
             aria-hidden
-            className="absolute size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-current opacity-70"
+            className={cn(
+              "absolute size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-current",
+              i < filled ? "bg-current opacity-100" : "bg-transparent opacity-50",
+            )}
             style={{ left: `${left}%`, top: `${top}%` }}
           />
         );
@@ -113,51 +120,71 @@ export function FloorCanvas({
         const meta = tableStateMeta[t.state];
         const shape = t.shape ?? "round";
         const stool = t.kind === "bar-chair";
+        const seated = t.seated ?? 0;
+        const free = t.state === "available" || t.state === "reserved";
         return (
           <div
             key={t.id}
             className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
             style={{ left: `${t.x ?? 50}%`, top: `${t.y ?? 50}%` }}
           >
-            <button
-              type="button"
-              onClick={() => onOpen(t)}
-              onContextMenu={(e) => {
-                e.preventDefault();
-                onStatus(t);
-              }}
-              title={t.name}
-              className="group grid place-items-center gap-1 text-center transition-transform active:scale-[0.97]"
-            >
-              <span
-                className={cn(
-                  "relative grid place-items-center border-2",
-                  stool
-                    ? "size-[clamp(1.5rem,3vw,2.25rem)] rounded-full"
-                    : "size-[clamp(2.5rem,5.5vw,4.25rem)]",
-                  meta.ring,
-                  meta.text,
-                  stool ? "" : shape === "round" ? "rounded-full" : "rounded-md",
-                )}
-                style={{ transform: `rotate(${t.rotation ?? 0}deg)` }}
+            <div className="relative grid place-items-center gap-1 text-center">
+              <button
+                type="button"
+                onClick={() => onOpen(t)}
+                title={t.name}
+                className="group grid place-items-center transition-transform active:scale-[0.97]"
               >
-                {stool ? null : <Seats seats={t.seats} />}
                 <span
-                  className="max-w-[86%] truncate text-[clamp(0.5rem,1.1vw,0.7rem)] font-bold leading-none text-foreground"
-                  style={{ transform: `rotate(${uprightSpin(t.rotation)}deg)` }}
+                  className={cn(
+                    "relative grid place-items-center border-2",
+                    stool
+                      ? "size-[clamp(1.5rem,3vw,2.25rem)] rounded-full"
+                      : "size-[clamp(2.5rem,5.5vw,4.25rem)]",
+                    meta.ring,
+                    meta.text,
+                    stool ? "" : shape === "round" ? "rounded-full" : "rounded-md",
+                  )}
+                  style={{ transform: `rotate(${t.rotation ?? 0}deg)` }}
                 >
-                  {t.label || t.name}
+                  {stool ? null : <Seats seats={t.seats} seated={seated} />}
+                  <span
+                    className="grid max-w-[86%] place-items-center leading-none"
+                    style={{ transform: `rotate(${uprightSpin(t.rotation)}deg)` }}
+                  >
+                    <span className="max-w-full truncate text-[clamp(0.5rem,1.1vw,0.7rem)] font-bold text-foreground">
+                      {t.label || t.name}
+                    </span>
+                    {/* Party size and time at the table, the way a host reads a floor. */}
+                    {!stool && !free ? (
+                      <span className="text-[clamp(0.4rem,0.9vw,0.6rem)] font-bold text-muted-foreground">
+                        {seated}/{t.seats}
+                        {t.since ? ` · ${t.since}` : ""}
+                      </span>
+                    ) : null}
+                  </span>
                 </span>
-              </span>
-              <span
+              </button>
+
+              {/*
+                Status is its own tap target so state can change without opening an order.
+                Phones get a compact dot so labels never collide on a busy floor.
+              */}
+              <button
+                type="button"
+                onClick={() => onStatus(t)}
+                aria-label={`Change status for ${t.name}, currently ${meta.label}`}
                 className={cn(
-                  "hidden max-w-[5rem] truncate text-[0.5rem] font-bold uppercase tracking-wide sm:block",
+                  "grid size-4 place-items-center rounded-pill border transition-opacity active:opacity-80 sm:size-auto sm:max-w-[5.5rem] sm:truncate sm:border-0 sm:px-1.5 sm:py-0.5 sm:text-[0.5rem] sm:font-bold sm:uppercase sm:tracking-wide",
+                  meta.strip,
                   meta.text,
+                  "border-current",
                 )}
               >
-                {meta.label}
-              </span>
-            </button>
+                <span className="size-1.5 rounded-full bg-current sm:hidden" aria-hidden />
+                <span className="hidden sm:inline">{meta.label}</span>
+              </button>
+            </div>
           </div>
         );
       })}

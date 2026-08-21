@@ -1,4 +1,4 @@
-import { ChevronDown, Minus, Plus, RotateCcw, RotateCw, Trash2 } from "lucide-react";
+import { ChevronDown, Minus, Plus, RotateCcw, RotateCw, Sparkles, Trash2 } from "lucide-react";
 import { useCallback, useRef, useState, type ReactNode } from "react";
 import { DecorShape, Seats, uprightSpin } from "@/components/pos/floor-canvas";
 import {
@@ -10,11 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  floorCounts,
   floorObjectKindMeta,
   hasFootprint,
   isDecor,
   isZone,
-  seatingKinds,
+  tidyLayout,
   type FloorObject,
   type FloorObjectKind,
 } from "@/lib/floor-data";
@@ -65,10 +66,9 @@ export function FloorEditor({
   const dragRef = useRef<{ id: string; mode: "move" | "rotate" } | null>(null);
   const selected = objects.find((o) => o.id === selectedId) ?? null;
 
-  // Counts read from the same objects the grid list renders, so they always agree.
-  const seating = objects.filter((o) => seatingKinds.includes(o.kind));
-  const tableCount = seating.filter((o) => o.kind !== "bar-chair").length;
-  const chairCount = seating.reduce((sum, o) => sum + Math.max(0, o.seats), 0);
+  // Counts read from the same helper the grid list uses, so they always agree.
+  const { tables: tableCount, chairs: chairCount } = floorCounts(objects);
+
 
 
   const patch = useCallback(
@@ -193,6 +193,21 @@ export function FloorEditor({
         ))}
 
         {toolbarExtra}
+
+        {/* Tidy up snaps everything back into an even, orderly arrangement. */}
+        <button
+          type="button"
+          onClick={() => {
+            onChange(tidyLayout(objects));
+            setSelectedId(null);
+          }}
+          className="inline-flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border bg-surface px-2.5 text-fs-xs font-bold uppercase text-foreground transition-colors hover:bg-muted"
+        >
+          <Sparkles className="size-3.5" aria-hidden />
+          Tidy up
+        </button>
+
+
 
         {onReset || onResetDefault ? (
           <DropdownMenu>

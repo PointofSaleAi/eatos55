@@ -412,6 +412,9 @@ type Store = {
   setFloor: (f: string) => void;
   tableStates: Record<string, TableState>;
   tableSince: Record<string, string>;
+  /** Guests currently seated per table, so every view shows the same number. */
+  tableSeated: Record<string, number>;
+  setTableSeated: (table: string, seated: number) => void;
   setTableState: (table: string, state: TableState) => void;
   /** Saved layouts per floor; falls back to the seeded arrangement. */
   floorLayouts: Record<string, FloorObject[]>;
@@ -579,6 +582,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [tableSince, setTableSince] = useState<Record<string, string>>({});
   const [roomStates, setRoomStates] = useState<Record<string, RoomState>>({});
   const [floorLayouts, setFloorLayouts] = useState<Record<string, FloorObject[]>>({});
+  const [tableSeated, setTableSeatedMap] = useState<Record<string, number>>({});
   const [floorTemplates, setFloorTemplates] = useState<SavedTemplate[]>([]);
   const [floorReady, setFloorReady] = useState(false);
 
@@ -632,12 +636,14 @@ export function PosProvider({ children }: { children: ReactNode }) {
         const saved = JSON.parse(raw) as {
           tableStates?: Record<string, TableState>;
           tableSince?: Record<string, string>;
+          tableSeated?: Record<string, number>;
           roomStates?: Record<string, RoomState>;
           floorLayouts?: Record<string, FloorObject[]>;
           floorTemplates?: SavedTemplate[];
         };
         if (saved.tableStates) setTableStates(saved.tableStates);
         if (saved.tableSince) setTableSince(saved.tableSince);
+        if (saved.tableSeated) setTableSeatedMap(saved.tableSeated);
         if (saved.roomStates) setRoomStates(saved.roomStates);
         if (saved.floorLayouts) setFloorLayouts(saved.floorLayouts);
         if (saved.floorTemplates) setFloorTemplates(saved.floorTemplates);
@@ -652,12 +658,27 @@ export function PosProvider({ children }: { children: ReactNode }) {
     try {
       window.localStorage.setItem(
         "eatos.pos.floor",
-        JSON.stringify({ tableStates, tableSince, roomStates, floorLayouts, floorTemplates }),
+        JSON.stringify({
+          tableStates,
+          tableSince,
+          tableSeated,
+          roomStates,
+          floorLayouts,
+          floorTemplates,
+        }),
       );
     } catch {
       /* ignore unwritable storage */
     }
-  }, [tableStates, tableSince, roomStates, floorLayouts, floorTemplates, floorReady]);
+  }, [
+    tableStates,
+    tableSince,
+    tableSeated,
+    roomStates,
+    floorLayouts,
+    floorTemplates,
+    floorReady,
+  ]);
 
 
 
@@ -908,6 +929,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
           delete next[f];
           return next;
         }),
+      tableSeated,
+      setTableSeated: (table, seated) =>
+        setTableSeatedMap((s) => ({ ...s, [table]: Math.max(0, seated) })),
       setTableState: (table, state) => {
         setTableStates((s) => ({ ...s, [table]: state }));
         setTableSince((s) => {
@@ -916,6 +940,14 @@ export function PosProvider({ children }: { children: ReactNode }) {
           else next[table] = new Date().toISOString();
           return next;
         });
+        // Freeing a table clears its party, so seated counts never linger.
+        if (state === "available" || state === "reserved") {
+          setTableSeatedMap((s) => {
+            const next = { ...s };
+            delete next[table];
+            return next;
+          });
+        }
       },
       roomStates,
       setRoomState: (room, state) => setRoomStates((s) => ({ ...s, [room]: state })),
@@ -939,6 +971,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
         if (table) {
           setTableStates((s) => ({ ...s, [table]: "ordering" }));
           setTableSince((s) => ({ ...s, [table]: new Date().toISOString() }));
+          if (partySize && partySize > 0) {
+            setTableSeatedMap((s) => ({ ...s, [table]: partySize }));
+          }
         }
       },
 
@@ -1000,6 +1035,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
             delete next[activeTable];
             return next;
           });
+          setTableSeatedMap((s) => {
+            const next = { ...s };
+            delete next[activeTable];
+            return next;
+          });
         }
         setActiveTable(null);
       },
@@ -1010,6 +1050,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
         if (table) {
           setTableStates((s) => ({ ...s, [table]: "available" }));
           setTableSince((s) => {
+            const next = { ...s };
+            delete next[table];
+            return next;
+          });
+          setTableSeatedMap((s) => {
             const next = { ...s };
             delete next[table];
             return next;
@@ -1188,6 +1233,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     floor,
     tableStates,
     tableSince,
+    tableSeated,
     roomStates,
     floorLayouts,
     floorTemplates,
