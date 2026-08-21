@@ -582,6 +582,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [tableSince, setTableSince] = useState<Record<string, string>>({});
   const [roomStates, setRoomStates] = useState<Record<string, RoomState>>({});
   const [floorLayouts, setFloorLayouts] = useState<Record<string, FloorObject[]>>({});
+  const [tableSeated, setTableSeatedMap] = useState<Record<string, number>>({});
   const [floorTemplates, setFloorTemplates] = useState<SavedTemplate[]>([]);
   const [floorReady, setFloorReady] = useState(false);
 
