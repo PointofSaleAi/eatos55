@@ -37,6 +37,8 @@ import {
 } from "@/components/ui/dialog";
 import {
   cloneLayout,
+  defaultFloorLayout,
+
   floorSections,
   floorTables,
   floors,
