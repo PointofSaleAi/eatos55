@@ -278,7 +278,7 @@ function FloorPlan() {
             </div>
           </div>
 
-          <div className="no-scrollbar -mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4">
+          <div className="mt-3 flex flex-wrap items-center gap-2">
             {floorSections.map((s) => (
               <button
                 key={s}
