@@ -5,7 +5,6 @@ import {
   ChevronDown,
   CircleDollarSign,
   Flame,
-  Inbox,
   NotebookPen,
   ReceiptText,
   Save,
@@ -293,7 +292,6 @@ export function OrderPanel({ wide }: { wide: boolean }) {
         </dl>
 
         <div className="mt-1.5 grid grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] items-center gap-2">
-
           <button
             type="button"
             disabled={!totals.count}
@@ -307,7 +305,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
             type="button"
             disabled={!totals.count}
             onClick={() => navigate({ to: "/payment/method" })}
-            className="min-h-ctl-lg min-w-0 flex-1 truncate rounded-row bg-accent px-3 text-fs-sm font-extrabold uppercase text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
+            className="min-h-ctl-lg min-w-0 truncate rounded-row bg-accent px-3 text-fs-sm font-extrabold uppercase text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
           >
             Charge {money(totals.total)}
           </button>
