@@ -135,10 +135,17 @@ function FloorPlan() {
                   <span className="truncate">{floor}</span>
                   <ChevronDown className="size-5 shrink-0" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
+                <DropdownMenuContent align="start" className="min-w-44">
                   {floors.map((f) => (
-                    <DropdownMenuItem key={f} onClick={() => setFloor(f)}>
-                      {f}
+                    <DropdownMenuItem
+                      key={f}
+                      onClick={() => setFloor(f)}
+                      className="text-fs-sm font-normal text-foreground"
+                    >
+                      <span className="min-w-0 flex-1 truncate">{f}</span>
+                      {f === floor ? (
+                        <Check className="size-4 shrink-0 text-primary" aria-hidden />
+                      ) : null}
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
