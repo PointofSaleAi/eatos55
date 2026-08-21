@@ -92,6 +92,7 @@ function FloorPlan() {
     setFloor,
     tableStates,
     tableSince,
+    tableSeated,
     setTableState,
     startOrder,
     settings,
