@@ -152,7 +152,10 @@ export function GuestSheet({
         <SheetGrabber handleProps={handleProps} />
 
         {/* Order type strip, pinned so the type can change in place */}
-        <div className="no-scrollbar mx-3 mt-1 flex shrink-0 gap-2 overflow-x-auto rounded-row bg-surface p-1.5">
+        <div
+          ref={stripRef}
+          className="no-scrollbar mx-3 mt-1 flex shrink-0 gap-2 overflow-x-auto rounded-row bg-surface p-1.5"
+        >
           {serviceOrderTypes.map((t) => {
             const Icon = orderTypeIcons[t];
             const active = t === type;
