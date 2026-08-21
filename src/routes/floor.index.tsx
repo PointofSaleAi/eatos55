@@ -76,10 +76,7 @@ export const Route = createFileRoute("/floor/")({
   component: FloorPlan,
 });
 
-function elapsed(iso: string) {
-  const mins = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
-  return mins < 60 ? `${mins}M` : `${Math.floor(mins / 60)}H`;
-}
+
 
 const statusOptions: StatusOption<TableState>[] = tableStateOrder.map((id) => ({
   id,
@@ -140,7 +137,11 @@ function FloorPlan() {
         x: o.x,
         y: o.y,
         state: (tableStates[o.name] ?? base?.state ?? "available") as TableState,
-        since: started ? elapsed(started) : base?.since,
+        since: started
+          ? formatDwell(Math.round((now - new Date(started).getTime()) / 60000))
+          : base?.seatedMinutesAgo !== undefined
+            ? formatDwell(base.seatedMinutesAgo)
+            : undefined,
       };
     });
 
