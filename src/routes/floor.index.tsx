@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Check, ChevronDown, LayoutGrid, Map, Pencil, Users, X } from "lucide-react";
+import { Check, ChevronDown, LayoutGrid, Map as MapIcon, Pencil, Users, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
@@ -158,8 +158,8 @@ function FloorPlan() {
                 {(
                   [
                     { id: "grid" as const, label: "Grid", Icon: LayoutGrid },
-                    { id: "layout" as const, label: "Layout", Icon: Map },
-                  ] satisfies { id: "grid" | "layout"; label: string; Icon: typeof Map }[]
+                    { id: "layout" as const, label: "Layout", Icon: MapIcon },
+                  ] satisfies { id: "grid" | "layout"; label: string; Icon: typeof MapIcon }[]
                 ).map(({ id, label, Icon }) => (
                   <button
                     key={id}
