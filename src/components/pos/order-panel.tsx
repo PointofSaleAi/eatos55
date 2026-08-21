@@ -5,7 +5,6 @@ import {
   ChevronDown,
   CircleDollarSign,
   Flame,
-  Inbox,
   NotebookPen,
   ReceiptText,
   Save,
@@ -72,12 +71,12 @@ export function OrderPanel({ wide }: { wide: boolean }) {
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       {/* Guest identity and order level actions */}
       <div className="shrink-0 border-b border-border px-4 pb-2.5 pt-2.5">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
           <button
             type="button"
             onClick={() => setGuestOpen(true)}
             aria-label="Edit guest details"
-            className="min-w-[10rem] flex-1 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted"
+            className="min-w-0 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted"
           >
             <span className="block truncate text-fs-lg font-extrabold leading-tight text-foreground">
               {guest.name || activeTable || "Guest Name"}
@@ -89,22 +88,16 @@ export function OrderPanel({ wide }: { wide: boolean }) {
               {arrivedAt ? `Arrived at ${arrivedAt}` : "Not started"}
             </span>
           </button>
-          <div className="flex shrink-0 items-center gap-0.5">
+          <div className="grid shrink-0 grid-cols-3 gap-1">
             <OrderAction
               label="Discount"
               active={totals.discount > 0}
               onPress={() => setDiscountOpen(true)}
             >
-              <BadgePercent className="size-4" />
+              <BadgePercent className="size-5" />
             </OrderAction>
             <OrderAction label="Transfer check" onPress={() => setGuestOpen(true)}>
-              <ArrowLeftRight className="size-4" />
-            </OrderAction>
-            <OrderAction
-              label="Cash drawer"
-              onPress={() => toast.success("Cash drawer opened")}
-            >
-              <Inbox className="size-4" />
+              <ArrowLeftRight className="size-5" />
             </OrderAction>
             <OrderAction
               label={noTax ? "Tax exempt on" : "Tax exempt"}
@@ -114,7 +107,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
                 toast.success(noTax ? "Tax applied" : "Order marked tax exempt");
               }}
             >
-              <ReceiptText className="size-4" />
+              <ReceiptText className="size-5" />
             </OrderAction>
             <OrderAction
               label={comped ? "Comp on" : "Comp order"}
@@ -128,7 +121,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
                 setPinOpen(true);
               }}
             >
-              <span className="text-fs-sm font-extrabold leading-none">C</span>
+              <span className="text-fs-base font-extrabold leading-none">C</span>
             </OrderAction>
             <OrderAction
               label="No charge"
@@ -138,7 +131,16 @@ export function OrderPanel({ wide }: { wide: boolean }) {
                 toast.success("Order voided");
               }}
             >
-              <CircleDollarSign className="size-4" />
+              <CircleDollarSign className="size-5" />
+            </OrderAction>
+            <OrderAction
+              label="Save order"
+              onPress={() => {
+                if (!totals.count) return;
+                toast.success("Order saved");
+              }}
+            >
+              <Save className="size-5" />
             </OrderAction>
           </div>
         </div>
@@ -151,17 +153,18 @@ export function OrderPanel({ wide }: { wide: boolean }) {
               type="button"
               onClick={() => setOrderType(q.type)}
               className={cn(
-                "flex min-h-tap items-center justify-center gap-1.5 rounded-row px-1 text-fs-xs font-extrabold uppercase tracking-tight transition-colors",
+                "flex min-h-tap items-center justify-center gap-1 rounded-row px-0.5 text-fs-xs font-extrabold uppercase tracking-[-0.02em] transition-colors",
                 orderType === q.type
                   ? "border-2 border-foreground bg-surface text-foreground shadow-sm"
                   : "border border-transparent bg-muted text-muted-foreground hover:bg-secondary",
               )}
             >
-              <span className="hidden shrink-0 xl:inline-flex">{q.icon}</span>
+              <span className="shrink-0">{q.icon}</span>
               <span className="truncate">{q.label}</span>
             </button>
           ))}
         </div>
+
         {!quickTypes.some((q) => q.type === orderType) ? (
           <div className="relative mt-2">
             <select
@@ -210,21 +213,21 @@ export function OrderPanel({ wide }: { wide: boolean }) {
           <ul>
             {cart.map((l) => (
               <li key={l.id}>
-                <div className="flex items-start gap-3 py-1.5">
-                  <span className="w-10 shrink-0 pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">
+                <div className="grid grid-cols-[3rem_minmax(0,1fr)_auto_1.5rem] items-start gap-2 py-1.5">
+                  <span className="pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">
                     {l.qty} ea
                   </span>
                   <button
                     type="button"
                     onClick={() => changeQty(l.id, 1)}
                     aria-label={`Add one ${l.name}`}
-                    className="min-w-0 flex-1 rounded-row text-left transition-colors hover:bg-muted"
+                    className="min-w-0 rounded-row text-left transition-colors hover:bg-muted"
                   >
-                    <span className="block truncate text-fs-sm font-bold text-foreground">
+                    <span className="block line-clamp-2 text-fs-sm font-bold text-foreground">
                       {l.name}
                     </span>
                   </button>
-                  <span className="shrink-0 text-fs-sm font-bold tabular-nums text-foreground">
+                  <span className="min-w-[4.5rem] text-right text-fs-sm font-bold tabular-nums text-foreground">
                     {money(l.price * l.qty)}
                   </span>
                   <button
@@ -237,17 +240,18 @@ export function OrderPanel({ wide }: { wide: boolean }) {
                   </button>
                 </div>
                 {l.modifiers?.length ? (
-                  <div className="pl-10">
+                  <div className="pl-12">
                     {l.modifiers.map((m) => (
                       <div key={m} className="flex items-start gap-2 pb-1">
                         <span className="text-fs-xs leading-none text-muted-foreground">&#x2514;</span>
-                        <span className="min-w-0 flex-1 truncate text-fs-xs font-bold text-tile-orange">
-                          {m}
+                        <span className="min-w-0 flex-1 truncate text-fs-xs font-bold text-tile-blue">
+                          - {m}
                         </span>
                       </div>
                     ))}
                   </div>
                 ) : null}
+
                 {l.notes ? (
                   <p className="truncate pl-10 pb-1 text-fs-xs text-muted-foreground">{l.notes}</p>
                 ) : null}
@@ -287,22 +291,12 @@ export function OrderPanel({ wide }: { wide: boolean }) {
           </div>
         </dl>
 
-        <div className="mt-1.5 flex items-center gap-2">
-          <button
-            type="button"
-            disabled={!totals.count}
-            aria-label="Save order"
-            title="Save order"
-            onClick={() => toast.success("Order saved")}
-            className="grid min-h-ctl-lg w-14 shrink-0 place-items-center rounded-row border border-border bg-muted text-foreground transition-colors hover:bg-secondary disabled:opacity-40"
-          >
-            <Save className="size-5" />
-          </button>
+        <div className="mt-1.5 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2">
           <button
             type="button"
             disabled={!totals.count}
             onClick={() => toast.success("Order fired to the kitchen")}
-            className="flex min-h-ctl-lg shrink-0 items-center gap-1.5 rounded-row bg-tile-orange px-4 text-fs-sm font-extrabold uppercase text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="flex min-h-ctl-lg shrink-0 items-center justify-center gap-1.5 rounded-row bg-tile-orange px-3 text-fs-sm font-extrabold uppercase text-white transition-opacity hover:opacity-90 disabled:opacity-40"
           >
             <Flame className="size-4 shrink-0" />
             Fire
@@ -311,7 +305,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
             type="button"
             disabled={!totals.count}
             onClick={() => navigate({ to: "/payment/method" })}
-            className="min-h-ctl-lg min-w-0 flex-1 truncate rounded-row bg-accent px-3 text-fs-sm font-extrabold uppercase text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
+            className="min-h-ctl-lg min-w-0 truncate rounded-row bg-accent px-3 text-fs-sm font-extrabold uppercase text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
           >
             Charge {money(totals.total)}
           </button>
@@ -361,9 +355,10 @@ function OrderAction({
       title={label}
       onClick={onPress}
       className={cn(
-        "grid size-9 shrink-0 place-items-center rounded-pill border border-border transition-colors hover:bg-muted",
-        active ? "bg-accent text-accent-foreground" : "bg-surface text-foreground",
+        "grid size-9 shrink-0 place-items-center rounded-pill transition-colors",
+        active ? "bg-accent text-accent-foreground" : "bg-muted text-foreground hover:bg-secondary",
       )}
+
     >
       {children}
     </button>
