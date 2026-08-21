@@ -72,12 +72,12 @@ export function OrderPanel({ wide }: { wide: boolean }) {
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       {/* Guest identity and order level actions */}
       <div className="shrink-0 border-b border-border px-4 pb-2.5 pt-2.5">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
           <button
             type="button"
             onClick={() => setGuestOpen(true)}
             aria-label="Edit guest details"
-            className="min-w-[10rem] flex-1 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted"
+            className="min-w-0 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted"
           >
             <span className="block truncate text-fs-lg font-extrabold leading-tight text-foreground">
               {guest.name || activeTable || "Guest Name"}
@@ -89,22 +89,16 @@ export function OrderPanel({ wide }: { wide: boolean }) {
               {arrivedAt ? `Arrived at ${arrivedAt}` : "Not started"}
             </span>
           </button>
-          <div className="flex shrink-0 items-center gap-0.5">
+          <div className="flex shrink-0 items-center gap-1">
             <OrderAction
               label="Discount"
               active={totals.discount > 0}
               onPress={() => setDiscountOpen(true)}
             >
-              <BadgePercent className="size-4" />
+              <BadgePercent className="size-5" />
             </OrderAction>
             <OrderAction label="Transfer check" onPress={() => setGuestOpen(true)}>
-              <ArrowLeftRight className="size-4" />
-            </OrderAction>
-            <OrderAction
-              label="Cash drawer"
-              onPress={() => toast.success("Cash drawer opened")}
-            >
-              <Inbox className="size-4" />
+              <ArrowLeftRight className="size-5" />
             </OrderAction>
             <OrderAction
               label={noTax ? "Tax exempt on" : "Tax exempt"}
@@ -114,7 +108,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
                 toast.success(noTax ? "Tax applied" : "Order marked tax exempt");
               }}
             >
-              <ReceiptText className="size-4" />
+              <ReceiptText className="size-5" />
             </OrderAction>
             <OrderAction
               label={comped ? "Comp on" : "Comp order"}
@@ -128,7 +122,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
                 setPinOpen(true);
               }}
             >
-              <span className="text-fs-sm font-extrabold leading-none">C</span>
+              <span className="text-fs-base font-extrabold leading-none">C</span>
             </OrderAction>
             <OrderAction
               label="No charge"
@@ -138,7 +132,16 @@ export function OrderPanel({ wide }: { wide: boolean }) {
                 toast.success("Order voided");
               }}
             >
-              <CircleDollarSign className="size-4" />
+              <CircleDollarSign className="size-5" />
+            </OrderAction>
+            <OrderAction
+              label="Save order"
+              onPress={() => {
+                if (!totals.count) return;
+                toast.success("Order saved");
+              }}
+            >
+              <Save className="size-5" />
             </OrderAction>
           </div>
         </div>
@@ -157,11 +160,12 @@ export function OrderPanel({ wide }: { wide: boolean }) {
                   : "border border-transparent bg-muted text-muted-foreground hover:bg-secondary",
               )}
             >
-              <span className="hidden shrink-0 xl:inline-flex">{q.icon}</span>
+              <span className="shrink-0">{q.icon}</span>
               <span className="truncate">{q.label}</span>
             </button>
           ))}
         </div>
+
         {!quickTypes.some((q) => q.type === orderType) ? (
           <div className="relative mt-2">
             <select
