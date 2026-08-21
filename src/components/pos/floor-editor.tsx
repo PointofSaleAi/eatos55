@@ -1,4 +1,4 @@
-import { ChevronDown, Minus, Plus, RotateCcw, RotateCw, Trash2 } from "lucide-react";
+import { ChevronDown, Minus, Plus, RotateCcw, RotateCw, Sparkles, Trash2 } from "lucide-react";
 import { useCallback, useRef, useState, type ReactNode } from "react";
 import { DecorShape, Seats, uprightSpin } from "@/components/pos/floor-canvas";
 import {
@@ -10,11 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  floorCounts,
   floorObjectKindMeta,
   hasFootprint,
   isDecor,
   isZone,
-  seatingKinds,
+  tidyLayout,
   type FloorObject,
   type FloorObjectKind,
 } from "@/lib/floor-data";
