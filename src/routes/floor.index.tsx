@@ -38,6 +38,8 @@ import {
 import {
   cloneLayout,
   defaultFloorLayout,
+  floorCounts,
+
 
   floorSections,
   floorTables,
