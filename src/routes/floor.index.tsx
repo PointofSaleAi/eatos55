@@ -299,10 +299,17 @@ function FloorPlan() {
                 No Tables Found
               </p>
             ) : (
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(8.25rem,1fr))] gap-3">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(9.5rem,1fr))] gap-3">
                 {tables.map((t) => {
                   const meta = tableStateMeta[t.state];
                   const seated = t.seated ?? 0;
+                  // Long names shrink instead of truncating so the number stays readable.
+                  const nameSize =
+                    t.name.length > 7
+                      ? "text-[0.6rem]"
+                      : t.name.length > 5
+                        ? "text-[0.7rem]"
+                        : "text-fs-sm";
                   return (
                     <div
                       key={t.id}
@@ -311,17 +318,20 @@ function FloorPlan() {
                       <button
                         type="button"
                         onClick={() => openTable(t)}
+                        title={t.name}
                         className="block w-full transition-transform active:scale-[0.98]"
                       >
                         <div className="relative grid h-tile place-items-center">
                           <div
                             className={cn(
-                              "grid size-[70px] place-items-center border-2 text-fs-sm font-bold text-foreground",
+                              "grid size-[76px] place-items-center border-2 font-bold text-foreground",
                               (t.shape ?? "round") === "round" ? "rounded-full" : "rounded-row",
                               meta.ring,
                             )}
                           >
-                            <span className="max-w-[85%] truncate px-1">{t.name}</span>
+                            <span className={cn("max-w-[94%] truncate px-0.5 leading-none", nameSize)}>
+                              {t.name}
+                            </span>
                           </div>
                           {t.since ? (
                             <span className="absolute bottom-2 right-3 text-fs-xs font-bold text-muted-foreground">
