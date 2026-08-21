@@ -153,27 +153,82 @@ export function FloorEditor({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
-      {/* Palette, grouped so zones and fixtures stay distinct from seating. */}
-      <div className="no-scrollbar flex shrink-0 items-center gap-3 overflow-x-auto">
+      {/* Toolbar: add menus, templates, reset and the live counts. */}
+      <div className="flex shrink-0 flex-wrap items-center gap-1.5 rounded-card border border-border bg-surface p-1.5">
         {paletteGroups.map((group) => (
-          <div key={group.label} className="flex shrink-0 items-center gap-1.5">
-            <span className="shrink-0 text-fs-xs font-bold uppercase text-muted-foreground">
+          <DropdownMenu key={group.label}>
+            <DropdownMenuTrigger className="inline-flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border bg-surface px-2.5 text-fs-xs font-bold uppercase text-foreground transition-colors hover:bg-muted">
+              <Plus className="size-3.5" aria-hidden />
               {group.label}
-            </span>
-            {group.kinds.map((kind) => (
-              <button
-                key={kind}
-                type="button"
-                onClick={() => add(kind)}
-                className="inline-flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border bg-surface px-2.5 text-fs-xs font-bold uppercase text-foreground transition-colors hover:bg-muted"
-              >
-                <Plus className="size-3.5" aria-hidden />
-                {floorObjectKindMeta[kind].label}
-              </button>
-            ))}
-          </div>
+              <ChevronDown className="size-3.5 shrink-0" aria-hidden />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-56">
+              <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
+                {group.menu}
+              </DropdownMenuLabel>
+              {group.kinds.map((kind) => {
+                const meta = floorObjectKindMeta[kind];
+                const detail = hasFootprint(kind)
+                  ? `${meta.w ?? 30} x ${meta.h ?? 8}`
+                  : meta.seats > 0
+                    ? `${meta.seats} seats`
+                    : "";
+                return (
+                  <DropdownMenuItem
+                    key={kind}
+                    className="text-fs-sm font-normal text-foreground"
+                    onClick={() => add(kind)}
+                  >
+                    <span className="min-w-0 flex-1 truncate">{meta.label}</span>
+                    {detail ? (
+                      <span className="ml-2 shrink-0 text-fs-xs text-muted-foreground">
+                        {detail}
+                      </span>
+                    ) : null}
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         ))}
+
+        {toolbarExtra}
+
+        {onReset || onResetDefault ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger className="inline-flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border bg-surface px-2.5 text-fs-xs font-bold uppercase text-foreground transition-colors hover:bg-muted">
+              <RotateCcw className="size-3.5" aria-hidden />
+              Reset
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-56">
+              {onReset ? (
+                <DropdownMenuItem
+                  className="text-fs-sm font-normal text-foreground"
+                  onClick={onReset}
+                >
+                  Reset to saved layout
+                </DropdownMenuItem>
+              ) : null}
+              {onResetDefault ? (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="text-fs-sm font-normal text-foreground"
+                    onClick={onResetDefault}
+                  >
+                    Reset to default layout
+                  </DropdownMenuItem>
+                </>
+              ) : null}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
+
+        <span className="ml-auto shrink-0 rounded-pill bg-muted px-2.5 py-1 text-fs-xs font-bold uppercase text-muted-foreground">
+          Tables {tableCount} / Chairs {chairCount}
+        </span>
       </div>
+
 
       {/* Canvas */}
       <div
