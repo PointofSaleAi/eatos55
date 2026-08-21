@@ -194,6 +194,21 @@ export function FloorEditor({
 
         {toolbarExtra}
 
+        {/* Tidy up snaps everything back into an even, orderly arrangement. */}
+        <button
+          type="button"
+          onClick={() => {
+            onChange(tidyLayout(objects));
+            setSelectedId(null);
+          }}
+          className="inline-flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border bg-surface px-2.5 text-fs-xs font-bold uppercase text-foreground transition-colors hover:bg-muted"
+        >
+          <Sparkles className="size-3.5" aria-hidden />
+          Tidy up
+        </button>
+
+
+
         {onReset || onResetDefault ? (
           <DropdownMenu>
             <DropdownMenuTrigger className="inline-flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border bg-surface px-2.5 text-fs-xs font-bold uppercase text-foreground transition-colors hover:bg-muted">
