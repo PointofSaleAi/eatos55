@@ -109,6 +109,7 @@ export function FloorCanvas({
       {tables.map((t) => {
         const meta = tableStateMeta[t.state];
         const shape = t.shape ?? "round";
+        const stool = t.kind === "bar-chair";
         return (
           <div
             key={t.id}
@@ -127,15 +128,22 @@ export function FloorCanvas({
             >
               <span
                 className={cn(
-                  "relative grid size-[clamp(2.5rem,5.5vw,4.25rem)] place-items-center border-2",
+                  "relative grid place-items-center border-2",
+                  stool
+                    ? "size-[clamp(1.5rem,3vw,2.25rem)] rounded-full"
+                    : "size-[clamp(2.5rem,5.5vw,4.25rem)]",
                   meta.ring,
                   meta.text,
-                  shape === "round" ? "rounded-full" : "rounded-md",
+                  stool ? "" : shape === "round" ? "rounded-full" : "rounded-md",
                 )}
+                style={{ transform: `rotate(${t.rotation ?? 0}deg)` }}
               >
-                <Seats seats={t.seats} />
-                <span className="max-w-[80%] truncate text-[clamp(0.5rem,1.1vw,0.7rem)] font-bold leading-none text-foreground">
-                  {t.name}
+                {stool ? null : <Seats seats={t.seats} />}
+                <span
+                  className="max-w-[86%] truncate text-[clamp(0.5rem,1.1vw,0.7rem)] font-bold leading-none text-foreground"
+                  style={{ transform: `rotate(${uprightSpin(t.rotation)}deg)` }}
+                >
+                  {t.label || t.name}
                 </span>
               </span>
               <span
