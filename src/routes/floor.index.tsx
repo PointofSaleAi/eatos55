@@ -461,6 +461,48 @@ function FloorPlan() {
             setStatusFor(null);
           }}
         />
+
+        {/* Name a saved template so staff can reapply it to any floor. */}
+        <Dialog open={templateName !== null} onOpenChange={(o) => (o ? null : setTemplateName(null))}>
+          <DialogContent className="max-w-sm rounded-card p-4">
+            <DialogHeader>
+              <DialogTitle className="text-fs-base font-extrabold text-foreground">
+                Save layout as template
+              </DialogTitle>
+            </DialogHeader>
+            <input
+              autoFocus
+              value={templateName ?? ""}
+              onChange={(e) => setTemplateName(e.target.value.slice(0, 32))}
+              placeholder="Template name"
+              aria-label="Template name"
+              className="min-h-ctl-sm w-full rounded-row bg-muted px-3 text-fs-sm font-bold text-foreground outline-none placeholder:text-muted-foreground"
+            />
+            <DialogFooter className="gap-2 sm:justify-end">
+              <button
+                type="button"
+                onClick={() => setTemplateName(null)}
+                className="min-h-ctl-sm rounded-pill border border-border px-4 text-fs-sm font-bold text-foreground"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={!templateName?.trim()}
+                onClick={() => {
+                  const label = (templateName ?? "").trim();
+                  if (!label) return;
+                  saveFloorTemplate(label, draft ?? layout);
+                  setTemplateName(null);
+                  toast.success(`${label} saved to My templates`);
+                }}
+                className="min-h-ctl-sm rounded-pill bg-primary px-4 text-fs-sm font-extrabold uppercase text-primary-foreground disabled:opacity-50"
+              >
+                Save
+              </button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <StaffPanel
