@@ -345,11 +345,54 @@ export const serviceOrderTypes = [
   "Dine In",
   "Take Away",
   "Delivery",
-  "Pickup",
   "Drive Thru",
+  "Banquet",
+  "Scheduled",
+  "Phone In",
+  "Custom",
+  "Pickup",
   "Online",
 ] as const;
 export type ServiceOrderType = (typeof serviceOrderTypes)[number];
+
+/** Short uppercase labels used on the order type strip. */
+export const serviceOrderTypeLabels: Record<ServiceOrderType, string> = {
+  "Dine In": "Dine-In",
+  "Take Away": "Takeout",
+  Delivery: "Delivery",
+  "Drive Thru": "Drive Thru",
+  Banquet: "Banquet",
+  Scheduled: "Scheduled",
+  "Phone In": "Phone-In",
+  Custom: "Custom",
+  Pickup: "Pickup",
+  Online: "Online",
+};
+
+/** Event types offered on a Banquet order. */
+export const eventTypes = [
+  "Birthday",
+  "Wedding",
+  "Corporate",
+  "Anniversary",
+  "Private Party",
+  "Other",
+];
+
+/** Which fields each service order type requires before it can be saved. */
+export type GuestFieldKey = "name" | "phone" | "address" | "scheduledAt";
+export const serviceOrderRequirements: Record<ServiceOrderType, GuestFieldKey[]> = {
+  "Dine In": ["name"],
+  "Take Away": ["name"],
+  Delivery: ["name", "phone", "address"],
+  "Drive Thru": ["name"],
+  Banquet: ["name"],
+  Scheduled: ["name", "scheduledAt"],
+  "Phone In": ["name", "phone"],
+  Custom: ["name"],
+  Pickup: ["name", "phone"],
+  Online: ["name"],
+};
 
 /** Vehicle picker options on a Drive Thru order. */
 export const vehicleTypes = ["Car", "SUV", "Truck", "Van", "Motorcycle", "Bicycle"];
