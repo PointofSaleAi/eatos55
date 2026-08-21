@@ -31,6 +31,49 @@ export type FloorTable = {
   y?: number;
 };
 
+/** Objects that can sit on an editable floor layout. */
+export type FloorObjectKind =
+  | "table"
+  | "bar"
+  | "counter"
+  | "booth"
+  | "wall"
+  | "door"
+  | "plant";
+
+export type FloorObject = {
+  id: string;
+  kind: FloorObjectKind;
+  name: string;
+  /** Seat capacity, only meaningful for tables and booths. */
+  seats: number;
+  shape: "round" | "square";
+  section: "B1" | "B2";
+  /** Position on the canvas, in percent of canvas width / height. */
+  x: number;
+  y: number;
+  /** Footprint in percent of the canvas, used by bars, counters and walls. */
+  w?: number;
+  h?: number;
+};
+
+/** Objects that are decor: they never take orders and never show a status. */
+export const decorKinds: FloorObjectKind[] = ["bar", "counter", "wall", "door", "plant"];
+
+export const floorObjectKindMeta: Record<FloorObjectKind, { label: string; seats: number }> = {
+  table: { label: "Table", seats: 4 },
+  booth: { label: "Booth", seats: 4 },
+  bar: { label: "Bar", seats: 0 },
+  counter: { label: "Counter", seats: 0 },
+  wall: { label: "Wall", seats: 0 },
+  door: { label: "Door", seats: 0 },
+  plant: { label: "Plant", seats: 0 },
+};
+
+export function isDecor(kind: FloorObjectKind) {
+  return decorKinds.includes(kind);
+}
+
 export const floors = ["Ground Floor", "First Floor", "Patio"] as const;
 
 export const floorSections = ["all", "B2", "B1"] as const;
