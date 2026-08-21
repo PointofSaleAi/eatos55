@@ -297,19 +297,20 @@ function NewOrder() {
           </div>
         )}
         </div>
-
-        <aside
-          className={cn(
-            "flex min-h-0 flex-col overflow-hidden",
-            showCart ? "" : "hidden",
-            wide
-              ? "w-[21rem] shrink-0 border-l border-border bg-surface lg:w-[24rem]"
-              : "min-w-0 flex-1 bg-surface",
-          )}
-        >
-          <OrderPanel wide={wide} />
-        </aside>
       </div>
+
+      <aside
+        className={cn(
+          "flex min-h-0 flex-col overflow-hidden",
+          showCart ? "" : "hidden",
+          wide
+            ? "w-[21rem] shrink-0 border-l border-border bg-surface lg:w-[24rem]"
+            : "min-w-0 flex-1 bg-surface",
+        )}
+      >
+        <OrderPanel wide={wide} />
+      </aside>
+
 
       {/* Phone, menu tab: keep the running total and Charge one tap away. */}
       {!wide && tab === "menu" && totals.count > 0 ? (
