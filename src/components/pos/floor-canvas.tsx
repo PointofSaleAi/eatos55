@@ -59,7 +59,7 @@ export function FloorCanvas({
             >
               <span
                 className={cn(
-                  "relative grid size-[clamp(2.75rem,5vw,4rem)] place-items-center border-2",
+                  "relative grid size-[clamp(2.25rem,5vw,4rem)] place-items-center border-2",
                   meta.ring,
                   meta.text,
                   shape === "round" ? "rounded-full" : "rounded-md",
@@ -70,7 +70,10 @@ export function FloorCanvas({
                   {t.name}
                 </span>
               </span>
-              <span className={cn("text-[0.5rem] font-bold uppercase tracking-wide", meta.text)}>
+              <span className={cn(
+                  "hidden max-w-[5rem] truncate text-[0.5rem] font-bold uppercase tracking-wide sm:block",
+                  meta.text,
+                )}>
                 {meta.label}
               </span>
             </button>
