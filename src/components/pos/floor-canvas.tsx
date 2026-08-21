@@ -1,4 +1,11 @@
-import { isDecor, tableStateMeta, type FloorObject, type FloorTable } from "@/lib/floor-data";
+import {
+  hasFootprint,
+  isDecor,
+  isZone,
+  tableStateMeta,
+  type FloorObject,
+  type FloorTable,
+} from "@/lib/floor-data";
 import { cn } from "@/lib/utils";
 
 /** Seat dots drawn around a table shape so capacity reads at a glance. */
@@ -24,22 +31,48 @@ function Seats({ seats }: { seats: number }) {
   );
 }
 
-/** Bars, counters, walls, doors and plants: shown for orientation, never tappable. */
+/** Keeps a rotated label the right way up: past 90 degrees the text would invert. */
+export function uprightSpin(rotation = 0) {
+  const deg = ((rotation % 360) + 360) % 360;
+  return deg > 90 && deg < 270 ? 180 : 0;
+}
+
+/** Label sizing that shrinks with the footprint instead of clipping. */
+function fitLabel(object: FloorObject) {
+  if (!hasFootprint(object.kind)) return "text-fs-xs";
+  const area = (object.w ?? 20) * (object.h ?? 8);
+  if (area > 400) return "text-[clamp(0.6rem,1.4vw,0.95rem)]";
+  if (area > 140) return "text-[clamp(0.5rem,1.1vw,0.75rem)]";
+  return "text-[clamp(0.45rem,0.9vw,0.65rem)]";
+}
+
+/** Bars, counters, walls, doors, plants and zones: shown for orientation, never tappable. */
 export function DecorShape({ object }: { object: FloorObject }) {
-  const isBlock = object.kind === "bar" || object.kind === "counter" || object.kind === "wall";
+  const zone = isZone(object.kind);
+  const sized = hasFootprint(object.kind);
   return (
     <span
       className={cn(
-        "grid place-items-center border-2 border-dashed border-border bg-muted/60 text-fs-xs font-bold uppercase tracking-wide text-muted-foreground",
+        "grid place-items-center border-2 border-dashed text-center font-bold uppercase tracking-wide",
+        zone
+          ? "border-primary/30 bg-primary/5 text-muted-foreground"
+          : "border-border bg-muted/60 text-muted-foreground",
         object.kind === "plant" ? "rounded-full" : "rounded-md",
+        fitLabel(object),
       )}
-      style={
-        isBlock
+      style={{
+        transform: `rotate(${object.rotation ?? 0}deg)`,
+        ...(sized
           ? { width: `${(object.w ?? 40) * 4}px`, height: `${(object.h ?? 8) * 4}px` }
-          : { width: "2.75rem", height: "2.75rem" }
-      }
+          : { width: "2.75rem", height: "2.75rem" }),
+      }}
     >
-      <span className="max-w-[90%] truncate px-1">{object.name}</span>
+      <span
+        className="max-w-[92%] px-1 leading-tight [overflow-wrap:anywhere]"
+        style={{ transform: `rotate(${uprightSpin(object.rotation)}deg)` }}
+      >
+        {object.label || object.name}
+      </span>
     </span>
   );
 }
@@ -67,7 +100,10 @@ export function FloorCanvas({
           <div
             key={o.id}
             aria-hidden
-            className="absolute -translate-x-1/2 -translate-y-1/2"
+            className={cn(
+              "absolute -translate-x-1/2 -translate-y-1/2",
+              isZone(o.kind) ? "z-0" : "z-10",
+            )}
             style={{ left: `${o.x}%`, top: `${o.y}%` }}
           >
             <DecorShape object={o} />
@@ -76,10 +112,11 @@ export function FloorCanvas({
       {tables.map((t) => {
         const meta = tableStateMeta[t.state];
         const shape = t.shape ?? "round";
+        const stool = t.kind === "bar-chair";
         return (
           <div
             key={t.id}
-            className="absolute -translate-x-1/2 -translate-y-1/2"
+            className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
             style={{ left: `${t.x ?? 50}%`, top: `${t.y ?? 50}%` }}
           >
             <button
@@ -94,15 +131,22 @@ export function FloorCanvas({
             >
               <span
                 className={cn(
-                  "relative grid size-[clamp(2.5rem,5.5vw,4.25rem)] place-items-center border-2",
+                  "relative grid place-items-center border-2",
+                  stool
+                    ? "size-[clamp(1.5rem,3vw,2.25rem)] rounded-full"
+                    : "size-[clamp(2.5rem,5.5vw,4.25rem)]",
                   meta.ring,
                   meta.text,
-                  shape === "round" ? "rounded-full" : "rounded-md",
+                  stool ? "" : shape === "round" ? "rounded-full" : "rounded-md",
                 )}
+                style={{ transform: `rotate(${t.rotation ?? 0}deg)` }}
               >
-                <Seats seats={t.seats} />
-                <span className="max-w-[80%] truncate text-[clamp(0.5rem,1.1vw,0.7rem)] font-bold leading-none text-foreground">
-                  {t.name}
+                {stool ? null : <Seats seats={t.seats} />}
+                <span
+                  className="max-w-[86%] truncate text-[clamp(0.5rem,1.1vw,0.7rem)] font-bold leading-none text-foreground"
+                  style={{ transform: `rotate(${uprightSpin(t.rotation)}deg)` }}
+                >
+                  {t.label || t.name}
                 </span>
               </span>
               <span

@@ -1,5 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Check, ChevronDown, LayoutGrid, Map as MapIcon, Pencil, Users, X } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  LayoutGrid,
+  Map as MapIcon,
+  Pencil,
+  Trash2,
+  Users,
+  X,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
@@ -15,9 +24,19 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  cloneLayout,
   floorSections,
   floorTables,
   floors,
@@ -76,6 +95,9 @@ function FloorPlan() {
     settings,
     getFloorLayout,
     saveFloorLayout,
+    floorTemplates,
+    saveFloorTemplate,
+    deleteFloorTemplate,
     canManageSettings,
   } = usePos();
   const [section, setSection] = useState<FloorSection>("all");
@@ -84,6 +106,7 @@ function FloorPlan() {
   const [statusFor, setStatusFor] = useState<{ name: string; state: TableState } | null>(null);
   const [guestsFor, setGuestsFor] = useState<{ name: string; seats: number } | null>(null);
   const [draft, setDraft] = useState<FloorObject[] | null>(null);
+  const [templateName, setTemplateName] = useState<string | null>(null);
   const editing = draft !== null;
 
   const layout = getFloorLayout(floor);
@@ -104,6 +127,9 @@ function FloorPlan() {
         floor,
         section: o.section,
         shape: o.shape,
+        rotation: o.rotation ?? 0,
+        label: o.label ?? "",
+        kind: o.kind === "booth" || o.kind === "bar-chair" ? o.kind : "table",
         x: o.x,
         y: o.y,
         state: (tableStates[o.name] ?? base?.state ?? "available") as TableState,
@@ -161,7 +187,10 @@ function FloorPlan() {
                       Template
                       <ChevronDown className="size-4 shrink-0" />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="min-w-44">
+                    <DropdownMenuContent align="end" className="min-w-52">
+                      <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
+                        Starter layouts
+                      </DropdownMenuLabel>
                       {layoutTemplates.map((t) => (
                         <DropdownMenuItem
                           key={t.id}
@@ -174,6 +203,45 @@ function FloorPlan() {
                           {t.label}
                         </DropdownMenuItem>
                       ))}
+                      {floorTemplates.length ? (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
+                            My templates
+                          </DropdownMenuLabel>
+                          {floorTemplates.map((t) => (
+                            <DropdownMenuItem
+                              key={t.id}
+                              className="text-fs-sm font-normal text-foreground"
+                              onClick={() => {
+                                setDraft(cloneLayout(t.objects));
+                                toast.success(`${t.label} loaded. Save to keep it.`);
+                              }}
+                            >
+                              <span className="min-w-0 flex-1 truncate">{t.label}</span>
+                              <button
+                                type="button"
+                                aria-label={`Delete ${t.label}`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteFloorTemplate(t.id);
+                                  toast.success(`${t.label} deleted`);
+                                }}
+                                className="ml-2 shrink-0 text-destructive"
+                              >
+                                <Trash2 className="size-4" />
+                              </button>
+                            </DropdownMenuItem>
+                          ))}
+                        </>
+                      ) : null}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        className="text-fs-sm font-bold text-foreground"
+                        onClick={() => setTemplateName("")}
+                      >
+                        Save current as template
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                   <button
@@ -393,6 +461,48 @@ function FloorPlan() {
             setStatusFor(null);
           }}
         />
+
+        {/* Name a saved template so staff can reapply it to any floor. */}
+        <Dialog open={templateName !== null} onOpenChange={(o) => (o ? null : setTemplateName(null))}>
+          <DialogContent className="max-w-sm rounded-card p-4">
+            <DialogHeader>
+              <DialogTitle className="text-fs-base font-extrabold text-foreground">
+                Save layout as template
+              </DialogTitle>
+            </DialogHeader>
+            <input
+              autoFocus
+              value={templateName ?? ""}
+              onChange={(e) => setTemplateName(e.target.value.slice(0, 32))}
+              placeholder="Template name"
+              aria-label="Template name"
+              className="min-h-ctl-sm w-full rounded-row bg-muted px-3 text-fs-sm font-bold text-foreground outline-none placeholder:text-muted-foreground"
+            />
+            <DialogFooter className="gap-2 sm:justify-end">
+              <button
+                type="button"
+                onClick={() => setTemplateName(null)}
+                className="min-h-ctl-sm rounded-pill border border-border px-4 text-fs-sm font-bold text-foreground"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={!templateName?.trim()}
+                onClick={() => {
+                  const label = (templateName ?? "").trim();
+                  if (!label) return;
+                  saveFloorTemplate(label, draft ?? layout);
+                  setTemplateName(null);
+                  toast.success(`${label} saved to My templates`);
+                }}
+                className="min-h-ctl-sm rounded-pill bg-primary px-4 text-fs-sm font-extrabold uppercase text-primary-foreground disabled:opacity-50"
+              >
+                Save
+              </button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <StaffPanel

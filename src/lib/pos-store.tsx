@@ -18,7 +18,12 @@ import {
   type Ticket,
   type TicketStatus,
 } from "./demo-data";
-import { defaultFloorLayout, type FloorObject, type TableState } from "./floor-data";
+import {
+  defaultFloorLayout,
+  type FloorObject,
+  type SavedTemplate,
+  type TableState,
+} from "./floor-data";
 import {
   inRange,
   rangeForPreset,
@@ -413,6 +418,11 @@ type Store = {
   getFloorLayout: (floor: string) => FloorObject[];
   saveFloorLayout: (floor: string, objects: FloorObject[]) => void;
   resetFloorLayout: (floor: string) => void;
+  /** Layouts the venue saved as reusable templates. */
+  floorTemplates: SavedTemplate[];
+  saveFloorTemplate: (label: string, objects: FloorObject[]) => void;
+  renameFloorTemplate: (id: string, label: string) => void;
+  deleteFloorTemplate: (id: string) => void;
   roomStates: Record<string, RoomState>;
   setRoomState: (room: string, state: RoomState) => void;
   startOrder: (table?: string, partySize?: number) => void;
@@ -569,6 +579,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [tableSince, setTableSince] = useState<Record<string, string>>({});
   const [roomStates, setRoomStates] = useState<Record<string, RoomState>>({});
   const [floorLayouts, setFloorLayouts] = useState<Record<string, FloorObject[]>>({});
+  const [floorTemplates, setFloorTemplates] = useState<SavedTemplate[]>([]);
   const [floorReady, setFloorReady] = useState(false);
 
   const [noTax, setNoTax] = useState(false);
@@ -623,11 +634,13 @@ export function PosProvider({ children }: { children: ReactNode }) {
           tableSince?: Record<string, string>;
           roomStates?: Record<string, RoomState>;
           floorLayouts?: Record<string, FloorObject[]>;
+          floorTemplates?: SavedTemplate[];
         };
         if (saved.tableStates) setTableStates(saved.tableStates);
         if (saved.tableSince) setTableSince(saved.tableSince);
         if (saved.roomStates) setRoomStates(saved.roomStates);
         if (saved.floorLayouts) setFloorLayouts(saved.floorLayouts);
+        if (saved.floorTemplates) setFloorTemplates(saved.floorTemplates);
       }
     } catch {
       /* ignore unreadable storage */
@@ -639,12 +652,12 @@ export function PosProvider({ children }: { children: ReactNode }) {
     try {
       window.localStorage.setItem(
         "eatos.pos.floor",
-        JSON.stringify({ tableStates, tableSince, roomStates, floorLayouts }),
+        JSON.stringify({ tableStates, tableSince, roomStates, floorLayouts, floorTemplates }),
       );
     } catch {
       /* ignore unwritable storage */
     }
-  }, [tableStates, tableSince, roomStates, floorLayouts, floorReady]);
+  }, [tableStates, tableSince, roomStates, floorLayouts, floorTemplates, floorReady]);
 
 
 
@@ -880,6 +893,15 @@ export function PosProvider({ children }: { children: ReactNode }) {
       floorLayouts,
       getFloorLayout: (f) => floorLayouts[f] ?? defaultFloorLayout(f),
       saveFloorLayout: (f, objects) => setFloorLayouts((m) => ({ ...m, [f]: objects })),
+      floorTemplates,
+      saveFloorTemplate: (label, objects) =>
+        setFloorTemplates((list) => [
+          ...list,
+          { id: `tpl-${Date.now()}`, label, objects: objects.map((o) => ({ ...o })) },
+        ]),
+      renameFloorTemplate: (id, label) =>
+        setFloorTemplates((list) => list.map((t) => (t.id === id ? { ...t, label } : t))),
+      deleteFloorTemplate: (id) => setFloorTemplates((list) => list.filter((t) => t.id !== id)),
       resetFloorLayout: (f) =>
         setFloorLayouts((m) => {
           const next = { ...m };
@@ -1168,6 +1190,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     tableSince,
     roomStates,
     floorLayouts,
+    floorTemplates,
 
     guest,
     orderType,
