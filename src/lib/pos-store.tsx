@@ -512,6 +512,12 @@ type Store = {
 };
 
 export type GuestVehicle = { type: string; color: string; brand?: string; plate?: string };
+export type GuestEvent = {
+  type?: string | undefined;
+  date?: string | undefined;
+  time?: string | undefined;
+  guests?: number | undefined;
+};
 export type Guest = {
   name: string;
   phone: string;
@@ -519,6 +525,10 @@ export type Guest = {
   email?: string | undefined;
   notes?: string | undefined;
   vehicle?: GuestVehicle | undefined;
+  address?: string | undefined;
+  event?: GuestEvent | undefined;
+  scheduledAt?: string | undefined;
+  customLabel?: string | undefined;
 };
 
 const PosContext = createContext<Store | null>(null);

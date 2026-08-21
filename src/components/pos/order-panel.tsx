@@ -1,33 +1,29 @@
 import {
   ArrowLeftRight,
   BadgePercent,
-  Bike,
-  ChevronDown,
+  ChevronRight,
   CircleDollarSign,
   Flame,
   NotebookPen,
   ReceiptText,
   Save,
-  ShoppingBag,
   Utensils,
 } from "lucide-react";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { usePos } from "@/lib/pos-store";
-import { money, serviceOrderTypes, type ServiceOrderType } from "@/lib/demo-data";
+import {
+  money,
+  serviceOrderTypeLabels,
+  serviceOrderTypes,
+  type ServiceOrderType,
+} from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
-import { GuestSheet } from "@/components/pos/guest-sheet";
+import { GuestSheet, orderTypeIcons } from "@/components/pos/guest-sheet";
 import { PinSheet } from "@/components/pos/pin-sheet";
-
-/** Quick service types shown as a segmented control, as on the original screen. */
-const quickTypes: { type: ServiceOrderType; label: string; icon: React.ReactNode }[] = [
-  { type: "Dine In", label: "Dine-In", icon: <Utensils className="size-4" /> },
-  { type: "Take Away", label: "Takeout", icon: <ShoppingBag className="size-4" /> },
-  { type: "Delivery", label: "Delivery", icon: <Bike className="size-4" /> },
-];
 
 /**
  * Right-hand order area: guest identity, order level actions, service type,
@@ -59,6 +55,8 @@ export function OrderPanel({ wide }: { wide: boolean }) {
   } = usePos();
 
   const [guestOpen, setGuestOpen] = useState(false);
+  const [typeForSheet, setTypeForSheet] = useState<ServiceOrderType | undefined>(undefined);
+  const stripRef = useRef<HTMLDivElement>(null);
   const [discountOpen, setDiscountOpen] = useState(false);
   const [discountName, setDiscountName] = useState<string | null>(null);
   const [pinOpen, setPinOpen] = useState(false);
@@ -145,43 +143,49 @@ export function OrderPanel({ wide }: { wide: boolean }) {
           </div>
         </div>
 
-        {/* Service type: three separate buttons, as on the original screen */}
-        <div className="mt-2.5 grid grid-cols-3 gap-2">
-          {quickTypes.map((q) => (
-            <button
-              key={q.type}
-              type="button"
-              onClick={() => setOrderType(q.type)}
-              className={cn(
-                "flex min-h-tap items-center justify-center gap-1 rounded-row px-0.5 text-fs-xs font-extrabold uppercase tracking-[-0.02em] transition-colors",
-                orderType === q.type
-                  ? "border-2 border-foreground bg-surface text-foreground shadow-sm"
-                  : "border border-transparent bg-muted text-muted-foreground hover:bg-secondary",
-              )}
-            >
-              <span className="shrink-0">{q.icon}</span>
-              <span className="truncate">{q.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {!quickTypes.some((q) => q.type === orderType) ? (
-          <div className="relative mt-2">
-            <select
-              aria-label="Order type"
-              value={orderType}
-              onChange={(e) => setOrderType(e.target.value as ServiceOrderType)}
-              className="min-h-tap w-full appearance-none rounded-pill border border-border bg-background pl-3 pr-8 text-fs-sm font-extrabold text-foreground outline-none"
-            >
-              {serviceOrderTypes.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        {/* Service type strip: full set, scrolls sideways, opens guest info */}
+        <div className="relative mt-2.5">
+          <div
+            ref={stripRef}
+            className="no-scrollbar flex gap-2 overflow-x-auto scroll-smooth"
+          >
+            {serviceOrderTypes.map((t) => {
+              const Icon = orderTypeIcons[t];
+              const active = orderType === t;
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => {
+                    setOrderType(t);
+                    setTypeForSheet(t);
+                    setGuestOpen(true);
+                  }}
+                  className={cn(
+                    "flex min-h-tap shrink-0 items-center justify-center gap-1.5 rounded-row px-3 text-fs-xs font-extrabold uppercase tracking-[-0.02em] transition-colors",
+                    active
+                      ? "border-2 border-foreground bg-surface text-foreground shadow-sm"
+                      : "border border-transparent bg-muted text-muted-foreground hover:bg-secondary",
+                  )}
+                >
+                  <Icon className="size-4 shrink-0" aria-hidden />
+                  <span>{serviceOrderTypeLabels[t]}</span>
+                </button>
+              );
+            })}
           </div>
-        ) : null}
+          <button
+            type="button"
+            aria-label="More order types"
+            onClick={() =>
+              stripRef.current?.scrollBy({ left: stripRef.current.clientWidth * 0.7, behavior: "smooth" })
+            }
+            className="absolute right-0 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-pill border border-border bg-surface text-foreground shadow-sm"
+          >
+            <ChevronRight className="size-4" aria-hidden />
+          </button>
+        </div>
 
         {/* Order number and server */}
         <div className="mt-2 flex items-center justify-between text-fs-xs font-bold uppercase text-muted-foreground">
@@ -313,7 +317,14 @@ export function OrderPanel({ wide }: { wide: boolean }) {
       </div>
 
 
-      <GuestSheet open={guestOpen} onClose={() => setGuestOpen(false)} />
+      <GuestSheet
+        open={guestOpen}
+        initialType={typeForSheet}
+        onClose={() => {
+          setGuestOpen(false);
+          setTypeForSheet(undefined);
+        }}
+      />
       <DiscountSheet
         open={discountOpen}
         selected={discountName}
