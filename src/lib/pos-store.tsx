@@ -971,6 +971,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
         if (table) {
           setTableStates((s) => ({ ...s, [table]: "ordering" }));
           setTableSince((s) => ({ ...s, [table]: new Date().toISOString() }));
+          if (partySize && partySize > 0) {
+            setTableSeatedMap((s) => ({ ...s, [table]: partySize }));
+          }
         }
       },
 
