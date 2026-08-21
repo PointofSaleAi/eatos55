@@ -1,21 +1,35 @@
-import { Minus, Plus, RotateCw, Trash2 } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
-import { DecorShape, uprightSpin } from "@/components/pos/floor-canvas";
+import { ChevronDown, Minus, Plus, RotateCcw, RotateCw, Trash2 } from "lucide-react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
+import { DecorShape, Seats, uprightSpin } from "@/components/pos/floor-canvas";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   floorObjectKindMeta,
   hasFootprint,
   isDecor,
   isZone,
+  seatingKinds,
   type FloorObject,
   type FloorObjectKind,
 } from "@/lib/floor-data";
 import { cn } from "@/lib/utils";
 
-const paletteGroups: { label: string; kinds: FloorObjectKind[] }[] = [
-  { label: "Seating", kinds: ["table", "booth", "bar-chair"] },
-  { label: "Fixtures", kinds: ["bar", "counter", "wall", "door", "plant"] },
+const paletteGroups: { label: string; menu: string; kinds: FloorObjectKind[] }[] = [
+  { label: "Seating", menu: "Add seating", kinds: ["table", "booth", "bar-chair"] },
+  {
+    label: "Fixtures",
+    menu: "Add fixture",
+    kinds: ["bar", "counter", "wall", "door", "plant"],
+  },
   {
     label: "Zones",
+    menu: "Add zone",
     kinds: ["zone-kitchen", "zone-private-dining", "zone-patio", "zone-lounge"],
   },
 ];
@@ -27,20 +41,35 @@ const norm = (deg: number) => ((Math.round(deg / ROT_STEP) * ROT_STEP % 360) + 3
 
 /**
  * Editable floor layout: drag objects to reposition them, drag the corner handle to
- * rotate, add seating, fixtures and zones from the palette, and tune the selection.
+ * rotate, add seating, fixtures and zones from the toolbar, and tune the selection.
  */
 export function FloorEditor({
   objects,
   onChange,
+  onReset,
+  onResetDefault,
+  toolbarExtra,
 }: {
   objects: FloorObject[];
   onChange: (next: FloorObject[]) => void;
+  /** Restore the layout that was saved before this edit session. */
+  onReset?: () => void;
+  /** Restore the original seeded layout for this floor. */
+  onResetDefault?: () => void;
+  /** Extra toolbar controls, such as the Template menu. */
+  toolbarExtra?: ReactNode;
 }) {
   const canvasRef = useRef<HTMLDivElement | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const dragRef = useRef<{ id: string; mode: "move" | "rotate" } | null>(null);
   const selected = objects.find((o) => o.id === selectedId) ?? null;
+
+  // Counts read from the same objects the grid list renders, so they always agree.
+  const seating = objects.filter((o) => seatingKinds.includes(o.kind));
+  const tableCount = seating.filter((o) => o.kind !== "bar-chair").length;
+  const chairCount = seating.reduce((sum, o) => sum + Math.max(0, o.seats), 0);
+
 
   const patch = useCallback(
     (id: string, next: Partial<FloorObject>) =>
@@ -124,27 +153,82 @@ export function FloorEditor({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
-      {/* Palette, grouped so zones and fixtures stay distinct from seating. */}
-      <div className="no-scrollbar flex shrink-0 items-center gap-3 overflow-x-auto">
+      {/* Toolbar: add menus, templates, reset and the live counts. */}
+      <div className="flex shrink-0 flex-wrap items-center gap-1.5 rounded-card border border-border bg-surface p-1.5">
         {paletteGroups.map((group) => (
-          <div key={group.label} className="flex shrink-0 items-center gap-1.5">
-            <span className="shrink-0 text-fs-xs font-bold uppercase text-muted-foreground">
+          <DropdownMenu key={group.label}>
+            <DropdownMenuTrigger className="inline-flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border bg-surface px-2.5 text-fs-xs font-bold uppercase text-foreground transition-colors hover:bg-muted">
+              <Plus className="size-3.5" aria-hidden />
               {group.label}
-            </span>
-            {group.kinds.map((kind) => (
-              <button
-                key={kind}
-                type="button"
-                onClick={() => add(kind)}
-                className="inline-flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border bg-surface px-2.5 text-fs-xs font-bold uppercase text-foreground transition-colors hover:bg-muted"
-              >
-                <Plus className="size-3.5" aria-hidden />
-                {floorObjectKindMeta[kind].label}
-              </button>
-            ))}
-          </div>
+              <ChevronDown className="size-3.5 shrink-0" aria-hidden />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-56">
+              <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
+                {group.menu}
+              </DropdownMenuLabel>
+              {group.kinds.map((kind) => {
+                const meta = floorObjectKindMeta[kind];
+                const detail = hasFootprint(kind)
+                  ? `${meta.w ?? 30} x ${meta.h ?? 8}`
+                  : meta.seats > 0
+                    ? `${meta.seats} seats`
+                    : "";
+                return (
+                  <DropdownMenuItem
+                    key={kind}
+                    className="text-fs-sm font-normal text-foreground"
+                    onClick={() => add(kind)}
+                  >
+                    <span className="min-w-0 flex-1 truncate">{meta.label}</span>
+                    {detail ? (
+                      <span className="ml-2 shrink-0 text-fs-xs text-muted-foreground">
+                        {detail}
+                      </span>
+                    ) : null}
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         ))}
+
+        {toolbarExtra}
+
+        {onReset || onResetDefault ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger className="inline-flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border bg-surface px-2.5 text-fs-xs font-bold uppercase text-foreground transition-colors hover:bg-muted">
+              <RotateCcw className="size-3.5" aria-hidden />
+              Reset
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-56">
+              {onReset ? (
+                <DropdownMenuItem
+                  className="text-fs-sm font-normal text-foreground"
+                  onClick={onReset}
+                >
+                  Reset to saved layout
+                </DropdownMenuItem>
+              ) : null}
+              {onResetDefault ? (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="text-fs-sm font-normal text-foreground"
+                    onClick={onResetDefault}
+                  >
+                    Reset to default layout
+                  </DropdownMenuItem>
+                </>
+              ) : null}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
+
+        <span className="ml-auto shrink-0 rounded-pill bg-muted px-2.5 py-1 text-fs-xs font-bold uppercase text-muted-foreground">
+          Tables {tableCount} / Chairs {chairCount}
+        </span>
       </div>
+
 
       {/* Canvas */}
       <div
@@ -190,7 +274,7 @@ export function FloorEditor({
                   ) : (
                     <span
                       className={cn(
-                        "grid place-items-center border-2 border-foreground/40",
+                        "relative grid place-items-center border-2 border-foreground/40 text-foreground",
                         stool
                           ? "size-[clamp(1.5rem,3vw,2.25rem)] rounded-full"
                           : "size-[clamp(2.5rem,5.5vw,4.25rem)]",
@@ -198,6 +282,8 @@ export function FloorEditor({
                       )}
                       style={{ transform: `rotate(${o.rotation ?? 0}deg)` }}
                     >
+                      {/* Seat dots match the seats stepper, so counts never drift. */}
+                      {stool ? null : <Seats seats={o.seats} />}
                       <span
                         className="max-w-[86%] truncate text-[clamp(0.5rem,1.1vw,0.7rem)] font-bold leading-none text-foreground"
                         style={{ transform: `rotate(${uprightSpin(o.rotation)}deg)` }}
@@ -205,6 +291,7 @@ export function FloorEditor({
                         {o.label || o.name}
                       </span>
                     </span>
+
                   )}
                 </button>
 

@@ -37,6 +37,8 @@ import {
 } from "@/components/ui/dialog";
 import {
   cloneLayout,
+  defaultFloorLayout,
+
   floorSections,
   floorTables,
   floors,
@@ -107,7 +109,9 @@ function FloorPlan() {
   const [guestsFor, setGuestsFor] = useState<{ name: string; seats: number } | null>(null);
   const [draft, setDraft] = useState<FloorObject[] | null>(null);
   const [templateName, setTemplateName] = useState<string | null>(null);
+  const [resetMode, setResetMode] = useState<"saved" | "default" | null>(null);
   const editing = draft !== null;
+
 
   const layout = getFloorLayout(floor);
   const seed = new Map(floorTables.filter((t) => t.floor === floor).map((t) => [t.name, t]));
@@ -181,70 +185,8 @@ function FloorPlan() {
             <div className="flex shrink-0 items-center gap-2">
               {editing ? (
                 <>
-                  {/* Templates give staff a starting arrangement to edit. */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="inline-flex h-ctl-sm min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border px-3 text-fs-sm font-bold text-foreground transition-colors hover:bg-muted">
-                      Template
-                      <ChevronDown className="size-4 shrink-0" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="min-w-52">
-                      <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
-                        Starter layouts
-                      </DropdownMenuLabel>
-                      {layoutTemplates.map((t) => (
-                        <DropdownMenuItem
-                          key={t.id}
-                          className="text-fs-sm font-normal text-foreground"
-                          onClick={() => {
-                            setDraft(t.build());
-                            toast.success(`${t.label} template loaded. Save to keep it.`);
-                          }}
-                        >
-                          {t.label}
-                        </DropdownMenuItem>
-                      ))}
-                      {floorTemplates.length ? (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
-                            My templates
-                          </DropdownMenuLabel>
-                          {floorTemplates.map((t) => (
-                            <DropdownMenuItem
-                              key={t.id}
-                              className="text-fs-sm font-normal text-foreground"
-                              onClick={() => {
-                                setDraft(cloneLayout(t.objects));
-                                toast.success(`${t.label} loaded. Save to keep it.`);
-                              }}
-                            >
-                              <span className="min-w-0 flex-1 truncate">{t.label}</span>
-                              <button
-                                type="button"
-                                aria-label={`Delete ${t.label}`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  deleteFloorTemplate(t.id);
-                                  toast.success(`${t.label} deleted`);
-                                }}
-                                className="ml-2 shrink-0 text-destructive"
-                              >
-                                <Trash2 className="size-4" />
-                              </button>
-                            </DropdownMenuItem>
-                          ))}
-                        </>
-                      ) : null}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className="text-fs-sm font-bold text-foreground"
-                        onClick={() => setTemplateName("")}
-                      >
-                        Save current as template
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
                   <button
+
                     type="button"
                     onClick={() => setDraft(null)}
                     aria-label="Cancel layout edits"
@@ -349,9 +291,80 @@ function FloorPlan() {
 
         {editing ? (
           <div className="flex min-h-0 flex-1 flex-col p-3 pb-[calc(0.75rem+var(--tabs-h,0px))]">
-            <FloorEditor objects={draft ?? []} onChange={setDraft} />
+            <FloorEditor
+              objects={draft ?? []}
+              onChange={setDraft}
+              onReset={() => setResetMode("saved")}
+              onResetDefault={() => setResetMode("default")}
+              toolbarExtra={
+                /* Templates give staff a starting arrangement to edit. */
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="inline-flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border bg-surface px-2.5 text-fs-xs font-bold uppercase text-foreground transition-colors hover:bg-muted">
+                    Template
+                    <ChevronDown className="size-3.5 shrink-0" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="min-w-52">
+                    <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
+                      Starter layouts
+                    </DropdownMenuLabel>
+                    {layoutTemplates.map((t) => (
+                      <DropdownMenuItem
+                        key={t.id}
+                        className="text-fs-sm font-normal text-foreground"
+                        onClick={() => {
+                          setDraft(t.build());
+                          toast.success(`${t.label} template loaded. Save to keep it.`);
+                        }}
+                      >
+                        {t.label}
+                      </DropdownMenuItem>
+                    ))}
+                    {floorTemplates.length ? (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
+                          My templates
+                        </DropdownMenuLabel>
+                        {floorTemplates.map((t) => (
+                          <DropdownMenuItem
+                            key={t.id}
+                            className="text-fs-sm font-normal text-foreground"
+                            onClick={() => {
+                              setDraft(cloneLayout(t.objects));
+                              toast.success(`${t.label} loaded. Save to keep it.`);
+                            }}
+                          >
+                            <span className="min-w-0 flex-1 truncate">{t.label}</span>
+                            <button
+                              type="button"
+                              aria-label={`Delete ${t.label}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteFloorTemplate(t.id);
+                                toast.success(`${t.label} deleted`);
+                              }}
+                              className="ml-2 shrink-0 text-destructive"
+                            >
+                              <Trash2 className="size-4" />
+                            </button>
+                          </DropdownMenuItem>
+                        ))}
+                      </>
+                    ) : null}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-fs-sm font-bold text-foreground"
+                      onClick={() => setTemplateName("")}
+                    >
+                      Save current as template
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              }
+            />
           </div>
         ) : view === "layout" ? (
+
           <div className="min-h-0 flex-1 p-3 pb-[calc(0.75rem+var(--tabs-h,0px))]">
             <FloorCanvas
               tables={tables}
@@ -503,6 +516,49 @@ function FloorPlan() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Confirm before throwing away the current arrangement. */}
+        <Dialog open={resetMode !== null} onOpenChange={(o) => (o ? null : setResetMode(null))}>
+          <DialogContent className="max-w-sm rounded-card p-4">
+            <DialogHeader>
+              <DialogTitle className="text-fs-base font-extrabold text-foreground">
+                {resetMode === "default" ? "Reset to default layout" : "Reset to saved layout"}
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-fs-sm text-muted-foreground">
+              {resetMode === "default"
+                ? `This puts ${floor} back to the original tables it shipped with. Nothing is kept until you press Save.`
+                : `This drops the changes you made in this session and reloads the saved ${floor} layout.`}
+            </p>
+            <DialogFooter className="gap-2 sm:justify-end">
+              <button
+                type="button"
+                onClick={() => setResetMode(null)}
+                className="min-h-ctl-sm rounded-pill border border-border px-4 text-fs-sm font-bold text-foreground"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const next =
+                    resetMode === "default" ? defaultFloorLayout(floor) : getFloorLayout(floor);
+                  setDraft(next.map((o) => ({ ...o })));
+                  setResetMode(null);
+                  toast.success(
+                    resetMode === "default"
+                      ? `${floor} reset to the default layout`
+                      : `${floor} reset to the saved layout`,
+                  );
+                }}
+                className="min-h-ctl-sm rounded-pill bg-primary px-4 text-fs-sm font-extrabold uppercase text-primary-foreground"
+              >
+                Reset
+              </button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
       </div>
 
       <StaffPanel

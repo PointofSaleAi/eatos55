@@ -9,7 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 
 /** Seat dots drawn around a table shape so capacity reads at a glance. */
-function Seats({ seats }: { seats: number }) {
+export function Seats({ seats }: { seats: number }) {
   const count = Math.min(8, Math.max(1, seats));
   return (
     <>
