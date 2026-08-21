@@ -174,7 +174,6 @@ function NewOrder() {
       </div>
 
 
-      <div className="flex min-h-0 flex-1 overflow-hidden">
         <div
           className={cn(
             "no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pt-3",
