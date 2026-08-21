@@ -352,6 +352,60 @@ export function cloneLayout(objects: FloorObject[]): FloorObject[] {
   return objects.map((o, i) => ({ ...o, id: `fo-${o.kind}-${stamp}-${i}` }));
 }
 
+/**
+ * One shared count for every view: the grid list, the layout view and the editor chip
+ * all call this so the numbers can never disagree. Bar chairs are seats, not tables.
+ */
+export function floorCounts(objects: FloorObject[], section: FloorSection = "all") {
+  const scoped = objects.filter(
+    (o) => seatingKinds.includes(o.kind) && (section === "all" || o.section === section),
+  );
+  return {
+    tables: scoped.filter((o) => o.kind !== "bar-chair").length,
+    chairs: scoped.reduce((sum, o) => sum + Math.max(0, o.seats), 0),
+  };
+}
+
+/**
+ * Puts a layout back into an orderly arrangement: zones and fixtures keep their place,
+ * seating is laid out on an even grid, and stools line up under the nearest rail.
+ */
+export function tidyLayout(objects: FloorObject[]): FloorObject[] {
+  const fixtures = objects.filter((o) => isDecor(o.kind));
+  const seating = objects.filter((o) => !isDecor(o.kind) && o.kind !== "bar-chair");
+  const stools = objects.filter((o) => o.kind === "bar-chair");
+
+  const cols = Math.max(1, Math.ceil(Math.sqrt(Math.max(1, seating.length))));
+  const rows = Math.max(1, Math.ceil(seating.length / cols));
+  const stepX = 80 / cols;
+  const stepY = 60 / rows;
+
+  const tidiedSeating = seating.map((o, i) => ({
+    ...o,
+    rotation: 0,
+    x: Math.round(10 + stepX * ((i % cols) + 0.5)),
+    y: Math.round(30 + stepY * (Math.floor(i / cols) + 0.5)),
+  }));
+
+  const rails = fixtures.filter((o) => o.kind === "bar" || o.kind === "counter");
+  const tidiedStools = stools.map((o, i) => {
+    const rail = rails[i % Math.max(1, rails.length)];
+    if (!rail) return { ...o, rotation: 0, x: Math.round(10 + ((i * 6) % 80)), y: 90 };
+    const perRail = Math.max(1, Math.ceil(stools.length / rails.length));
+    const slot = Math.floor(i / Math.max(1, rails.length));
+    const width = rail.w ?? 40;
+    const spread = width / (perRail + 1);
+    return {
+      ...o,
+      rotation: rail.rotation ?? 0,
+      x: Math.round(rail.x - width / 2 + spread * (slot + 1)),
+      y: Math.round(rail.y + (rail.h ?? 8) / 2 + 3),
+    };
+  });
+
+  return [...fixtures, ...tidiedSeating, ...tidiedStools];
+}
+
 /** Staff roster shown in the floor plan staff panel, grouped by role. */
 export type StaffMember = { id: string; name: string; role: string };
 
