@@ -1167,6 +1167,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     tableStates,
     tableSince,
     roomStates,
+    floorLayouts,
 
     guest,
     orderType,
