@@ -514,6 +514,49 @@ function FloorPlan() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Confirm before throwing away the current arrangement. */}
+        <Dialog open={resetMode !== null} onOpenChange={(o) => (o ? null : setResetMode(null))}>
+          <DialogContent className="max-w-sm rounded-card p-4">
+            <DialogHeader>
+              <DialogTitle className="text-fs-base font-extrabold text-foreground">
+                {resetMode === "default" ? "Reset to default layout" : "Reset to saved layout"}
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-fs-sm text-muted-foreground">
+              {resetMode === "default"
+                ? `This puts ${floor} back to the original tables it shipped with. Nothing is kept until you press Save.`
+                : `This drops the changes you made in this session and reloads the saved ${floor} layout.`}
+            </p>
+            <DialogFooter className="gap-2 sm:justify-end">
+              <button
+                type="button"
+                onClick={() => setResetMode(null)}
+                className="min-h-ctl-sm rounded-pill border border-border px-4 text-fs-sm font-bold text-foreground"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const next =
+                    resetMode === "default" ? defaultFloorLayout(floor) : getFloorLayout(floor);
+                  setDraft(next.map((o) => ({ ...o })));
+                  setResetMode(null);
+                  toast.success(
+                    resetMode === "default"
+                      ? `${floor} reset to the default layout`
+                      : `${floor} reset to the saved layout`,
+                  );
+                }}
+                className="min-h-ctl-sm rounded-pill bg-primary px-4 text-fs-sm font-extrabold uppercase text-primary-foreground"
+              >
+                Reset
+              </button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
       </div>
 
       <StaffPanel
