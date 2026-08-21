@@ -1,4 +1,4 @@
-import { Minus, Plus, Users } from "lucide-react";
+import { Delete } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -19,11 +19,22 @@ export function GuestsSheet({
   onStart: (count: number) => void;
 }) {
   const { dragStyle, handleProps } = useSheetDrag(onClose);
-  const [count, setCount] = useState(seats || 1);
+  const cap = Math.max(1, seats || 1);
+  const [entry, setEntry] = useState("");
 
   useEffect(() => {
-    if (open) setCount(Math.max(1, seats || 1));
-  }, [open, seats]);
+    if (open) setEntry("");
+  }, [open]);
+
+  const count = entry === "" ? cap : Math.max(0, Number(entry));
+  const valid = count >= 1 && count <= Math.max(cap, 20);
+
+  const press = (d: string) => {
+    setEntry((prev) => {
+      const next = (prev + d).replace(/^0+/, "").slice(0, 2);
+      return next;
+    });
+  };
 
   return (
     <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
@@ -31,67 +42,69 @@ export function GuestsSheet({
         hideClose
         side="bottom"
         style={dragStyle}
-        className="mx-auto w-full max-w-sheet rounded-t-sheet border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]"
+        className="mx-auto w-full max-w-[22rem] rounded-t-sheet border-0 bg-surface p-0 pb-[calc(1rem+var(--kb-inset,0px))]"
       >
         <SheetGrabber handleProps={handleProps} />
-        <SheetHeader className="px-4 pb-1.5 pt-1" {...handleProps}>
-          <SheetTitle className="text-center text-fs-base font-extrabold text-foreground">
-            {table ? `${table} · Guests` : "Guests"}
+        <SheetHeader className="px-4 pb-1 pt-1" {...handleProps}>
+          <SheetTitle className="text-center text-fs-base font-extrabold text-muted-foreground">
+            {table ? `Table #${table}` : "Guests"}
           </SheetTitle>
         </SheetHeader>
 
-        <div className="px-4 pt-2">
-          <div className="flex items-center gap-2 rounded-row border border-border bg-surface px-3">
-            <Users className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-            <span className="min-w-0 flex-1 text-fs-sm text-muted-foreground">Guests seated</span>
-            <button
-              type="button"
-              onClick={() => setCount((c) => Math.max(1, c - 1))}
-              aria-label="Fewer guests"
-              className="grid size-11 shrink-0 place-items-center text-foreground disabled:opacity-40"
-              disabled={count <= 1}
-            >
-              <Minus className="size-4" />
-            </button>
-            <span
-              aria-live="polite"
-              className="min-w-[2rem] text-center text-fs-base font-extrabold text-foreground"
-            >
-              {count}
-            </span>
-            <button
-              type="button"
-              onClick={() => setCount((c) => Math.min(20, c + 1))}
-              aria-label="More guests"
-              className="grid size-11 shrink-0 place-items-center text-foreground"
-            >
-              <Plus className="size-4" />
-            </button>
-          </div>
+        <p
+          aria-live="polite"
+          className="border-b border-border pb-3 text-center text-fs-2xl font-extrabold leading-none text-foreground"
+        >
+          {count}
+        </p>
+        <p className="pt-1.5 text-center text-fs-xs text-muted-foreground">
+          Seats {cap} · guests seated
+        </p>
 
-          <div className="mt-3 grid grid-cols-4 gap-2">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-              <button
-                key={n}
-                type="button"
-                aria-pressed={n === count}
-                onClick={() => setCount(n)}
-                className={cn(
-                  "min-h-tap rounded-row text-fs-sm font-bold transition-colors",
-                  n === count
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-secondary",
-                )}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
-
+        <div className="grid grid-cols-3 gap-2 px-4 pt-3">
+          {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((d) => (
+            <button
+              key={d}
+              type="button"
+              onClick={() => press(d)}
+              className="grid min-h-ctl-lg place-items-center rounded-card bg-muted text-fs-lg font-extrabold text-foreground transition-transform active:scale-[0.97]"
+            >
+              {d}
+            </button>
+          ))}
           <button
             type="button"
+            onClick={() => setEntry("")}
+            className="grid min-h-ctl-lg place-items-center rounded-card bg-muted text-fs-sm font-extrabold uppercase text-muted-foreground transition-transform active:scale-[0.97]"
+          >
+            Clear
+          </button>
+          <button
+            type="button"
+            onClick={() => press("0")}
+            className="grid min-h-ctl-lg place-items-center rounded-card bg-muted text-fs-lg font-extrabold text-foreground transition-transform active:scale-[0.97]"
+          >
+            0
+          </button>
+          <button
+            type="button"
+            aria-label="Backspace"
+            onClick={() => setEntry((p) => p.slice(0, -1))}
+            className="grid min-h-ctl-lg place-items-center rounded-card bg-muted text-foreground transition-transform active:scale-[0.97]"
+          >
+            <Delete className="size-5" />
+          </button>
+        </div>
+
+        <div className="px-4 pt-3">
+          <button
+            type="button"
+            disabled={!valid}
             onClick={() => onStart(count)}
-            className="mt-4 min-h-ctl-lg w-full rounded-row bg-primary text-fs-sm font-extrabold text-primary-foreground transition-transform active:scale-[0.99]"
+            className={cn(
+              "min-h-ctl-lg w-full rounded-row bg-primary text-fs-sm font-extrabold uppercase text-primary-foreground transition-transform active:scale-[0.99]",
+              !valid && "opacity-40",
+            )}
           >
             Start order
           </button>

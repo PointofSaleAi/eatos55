@@ -41,7 +41,7 @@ export function StatusSheet<T extends string>({
             {title}
           </SheetTitle>
         </SheetHeader>
-        <div>
+        <div className="max-h-[60dvh] overflow-y-auto">
           {options.map((o, i) => {
             const active = value === o.id;
             return (
