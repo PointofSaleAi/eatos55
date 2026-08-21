@@ -100,7 +100,10 @@ export function FloorCanvas({
           <div
             key={o.id}
             aria-hidden
-            className="absolute -translate-x-1/2 -translate-y-1/2"
+            className={cn(
+              "absolute -translate-x-1/2 -translate-y-1/2",
+              isZone(o.kind) ? "z-0" : "z-10",
+            )}
             style={{ left: `${o.x}%`, top: `${o.y}%` }}
           >
             <DecorShape object={o} />
@@ -113,7 +116,7 @@ export function FloorCanvas({
         return (
           <div
             key={t.id}
-            className="absolute -translate-x-1/2 -translate-y-1/2"
+            className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
             style={{ left: `${t.x ?? 50}%`, top: `${t.y ?? 50}%` }}
           >
             <button
