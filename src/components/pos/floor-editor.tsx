@@ -65,10 +65,9 @@ export function FloorEditor({
   const dragRef = useRef<{ id: string; mode: "move" | "rotate" } | null>(null);
   const selected = objects.find((o) => o.id === selectedId) ?? null;
 
-  // Counts read from the same objects the grid list renders, so they always agree.
-  const seating = objects.filter((o) => seatingKinds.includes(o.kind));
-  const tableCount = seating.filter((o) => o.kind !== "bar-chair").length;
-  const chairCount = seating.reduce((sum, o) => sum + Math.max(0, o.seats), 0);
+  // Counts read from the same helper the grid list uses, so they always agree.
+  const { tables: tableCount, chairs: chairCount } = floorCounts(objects);
+
 
 
   const patch = useCallback(
