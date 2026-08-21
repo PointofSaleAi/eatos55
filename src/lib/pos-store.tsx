@@ -1035,6 +1035,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
             delete next[activeTable];
             return next;
           });
+          setTableSeatedMap((s) => {
+            const next = { ...s };
+            delete next[activeTable];
+            return next;
+          });
         }
         setActiveTable(null);
       },
@@ -1045,6 +1050,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
         if (table) {
           setTableStates((s) => ({ ...s, [table]: "available" }));
           setTableSince((s) => {
+            const next = { ...s };
+            delete next[table];
+            return next;
+          });
+          setTableSeatedMap((s) => {
             const next = { ...s };
             delete next[table];
             return next;
