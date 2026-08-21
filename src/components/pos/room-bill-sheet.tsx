@@ -56,7 +56,7 @@ export function RoomBillSheet({
         {/* Paper tears sit above and below the printed area, cut out of the sheet. */}
         <TornEdge />
 
-        <div className="min-h-0 flex-1 overflow-hidden bg-background px-4">
+        <div className="min-h-0 flex-1 overflow-hidden bg-background px-4 pt-3">
           <div className="text-center">
 
             <p className="truncate text-fs-sm font-extrabold uppercase tracking-[0.22em] text-foreground">
