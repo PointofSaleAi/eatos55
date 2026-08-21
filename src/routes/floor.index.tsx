@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, LayoutGrid, Map, Users } from "lucide-react";
+import { Check, ChevronDown, LayoutGrid, Map, Pencil, Users, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import { FloorCanvas } from "@/components/pos/floor-canvas";
+import { FloorEditor } from "@/components/pos/floor-editor";
 import { GuestsSheet } from "@/components/pos/guests-sheet";
 import { StaffPanel } from "@/components/pos/staff-panel";
 import { StatusSheet, type StatusOption } from "@/components/pos/status-sheet";
@@ -20,9 +21,13 @@ import {
   floorSections,
   floorTables,
   floors,
+  isDecor,
+  layoutTemplates,
   tableStateMeta,
   tableStateOrder,
+  type FloorObject,
   type FloorSection,
+  type FloorTable,
   type TableState,
 } from "@/lib/floor-data";
 import { usePos } from "@/lib/pos-store";
@@ -61,24 +66,52 @@ const statusOptions: StatusOption<TableState>[] = tableStateOrder.map((id) => ({
 
 function FloorPlan() {
   const navigate = useNavigate();
-  const { floor, setFloor, tableStates, tableSince, setTableState, startOrder, settings } = usePos();
+  const {
+    floor,
+    setFloor,
+    tableStates,
+    tableSince,
+    setTableState,
+    startOrder,
+    settings,
+    getFloorLayout,
+    saveFloorLayout,
+    canManageSettings,
+  } = usePos();
   const [section, setSection] = useState<FloorSection>("all");
   const [view, setView] = useState<"grid" | "layout">("grid");
   const [staffOpen, setStaffOpen] = useState(false);
   const [statusFor, setStatusFor] = useState<{ name: string; state: TableState } | null>(null);
   const [guestsFor, setGuestsFor] = useState<{ name: string; seats: number } | null>(null);
+  const [draft, setDraft] = useState<FloorObject[] | null>(null);
+  const editing = draft !== null;
 
-  const tables = floorTables
-    .filter((t) => t.floor === floor)
-    .map((t) => {
-      const started = tableSince[t.name];
+  const layout = getFloorLayout(floor);
+  const seed = new Map(floorTables.filter((t) => t.floor === floor).map((t) => [t.name, t]));
+  const inSection = (sec: "B1" | "B2") => section === "all" || sec === section;
+
+  const tables: FloorTable[] = layout
+    .filter((o) => !isDecor(o.kind))
+    .filter((o) => inSection(o.section))
+    .map((o) => {
+      const base = seed.get(o.name);
+      const started = tableSince[o.name];
       return {
-        ...t,
-        state: (tableStates[t.name] ?? t.state) as TableState,
-        since: started ? elapsed(started) : t.since,
+        id: o.id,
+        name: o.name,
+        seats: o.seats,
+        seated: base?.seated ?? 0,
+        floor,
+        section: o.section,
+        shape: o.shape,
+        x: o.x,
+        y: o.y,
+        state: (tableStates[o.name] ?? base?.state ?? "available") as TableState,
+        since: started ? elapsed(started) : base?.since,
       };
-    })
-    .filter((t) => (section === "all" ? true : t.section === section));
+    });
+
+  const decor = layout.filter((o) => isDecor(o.kind)).filter((o) => inSection(o.section));
 
   const openTable = (t: { name: string; seats: number; state: TableState }) => {
     // Occupied tables resume; free tables ask how many are seated first.
