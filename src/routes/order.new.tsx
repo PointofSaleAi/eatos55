@@ -60,8 +60,21 @@ function NewOrder() {
   const items = q ? base.filter((i) => i.name.toLowerCase().includes(q)) : base;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background">
+    <div
+      className={cn(
+        "flex min-h-0 flex-1 overflow-hidden bg-background",
+        wide ? "flex-row" : "flex-col",
+      )}
+    >
+      {/* Left column: header (menu + category pills) and the product grid. */}
+      <div
+        className={cn(
+          "flex min-h-0 flex-col overflow-hidden",
+          wide ? "min-w-0 flex-1" : showMenu ? "min-h-0 flex-1" : "shrink-0",
+        )}
+      >
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
+
         <div className="flex items-start gap-2">
           <MenuButton className="-ml-2 size-11 shrink-0 rounded-card border border-border" />
 
@@ -161,7 +174,6 @@ function NewOrder() {
       </div>
 
 
-      <div className="flex min-h-0 flex-1 overflow-hidden">
         <div
           className={cn(
             "no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pt-3",
@@ -285,19 +297,20 @@ function NewOrder() {
           </div>
         )}
         </div>
-
-        <aside
-          className={cn(
-            "flex min-h-0 flex-col overflow-hidden",
-            showCart ? "" : "hidden",
-            wide
-              ? "w-[21rem] shrink-0 border-l border-border bg-surface lg:w-[24rem]"
-              : "min-w-0 flex-1 bg-surface",
-          )}
-        >
-          <OrderPanel wide={wide} />
-        </aside>
       </div>
+
+      <aside
+        className={cn(
+          "flex min-h-0 flex-col overflow-hidden",
+          showCart ? "" : "hidden",
+          wide
+            ? "w-[21rem] shrink-0 border-l border-border bg-surface lg:w-[24rem]"
+            : "min-w-0 flex-1 bg-surface",
+        )}
+      >
+        <OrderPanel wide={wide} />
+      </aside>
+
 
       {/* Phone, menu tab: keep the running total and Charge one tap away. */}
       {!wide && tab === "menu" && totals.count > 0 ? (
