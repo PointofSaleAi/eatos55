@@ -107,7 +107,9 @@ function FloorPlan() {
   const [guestsFor, setGuestsFor] = useState<{ name: string; seats: number } | null>(null);
   const [draft, setDraft] = useState<FloorObject[] | null>(null);
   const [templateName, setTemplateName] = useState<string | null>(null);
+  const [resetMode, setResetMode] = useState<"saved" | "default" | null>(null);
   const editing = draft !== null;
+
 
   const layout = getFloorLayout(floor);
   const seed = new Map(floorTables.filter((t) => t.floor === floor).map((t) => [t.name, t]));
