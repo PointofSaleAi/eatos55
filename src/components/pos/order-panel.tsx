@@ -88,7 +88,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
               {arrivedAt ? `Arrived at ${arrivedAt}` : "Not started"}
             </span>
           </button>
-          <div className="flex shrink-0 items-center gap-1">
+          <div className="grid shrink-0 grid-cols-3 gap-1 xl:flex xl:items-center">
             <OrderAction
               label="Discount"
               active={totals.discount > 0}
@@ -291,12 +291,12 @@ export function OrderPanel({ wide }: { wide: boolean }) {
           </div>
         </dl>
 
-        <div className="mt-1.5 grid grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] items-center gap-2">
+        <div className="mt-1.5 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2">
           <button
             type="button"
             disabled={!totals.count}
             onClick={() => toast.success("Order fired to the kitchen")}
-            className="flex min-h-ctl-lg shrink-0 items-center gap-1.5 rounded-row bg-tile-orange px-4 text-fs-sm font-extrabold uppercase text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="flex min-h-ctl-lg shrink-0 items-center justify-center gap-1.5 rounded-row bg-tile-orange px-3 text-fs-sm font-extrabold uppercase text-white transition-opacity hover:opacity-90 disabled:opacity-40"
           >
             <Flame className="size-4 shrink-0" />
             Fire
@@ -355,7 +355,7 @@ function OrderAction({
       title={label}
       onClick={onPress}
       className={cn(
-        "grid size-10 shrink-0 place-items-center rounded-pill transition-colors",
+        "grid size-9 shrink-0 place-items-center rounded-pill transition-colors xl:size-10",
         active ? "bg-accent text-accent-foreground" : "bg-muted text-foreground hover:bg-secondary",
       )}
 
