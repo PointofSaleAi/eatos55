@@ -1233,6 +1233,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     floor,
     tableStates,
     tableSince,
+    tableSeated,
     roomStates,
     floorLayouts,
     floorTemplates,
