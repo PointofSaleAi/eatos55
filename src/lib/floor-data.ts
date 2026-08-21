@@ -37,15 +37,24 @@ export type FloorObjectKind =
   | "bar"
   | "counter"
   | "booth"
+  | "bar-chair"
   | "wall"
   | "door"
-  | "plant";
+  | "plant"
+  | "zone-kitchen"
+  | "zone-private-dining"
+  | "zone-patio"
+  | "zone-lounge";
 
 export type FloorObject = {
   id: string;
   kind: FloorObjectKind;
   name: string;
-  /** Seat capacity, only meaningful for tables and booths. */
+  /** Optional short label drawn inside tight shapes when the name is long. */
+  label?: string;
+  /** Clockwise rotation in degrees, 0 to 345. */
+  rotation?: number;
+  /** Seat capacity, only meaningful for tables, booths and bar chairs. */
   seats: number;
   shape: "round" | "square";
   section: "B1" | "B2";
@@ -57,22 +66,64 @@ export type FloorObject = {
   h?: number;
 };
 
-/** Objects that are decor: they never take orders and never show a status. */
-export const decorKinds: FloorObjectKind[] = ["bar", "counter", "wall", "door", "plant"];
+/** Large labelled areas that sit behind everything else. */
+export const zoneKinds: FloorObjectKind[] = [
+  "zone-kitchen",
+  "zone-private-dining",
+  "zone-patio",
+  "zone-lounge",
+];
 
-export const floorObjectKindMeta: Record<FloorObjectKind, { label: string; seats: number }> = {
+/** Objects that are decor: they never take orders and never show a status. */
+export const decorKinds: FloorObjectKind[] = [
+  "bar",
+  "counter",
+  "wall",
+  "door",
+  "plant",
+  ...zoneKinds,
+];
+
+/** Objects that can seat guests and therefore take orders. */
+export const seatingKinds: FloorObjectKind[] = ["table", "booth", "bar-chair"];
+
+export const floorObjectKindMeta: Record<
+  FloorObjectKind,
+  { label: string; seats: number; w?: number; h?: number }
+> = {
   table: { label: "Table", seats: 4 },
   booth: { label: "Booth", seats: 4 },
-  bar: { label: "Bar", seats: 0 },
-  counter: { label: "Counter", seats: 0 },
-  wall: { label: "Wall", seats: 0 },
-  door: { label: "Door", seats: 0 },
+  "bar-chair": { label: "Bar Chair", seats: 1 },
+  bar: { label: "Bar", seats: 0, w: 40, h: 8 },
+  counter: { label: "Counter", seats: 0, w: 36, h: 8 },
+  wall: { label: "Wall", seats: 0, w: 30, h: 4 },
+  door: { label: "Door", seats: 0, w: 10, h: 4 },
   plant: { label: "Plant", seats: 0 },
+  "zone-kitchen": { label: "Kitchen", seats: 0, w: 30, h: 22 },
+  "zone-private-dining": { label: "Private Dining Room", seats: 0, w: 34, h: 26 },
+  "zone-patio": { label: "Patio", seats: 0, w: 30, h: 24 },
+  "zone-lounge": { label: "Lounge", seats: 0, w: 28, h: 22 },
 };
 
 export function isDecor(kind: FloorObjectKind) {
   return decorKinds.includes(kind);
 }
+
+export function isZone(kind: FloorObjectKind) {
+  return zoneKinds.includes(kind);
+}
+
+/** Fixtures and zones that own an explicit width and depth footprint. */
+export function hasFootprint(kind: FloorObjectKind) {
+  return kind === "bar" || kind === "counter" || kind === "wall" || kind === "door" || isZone(kind);
+}
+
+/** A layout the venue saved so it can be reapplied to any floor. */
+export type SavedTemplate = {
+  id: string;
+  label: string;
+  objects: FloorObject[];
+};
 
 export const floors = ["Ground Floor", "First Floor", "Patio"] as const;
 
@@ -288,6 +339,12 @@ export const layoutTemplates: { id: string; label: string; build: () => FloorObj
     ],
   },
 ];
+
+/** Fresh ids so applying a template twice never collides. */
+export function cloneLayout(objects: FloorObject[]): FloorObject[] {
+  const stamp = Date.now();
+  return objects.map((o, i) => ({ ...o, id: `fo-${o.kind}-${stamp}-${i}` }));
+}
 
 /** Staff roster shown in the floor plan staff panel, grouped by role. */
 export type StaffMember = { id: string; name: string; role: string };
