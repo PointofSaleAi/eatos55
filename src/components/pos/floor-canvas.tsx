@@ -113,51 +113,66 @@ export function FloorCanvas({
         const meta = tableStateMeta[t.state];
         const shape = t.shape ?? "round";
         const stool = t.kind === "bar-chair";
+        const seated = t.seated ?? 0;
+        const free = t.state === "available" || t.state === "reserved";
         return (
           <div
             key={t.id}
             className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
             style={{ left: `${t.x ?? 50}%`, top: `${t.y ?? 50}%` }}
           >
-            <button
-              type="button"
-              onClick={() => onOpen(t)}
-              onContextMenu={(e) => {
-                e.preventDefault();
-                onStatus(t);
-              }}
-              title={t.name}
-              className="group grid place-items-center gap-1 text-center transition-transform active:scale-[0.97]"
-            >
-              <span
-                className={cn(
-                  "relative grid place-items-center border-2",
-                  stool
-                    ? "size-[clamp(1.5rem,3vw,2.25rem)] rounded-full"
-                    : "size-[clamp(2.5rem,5.5vw,4.25rem)]",
-                  meta.ring,
-                  meta.text,
-                  stool ? "" : shape === "round" ? "rounded-full" : "rounded-md",
-                )}
-                style={{ transform: `rotate(${t.rotation ?? 0}deg)` }}
+            <div className="relative grid place-items-center gap-1 text-center">
+              <button
+                type="button"
+                onClick={() => onOpen(t)}
+                title={t.name}
+                className="group grid place-items-center transition-transform active:scale-[0.97]"
               >
-                {stool ? null : <Seats seats={t.seats} />}
                 <span
-                  className="max-w-[86%] truncate text-[clamp(0.5rem,1.1vw,0.7rem)] font-bold leading-none text-foreground"
-                  style={{ transform: `rotate(${uprightSpin(t.rotation)}deg)` }}
+                  className={cn(
+                    "relative grid place-items-center border-2",
+                    stool
+                      ? "size-[clamp(1.5rem,3vw,2.25rem)] rounded-full"
+                      : "size-[clamp(2.5rem,5.5vw,4.25rem)]",
+                    meta.ring,
+                    meta.text,
+                    stool ? "" : shape === "round" ? "rounded-full" : "rounded-md",
+                  )}
+                  style={{ transform: `rotate(${t.rotation ?? 0}deg)` }}
                 >
-                  {t.label || t.name}
+                  {stool ? null : <Seats seats={t.seats} seated={seated} />}
+                  <span
+                    className="grid max-w-[86%] place-items-center leading-none"
+                    style={{ transform: `rotate(${uprightSpin(t.rotation)}deg)` }}
+                  >
+                    <span className="max-w-full truncate text-[clamp(0.5rem,1.1vw,0.7rem)] font-bold text-foreground">
+                      {t.label || t.name}
+                    </span>
+                    {/* Party size and time at the table, the way a host reads a floor. */}
+                    {!stool && !free ? (
+                      <span className="text-[clamp(0.4rem,0.9vw,0.6rem)] font-bold text-muted-foreground">
+                        {seated}/{t.seats}
+                        {t.since ? ` · ${t.since}` : ""}
+                      </span>
+                    ) : null}
+                  </span>
                 </span>
-              </span>
-              <span
+              </button>
+
+              {/* Status is its own tap target so state can change without opening an order. */}
+              <button
+                type="button"
+                onClick={() => onStatus(t)}
+                aria-label={`Change status for ${t.name}, currently ${meta.label}`}
                 className={cn(
-                  "hidden max-w-[5rem] truncate text-[0.5rem] font-bold uppercase tracking-wide sm:block",
+                  "max-w-[5.5rem] truncate rounded-pill px-1.5 py-0.5 text-[0.5rem] font-bold uppercase tracking-wide transition-opacity active:opacity-80",
+                  meta.strip,
                   meta.text,
                 )}
               >
                 {meta.label}
-              </span>
-            </button>
+              </button>
+            </div>
           </div>
         );
       })}
