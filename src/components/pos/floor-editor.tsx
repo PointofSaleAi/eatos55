@@ -1,21 +1,35 @@
-import { Minus, Plus, RotateCw, Trash2 } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
-import { DecorShape, uprightSpin } from "@/components/pos/floor-canvas";
+import { ChevronDown, Minus, Plus, RotateCcw, RotateCw, Trash2 } from "lucide-react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
+import { DecorShape, Seats, uprightSpin } from "@/components/pos/floor-canvas";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   floorObjectKindMeta,
   hasFootprint,
   isDecor,
   isZone,
+  seatingKinds,
   type FloorObject,
   type FloorObjectKind,
 } from "@/lib/floor-data";
 import { cn } from "@/lib/utils";
 
-const paletteGroups: { label: string; kinds: FloorObjectKind[] }[] = [
-  { label: "Seating", kinds: ["table", "booth", "bar-chair"] },
-  { label: "Fixtures", kinds: ["bar", "counter", "wall", "door", "plant"] },
+const paletteGroups: { label: string; menu: string; kinds: FloorObjectKind[] }[] = [
+  { label: "Seating", menu: "Add seating", kinds: ["table", "booth", "bar-chair"] },
+  {
+    label: "Fixtures",
+    menu: "Add fixture",
+    kinds: ["bar", "counter", "wall", "door", "plant"],
+  },
   {
     label: "Zones",
+    menu: "Add zone",
     kinds: ["zone-kitchen", "zone-private-dining", "zone-patio", "zone-lounge"],
   },
 ];
@@ -27,20 +41,35 @@ const norm = (deg: number) => ((Math.round(deg / ROT_STEP) * ROT_STEP % 360) + 3
 
 /**
  * Editable floor layout: drag objects to reposition them, drag the corner handle to
- * rotate, add seating, fixtures and zones from the palette, and tune the selection.
+ * rotate, add seating, fixtures and zones from the toolbar, and tune the selection.
  */
 export function FloorEditor({
   objects,
   onChange,
+  onReset,
+  onResetDefault,
+  toolbarExtra,
 }: {
   objects: FloorObject[];
   onChange: (next: FloorObject[]) => void;
+  /** Restore the layout that was saved before this edit session. */
+  onReset?: () => void;
+  /** Restore the original seeded layout for this floor. */
+  onResetDefault?: () => void;
+  /** Extra toolbar controls, such as the Template menu. */
+  toolbarExtra?: ReactNode;
 }) {
   const canvasRef = useRef<HTMLDivElement | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const dragRef = useRef<{ id: string; mode: "move" | "rotate" } | null>(null);
   const selected = objects.find((o) => o.id === selectedId) ?? null;
+
+  // Counts read from the same objects the grid list renders, so they always agree.
+  const seating = objects.filter((o) => seatingKinds.includes(o.kind));
+  const tableCount = seating.filter((o) => o.kind !== "bar-chair").length;
+  const chairCount = seating.reduce((sum, o) => sum + Math.max(0, o.seats), 0);
+
 
   const patch = useCallback(
     (id: string, next: Partial<FloorObject>) =>
