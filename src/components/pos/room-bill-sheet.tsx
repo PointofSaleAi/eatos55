@@ -210,19 +210,15 @@ export function RoomBillSheet({
   );
 }
 
-/** Zig-zag paper tear, so the bill reads as a printed slip and not a card. */
+/** Scalloped paper tear, so the bill reads as a printed slip and not a card. */
 function TornEdge({ flip }: { flip?: boolean }) {
+  const mask =
+    "repeating-radial-gradient(circle at 0.35rem 100%, transparent 0 0.3rem, #000 0.31rem 0.7rem)";
   return (
     <div
       aria-hidden
-      className={cn("h-2 w-full shrink-0 bg-border", flip && "rotate-180")}
-      style={{
-        maskImage:
-          "linear-gradient(#000 0 0), radial-gradient(circle at 0.375rem 0, transparent 0.375rem, #000 0.375rem)",
-        WebkitMaskImage:
-          "repeating-radial-gradient(circle at 0.375rem 100%, #000 0 0.28rem, transparent 0.3rem 0.75rem)",
-        maskImageRepeat: "repeat-x",
-      } as React.CSSProperties}
+      className={cn("h-2 w-full shrink-0 bg-background", flip && "rotate-180")}
+      style={{ maskImage: mask, WebkitMaskImage: mask }}
     />
   );
 }
