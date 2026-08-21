@@ -357,9 +357,10 @@ function OrderAction({
       title={label}
       onClick={onPress}
       className={cn(
-        "grid size-9 shrink-0 place-items-center rounded-pill border border-border transition-colors hover:bg-muted",
-        active ? "bg-accent text-accent-foreground" : "bg-surface text-foreground",
+        "grid size-10 shrink-0 place-items-center rounded-pill transition-colors",
+        active ? "bg-accent text-accent-foreground" : "bg-muted text-foreground hover:bg-secondary",
       )}
+
     >
       {children}
     </button>
