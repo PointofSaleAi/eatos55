@@ -412,6 +412,9 @@ type Store = {
   setFloor: (f: string) => void;
   tableStates: Record<string, TableState>;
   tableSince: Record<string, string>;
+  /** Guests currently seated per table, so every view shows the same number. */
+  tableSeated: Record<string, number>;
+  setTableSeated: (table: string, seated: number) => void;
   setTableState: (table: string, state: TableState) => void;
   /** Saved layouts per floor; falls back to the seeded arrangement. */
   floorLayouts: Record<string, FloorObject[]>;
