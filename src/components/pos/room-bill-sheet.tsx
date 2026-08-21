@@ -52,12 +52,13 @@ export function RoomBillSheet({
 
   const paper = room ? (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-3 pb-3">
-      <div className="mx-auto flex min-h-0 w-full max-w-[26rem] flex-1 flex-col overflow-hidden rounded-card bg-background shadow-sm ring-1 ring-border">
-        {/* Torn top edge, drawn from the border colour so both themes work. */}
+      <div className="mx-auto flex min-h-0 w-full max-w-[26rem] flex-1 flex-col overflow-hidden drop-shadow-sm">
+        {/* Paper tears sit above and below the printed area, cut out of the sheet. */}
         <TornEdge />
 
-        <div className="min-h-0 flex-1 overflow-hidden px-4">
+        <div className="min-h-0 flex-1 overflow-hidden bg-background px-4">
           <div className="text-center">
+
             <p className="truncate text-fs-sm font-extrabold uppercase tracking-[0.22em] text-foreground">
               {venue}
             </p>
