@@ -128,7 +128,7 @@ function FloorPlan() {
         id: o.id,
         name: o.name,
         seats: o.seats,
-        seated: base?.seated ?? 0,
+        seated: tableSeated[o.name] ?? base?.seated ?? 0,
         floor,
         section: o.section,
         shape: o.shape,
