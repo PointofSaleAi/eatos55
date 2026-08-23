@@ -91,6 +91,17 @@ export function DecorShape({ object }: { object: FloorObject }) {
   );
 }
 
+/** A merged party: several real tables pushed together, read as one group. */
+export type FloorGroup = {
+  id: string;
+  label: string;
+  members: string[];
+  state: FloorTable["state"];
+  seats: number;
+  seated: number;
+  since?: string | undefined;
+};
+
 /**
  * Spatial floor view: tables sit at their real positions on a scaled canvas so the
  * whole plan always fits without scrolling.
@@ -101,6 +112,7 @@ export function FloorCanvas({
   onOpen,
   onStatus,
   selectedNames = [],
+  groups = [],
 }: {
   tables: FloorTable[];
   decor?: FloorObject[];
@@ -108,7 +120,33 @@ export function FloorCanvas({
   onStatus: (t: FloorTable) => void;
   /** Tables picked while merging, drawn with a highlight ring. */
   selectedNames?: string[];
+  /** Merged groups drawn as one connected party. */
+  groups?: FloorGroup[];
 }) {
+  const grouped = new Map<string, FloorGroup>();
+  for (const g of groups) for (const name of g.members) grouped.set(name, g);
+
+  /** Each group's geometry: centre point plus the box its members occupy. */
+  const geoms = groups
+    .map((g) => {
+      const pts = g.members
+        .map((n) => tables.find((t) => t.name === n))
+        .filter((t): t is FloorTable => Boolean(t))
+        .map((t) => ({ x: t.x ?? 50, y: t.y ?? 50 }));
+      if (!pts.length) return null;
+      const xs = pts.map((p) => p.x);
+      const ys = pts.map((p) => p.y);
+      return {
+        group: g,
+        pts,
+        cx: (Math.min(...xs) + Math.max(...xs)) / 2,
+        minX: Math.min(...xs),
+        maxX: Math.max(...xs),
+        minY: Math.min(...ys),
+        maxY: Math.max(...ys),
+      };
+    })
+    .filter((g): g is NonNullable<typeof g> => Boolean(g));
 
   return (
     <div className="relative h-full min-h-0 w-full overflow-hidden rounded-card border border-border bg-surface">
@@ -127,8 +165,57 @@ export function FloorCanvas({
             <DecorShape object={o} />
           </div>
         ))}
+
+      {/* Merge halos and the link lines that show which tables were pushed together. */}
+      {geoms.length ? (
+        <svg
+          aria-hidden
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          className="absolute inset-0 z-10 size-full"
+        >
+          {geoms.map((geo) => (
+            <g key={geo.group.id} className={tableStateMeta[geo.group.state].text}>
+              <rect
+                x={Math.max(0, geo.minX - 7)}
+                y={Math.max(0, geo.minY - 7)}
+                width={Math.min(100, geo.maxX + 7) - Math.max(0, geo.minX - 7)}
+                height={Math.min(100, geo.maxY + 7) - Math.max(0, geo.minY - 7)}
+                rx={4}
+                ry={4}
+                fill="currentColor"
+                fillOpacity={0.07}
+                stroke="currentColor"
+                strokeOpacity={0.5}
+                strokeWidth={0.4}
+                strokeDasharray="1.5 1.5"
+                vectorEffect="non-scaling-stroke"
+              />
+              {geo.pts.map((p, i) => {
+                const next = geo.pts[(i + 1) % geo.pts.length];
+                if (geo.pts.length < 2 || !next) return null;
+                return (
+                  <line
+                    key={i}
+                    x1={p.x}
+                    y1={p.y}
+                    x2={next.x}
+                    y2={next.y}
+                    stroke="currentColor"
+                    strokeOpacity={0.6}
+                    strokeWidth={1}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                );
+              })}
+            </g>
+          ))}
+        </svg>
+      ) : null}
+
       {tables.map((t) => {
-        const meta = tableStateMeta[t.state];
+        const group = grouped.get(t.name);
+        const meta = tableStateMeta[group ? group.state : t.state];
         const shape = t.shape ?? "round";
         const stool = t.kind === "bar-chair";
         const seated = t.seated ?? 0;
@@ -144,7 +231,7 @@ export function FloorCanvas({
               <button
                 type="button"
                 onClick={() => onOpen(t)}
-                title={t.name}
+                title={group ? group.label : t.name}
                 aria-pressed={picked || undefined}
                 className="group grid place-items-center transition-transform active:scale-[0.97]"
               >
@@ -171,7 +258,7 @@ export function FloorCanvas({
                       {t.label || t.name}
                     </span>
                     {/* Party size and time at the table, the way a host reads a floor. */}
-                    {!stool && !free ? (
+                    {!stool && !free && !group ? (
                       <span className="text-[clamp(0.4rem,0.9vw,0.6rem)] font-bold text-muted-foreground">
                         {seated}/{t.seats}
                         {t.since ? ` · ${t.since}` : ""}
@@ -184,25 +271,65 @@ export function FloorCanvas({
               {/*
                 Status is its own tap target so state can change without opening an order.
                 Phones get a compact dot so labels never collide on a busy floor.
+                Merged members hand this job to the group readout below the halo.
               */}
+              {group ? null : (
+                <button
+                  type="button"
+                  onClick={() => onStatus(t)}
+                  aria-label={`Change status for ${t.name}, currently ${meta.label}`}
+                  className={cn(
+                    "grid size-4 place-items-center rounded-pill border transition-opacity active:opacity-80 sm:size-auto sm:max-w-[5.5rem] sm:truncate sm:border-0 sm:px-1.5 sm:py-0.5 sm:text-[0.5rem] sm:font-bold sm:uppercase sm:tracking-wide",
+                    meta.strip,
+                    meta.text,
+                    "border-current",
+                  )}
+                >
+                  <span className="size-1.5 rounded-full bg-current sm:hidden" aria-hidden />
+                  <span className="hidden sm:inline">{meta.label}</span>
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      })}
+
+      {/* One label, one occupancy readout and one status control for each merged party. */}
+      {geoms.map((geo) => {
+        const g = geo.group;
+        const meta = tableStateMeta[g.state];
+        const first = tables.find((t) => t.name === g.members[0]);
+        return (
+          <div
+            key={`readout-${g.id}`}
+            className="absolute z-30 -translate-x-1/2"
+            style={{ left: `${geo.cx}%`, top: `calc(${Math.min(96, geo.maxY + 7)}% + 0.35rem)` }}
+          >
+            <div className="grid max-w-[9rem] place-items-center gap-0.5 rounded-pill border border-border bg-surface px-2 py-1 text-center shadow-sm">
+              <span className="max-w-full truncate text-[clamp(0.5rem,1.1vw,0.7rem)] font-bold text-foreground">
+                {g.label}
+              </span>
+              <span className="text-[clamp(0.4rem,0.9vw,0.6rem)] font-bold text-muted-foreground">
+                {g.seated}/{g.seats}
+                {g.since ? ` · ${g.since}` : ""}
+              </span>
               <button
                 type="button"
-                onClick={() => onStatus(t)}
-                aria-label={`Change status for ${t.name}, currently ${meta.label}`}
+                onClick={() => first && onStatus(first)}
+                aria-label={`Change status for ${g.label}, currently ${meta.label}`}
                 className={cn(
-                  "grid size-4 place-items-center rounded-pill border transition-opacity active:opacity-80 sm:size-auto sm:max-w-[5.5rem] sm:truncate sm:border-0 sm:px-1.5 sm:py-0.5 sm:text-[0.5rem] sm:font-bold sm:uppercase sm:tracking-wide",
+                  "max-w-full truncate rounded-pill px-1.5 py-0.5 text-[0.5rem] font-bold uppercase tracking-wide transition-opacity active:opacity-80",
                   meta.strip,
                   meta.text,
-                  "border-current",
                 )}
               >
-                <span className="size-1.5 rounded-full bg-current sm:hidden" aria-hidden />
-                <span className="hidden sm:inline">{meta.label}</span>
+                {meta.label}
               </button>
             </div>
           </div>
         );
       })}
+
       {tables.length === 0 && decor.length === 0 ? (
         <p className="grid h-full place-items-center text-fs-sm text-muted-foreground">
           No Tables Found

@@ -199,6 +199,39 @@ function FloorPlan() {
         ];
       });
 
+  /**
+   * Layout view keeps every real table where it stands and draws the merge as a halo
+   * around its members, so the plan matches the room while still reading as one party.
+   */
+  const layoutGroups = merging
+    ? []
+    : floorMerges
+        .map((m) => {
+          const group = m.members
+            .map((n) => rawTables.find((r) => r.name === n))
+            .filter((r): r is FloorTable => Boolean(r));
+          if (group.length < 2) return null;
+          const busy = group.find((g) => g.state !== "available" && g.state !== "reserved");
+          return {
+            id: m.id,
+            label: mergeLabel(m.members),
+            members: group.map((g) => g.name),
+            state: busy?.state ?? group[0]!.state,
+            seats: m.seats ?? group.reduce((sum, g) => sum + g.seats, 0),
+            seated: group.reduce((sum, g) => sum + (g.seated ?? 0), 0),
+            since: busy?.since,
+          };
+        })
+        .filter((g): g is NonNullable<typeof g> => Boolean(g));
+
+  /** A tap on any merged member acts on the whole group. */
+  const asGroup = (t: FloorTable) => {
+    const g = layoutGroups.find((grp) => grp.members.includes(t.name));
+    if (!g) return t;
+    return { ...t, name: g.members[0] ?? t.name, seats: g.seats, state: g.state };
+  };
+
+
   const decor = layout.filter((o) => isDecor(o.kind)).filter((o) => inSection(o.section));
 
   const counts = floorCounts(editing ? (draft ?? []) : layout, section);
@@ -508,12 +541,17 @@ function FloorPlan() {
 
           <div className="min-h-0 flex-1 p-3 pb-[calc(0.75rem+var(--tabs-h,0px))]">
             <FloorCanvas
-              tables={tables}
+              tables={rawTables}
               decor={decor}
-              onOpen={(t) => openTable(t)}
-              onStatus={(t) => setStatusFor({ name: t.name, state: t.state })}
+              groups={layoutGroups}
+              onOpen={(t) => openTable(asGroup(t))}
+              onStatus={(t) => {
+                const g = asGroup(t);
+                setStatusFor({ name: g.name, state: g.state });
+              }}
               selectedNames={merging ? picked : []}
             />
+
           </div>
         ) : (
           <ScreenBody>
@@ -562,11 +600,18 @@ function FloorPlan() {
                               {shown}
                             </span>
                           </div>
+                          {/* Which real tables were pushed together for this party. */}
+                          {merge ? (
+                            <span className="absolute left-0 right-0 top-2 truncate px-2 text-center text-fs-xs font-bold text-muted-foreground">
+                              {merge.members.join(" · ")}
+                            </span>
+                          ) : null}
                           {t.since ? (
                             <span className="absolute bottom-2 right-3 text-fs-xs font-bold text-muted-foreground">
                               {t.since}
                             </span>
                           ) : null}
+
                           <span className="absolute bottom-2 left-3 inline-flex items-center gap-1 text-fs-xs text-muted-foreground">
                             <Users className="size-3.5 shrink-0" aria-hidden />
                             {seated} / {t.seats}
