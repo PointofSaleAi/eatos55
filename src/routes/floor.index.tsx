@@ -22,6 +22,7 @@ import { FloorEditor } from "@/components/pos/floor-editor";
 import { GuestsSheet } from "@/components/pos/guests-sheet";
 import { StaffPanel } from "@/components/pos/staff-panel";
 import { StatusSheet, type StatusOption } from "@/components/pos/status-sheet";
+import { useConfirm } from "@/components/pos/confirm-sheet";
 
 import { MenuButton, ScreenBody } from "@/components/pos/shell";
 
@@ -93,6 +94,7 @@ const statusOptions: StatusOption<TableState>[] = tableStateOrder.map((id) => ({
 
 function FloorPlan() {
   const navigate = useNavigate();
+  const confirm = useConfirm();
   const {
     floor,
     setFloor,
@@ -125,7 +127,9 @@ function FloorPlan() {
   const [section, setSection] = useState<FloorSection>("all");
   const [view, setView] = useState<"grid" | "layout">("grid");
   const [staffOpen, setStaffOpen] = useState(false);
-  const [statusFor, setStatusFor] = useState<{ name: string; state: TableState } | null>(null);
+  const [statusFor, setStatusFor] = useState<{ name: string; label: string; state: TableState } | null>(
+    null,
+  );
   const [guestsFor, setGuestsFor] = useState<{ name: string; seats: number } | null>(null);
   const [draft, setDraft] = useState<FloorObject[] | null>(null);
   const [templateName, setTemplateName] = useState<string | null>(null);
@@ -250,6 +254,22 @@ function FloorPlan() {
     toast.success(`${mergeLabel(picked)} merged, ${seats} seats`);
     setPicked([]);
     setMerging(false);
+  };
+
+  /** One tap split, with a confirm so a busy party is never broken up by accident. */
+  const splitMerge = async (id: string) => {
+    const merge = tableMerges.find((m) => m.id === id);
+    if (!merge) return;
+    const ok = await confirm({
+      title: `Split ${mergeLabel(merge.members)}?`,
+      message: `This restores ${merge.members.length} tables and their own capacities.`,
+      confirmLabel: "Unmerge",
+      destructive: true,
+    });
+    if (!ok) return;
+    unmergeTables(id);
+    setSeatsFor(null);
+    toast.success("Tables split back up");
   };
 
   const openTable = (t: { name: string; seats: number; state: TableState }) => {
@@ -546,9 +566,14 @@ function FloorPlan() {
               groups={layoutGroups}
               onOpen={(t) => openTable(asGroup(t))}
               onStatus={(t) => {
-                const g = asGroup(t);
-                setStatusFor({ name: g.name, state: g.state });
+                const g = layoutGroups.find((grp) => grp.members.includes(t.name));
+                setStatusFor(
+                  g
+                    ? { name: g.members[0] ?? t.name, label: g.label, state: g.state }
+                    : { name: t.name, label: t.name, state: t.state },
+                );
               }}
+              onUnmerge={(id) => void splitMerge(id)}
               selectedNames={merging ? picked : []}
             />
 
@@ -621,22 +646,31 @@ function FloorPlan() {
 
                       {/* Merged groups get their own row to retune capacity or split back up. */}
                       {merge ? (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setSeatsFor({ id: merge.id, seats: t.seats })
-                          }
-                          className="flex min-h-ctl-sm w-full items-center justify-center gap-1 border-t border-border px-2 text-fs-xs font-bold uppercase text-muted-foreground"
-                        >
-                          <Combine className="size-3.5 shrink-0" aria-hidden />
-                          Merged · {t.seats} seats
-                        </button>
+                        <div className="flex items-stretch border-t border-border">
+                          <button
+                            type="button"
+                            onClick={() => setSeatsFor({ id: merge.id, seats: t.seats })}
+                            aria-label={`Adjust capacity for ${shown}`}
+                            className="flex min-h-tap min-w-0 flex-1 items-center justify-center gap-1 px-2 text-fs-xs font-bold uppercase text-muted-foreground"
+                          >
+                            <Combine className="size-3.5 shrink-0" aria-hidden />
+                            <span className="truncate">Merged · {t.seats} seats</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void splitMerge(merge.id)}
+                            aria-label={`Unmerge ${shown}`}
+                            className="grid min-h-tap w-11 shrink-0 place-items-center border-l border-border text-destructive"
+                          >
+                            <Unlink className="size-4" aria-hidden />
+                          </button>
+                        </div>
                       ) : null}
 
                       {/* Status strip is its own control so staff can change state without ordering. */}
                       <button
                         type="button"
-                        onClick={() => setStatusFor({ name: t.name, state: t.state })}
+                        onClick={() => setStatusFor({ name: t.name, label: shown, state: t.state })}
                         aria-label={`Change status for ${shown}, currently ${meta.label}`}
                         className={cn(
                           "flex min-h-ctl-sm w-full items-center justify-center gap-1 px-2 py-2 text-center text-fs-xs font-extrabold uppercase transition-opacity active:opacity-80",
@@ -696,11 +730,7 @@ function FloorPlan() {
               <button
                 type="button"
                 onClick={() => {
-                  if (seatsFor) {
-                    unmergeTables(seatsFor.id);
-                    toast.success("Tables split back up");
-                  }
-                  setSeatsFor(null);
+                  if (seatsFor) void splitMerge(seatsFor.id);
                 }}
                 className="inline-flex min-h-ctl-sm items-center gap-1 rounded-pill border border-border px-4 text-fs-sm font-bold text-destructive"
               >
@@ -741,14 +771,14 @@ function FloorPlan() {
 
         <StatusSheet
           open={statusFor !== null}
-          title={statusFor ? `${statusFor.name} status` : "Status"}
+          title={statusFor ? `${statusFor.label} status` : "Status"}
           options={statusOptions}
           value={statusFor?.state ?? null}
           onClose={() => setStatusFor(null)}
           onPick={(state) => {
             if (statusFor) {
               setTableState(statusFor.name, state);
-              toast.success(`${statusFor.name} · ${tableStateMeta[state].label}`);
+              toast.success(`${statusFor.label} · ${tableStateMeta[state].label}`);
             }
             setStatusFor(null);
           }}
