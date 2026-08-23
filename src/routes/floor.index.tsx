@@ -2,14 +2,19 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Check,
   ChevronDown,
+  Combine,
   LayoutGrid,
   Map as MapIcon,
+  Minus,
   Pencil,
+  Plus,
   Trash2,
+  Unlink,
   Users,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import { FloorCanvas } from "@/components/pos/floor-canvas";
