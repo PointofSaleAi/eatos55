@@ -571,7 +571,7 @@ export function FloorEditor({
                   <button
                     type="button"
                     aria-label="More seats"
-                    onClick={() => patch(selected.id, { seats: Math.min(20, selected.seats + 1) })}
+                    onClick={() => patch(selected.id, { seats: Math.min(25, selected.seats + 1) })}
                     className="grid size-8 place-items-center rounded-pill text-foreground"
                   >
                     <Plus className="size-4" />
