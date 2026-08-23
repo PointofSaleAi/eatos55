@@ -133,6 +133,7 @@ export function FloorCanvas({
         const stool = t.kind === "bar-chair";
         const seated = t.seated ?? 0;
         const free = t.state === "available" || t.state === "reserved";
+        const picked = selectedNames.includes(t.name);
         return (
           <div
             key={t.id}
@@ -144,6 +145,7 @@ export function FloorCanvas({
                 type="button"
                 onClick={() => onOpen(t)}
                 title={t.name}
+                aria-pressed={picked || undefined}
                 className="group grid place-items-center transition-transform active:scale-[0.97]"
               >
                 <span
@@ -155,9 +157,11 @@ export function FloorCanvas({
                     meta.ring,
                     meta.text,
                     stool ? "" : shape === "round" ? "rounded-full" : "rounded-md",
+                    picked && "ring-2 ring-primary ring-offset-2 ring-offset-surface",
                   )}
                   style={{ transform: `rotate(${t.rotation ?? 0}deg)` }}
                 >
+
                   {stool ? null : <Seats seats={t.seats} seated={seated} />}
                   <span
                     className="grid max-w-[86%] place-items-center leading-none"
