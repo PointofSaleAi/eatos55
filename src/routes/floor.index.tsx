@@ -199,6 +199,39 @@ function FloorPlan() {
         ];
       });
 
+  /**
+   * Layout view keeps every real table where it stands and draws the merge as a halo
+   * around its members, so the plan matches the room while still reading as one party.
+   */
+  const layoutGroups = merging
+    ? []
+    : floorMerges
+        .map((m) => {
+          const group = m.members
+            .map((n) => rawTables.find((r) => r.name === n))
+            .filter((r): r is FloorTable => Boolean(r));
+          if (group.length < 2) return null;
+          const busy = group.find((g) => g.state !== "available" && g.state !== "reserved");
+          return {
+            id: m.id,
+            label: mergeLabel(m.members),
+            members: group.map((g) => g.name),
+            state: busy?.state ?? group[0].state,
+            seats: m.seats ?? group.reduce((sum, g) => sum + g.seats, 0),
+            seated: group.reduce((sum, g) => sum + (g.seated ?? 0), 0),
+            since: busy?.since,
+          };
+        })
+        .filter((g): g is NonNullable<typeof g> => Boolean(g));
+
+  /** A tap on any merged member acts on the whole group. */
+  const asGroup = (t: FloorTable) => {
+    const g = layoutGroups.find((grp) => grp.members.includes(t.name));
+    if (!g) return t;
+    return { ...t, name: g.members[0], seats: g.seats, state: g.state };
+  };
+
+
   const decor = layout.filter((o) => isDecor(o.kind)).filter((o) => inSection(o.section));
 
   const counts = floorCounts(editing ? (draft ?? []) : layout, section);
