@@ -204,10 +204,27 @@ function FloorPlan() {
   const counts = floorCounts(editing ? (draft ?? []) : layout, section);
   const seatedTotal = rawTables.reduce((sum, t) => sum + (t.seated ?? 0), 0);
 
+  const togglePick = (name: string) =>
+    setPicked((list) => (list.includes(name) ? list.filter((n) => n !== name) : [...list, name]));
 
-
+  const applyMerge = () => {
+    if (picked.length < 2) return;
+    const seats = picked.reduce(
+      (sum, n) => sum + (rawTables.find((t) => t.name === n)?.seats ?? 0),
+      0,
+    );
+    mergeTables(floor, picked, seats);
+    toast.success(`${mergeLabel(picked)} merged, ${seats} seats`);
+    setPicked([]);
+    setMerging(false);
+  };
 
   const openTable = (t: { name: string; seats: number; state: TableState }) => {
+    // While merging, a tap picks the table instead of starting an order.
+    if (merging) {
+      togglePick(t.name);
+      return;
+    }
     // Occupied tables resume; free tables ask how many are seated first.
     if (t.state === "available" || t.state === "reserved") {
       setGuestsFor({ name: t.name, seats: t.seats });
@@ -216,6 +233,7 @@ function FloorPlan() {
     startOrder(t.name);
     navigate({ to: "/order/new" });
   };
+
 
   return (
     <div className="flex min-h-0 flex-1 bg-background">
