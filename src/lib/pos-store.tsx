@@ -666,6 +666,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
           roomStates?: Record<string, RoomState>;
           floorLayouts?: Record<string, FloorObject[]>;
           floorTemplates?: SavedTemplate[];
+          tableMerges?: TableMerge[];
+          customFloorKinds?: CustomFloorKind[];
         };
         if (saved.tableStates) setTableStates(saved.tableStates);
         if (saved.tableSince) setTableSince(saved.tableSince);
@@ -673,6 +675,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
         if (saved.roomStates) setRoomStates(saved.roomStates);
         if (saved.floorLayouts) setFloorLayouts(saved.floorLayouts);
         if (saved.floorTemplates) setFloorTemplates(saved.floorTemplates);
+        if (saved.tableMerges) setTableMerges(saved.tableMerges);
+        if (saved.customFloorKinds) setCustomFloorKinds(saved.customFloorKinds);
       }
     } catch {
       /* ignore unreadable storage */
@@ -691,6 +695,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
           roomStates,
           floorLayouts,
           floorTemplates,
+          tableMerges,
+          customFloorKinds,
         }),
       );
     } catch {
@@ -703,6 +709,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
     roomStates,
     floorLayouts,
     floorTemplates,
+    tableMerges,
+    customFloorKinds,
+
     floorReady,
   ]);
 
