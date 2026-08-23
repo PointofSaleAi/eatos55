@@ -20,10 +20,13 @@ import {
 } from "./demo-data";
 import {
   defaultFloorLayout,
+  type CustomFloorKind,
   type FloorObject,
   type SavedTemplate,
+  type TableMerge,
   type TableState,
 } from "./floor-data";
+
 import {
   inRange,
   rangeForPreset,
