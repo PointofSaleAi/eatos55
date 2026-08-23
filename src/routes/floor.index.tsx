@@ -512,6 +512,7 @@ function FloorPlan() {
               decor={decor}
               onOpen={(t) => openTable(t)}
               onStatus={(t) => setStatusFor({ name: t.name, state: t.state })}
+              selectedNames={merging ? picked : []}
             />
           </div>
         ) : (
@@ -525,22 +526,28 @@ function FloorPlan() {
                 {tables.map((t) => {
                   const meta = tableStateMeta[t.state];
                   const seated = t.seated ?? 0;
+                  const merge = merging ? null : mergeOf(t.name);
+                  const shown = merge ? mergeLabel(merge.members) : t.name;
+                  const isPicked = merging && picked.includes(t.name);
                   // Long names shrink instead of truncating so the number stays readable.
                   const nameSize =
-                    t.name.length > 7
+                    shown.length > 7
                       ? "text-[0.6rem]"
-                      : t.name.length > 5
+                      : shown.length > 5
                         ? "text-[0.7rem]"
                         : "text-fs-sm";
                   return (
                     <div
                       key={t.id}
-                      className="overflow-hidden rounded-card border border-border bg-surface text-left"
+                      className={cn(
+                        "overflow-hidden rounded-card border bg-surface text-left",
+                        isPicked ? "border-primary ring-2 ring-primary" : "border-border",
+                      )}
                     >
                       <button
                         type="button"
                         onClick={() => openTable(t)}
-                        title={t.name}
+                        title={shown}
                         className="block w-full transition-transform active:scale-[0.98]"
                       >
                         <div className="relative grid h-tile place-items-center">
@@ -552,7 +559,7 @@ function FloorPlan() {
                             )}
                           >
                             <span className={cn("max-w-[94%] truncate px-0.5 leading-none", nameSize)}>
-                              {t.name}
+                              {shown}
                             </span>
                           </div>
                           {t.since ? (
@@ -566,11 +573,26 @@ function FloorPlan() {
                           </span>
                         </div>
                       </button>
+
+                      {/* Merged groups get their own row to retune capacity or split back up. */}
+                      {merge ? (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSeatsFor({ id: merge.id, seats: t.seats })
+                          }
+                          className="flex min-h-ctl-sm w-full items-center justify-center gap-1 border-t border-border px-2 text-fs-xs font-bold uppercase text-muted-foreground"
+                        >
+                          <Combine className="size-3.5 shrink-0" aria-hidden />
+                          Merged · {t.seats} seats
+                        </button>
+                      ) : null}
+
                       {/* Status strip is its own control so staff can change state without ordering. */}
                       <button
                         type="button"
                         onClick={() => setStatusFor({ name: t.name, state: t.state })}
-                        aria-label={`Change status for ${t.name}, currently ${meta.label}`}
+                        aria-label={`Change status for ${shown}, currently ${meta.label}`}
                         className={cn(
                           "flex min-h-ctl-sm w-full items-center justify-center gap-1 px-2 py-2 text-center text-fs-xs font-extrabold uppercase transition-opacity active:opacity-80",
                           meta.strip,
@@ -586,6 +608,7 @@ function FloorPlan() {
             )}
           </ScreenBody>
         )}
+
 
         <GuestsSheet
           open={guestsFor !== null}
