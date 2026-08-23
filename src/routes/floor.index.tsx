@@ -609,6 +609,76 @@ function FloorPlan() {
           </ScreenBody>
         )}
 
+        {/* Adjust how many can sit at a merged group, or split it back up. */}
+        <Dialog open={seatsFor !== null} onOpenChange={(o) => (o ? null : setSeatsFor(null))}>
+          <DialogContent className="max-w-sm rounded-card p-4">
+            <DialogHeader>
+              <DialogTitle className="text-fs-base font-extrabold text-foreground">
+                Merged tables
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-fs-sm text-muted-foreground">
+              {seatsFor
+                ? mergeLabel(tableMerges.find((m) => m.id === seatsFor.id)?.members ?? [])
+                : ""}
+            </p>
+            <div className="flex items-center justify-center gap-1 rounded-pill bg-muted p-1">
+              <button
+                type="button"
+                aria-label="Fewer seats"
+                onClick={() =>
+                  setSeatsFor((s) => (s ? { ...s, seats: Math.max(1, s.seats - 1) } : s))
+                }
+                className="grid size-9 place-items-center rounded-pill text-foreground"
+              >
+                <Minus className="size-4" />
+              </button>
+              <span className="min-w-20 text-center text-fs-sm font-bold text-foreground">
+                {seatsFor?.seats ?? 0} seats
+              </span>
+              <button
+                type="button"
+                aria-label="More seats"
+                onClick={() =>
+                  setSeatsFor((s) => (s ? { ...s, seats: Math.min(60, s.seats + 1) } : s))
+                }
+                className="grid size-9 place-items-center rounded-pill text-foreground"
+              >
+                <Plus className="size-4" />
+              </button>
+            </div>
+            <DialogFooter className="gap-2 sm:justify-between">
+              <button
+                type="button"
+                onClick={() => {
+                  if (seatsFor) {
+                    unmergeTables(seatsFor.id);
+                    toast.success("Tables split back up");
+                  }
+                  setSeatsFor(null);
+                }}
+                className="inline-flex min-h-ctl-sm items-center gap-1 rounded-pill border border-border px-4 text-fs-sm font-bold text-destructive"
+              >
+                <Unlink className="size-4" aria-hidden />
+                Unmerge
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (seatsFor) {
+                    setMergeSeats(seatsFor.id, seatsFor.seats);
+                    toast.success(`Capacity set to ${seatsFor.seats} seats`);
+                  }
+                  setSeatsFor(null);
+                }}
+                className="min-h-ctl-sm rounded-pill bg-primary px-4 text-fs-sm font-extrabold uppercase text-primary-foreground"
+              >
+                Save
+              </button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
 
         <GuestsSheet
           open={guestsFor !== null}
