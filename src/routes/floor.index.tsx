@@ -108,6 +108,13 @@ function FloorPlan() {
     saveFloorTemplate,
     deleteFloorTemplate,
     canManageSettings,
+    tableMerges,
+    mergeTables,
+    unmergeTables,
+    setMergeSeats,
+    customFloorKinds,
+    addCustomFloorKind,
+    deleteCustomFloorKind,
   } = usePos();
   // Dwell times tick once a minute so the grid and layout stay in step.
   const [now, setNow] = useState(() => Date.now());
@@ -123,6 +130,11 @@ function FloorPlan() {
   const [draft, setDraft] = useState<FloorObject[] | null>(null);
   const [templateName, setTemplateName] = useState<string | null>(null);
   const [resetMode, setResetMode] = useState<"saved" | "default" | null>(null);
+  // Merge mode: tap tables to pick them, then join them into one big party.
+  const [merging, setMerging] = useState(false);
+  const [picked, setPicked] = useState<string[]>([]);
+  const [seatsFor, setSeatsFor] = useState<{ id: string; seats: number } | null>(null);
+
   const editing = draft !== null;
 
 
