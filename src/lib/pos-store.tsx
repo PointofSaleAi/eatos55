@@ -607,6 +607,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [floorLayouts, setFloorLayouts] = useState<Record<string, FloorObject[]>>({});
   const [tableSeated, setTableSeatedMap] = useState<Record<string, number>>({});
   const [floorTemplates, setFloorTemplates] = useState<SavedTemplate[]>([]);
+  const [tableMerges, setTableMerges] = useState<TableMerge[]>([]);
+  const [customFloorKinds, setCustomFloorKinds] = useState<CustomFloorKind[]>([]);
+
   const [floorReady, setFloorReady] = useState(false);
 
   const [noTax, setNoTax] = useState(false);
