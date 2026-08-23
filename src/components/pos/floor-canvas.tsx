@@ -91,6 +91,17 @@ export function DecorShape({ object }: { object: FloorObject }) {
   );
 }
 
+/** A merged party: several real tables pushed together, read as one group. */
+export type FloorGroup = {
+  id: string;
+  label: string;
+  members: string[];
+  state: FloorTable["state"];
+  seats: number;
+  seated: number;
+  since?: string;
+};
+
 /**
  * Spatial floor view: tables sit at their real positions on a scaled canvas so the
  * whole plan always fits without scrolling.
@@ -101,6 +112,7 @@ export function FloorCanvas({
   onOpen,
   onStatus,
   selectedNames = [],
+  groups = [],
 }: {
   tables: FloorTable[];
   decor?: FloorObject[];
@@ -108,7 +120,33 @@ export function FloorCanvas({
   onStatus: (t: FloorTable) => void;
   /** Tables picked while merging, drawn with a highlight ring. */
   selectedNames?: string[];
+  /** Merged groups drawn as one connected party. */
+  groups?: FloorGroup[];
 }) {
+  const grouped = new Map<string, FloorGroup>();
+  for (const g of groups) for (const name of g.members) grouped.set(name, g);
+
+  /** Each group's geometry: centre point plus the box its members occupy. */
+  const geoms = groups
+    .map((g) => {
+      const pts = g.members
+        .map((n) => tables.find((t) => t.name === n))
+        .filter((t): t is FloorTable => Boolean(t))
+        .map((t) => ({ x: t.x ?? 50, y: t.y ?? 50 }));
+      if (!pts.length) return null;
+      const xs = pts.map((p) => p.x);
+      const ys = pts.map((p) => p.y);
+      return {
+        group: g,
+        pts,
+        cx: (Math.min(...xs) + Math.max(...xs)) / 2,
+        minX: Math.min(...xs),
+        maxX: Math.max(...xs),
+        minY: Math.min(...ys),
+        maxY: Math.max(...ys),
+      };
+    })
+    .filter((g): g is NonNullable<typeof g> => Boolean(g));
 
   return (
     <div className="relative h-full min-h-0 w-full overflow-hidden rounded-card border border-border bg-surface">
@@ -127,6 +165,54 @@ export function FloorCanvas({
             <DecorShape object={o} />
           </div>
         ))}
+
+      {/* Merge halos and the link lines that show which tables were pushed together. */}
+      {geoms.length ? (
+        <svg
+          aria-hidden
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          className="absolute inset-0 z-10 size-full"
+        >
+          {geoms.map((geo) => (
+            <g key={geo.group.id} className={tableStateMeta[geo.group.state].text}>
+              <rect
+                x={Math.max(0, geo.minX - 7)}
+                y={Math.max(0, geo.minY - 7)}
+                width={Math.min(100, geo.maxX + 7) - Math.max(0, geo.minX - 7)}
+                height={Math.min(100, geo.maxY + 7) - Math.max(0, geo.minY - 7)}
+                rx={4}
+                ry={4}
+                fill="currentColor"
+                fillOpacity={0.07}
+                stroke="currentColor"
+                strokeOpacity={0.5}
+                strokeWidth={0.4}
+                strokeDasharray="1.5 1.5"
+                vectorEffect="non-scaling-stroke"
+              />
+              {geo.pts.map((p, i) => {
+                const next = geo.pts[(i + 1) % geo.pts.length];
+                if (geo.pts.length < 2) return null;
+                return (
+                  <line
+                    key={i}
+                    x1={p.x}
+                    y1={p.y}
+                    x2={next.x}
+                    y2={next.y}
+                    stroke="currentColor"
+                    strokeOpacity={0.6}
+                    strokeWidth={1}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                );
+              })}
+            </g>
+          ))}
+        </svg>
+      ) : null}
+
       {tables.map((t) => {
         const meta = tableStateMeta[t.state];
         const shape = t.shape ?? "round";
