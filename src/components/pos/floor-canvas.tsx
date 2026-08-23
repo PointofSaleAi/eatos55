@@ -6,6 +6,7 @@ import {
   type FloorObject,
   type FloorTable,
 } from "@/lib/floor-data";
+import { Unlink } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -113,6 +114,7 @@ export function FloorCanvas({
   onStatus,
   selectedNames = [],
   groups = [],
+  onUnmerge,
 }: {
   tables: FloorTable[];
   decor?: FloorObject[];
@@ -122,9 +124,33 @@ export function FloorCanvas({
   selectedNames?: string[];
   /** Merged groups drawn as one connected party. */
   groups?: FloorGroup[];
+  /** Split a merged party back into its own tables. */
+  onUnmerge?: (id: string) => void;
 }) {
   const grouped = new Map<string, FloorGroup>();
   for (const g of groups) for (const name of g.members) grouped.set(name, g);
+
+  /**
+   * Seat dots follow the group's edited capacity, not the sum of the members, so
+   * setting a merge to 25 seats redraws the dots straight away.
+   */
+  const seatOverride = new Map<string, number>();
+  for (const g of groups) {
+    const members = g.members
+      .map((n) => tables.find((t) => t.name === n))
+      .filter((t): t is FloorTable => Boolean(t));
+    const sum = members.reduce((total, m) => total + m.seats, 0);
+    if (!members.length || !sum) continue;
+    let left = Math.max(members.length, g.seats);
+    members.forEach((m, i) => {
+      const share =
+        i === members.length - 1
+          ? left
+          : Math.max(1, Math.round((g.seats * m.seats) / sum));
+      seatOverride.set(m.name, Math.max(1, Math.min(left - (members.length - 1 - i), share)));
+      left -= seatOverride.get(m.name) ?? 0;
+    });
+  }
 
   /** Each group's geometry: centre point plus the box its members occupy. */
   const geoms = groups
@@ -249,7 +275,9 @@ export function FloorCanvas({
                   style={{ transform: `rotate(${t.rotation ?? 0}deg)` }}
                 >
 
-                  {stool ? null : <Seats seats={t.seats} seated={seated} />}
+                  {stool ? null : (
+                    <Seats seats={seatOverride.get(t.name) ?? t.seats} seated={seated} />
+                  )}
                   <span
                     className="grid max-w-[86%] place-items-center leading-none"
                     style={{ transform: `rotate(${uprightSpin(t.rotation)}deg)` }}
@@ -313,18 +341,31 @@ export function FloorCanvas({
                 {g.seated}/{g.seats}
                 {g.since ? ` · ${g.since}` : ""}
               </span>
-              <button
-                type="button"
-                onClick={() => first && onStatus(first)}
-                aria-label={`Change status for ${g.label}, currently ${meta.label}`}
-                className={cn(
-                  "max-w-full truncate rounded-pill px-1.5 py-0.5 text-[0.5rem] font-bold uppercase tracking-wide transition-opacity active:opacity-80",
-                  meta.strip,
-                  meta.text,
-                )}
-              >
-                {meta.label}
-              </button>
+              <div className="flex max-w-full items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => first && onStatus(first)}
+                  aria-label={`Change status for ${g.label}, currently ${meta.label}`}
+                  className={cn(
+                    "min-w-0 max-w-full truncate rounded-pill px-1.5 py-0.5 text-[0.5rem] font-bold uppercase tracking-wide transition-opacity active:opacity-80",
+                    meta.strip,
+                    meta.text,
+                  )}
+                >
+                  {meta.label}
+                </button>
+                {/* One tap split, so a big party can be broken up from the plan itself. */}
+                {onUnmerge ? (
+                  <button
+                    type="button"
+                    onClick={() => onUnmerge(g.id)}
+                    aria-label={`Unmerge ${g.label}`}
+                    className="grid size-5 shrink-0 place-items-center rounded-pill border border-border text-destructive transition-opacity active:opacity-80"
+                  >
+                    <Unlink className="size-3" aria-hidden />
+                  </button>
+                ) : null}
+              </div>
             </div>
           </div>
         );
