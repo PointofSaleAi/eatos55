@@ -148,12 +148,13 @@ export const floorObjectKindMeta: Record<
 export function kindMeta(
   kind: FloorObjectKind,
   customs: CustomFloorKind[] = [],
-): { label: string; seats: number; w?: number; h?: number; shape?: "round" | "square" } {
+): { label: string; seats: number; w?: number | undefined; h?: number | undefined; shape?: "round" | "square" | undefined } {
   const id = customKindId(kind);
   if (id) {
     const found = customs.find((c) => c.id === id);
     return found
       ? { label: found.label, seats: found.seats, w: found.w, h: found.h, shape: found.shape }
+
       : { label: "Custom", seats: 0 };
   }
   return floorObjectKindMeta[kind as BuiltinFloorObjectKind] ?? { label: "Object", seats: 0 };
