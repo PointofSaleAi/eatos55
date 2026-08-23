@@ -44,14 +44,14 @@ import {
   cloneLayout,
   defaultFloorLayout,
   floorCounts,
-
-
+  findMerge,
   floorSections,
   floorTables,
   formatDwell,
   floors,
   isDecor,
   layoutTemplates,
+  mergeLabel,
   tableStateMeta,
   tableStateOrder,
   type FloorObject,
@@ -59,6 +59,7 @@ import {
   type FloorTable,
   type TableState,
 } from "@/lib/floor-data";
+
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
