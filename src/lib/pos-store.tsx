@@ -20,6 +20,8 @@ import {
 } from "./demo-data";
 import {
   defaultFloorLayout,
+  mergeLabel,
+
   type CustomFloorKind,
   type FloorObject,
   type SavedTemplate,
@@ -419,6 +421,9 @@ type Store = {
   tableSeated: Record<string, number>;
   setTableSeated: (table: string, seated: number) => void;
   setTableState: (table: string, state: TableState) => void;
+  /** Merged label for a table ("T1 + T2") so every screen prints the same name. */
+  tableGroupLabel: (table: string | null) => string | null;
+
   /** Saved layouts per floor; falls back to the seeded arrangement. */
   floorLayouts: Record<string, FloorObject[]>;
   getFloorLayout: (floor: string) => FloorObject[];
@@ -986,23 +991,41 @@ export function PosProvider({ children }: { children: ReactNode }) {
       tableSeated,
       setTableSeated: (table, seated) =>
         setTableSeatedMap((s) => ({ ...s, [table]: Math.max(0, seated) })),
+      // A merged party is one table to staff, so a status change fans out to every
+      // member: nobody is left on a stale state after leaving the floor or unmerging.
       setTableState: (table, state) => {
-        setTableStates((s) => ({ ...s, [table]: state }));
+        const merge = tableMerges.find((m) => m.members.includes(table));
+        const names = merge ? merge.members : [table];
+        const free = state === "available" || state === "reserved";
+        setTableStates((s) => {
+          const next = { ...s };
+          for (const n of names) next[n] = state;
+          return next;
+        });
         setTableSince((s) => {
           const next = { ...s };
-          if (state === "available" || state === "reserved") delete next[table];
-          else next[table] = new Date().toISOString();
+          const stamp = new Date().toISOString();
+          for (const n of names) {
+            if (free) delete next[n];
+            else next[n] = stamp;
+          }
           return next;
         });
         // Freeing a table clears its party, so seated counts never linger.
-        if (state === "available" || state === "reserved") {
+        if (free) {
           setTableSeatedMap((s) => {
             const next = { ...s };
-            delete next[table];
+            for (const n of names) delete next[n];
             return next;
           });
         }
       },
+      tableGroupLabel: (table) => {
+        if (!table) return table;
+        const merge = tableMerges.find((m) => m.members.includes(table));
+        return merge ? mergeLabel(merge.members) : table;
+      },
+
       roomStates,
       setRoomState: (room, state) => setRoomStates((s) => ({ ...s, [room]: state })),
 

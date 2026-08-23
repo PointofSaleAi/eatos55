@@ -92,6 +92,7 @@ function PaymentMethod() {
     guest,
     orderType,
     activeTable,
+    tableGroupLabel,
     paidSoFar,
     partialPayments,
     addPartialPayment,
@@ -399,7 +400,7 @@ function PaymentMethod() {
               {orderType}
             </p>
             <p className="truncate text-fs-xs text-muted-foreground">
-              {guest.name || activeTable || "Guest Name"}
+              {guest.name || tableGroupLabel(activeTable) || "Guest Name"}
             </p>
             <p className="shrink-0 text-fs-xs text-muted-foreground">
               Ticket No. {orderNumber} · Amount Due {money(due)}
@@ -601,7 +602,7 @@ function PaymentMethod() {
             Total Due <span className="text-accent">{money(due)}</span>
           </h1>
           <p className="truncate text-fs-xs text-muted-foreground">
-            Order {orderNumber} · {guest.name || activeTable || "Guest"} · {orderType}
+            Order {orderNumber} · {guest.name || tableGroupLabel(activeTable) || "Guest"} · {orderType}
           </p>
         </div>
       </div>

@@ -36,6 +36,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
     guest,
     arrivedAt,
     activeTable,
+    tableGroupLabel,
     orderType,
     setOrderType,
     cart,
@@ -77,7 +78,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
             className="min-w-0 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted"
           >
             <span className="block truncate text-fs-lg font-extrabold leading-tight text-foreground">
-              {guest.name || activeTable || "Guest Name"}
+              {guest.name || tableGroupLabel(activeTable) || "Guest Name"}
             </span>
             <span className="block truncate text-fs-sm leading-tight text-muted-foreground">
               {guest.phone || "(XXX) XXX-XXXX"}
