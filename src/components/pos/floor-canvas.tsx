@@ -100,12 +100,16 @@ export function FloorCanvas({
   decor = [],
   onOpen,
   onStatus,
+  selectedNames = [],
 }: {
   tables: FloorTable[];
   decor?: FloorObject[];
   onOpen: (t: FloorTable) => void;
   onStatus: (t: FloorTable) => void;
+  /** Tables picked while merging, drawn with a highlight ring. */
+  selectedNames?: string[];
 }) {
+
   return (
     <div className="relative h-full min-h-0 w-full overflow-hidden rounded-card border border-border bg-surface">
       {decor
