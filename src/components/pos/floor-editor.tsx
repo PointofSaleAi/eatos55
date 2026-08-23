@@ -190,42 +190,79 @@ export function FloorEditor({
     <div className="flex min-h-0 flex-1 flex-col gap-2">
       {/* Toolbar: add menus, templates, reset and the live counts. */}
       <div className="flex shrink-0 flex-wrap items-center gap-1.5 rounded-card border border-border bg-surface p-1.5">
-        {paletteGroups.map((group) => (
-          <DropdownMenu key={group.label}>
-            <DropdownMenuTrigger className="inline-flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border bg-surface px-2.5 text-fs-xs font-bold uppercase text-foreground transition-colors hover:bg-muted">
-              <Plus className="size-3.5" aria-hidden />
-              {group.label}
-              <ChevronDown className="size-3.5 shrink-0" aria-hidden />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="min-w-56">
-              <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
-                {group.menu}
-              </DropdownMenuLabel>
-              {group.kinds.map((kind) => {
-                const meta = floorObjectKindMeta[kind];
-                const detail = hasFootprint(kind)
-                  ? `${meta.w ?? 30} x ${meta.h ?? 8}`
-                  : meta.seats > 0
-                    ? `${meta.seats} seats`
-                    : "";
-                return (
-                  <DropdownMenuItem
-                    key={kind}
-                    className="text-fs-sm font-normal text-foreground"
-                    onClick={() => add(kind)}
-                  >
-                    <span className="min-w-0 flex-1 truncate">{meta.label}</span>
-                    {detail ? (
-                      <span className="ml-2 shrink-0 text-fs-xs text-muted-foreground">
-                        {detail}
-                      </span>
+        {paletteGroups.map((group) => {
+          const mine = customKinds.filter((k) => k.category === group.category);
+          const kinds: FloorObjectKind[] = [...group.kinds, ...mine.map(kindString)];
+          return (
+            <DropdownMenu key={group.label}>
+              <DropdownMenuTrigger className="inline-flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border bg-surface px-2.5 text-fs-xs font-bold uppercase text-foreground transition-colors hover:bg-muted">
+                <Plus className="size-3.5" aria-hidden />
+                {group.label}
+                <ChevronDown className="size-3.5 shrink-0" aria-hidden />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="min-w-56">
+                <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
+                  {group.menu}
+                </DropdownMenuLabel>
+                {kinds.map((kind) => {
+                  const meta = kindMeta(kind, customKinds);
+                  const detail = hasFootprint(kind)
+                    ? `${meta.w ?? 30} x ${meta.h ?? 8}`
+                    : meta.seats > 0
+                      ? `${meta.seats} seats`
+                      : "";
+                  return (
+                    <DropdownMenuItem
+                      key={kind}
+                      className="text-fs-sm font-normal text-foreground"
+                      onClick={() => add(kind)}
+                    >
+                      <span className="min-w-0 flex-1 truncate">{meta.label}</span>
+                      {detail ? (
+                        <span className="ml-2 shrink-0 text-fs-xs text-muted-foreground">
+                          {detail}
+                        </span>
+                      ) : null}
+                    </DropdownMenuItem>
+                  );
+                })}
+                {onAddCustomKind ? (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-fs-sm font-bold text-foreground"
+                      onClick={() => {
+                        setNewKind(group.category);
+                        setNewKindName("");
+                      }}
+                    >
+                      <Plus className="size-3.5" aria-hidden />
+                      Add new type
+                    </DropdownMenuItem>
+                    {mine.length && onDeleteCustomKind ? (
+                      <>
+                        <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
+                          Remove my types
+                        </DropdownMenuLabel>
+                        {mine.map((k) => (
+                          <DropdownMenuItem
+                            key={k.id}
+                            className="text-fs-sm font-normal text-destructive"
+                            onClick={() => onDeleteCustomKind(k.id)}
+                          >
+                            <Trash2 className="size-3.5" aria-hidden />
+                            <span className="min-w-0 flex-1 truncate">{k.label}</span>
+                          </DropdownMenuItem>
+                        ))}
+                      </>
                     ) : null}
-                  </DropdownMenuItem>
-                );
-              })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ))}
+                  </>
+                ) : null}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        })}
+
 
         {toolbarExtra}
 
