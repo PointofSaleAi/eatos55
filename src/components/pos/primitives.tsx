@@ -246,6 +246,9 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
   const orderTypeLabel = ticket.orderType ?? modeOrderType(ticket.mode);
   const OrderTypeIcon = orderTypeIcon(orderTypeLabel);
   const orderNo = ticket.orderNo ?? ticket.number;
+  // Merged parties read as one table on the ticket too.
+  const tableLabel = ticket.table ? (tableGroupLabel(String(ticket.table)) ?? String(ticket.table)) : null;
+
 
   return (
     <div className="@container w-full overflow-hidden rounded-card border border-border bg-surface">
