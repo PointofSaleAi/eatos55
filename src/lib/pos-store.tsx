@@ -1291,6 +1291,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
     roomStates,
     floorLayouts,
     floorTemplates,
+    tableMerges,
+    customFloorKinds,
+
 
     guest,
     orderType,
