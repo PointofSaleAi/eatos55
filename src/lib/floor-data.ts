@@ -40,8 +40,8 @@ export type FloorTable = {
   y?: number;
 };
 
-/** Objects that can sit on an editable floor layout. */
-export type FloorObjectKind =
+/** Built-in objects that can sit on an editable floor layout. */
+export type BuiltinFloorObjectKind =
   | "table"
   | "bar"
   | "counter"
@@ -54,6 +54,36 @@ export type FloorObjectKind =
   | "zone-private-dining"
   | "zone-patio"
   | "zone-lounge";
+
+/**
+ * Venue-defined object types. The category is baked into the kind string so every
+ * helper (decor, zone, footprint) can answer without looking the type up.
+ */
+export type CustomKindCategory = "seating" | "fixture" | "zone";
+export type CustomFloorObjectKind = `custom-${CustomKindCategory}:${string}`;
+
+export type FloorObjectKind = BuiltinFloorObjectKind | CustomFloorObjectKind;
+
+/** A type the venue added under Seating, Fixtures or Zones. */
+export type CustomFloorKind = {
+  id: string;
+  label: string;
+  category: CustomKindCategory;
+  seats: number;
+  shape: "round" | "square";
+  w?: number;
+  h?: number;
+};
+
+export function customKindId(kind: FloorObjectKind): string | null {
+  const match = /^custom-(?:seating|fixture|zone):(.+)$/.exec(kind);
+  return match ? (match[1] ?? null) : null;
+}
+
+export function kindString(k: CustomFloorKind): CustomFloorObjectKind {
+  return `custom-${k.category}:${k.id}`;
+}
+
 
 export type FloorObject = {
   id: string;
