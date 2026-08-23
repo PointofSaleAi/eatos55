@@ -61,6 +61,9 @@ export function FloorEditor({
   onReset,
   onResetDefault,
   toolbarExtra,
+  customKinds = [],
+  onAddCustomKind,
+  onDeleteCustomKind,
 }: {
   objects: FloorObject[];
   onChange: (next: FloorObject[]) => void;
@@ -70,17 +73,22 @@ export function FloorEditor({
   onResetDefault?: () => void;
   /** Extra toolbar controls, such as the Template menu. */
   toolbarExtra?: ReactNode;
+  /** Venue defined object types shown alongside the built-in ones. */
+  customKinds?: CustomFloorKind[];
+  onAddCustomKind?: (kind: Omit<CustomFloorKind, "id">) => void;
+  onDeleteCustomKind?: (id: string) => void;
 }) {
   const canvasRef = useRef<HTMLDivElement | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [newKind, setNewKind] = useState<CustomKindCategory | null>(null);
+  const [newKindName, setNewKindName] = useState("");
+  const [newKindSeats, setNewKindSeats] = useState(4);
   const dragRef = useRef<{ id: string; mode: "move" | "rotate" } | null>(null);
   const selected = objects.find((o) => o.id === selectedId) ?? null;
 
   // Counts read from the same helper the grid list uses, so they always agree.
   const { tables: tableCount, chairs: chairCount } = floorCounts(objects);
-
-
 
   const patch = useCallback(
     (id: string, next: Partial<FloorObject>) =>
@@ -89,7 +97,7 @@ export function FloorEditor({
   );
 
   const add = (kind: FloorObjectKind) => {
-    const meta = floorObjectKindMeta[kind];
+    const meta = kindMeta(kind, customKinds);
     const count = objects.filter((o) => o.kind === kind).length + 1;
     const next: FloorObject = {
       id: `fo-${kind}-${Date.now()}`,
@@ -102,7 +110,7 @@ export function FloorEditor({
             : `${meta.label}${count > 1 ? ` ${count}` : ""}`,
       seats: meta.seats,
       rotation: 0,
-      shape: kind === "table" ? "round" : "square",
+      shape: kind === "table" ? "round" : (meta.shape ?? "square"),
       section: "B1",
       // Stagger drops so a new object never lands exactly on the last one.
       x: snap(30 + ((objects.length * 8) % 50)),
@@ -112,6 +120,22 @@ export function FloorEditor({
     onChange([...objects, next]);
     setSelectedId(next.id);
   };
+
+  const saveNewKind = () => {
+    const label = newKindName.trim();
+    if (!newKind || !label || !onAddCustomKind) return;
+    onAddCustomKind({
+      label,
+      category: newKind,
+      seats: newKind === "seating" ? Math.max(0, Math.min(25, newKindSeats)) : 0,
+      shape: "square",
+      ...(newKind === "zone" ? { w: 28, h: 22 } : newKind === "fixture" ? { w: 30, h: 8 } : {}),
+    });
+    setNewKind(null);
+    setNewKindName("");
+    setNewKindSeats(4);
+  };
+
 
   const onPointerDown = (e: React.PointerEvent, id: string, mode: "move" | "rotate") => {
     e.stopPropagation();
