@@ -142,7 +142,7 @@ function FloorPlan() {
   const seed = new Map(floorTables.filter((t) => t.floor === floor).map((t) => [t.name, t]));
   const inSection = (sec: "B1" | "B2") => section === "all" || sec === section;
 
-  const tables: FloorTable[] = layout
+  const rawTables: FloorTable[] = layout
     .filter((o) => !isDecor(o.kind))
     .filter((o) => inSection(o.section))
     .map((o) => {
@@ -170,10 +170,40 @@ function FloorPlan() {
       };
     });
 
+  const floorMerges = tableMerges.filter((m) => m.floor === floor);
+  const mergeOf = (name: string) => findMerge(floorMerges, floor, name);
+
+  /**
+   * A merged group shows up as one table: the first member carries the order, the
+   * others fold into it, and capacity is the manager's override or the sum of seats.
+   */
+  const tables: FloorTable[] = merging
+    ? rawTables
+    : rawTables.flatMap((t) => {
+        const merge = mergeOf(t.name);
+        if (!merge) return [t];
+        if (merge.members[0] !== t.name) return [];
+        const group = merge.members
+          .map((n) => rawTables.find((r) => r.name === n))
+          .filter((r): r is FloorTable => Boolean(r));
+        const busy = group.find((g) => g.state !== "available" && g.state !== "reserved");
+        return [
+          {
+            ...t,
+            label: mergeLabel(merge.members),
+            seats: merge.seats ?? group.reduce((sum, g) => sum + g.seats, 0),
+            seated: group.reduce((sum, g) => sum + (g.seated ?? 0), 0),
+            state: busy?.state ?? t.state,
+            since: busy?.since ?? t.since,
+          },
+        ];
+      });
+
   const decor = layout.filter((o) => isDecor(o.kind)).filter((o) => inSection(o.section));
 
   const counts = floorCounts(editing ? (draft ?? []) : layout, section);
-  const seatedTotal = tables.reduce((sum, t) => sum + (t.seated ?? 0), 0);
+  const seatedTotal = rawTables.reduce((sum, t) => sum + (t.seated ?? 0), 0);
+
 
 
 
