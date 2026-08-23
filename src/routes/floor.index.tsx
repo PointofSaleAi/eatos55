@@ -541,12 +541,17 @@ function FloorPlan() {
 
           <div className="min-h-0 flex-1 p-3 pb-[calc(0.75rem+var(--tabs-h,0px))]">
             <FloorCanvas
-              tables={tables}
+              tables={rawTables}
               decor={decor}
-              onOpen={(t) => openTable(t)}
-              onStatus={(t) => setStatusFor({ name: t.name, state: t.state })}
+              groups={layoutGroups}
+              onOpen={(t) => openTable(asGroup(t))}
+              onStatus={(t) => {
+                const g = asGroup(t);
+                setStatusFor({ name: g.name, state: g.state });
+              }}
               selectedNames={merging ? picked : []}
             />
+
           </div>
         ) : (
           <ScreenBody>
