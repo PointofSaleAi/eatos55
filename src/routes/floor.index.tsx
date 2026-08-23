@@ -600,11 +600,18 @@ function FloorPlan() {
                               {shown}
                             </span>
                           </div>
+                          {/* Which real tables were pushed together for this party. */}
+                          {merge ? (
+                            <span className="absolute left-0 right-0 top-2 truncate px-2 text-center text-fs-xs font-bold text-muted-foreground">
+                              {merge.members.join(" · ")}
+                            </span>
+                          ) : null}
                           {t.since ? (
                             <span className="absolute bottom-2 right-3 text-fs-xs font-bold text-muted-foreground">
                               {t.since}
                             </span>
                           ) : null}
+
                           <span className="absolute bottom-2 left-3 inline-flex items-center gap-1 text-fs-xs text-muted-foreground">
                             <Users className="size-3.5 shrink-0" aria-hidden />
                             {seated} / {t.seats}
