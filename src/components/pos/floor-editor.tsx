@@ -316,6 +316,70 @@ export function FloorEditor({
         </span>
       </div>
 
+      {/* Inline form for a venue defined object type. */}
+      {newKind ? (
+        <div className="flex shrink-0 flex-wrap items-center gap-1.5 rounded-card border border-border bg-surface p-1.5">
+          <span className="shrink-0 text-fs-xs font-bold uppercase text-muted-foreground">
+            New {newKind} type
+          </span>
+          <input
+            autoFocus
+            value={newKindName}
+            onChange={(e) => setNewKindName(e.target.value.slice(0, 24))}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") saveNewKind();
+              if (e.key === "Escape") setNewKind(null);
+            }}
+            placeholder="Name, such as High Top"
+            aria-label="New type name"
+            className="min-h-ctl-sm min-w-40 flex-1 rounded-row bg-muted px-3 text-fs-sm font-bold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
+          />
+          {newKind === "seating" ? (
+            <div className="flex shrink-0 items-center gap-1 rounded-pill bg-muted p-1">
+              <button
+                type="button"
+                aria-label="Fewer default seats"
+                onClick={() => setNewKindSeats((s) => Math.max(1, s - 1))}
+                className="grid size-8 place-items-center rounded-pill text-foreground"
+              >
+                <Minus className="size-4" />
+              </button>
+              <span className="min-w-14 text-center text-fs-xs font-bold text-foreground">
+                {newKindSeats} seats
+              </span>
+              <button
+                type="button"
+                aria-label="More default seats"
+                onClick={() => setNewKindSeats((s) => Math.min(25, s + 1))}
+                className="grid size-8 place-items-center rounded-pill text-foreground"
+              >
+                <Plus className="size-4" />
+              </button>
+            </div>
+          ) : null}
+          <button
+            type="button"
+            onClick={saveNewKind}
+            disabled={!newKindName.trim()}
+            className={cn(
+              "min-h-ctl-sm shrink-0 rounded-pill bg-primary px-3 text-fs-xs font-bold uppercase text-primary-foreground",
+              !newKindName.trim() && "opacity-40",
+            )}
+          >
+            Save type
+          </button>
+          <button
+            type="button"
+            onClick={() => setNewKind(null)}
+            className="min-h-ctl-sm shrink-0 rounded-pill border border-border px-3 text-fs-xs font-bold uppercase text-muted-foreground"
+          >
+            Cancel
+          </button>
+        </div>
+      ) : null}
+
+
+
 
       {/* Canvas */}
       <div
