@@ -20,6 +20,8 @@ import {
 } from "./demo-data";
 import {
   defaultFloorLayout,
+  mergeLabel,
+
   type CustomFloorKind,
   type FloorObject,
   type SavedTemplate,
