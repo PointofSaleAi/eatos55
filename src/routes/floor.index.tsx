@@ -216,7 +216,7 @@ function FloorPlan() {
             id: m.id,
             label: mergeLabel(m.members),
             members: group.map((g) => g.name),
-            state: busy?.state ?? group[0].state,
+            state: busy?.state ?? group[0]!.state,
             seats: m.seats ?? group.reduce((sum, g) => sum + g.seats, 0),
             seated: group.reduce((sum, g) => sum + (g.seated ?? 0), 0),
             since: busy?.since,
@@ -228,7 +228,7 @@ function FloorPlan() {
   const asGroup = (t: FloorTable) => {
     const g = layoutGroups.find((grp) => grp.members.includes(t.name));
     if (!g) return t;
-    return { ...t, name: g.members[0], seats: g.seats, state: g.state };
+    return { ...t, name: g.members[0] ?? t.name, seats: g.seats, state: g.state };
   };
 
 

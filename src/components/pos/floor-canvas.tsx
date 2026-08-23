@@ -99,7 +99,7 @@ export type FloorGroup = {
   state: FloorTable["state"];
   seats: number;
   seated: number;
-  since?: string;
+  since?: string | undefined;
 };
 
 /**
@@ -193,7 +193,7 @@ export function FloorCanvas({
               />
               {geo.pts.map((p, i) => {
                 const next = geo.pts[(i + 1) % geo.pts.length];
-                if (geo.pts.length < 2) return null;
+                if (geo.pts.length < 2 || !next) return null;
                 return (
                   <line
                     key={i}
