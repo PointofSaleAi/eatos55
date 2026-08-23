@@ -958,6 +958,25 @@ export function PosProvider({ children }: { children: ReactNode }) {
       renameFloorTemplate: (id, label) =>
         setFloorTemplates((list) => list.map((t) => (t.id === id ? { ...t, label } : t))),
       deleteFloorTemplate: (id) => setFloorTemplates((list) => list.filter((t) => t.id !== id)),
+
+      tableMerges,
+      // Merging drops any existing merges the picked tables belonged to, so a table
+      // can only ever be part of one group.
+      mergeTables: (f, members, seats) =>
+        setTableMerges((list) => [
+          ...list.filter((m) => m.floor !== f || !m.members.some((n) => members.includes(n))),
+          { id: `mg-${Date.now()}`, floor: f, members, ...(seats ? { seats } : {}) },
+        ]),
+      unmergeTables: (id) => setTableMerges((list) => list.filter((m) => m.id !== id)),
+      setMergeSeats: (id, seats) =>
+        setTableMerges((list) => list.map((m) => (m.id === id ? { ...m, seats } : m))),
+
+      customFloorKinds,
+      addCustomFloorKind: (kind) =>
+        setCustomFloorKinds((list) => [...list, { ...kind, id: `ck-${Date.now()}` }]),
+      deleteCustomFloorKind: (id) =>
+        setCustomFloorKinds((list) => list.filter((k) => k.id !== id)),
+
       resetFloorLayout: (f) =>
         setFloorLayouts((m) => {
           const next = { ...m };
