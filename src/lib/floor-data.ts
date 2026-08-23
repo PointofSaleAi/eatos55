@@ -127,7 +127,7 @@ export const decorKinds: FloorObjectKind[] = [
 export const seatingKinds: FloorObjectKind[] = ["table", "booth", "bar-chair"];
 
 export const floorObjectKindMeta: Record<
-  FloorObjectKind,
+  BuiltinFloorObjectKind,
   { label: string; seats: number; w?: number; h?: number }
 > = {
   table: { label: "Table", seats: 4 },
@@ -144,18 +144,72 @@ export const floorObjectKindMeta: Record<
   "zone-lounge": { label: "Lounge", seats: 0, w: 28, h: 22 },
 };
 
+/** Label and defaults for any kind, built in or venue defined. */
+export function kindMeta(
+  kind: FloorObjectKind,
+  customs: CustomFloorKind[] = [],
+): { label: string; seats: number; w?: number; h?: number; shape?: "round" | "square" } {
+  const id = customKindId(kind);
+  if (id) {
+    const found = customs.find((c) => c.id === id);
+    return found
+      ? { label: found.label, seats: found.seats, w: found.w, h: found.h, shape: found.shape }
+      : { label: "Custom", seats: 0 };
+  }
+  return floorObjectKindMeta[kind as BuiltinFloorObjectKind] ?? { label: "Object", seats: 0 };
+}
+
 export function isDecor(kind: FloorObjectKind) {
-  return decorKinds.includes(kind);
+  return (
+    decorKinds.includes(kind) ||
+    kind.startsWith("custom-fixture:") ||
+    kind.startsWith("custom-zone:")
+  );
 }
 
 export function isZone(kind: FloorObjectKind) {
-  return zoneKinds.includes(kind);
+  return zoneKinds.includes(kind) || kind.startsWith("custom-zone:");
+}
+
+/** Objects that seat guests, so they take orders and count towards chairs. */
+export function isSeating(kind: FloorObjectKind) {
+  return seatingKinds.includes(kind) || kind.startsWith("custom-seating:");
 }
 
 /** Fixtures and zones that own an explicit width and depth footprint. */
 export function hasFootprint(kind: FloorObjectKind) {
-  return kind === "bar" || kind === "counter" || kind === "wall" || kind === "door" || isZone(kind);
+  return (
+    kind === "bar" ||
+    kind === "counter" ||
+    kind === "wall" ||
+    kind === "door" ||
+    isZone(kind) ||
+    kind.startsWith("custom-fixture:")
+  );
 }
+
+/**
+ * Two or more tables pushed together for a big party. The first member is the
+ * primary: it keeps the order and the status, the others fold into it.
+ */
+export type TableMerge = {
+  id: string;
+  floor: string;
+  /** Table names, in the order they were picked. */
+  members: string[];
+  /** Capacity the manager set for the joined tables; defaults to the sum. */
+  seats?: number;
+};
+
+export function mergeLabel(members: string[]) {
+  return members.join(" + ");
+}
+
+/** The merge a table belongs to on this floor, if any. */
+export function findMerge(merges: TableMerge[], floor: string, name: string) {
+  return merges.find((m) => m.floor === floor && m.members.includes(name)) ?? null;
+}
+
 
 /** A layout the venue saved so it can be reapplied to any floor. */
 export type SavedTemplate = {
