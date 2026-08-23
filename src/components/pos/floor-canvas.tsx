@@ -10,16 +10,21 @@ import { cn } from "@/lib/utils";
 
 /**
  * Seat dots drawn around a table shape. Filled dots are guests already seated, so a
- * half-full six top reads at a glance without opening the table.
+ * half-full six top reads at a glance without opening the table. Big parties keep
+ * drawing: past ten seats the extras fill a second, inner ring instead of stopping.
  */
 export function Seats({ seats, seated = 0 }: { seats: number; seated?: number }) {
-  const count = Math.min(8, Math.max(1, seats));
+  const count = Math.min(25, Math.max(1, seats));
   const filled = Math.min(count, Math.max(0, seated));
+  const outer = count <= 10 ? count : Math.ceil(count / 2);
   return (
     <>
       {Array.from({ length: count }).map((_, i) => {
-        const angle = (i / count) * 2 * Math.PI;
-        const r = 58;
+        const ring = i < outer ? 0 : 1;
+        const inRing = ring === 0 ? outer : count - outer;
+        const index = ring === 0 ? i : i - outer;
+        const angle = (index / inRing) * 2 * Math.PI + (ring === 1 ? Math.PI / inRing : 0);
+        const r = ring === 0 ? 58 : 40;
         const left = 50 + Math.cos(angle - Math.PI / 2) * r;
         const top = 50 + Math.sin(angle - Math.PI / 2) * r;
         return (
@@ -27,7 +32,8 @@ export function Seats({ seats, seated = 0 }: { seats: number; seated?: number })
             key={i}
             aria-hidden
             className={cn(
-              "absolute size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-current",
+              "absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-current",
+              count > 14 ? "size-1" : "size-1.5",
               i < filled ? "bg-current opacity-100" : "bg-transparent opacity-50",
             )}
             style={{ left: `${left}%`, top: `${top}%` }}
@@ -37,6 +43,7 @@ export function Seats({ seats, seated = 0 }: { seats: number; seated?: number })
     </>
   );
 }
+
 
 /** Keeps a rotated label the right way up: past 90 degrees the text would invert. */
 export function uprightSpin(rotation = 0) {
@@ -93,12 +100,16 @@ export function FloorCanvas({
   decor = [],
   onOpen,
   onStatus,
+  selectedNames = [],
 }: {
   tables: FloorTable[];
   decor?: FloorObject[];
   onOpen: (t: FloorTable) => void;
   onStatus: (t: FloorTable) => void;
+  /** Tables picked while merging, drawn with a highlight ring. */
+  selectedNames?: string[];
 }) {
+
   return (
     <div className="relative h-full min-h-0 w-full overflow-hidden rounded-card border border-border bg-surface">
       {decor
@@ -122,6 +133,7 @@ export function FloorCanvas({
         const stool = t.kind === "bar-chair";
         const seated = t.seated ?? 0;
         const free = t.state === "available" || t.state === "reserved";
+        const picked = selectedNames.includes(t.name);
         return (
           <div
             key={t.id}
@@ -133,6 +145,7 @@ export function FloorCanvas({
                 type="button"
                 onClick={() => onOpen(t)}
                 title={t.name}
+                aria-pressed={picked || undefined}
                 className="group grid place-items-center transition-transform active:scale-[0.97]"
               >
                 <span
@@ -144,9 +157,11 @@ export function FloorCanvas({
                     meta.ring,
                     meta.text,
                     stool ? "" : shape === "round" ? "rounded-full" : "rounded-md",
+                    picked && "ring-2 ring-primary ring-offset-2 ring-offset-surface",
                   )}
                   style={{ transform: `rotate(${t.rotation ?? 0}deg)` }}
                 >
+
                   {stool ? null : <Seats seats={t.seats} seated={seated} />}
                   <span
                     className="grid max-w-[86%] place-items-center leading-none"

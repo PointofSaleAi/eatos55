@@ -11,26 +11,36 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   floorCounts,
-  floorObjectKindMeta,
   hasFootprint,
   isDecor,
   isZone,
+  kindMeta,
+  kindString,
   tidyLayout,
+  type CustomFloorKind,
+  type CustomKindCategory,
   type FloorObject,
   type FloorObjectKind,
 } from "@/lib/floor-data";
 import { cn } from "@/lib/utils";
 
-const paletteGroups: { label: string; menu: string; kinds: FloorObjectKind[] }[] = [
-  { label: "Seating", menu: "Add seating", kinds: ["table", "booth", "bar-chair"] },
+const paletteGroups: {
+  label: string;
+  menu: string;
+  category: CustomKindCategory;
+  kinds: FloorObjectKind[];
+}[] = [
+  { label: "Seating", menu: "Add seating", category: "seating", kinds: ["table", "booth", "bar-chair"] },
   {
     label: "Fixtures",
     menu: "Add fixture",
+    category: "fixture",
     kinds: ["bar", "counter", "wall", "door", "plant"],
   },
   {
     label: "Zones",
     menu: "Add zone",
+    category: "zone",
     kinds: ["zone-kitchen", "zone-private-dining", "zone-patio", "zone-lounge"],
   },
 ];
@@ -39,6 +49,7 @@ const SNAP = 2;
 const snap = (n: number) => Math.round(Math.min(96, Math.max(4, n)) / SNAP) * SNAP;
 const ROT_STEP = 15;
 const norm = (deg: number) => ((Math.round(deg / ROT_STEP) * ROT_STEP % 360) + 360) % 360;
+
 
 /**
  * Editable floor layout: drag objects to reposition them, drag the corner handle to
@@ -50,6 +61,9 @@ export function FloorEditor({
   onReset,
   onResetDefault,
   toolbarExtra,
+  customKinds = [],
+  onAddCustomKind,
+  onDeleteCustomKind,
 }: {
   objects: FloorObject[];
   onChange: (next: FloorObject[]) => void;
@@ -59,17 +73,22 @@ export function FloorEditor({
   onResetDefault?: () => void;
   /** Extra toolbar controls, such as the Template menu. */
   toolbarExtra?: ReactNode;
+  /** Venue defined object types shown alongside the built-in ones. */
+  customKinds?: CustomFloorKind[];
+  onAddCustomKind?: (kind: Omit<CustomFloorKind, "id">) => void;
+  onDeleteCustomKind?: (id: string) => void;
 }) {
   const canvasRef = useRef<HTMLDivElement | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [newKind, setNewKind] = useState<CustomKindCategory | null>(null);
+  const [newKindName, setNewKindName] = useState("");
+  const [newKindSeats, setNewKindSeats] = useState(4);
   const dragRef = useRef<{ id: string; mode: "move" | "rotate" } | null>(null);
   const selected = objects.find((o) => o.id === selectedId) ?? null;
 
   // Counts read from the same helper the grid list uses, so they always agree.
   const { tables: tableCount, chairs: chairCount } = floorCounts(objects);
-
-
 
   const patch = useCallback(
     (id: string, next: Partial<FloorObject>) =>
@@ -78,7 +97,7 @@ export function FloorEditor({
   );
 
   const add = (kind: FloorObjectKind) => {
-    const meta = floorObjectKindMeta[kind];
+    const meta = kindMeta(kind, customKinds);
     const count = objects.filter((o) => o.kind === kind).length + 1;
     const next: FloorObject = {
       id: `fo-${kind}-${Date.now()}`,
@@ -91,7 +110,7 @@ export function FloorEditor({
             : `${meta.label}${count > 1 ? ` ${count}` : ""}`,
       seats: meta.seats,
       rotation: 0,
-      shape: kind === "table" ? "round" : "square",
+      shape: kind === "table" ? "round" : (meta.shape ?? "square"),
       section: "B1",
       // Stagger drops so a new object never lands exactly on the last one.
       x: snap(30 + ((objects.length * 8) % 50)),
@@ -101,6 +120,22 @@ export function FloorEditor({
     onChange([...objects, next]);
     setSelectedId(next.id);
   };
+
+  const saveNewKind = () => {
+    const label = newKindName.trim();
+    if (!newKind || !label || !onAddCustomKind) return;
+    onAddCustomKind({
+      label,
+      category: newKind,
+      seats: newKind === "seating" ? Math.max(0, Math.min(25, newKindSeats)) : 0,
+      shape: "square",
+      ...(newKind === "zone" ? { w: 28, h: 22 } : newKind === "fixture" ? { w: 30, h: 8 } : {}),
+    });
+    setNewKind(null);
+    setNewKindName("");
+    setNewKindSeats(4);
+  };
+
 
   const onPointerDown = (e: React.PointerEvent, id: string, mode: "move" | "rotate") => {
     e.stopPropagation();
@@ -155,42 +190,79 @@ export function FloorEditor({
     <div className="flex min-h-0 flex-1 flex-col gap-2">
       {/* Toolbar: add menus, templates, reset and the live counts. */}
       <div className="flex shrink-0 flex-wrap items-center gap-1.5 rounded-card border border-border bg-surface p-1.5">
-        {paletteGroups.map((group) => (
-          <DropdownMenu key={group.label}>
-            <DropdownMenuTrigger className="inline-flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border bg-surface px-2.5 text-fs-xs font-bold uppercase text-foreground transition-colors hover:bg-muted">
-              <Plus className="size-3.5" aria-hidden />
-              {group.label}
-              <ChevronDown className="size-3.5 shrink-0" aria-hidden />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="min-w-56">
-              <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
-                {group.menu}
-              </DropdownMenuLabel>
-              {group.kinds.map((kind) => {
-                const meta = floorObjectKindMeta[kind];
-                const detail = hasFootprint(kind)
-                  ? `${meta.w ?? 30} x ${meta.h ?? 8}`
-                  : meta.seats > 0
-                    ? `${meta.seats} seats`
-                    : "";
-                return (
-                  <DropdownMenuItem
-                    key={kind}
-                    className="text-fs-sm font-normal text-foreground"
-                    onClick={() => add(kind)}
-                  >
-                    <span className="min-w-0 flex-1 truncate">{meta.label}</span>
-                    {detail ? (
-                      <span className="ml-2 shrink-0 text-fs-xs text-muted-foreground">
-                        {detail}
-                      </span>
+        {paletteGroups.map((group) => {
+          const mine = customKinds.filter((k) => k.category === group.category);
+          const kinds: FloorObjectKind[] = [...group.kinds, ...mine.map(kindString)];
+          return (
+            <DropdownMenu key={group.label}>
+              <DropdownMenuTrigger className="inline-flex min-h-ctl-sm shrink-0 items-center gap-1 rounded-pill border border-border bg-surface px-2.5 text-fs-xs font-bold uppercase text-foreground transition-colors hover:bg-muted">
+                <Plus className="size-3.5" aria-hidden />
+                {group.label}
+                <ChevronDown className="size-3.5 shrink-0" aria-hidden />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="min-w-56">
+                <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
+                  {group.menu}
+                </DropdownMenuLabel>
+                {kinds.map((kind) => {
+                  const meta = kindMeta(kind, customKinds);
+                  const detail = hasFootprint(kind)
+                    ? `${meta.w ?? 30} x ${meta.h ?? 8}`
+                    : meta.seats > 0
+                      ? `${meta.seats} seats`
+                      : "";
+                  return (
+                    <DropdownMenuItem
+                      key={kind}
+                      className="text-fs-sm font-normal text-foreground"
+                      onClick={() => add(kind)}
+                    >
+                      <span className="min-w-0 flex-1 truncate">{meta.label}</span>
+                      {detail ? (
+                        <span className="ml-2 shrink-0 text-fs-xs text-muted-foreground">
+                          {detail}
+                        </span>
+                      ) : null}
+                    </DropdownMenuItem>
+                  );
+                })}
+                {onAddCustomKind ? (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-fs-sm font-bold text-foreground"
+                      onClick={() => {
+                        setNewKind(group.category);
+                        setNewKindName("");
+                      }}
+                    >
+                      <Plus className="size-3.5" aria-hidden />
+                      Add new type
+                    </DropdownMenuItem>
+                    {mine.length && onDeleteCustomKind ? (
+                      <>
+                        <DropdownMenuLabel className="text-fs-xs uppercase text-muted-foreground">
+                          Remove my types
+                        </DropdownMenuLabel>
+                        {mine.map((k) => (
+                          <DropdownMenuItem
+                            key={k.id}
+                            className="text-fs-sm font-normal text-destructive"
+                            onClick={() => onDeleteCustomKind(k.id)}
+                          >
+                            <Trash2 className="size-3.5" aria-hidden />
+                            <span className="min-w-0 flex-1 truncate">{k.label}</span>
+                          </DropdownMenuItem>
+                        ))}
+                      </>
                     ) : null}
-                  </DropdownMenuItem>
-                );
-              })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ))}
+                  </>
+                ) : null}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        })}
+
 
         {toolbarExtra}
 
@@ -243,6 +315,70 @@ export function FloorEditor({
           Tables {tableCount} / Chairs {chairCount}
         </span>
       </div>
+
+      {/* Inline form for a venue defined object type. */}
+      {newKind ? (
+        <div className="flex shrink-0 flex-wrap items-center gap-1.5 rounded-card border border-border bg-surface p-1.5">
+          <span className="shrink-0 text-fs-xs font-bold uppercase text-muted-foreground">
+            New {newKind} type
+          </span>
+          <input
+            autoFocus
+            value={newKindName}
+            onChange={(e) => setNewKindName(e.target.value.slice(0, 24))}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") saveNewKind();
+              if (e.key === "Escape") setNewKind(null);
+            }}
+            placeholder="Name, such as High Top"
+            aria-label="New type name"
+            className="min-h-ctl-sm min-w-40 flex-1 rounded-row bg-muted px-3 text-fs-sm font-bold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
+          />
+          {newKind === "seating" ? (
+            <div className="flex shrink-0 items-center gap-1 rounded-pill bg-muted p-1">
+              <button
+                type="button"
+                aria-label="Fewer default seats"
+                onClick={() => setNewKindSeats((s) => Math.max(1, s - 1))}
+                className="grid size-8 place-items-center rounded-pill text-foreground"
+              >
+                <Minus className="size-4" />
+              </button>
+              <span className="min-w-14 text-center text-fs-xs font-bold text-foreground">
+                {newKindSeats} seats
+              </span>
+              <button
+                type="button"
+                aria-label="More default seats"
+                onClick={() => setNewKindSeats((s) => Math.min(25, s + 1))}
+                className="grid size-8 place-items-center rounded-pill text-foreground"
+              >
+                <Plus className="size-4" />
+              </button>
+            </div>
+          ) : null}
+          <button
+            type="button"
+            onClick={saveNewKind}
+            disabled={!newKindName.trim()}
+            className={cn(
+              "min-h-ctl-sm shrink-0 rounded-pill bg-primary px-3 text-fs-xs font-bold uppercase text-primary-foreground",
+              !newKindName.trim() && "opacity-40",
+            )}
+          >
+            Save type
+          </button>
+          <button
+            type="button"
+            onClick={() => setNewKind(null)}
+            className="min-h-ctl-sm shrink-0 rounded-pill border border-border px-3 text-fs-xs font-bold uppercase text-muted-foreground"
+          >
+            Cancel
+          </button>
+        </div>
+      ) : null}
+
+
 
 
       {/* Canvas */}
@@ -435,7 +571,7 @@ export function FloorEditor({
                   <button
                     type="button"
                     aria-label="More seats"
-                    onClick={() => patch(selected.id, { seats: Math.min(20, selected.seats + 1) })}
+                    onClick={() => patch(selected.id, { seats: Math.min(25, selected.seats + 1) })}
                     className="grid size-8 place-items-center rounded-pill text-foreground"
                   >
                     <Plus className="size-4" />

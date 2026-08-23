@@ -2,14 +2,19 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Check,
   ChevronDown,
+  Combine,
   LayoutGrid,
   Map as MapIcon,
+  Minus,
   Pencil,
+  Plus,
   Trash2,
+  Unlink,
   Users,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import { FloorCanvas } from "@/components/pos/floor-canvas";
@@ -39,14 +44,14 @@ import {
   cloneLayout,
   defaultFloorLayout,
   floorCounts,
-
-
+  findMerge,
   floorSections,
   floorTables,
   formatDwell,
   floors,
   isDecor,
   layoutTemplates,
+  mergeLabel,
   tableStateMeta,
   tableStateOrder,
   type FloorObject,
@@ -54,6 +59,7 @@ import {
   type FloorTable,
   type TableState,
 } from "@/lib/floor-data";
+
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
@@ -102,6 +108,13 @@ function FloorPlan() {
     saveFloorTemplate,
     deleteFloorTemplate,
     canManageSettings,
+    tableMerges,
+    mergeTables,
+    unmergeTables,
+    setMergeSeats,
+    customFloorKinds,
+    addCustomFloorKind,
+    deleteCustomFloorKind,
   } = usePos();
   // Dwell times tick once a minute so the grid and layout stay in step.
   const [now, setNow] = useState(() => Date.now());
@@ -117,6 +130,11 @@ function FloorPlan() {
   const [draft, setDraft] = useState<FloorObject[] | null>(null);
   const [templateName, setTemplateName] = useState<string | null>(null);
   const [resetMode, setResetMode] = useState<"saved" | "default" | null>(null);
+  // Merge mode: tap tables to pick them, then join them into one big party.
+  const [merging, setMerging] = useState(false);
+  const [picked, setPicked] = useState<string[]>([]);
+  const [seatsFor, setSeatsFor] = useState<{ id: string; seats: number } | null>(null);
+
   const editing = draft !== null;
 
 
@@ -124,7 +142,7 @@ function FloorPlan() {
   const seed = new Map(floorTables.filter((t) => t.floor === floor).map((t) => [t.name, t]));
   const inSection = (sec: "B1" | "B2") => section === "all" || sec === section;
 
-  const tables: FloorTable[] = layout
+  const rawTables: FloorTable[] = layout
     .filter((o) => !isDecor(o.kind))
     .filter((o) => inSection(o.section))
     .map((o) => {
@@ -152,14 +170,61 @@ function FloorPlan() {
       };
     });
 
+  const floorMerges = tableMerges.filter((m) => m.floor === floor);
+  const mergeOf = (name: string) => findMerge(floorMerges, floor, name);
+
+  /**
+   * A merged group shows up as one table: the first member carries the order, the
+   * others fold into it, and capacity is the manager's override or the sum of seats.
+   */
+  const tables: FloorTable[] = merging
+    ? rawTables
+    : rawTables.flatMap((t) => {
+        const merge = mergeOf(t.name);
+        if (!merge) return [t];
+        if (merge.members[0] !== t.name) return [];
+        const group = merge.members
+          .map((n) => rawTables.find((r) => r.name === n))
+          .filter((r): r is FloorTable => Boolean(r));
+        const busy = group.find((g) => g.state !== "available" && g.state !== "reserved");
+        return [
+          {
+            ...t,
+            label: mergeLabel(merge.members),
+            seats: merge.seats ?? group.reduce((sum, g) => sum + g.seats, 0),
+            seated: group.reduce((sum, g) => sum + (g.seated ?? 0), 0),
+            state: busy?.state ?? t.state,
+            since: busy?.since ?? t.since,
+          },
+        ];
+      });
+
   const decor = layout.filter((o) => isDecor(o.kind)).filter((o) => inSection(o.section));
 
   const counts = floorCounts(editing ? (draft ?? []) : layout, section);
-  const seatedTotal = tables.reduce((sum, t) => sum + (t.seated ?? 0), 0);
+  const seatedTotal = rawTables.reduce((sum, t) => sum + (t.seated ?? 0), 0);
 
+  const togglePick = (name: string) =>
+    setPicked((list) => (list.includes(name) ? list.filter((n) => n !== name) : [...list, name]));
 
+  const applyMerge = () => {
+    if (picked.length < 2) return;
+    const seats = picked.reduce(
+      (sum, n) => sum + (rawTables.find((t) => t.name === n)?.seats ?? 0),
+      0,
+    );
+    mergeTables(floor, picked, seats);
+    toast.success(`${mergeLabel(picked)} merged, ${seats} seats`);
+    setPicked([]);
+    setMerging(false);
+  };
 
   const openTable = (t: { name: string; seats: number; state: TableState }) => {
+    // While merging, a tap picks the table instead of starting an order.
+    if (merging) {
+      togglePick(t.name);
+      return;
+    }
     // Occupied tables resume; free tables ask how many are seated first.
     if (t.state === "available" || t.state === "reserved") {
       setGuestsFor({ name: t.name, seats: t.seats });
@@ -168,6 +233,7 @@ function FloorPlan() {
     startOrder(t.name);
     navigate({ to: "/order/new" });
   };
+
 
   return (
     <div className="flex min-h-0 flex-1 bg-background">
@@ -260,6 +326,25 @@ function FloorPlan() {
                       <Pencil className="size-5" />
                     </button>
                   ) : null}
+                  {/* Merge mode: pick two or more tables for a big party. */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMerging((v) => !v);
+                      setPicked([]);
+                    }}
+                    aria-label="Merge tables"
+                    aria-pressed={merging}
+                    className={cn(
+                      "grid size-11 shrink-0 place-items-center rounded-pill border border-border transition-colors",
+                      merging
+                        ? "bg-primary text-primary-foreground"
+                        : "text-foreground hover:bg-muted",
+                    )}
+                  >
+                    <Combine className="size-5" />
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => setStaffOpen((v) => !v)}
@@ -307,7 +392,39 @@ function FloorPlan() {
               Tables {counts.tables} / Chairs {counts.chairs} / Seated {seatedTotal}
             </span>
           </div>
+
+          {merging ? (
+            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-card bg-muted p-2">
+              <span className="min-w-0 flex-1 text-fs-xs font-bold uppercase text-muted-foreground">
+                {picked.length < 2
+                  ? "Tap two or more tables to merge"
+                  : `Merging ${mergeLabel(picked)}`}
+              </span>
+              <button
+                type="button"
+                disabled={picked.length < 2}
+                onClick={applyMerge}
+                className={cn(
+                  "min-h-ctl-sm shrink-0 rounded-pill bg-primary px-3.5 text-fs-xs font-extrabold uppercase text-primary-foreground",
+                  picked.length < 2 && "opacity-40",
+                )}
+              >
+                Merge {picked.length || ""}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMerging(false);
+                  setPicked([]);
+                }}
+                className="min-h-ctl-sm shrink-0 rounded-pill border border-border px-3.5 text-fs-xs font-bold uppercase text-foreground"
+              >
+                Done
+              </button>
+            </div>
+          ) : null}
         </div>
+
 
         {editing ? (
           <div className="flex min-h-0 flex-1 flex-col p-3 pb-[calc(0.75rem+var(--tabs-h,0px))]">
@@ -316,6 +433,10 @@ function FloorPlan() {
               onChange={setDraft}
               onReset={() => setResetMode("saved")}
               onResetDefault={() => setResetMode("default")}
+              customKinds={customFloorKinds}
+              onAddCustomKind={addCustomFloorKind}
+              onDeleteCustomKind={deleteCustomFloorKind}
+
               toolbarExtra={
                 /* Templates give staff a starting arrangement to edit. */
                 <DropdownMenu>
@@ -391,6 +512,7 @@ function FloorPlan() {
               decor={decor}
               onOpen={(t) => openTable(t)}
               onStatus={(t) => setStatusFor({ name: t.name, state: t.state })}
+              selectedNames={merging ? picked : []}
             />
           </div>
         ) : (
@@ -404,22 +526,28 @@ function FloorPlan() {
                 {tables.map((t) => {
                   const meta = tableStateMeta[t.state];
                   const seated = t.seated ?? 0;
+                  const merge = merging ? null : mergeOf(t.name);
+                  const shown = merge ? mergeLabel(merge.members) : t.name;
+                  const isPicked = merging && picked.includes(t.name);
                   // Long names shrink instead of truncating so the number stays readable.
                   const nameSize =
-                    t.name.length > 7
+                    shown.length > 7
                       ? "text-[0.6rem]"
-                      : t.name.length > 5
+                      : shown.length > 5
                         ? "text-[0.7rem]"
                         : "text-fs-sm";
                   return (
                     <div
                       key={t.id}
-                      className="overflow-hidden rounded-card border border-border bg-surface text-left"
+                      className={cn(
+                        "overflow-hidden rounded-card border bg-surface text-left",
+                        isPicked ? "border-primary ring-2 ring-primary" : "border-border",
+                      )}
                     >
                       <button
                         type="button"
                         onClick={() => openTable(t)}
-                        title={t.name}
+                        title={shown}
                         className="block w-full transition-transform active:scale-[0.98]"
                       >
                         <div className="relative grid h-tile place-items-center">
@@ -431,7 +559,7 @@ function FloorPlan() {
                             )}
                           >
                             <span className={cn("max-w-[94%] truncate px-0.5 leading-none", nameSize)}>
-                              {t.name}
+                              {shown}
                             </span>
                           </div>
                           {t.since ? (
@@ -445,11 +573,26 @@ function FloorPlan() {
                           </span>
                         </div>
                       </button>
+
+                      {/* Merged groups get their own row to retune capacity or split back up. */}
+                      {merge ? (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSeatsFor({ id: merge.id, seats: t.seats })
+                          }
+                          className="flex min-h-ctl-sm w-full items-center justify-center gap-1 border-t border-border px-2 text-fs-xs font-bold uppercase text-muted-foreground"
+                        >
+                          <Combine className="size-3.5 shrink-0" aria-hidden />
+                          Merged · {t.seats} seats
+                        </button>
+                      ) : null}
+
                       {/* Status strip is its own control so staff can change state without ordering. */}
                       <button
                         type="button"
                         onClick={() => setStatusFor({ name: t.name, state: t.state })}
-                        aria-label={`Change status for ${t.name}, currently ${meta.label}`}
+                        aria-label={`Change status for ${shown}, currently ${meta.label}`}
                         className={cn(
                           "flex min-h-ctl-sm w-full items-center justify-center gap-1 px-2 py-2 text-center text-fs-xs font-extrabold uppercase transition-opacity active:opacity-80",
                           meta.strip,
@@ -465,6 +608,77 @@ function FloorPlan() {
             )}
           </ScreenBody>
         )}
+
+        {/* Adjust how many can sit at a merged group, or split it back up. */}
+        <Dialog open={seatsFor !== null} onOpenChange={(o) => (o ? null : setSeatsFor(null))}>
+          <DialogContent className="max-w-sm rounded-card p-4">
+            <DialogHeader>
+              <DialogTitle className="text-fs-base font-extrabold text-foreground">
+                Merged tables
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-fs-sm text-muted-foreground">
+              {seatsFor
+                ? mergeLabel(tableMerges.find((m) => m.id === seatsFor.id)?.members ?? [])
+                : ""}
+            </p>
+            <div className="flex items-center justify-center gap-1 rounded-pill bg-muted p-1">
+              <button
+                type="button"
+                aria-label="Fewer seats"
+                onClick={() =>
+                  setSeatsFor((s) => (s ? { ...s, seats: Math.max(1, s.seats - 1) } : s))
+                }
+                className="grid size-9 place-items-center rounded-pill text-foreground"
+              >
+                <Minus className="size-4" />
+              </button>
+              <span className="min-w-20 text-center text-fs-sm font-bold text-foreground">
+                {seatsFor?.seats ?? 0} seats
+              </span>
+              <button
+                type="button"
+                aria-label="More seats"
+                onClick={() =>
+                  setSeatsFor((s) => (s ? { ...s, seats: Math.min(60, s.seats + 1) } : s))
+                }
+                className="grid size-9 place-items-center rounded-pill text-foreground"
+              >
+                <Plus className="size-4" />
+              </button>
+            </div>
+            <DialogFooter className="gap-2 sm:justify-between">
+              <button
+                type="button"
+                onClick={() => {
+                  if (seatsFor) {
+                    unmergeTables(seatsFor.id);
+                    toast.success("Tables split back up");
+                  }
+                  setSeatsFor(null);
+                }}
+                className="inline-flex min-h-ctl-sm items-center gap-1 rounded-pill border border-border px-4 text-fs-sm font-bold text-destructive"
+              >
+                <Unlink className="size-4" aria-hidden />
+                Unmerge
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (seatsFor) {
+                    setMergeSeats(seatsFor.id, seatsFor.seats);
+                    toast.success(`Capacity set to ${seatsFor.seats} seats`);
+                  }
+                  setSeatsFor(null);
+                }}
+                className="min-h-ctl-sm rounded-pill bg-primary px-4 text-fs-sm font-extrabold uppercase text-primary-foreground"
+              >
+                Save
+              </button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
 
         <GuestsSheet
           open={guestsFor !== null}

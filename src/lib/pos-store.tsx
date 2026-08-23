@@ -20,10 +20,13 @@ import {
 } from "./demo-data";
 import {
   defaultFloorLayout,
+  type CustomFloorKind,
   type FloorObject,
   type SavedTemplate,
+  type TableMerge,
   type TableState,
 } from "./floor-data";
+
 import {
   inRange,
   rangeForPreset,
@@ -426,6 +429,16 @@ type Store = {
   saveFloorTemplate: (label: string, objects: FloorObject[]) => void;
   renameFloorTemplate: (id: string, label: string) => void;
   deleteFloorTemplate: (id: string) => void;
+  /** Tables pushed together for big parties, per floor. */
+  tableMerges: TableMerge[];
+  mergeTables: (floor: string, members: string[], seats?: number) => void;
+  unmergeTables: (id: string) => void;
+  setMergeSeats: (id: string, seats: number) => void;
+  /** Object types the venue added to the floor editor palette. */
+  customFloorKinds: CustomFloorKind[];
+  addCustomFloorKind: (kind: Omit<CustomFloorKind, "id">) => void;
+  deleteCustomFloorKind: (id: string) => void;
+
   roomStates: Record<string, RoomState>;
   setRoomState: (room: string, state: RoomState) => void;
   startOrder: (table?: string, partySize?: number) => void;
@@ -594,6 +607,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [floorLayouts, setFloorLayouts] = useState<Record<string, FloorObject[]>>({});
   const [tableSeated, setTableSeatedMap] = useState<Record<string, number>>({});
   const [floorTemplates, setFloorTemplates] = useState<SavedTemplate[]>([]);
+  const [tableMerges, setTableMerges] = useState<TableMerge[]>([]);
+  const [customFloorKinds, setCustomFloorKinds] = useState<CustomFloorKind[]>([]);
+
   const [floorReady, setFloorReady] = useState(false);
 
   const [noTax, setNoTax] = useState(false);
@@ -650,6 +666,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
           roomStates?: Record<string, RoomState>;
           floorLayouts?: Record<string, FloorObject[]>;
           floorTemplates?: SavedTemplate[];
+          tableMerges?: TableMerge[];
+          customFloorKinds?: CustomFloorKind[];
         };
         if (saved.tableStates) setTableStates(saved.tableStates);
         if (saved.tableSince) setTableSince(saved.tableSince);
@@ -657,6 +675,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
         if (saved.roomStates) setRoomStates(saved.roomStates);
         if (saved.floorLayouts) setFloorLayouts(saved.floorLayouts);
         if (saved.floorTemplates) setFloorTemplates(saved.floorTemplates);
+        if (saved.tableMerges) setTableMerges(saved.tableMerges);
+        if (saved.customFloorKinds) setCustomFloorKinds(saved.customFloorKinds);
       }
     } catch {
       /* ignore unreadable storage */
@@ -675,6 +695,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
           roomStates,
           floorLayouts,
           floorTemplates,
+          tableMerges,
+          customFloorKinds,
         }),
       );
     } catch {
@@ -687,6 +709,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
     roomStates,
     floorLayouts,
     floorTemplates,
+    tableMerges,
+    customFloorKinds,
+
     floorReady,
   ]);
 
@@ -933,6 +958,25 @@ export function PosProvider({ children }: { children: ReactNode }) {
       renameFloorTemplate: (id, label) =>
         setFloorTemplates((list) => list.map((t) => (t.id === id ? { ...t, label } : t))),
       deleteFloorTemplate: (id) => setFloorTemplates((list) => list.filter((t) => t.id !== id)),
+
+      tableMerges,
+      // Merging drops any existing merges the picked tables belonged to, so a table
+      // can only ever be part of one group.
+      mergeTables: (f, members, seats) =>
+        setTableMerges((list) => [
+          ...list.filter((m) => m.floor !== f || !m.members.some((n) => members.includes(n))),
+          { id: `mg-${Date.now()}`, floor: f, members, ...(seats ? { seats } : {}) },
+        ]),
+      unmergeTables: (id) => setTableMerges((list) => list.filter((m) => m.id !== id)),
+      setMergeSeats: (id, seats) =>
+        setTableMerges((list) => list.map((m) => (m.id === id ? { ...m, seats } : m))),
+
+      customFloorKinds,
+      addCustomFloorKind: (kind) =>
+        setCustomFloorKinds((list) => [...list, { ...kind, id: `ck-${Date.now()}` }]),
+      deleteCustomFloorKind: (id) =>
+        setCustomFloorKinds((list) => list.filter((k) => k.id !== id)),
+
       resetFloorLayout: (f) =>
         setFloorLayouts((m) => {
           const next = { ...m };
@@ -1247,6 +1291,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
     roomStates,
     floorLayouts,
     floorTemplates,
+    tableMerges,
+    customFloorKinds,
+
 
     guest,
     orderType,

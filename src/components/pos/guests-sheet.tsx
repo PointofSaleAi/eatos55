@@ -27,7 +27,7 @@ export function GuestsSheet({
   }, [open]);
 
   const count = entry === "" ? cap : Math.max(0, Number(entry));
-  const valid = count >= 1 && count <= Math.max(cap, 20);
+  const valid = count >= 1 && count <= Math.max(cap, 25);
 
   const press = (d: string) => {
     setEntry((prev) => {
