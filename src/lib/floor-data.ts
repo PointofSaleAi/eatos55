@@ -456,7 +456,7 @@ export function cloneLayout(objects: FloorObject[]): FloorObject[] {
  */
 export function floorCounts(objects: FloorObject[], section: FloorSection = "all") {
   const scoped = objects.filter(
-    (o) => seatingKinds.includes(o.kind) && (section === "all" || o.section === section),
+    (o) => isSeating(o.kind) && (section === "all" || o.section === section),
   );
   return {
     tables: scoped.filter((o) => o.kind !== "bar-chair").length,
