@@ -392,7 +392,39 @@ function FloorPlan() {
               Tables {counts.tables} / Chairs {counts.chairs} / Seated {seatedTotal}
             </span>
           </div>
+
+          {merging ? (
+            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-card bg-muted p-2">
+              <span className="min-w-0 flex-1 text-fs-xs font-bold uppercase text-muted-foreground">
+                {picked.length < 2
+                  ? "Tap two or more tables to merge"
+                  : `Merging ${mergeLabel(picked)}`}
+              </span>
+              <button
+                type="button"
+                disabled={picked.length < 2}
+                onClick={applyMerge}
+                className={cn(
+                  "min-h-ctl-sm shrink-0 rounded-pill bg-primary px-3.5 text-fs-xs font-extrabold uppercase text-primary-foreground",
+                  picked.length < 2 && "opacity-40",
+                )}
+              >
+                Merge {picked.length || ""}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMerging(false);
+                  setPicked([]);
+                }}
+                className="min-h-ctl-sm shrink-0 rounded-pill border border-border px-3.5 text-fs-xs font-bold uppercase text-foreground"
+              >
+                Done
+              </button>
+            </div>
+          ) : null}
         </div>
+
 
         {editing ? (
           <div className="flex min-h-0 flex-1 flex-col p-3 pb-[calc(0.75rem+var(--tabs-h,0px))]">
