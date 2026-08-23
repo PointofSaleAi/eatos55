@@ -11,26 +11,36 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   floorCounts,
-  floorObjectKindMeta,
   hasFootprint,
   isDecor,
   isZone,
+  kindMeta,
+  kindString,
   tidyLayout,
+  type CustomFloorKind,
+  type CustomKindCategory,
   type FloorObject,
   type FloorObjectKind,
 } from "@/lib/floor-data";
 import { cn } from "@/lib/utils";
 
-const paletteGroups: { label: string; menu: string; kinds: FloorObjectKind[] }[] = [
-  { label: "Seating", menu: "Add seating", kinds: ["table", "booth", "bar-chair"] },
+const paletteGroups: {
+  label: string;
+  menu: string;
+  category: CustomKindCategory;
+  kinds: FloorObjectKind[];
+}[] = [
+  { label: "Seating", menu: "Add seating", category: "seating", kinds: ["table", "booth", "bar-chair"] },
   {
     label: "Fixtures",
     menu: "Add fixture",
+    category: "fixture",
     kinds: ["bar", "counter", "wall", "door", "plant"],
   },
   {
     label: "Zones",
     menu: "Add zone",
+    category: "zone",
     kinds: ["zone-kitchen", "zone-private-dining", "zone-patio", "zone-lounge"],
   },
 ];
@@ -39,6 +49,7 @@ const SNAP = 2;
 const snap = (n: number) => Math.round(Math.min(96, Math.max(4, n)) / SNAP) * SNAP;
 const ROT_STEP = 15;
 const norm = (deg: number) => ((Math.round(deg / ROT_STEP) * ROT_STEP % 360) + 360) % 360;
+
 
 /**
  * Editable floor layout: drag objects to reposition them, drag the corner handle to
