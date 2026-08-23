@@ -429,6 +429,16 @@ type Store = {
   saveFloorTemplate: (label: string, objects: FloorObject[]) => void;
   renameFloorTemplate: (id: string, label: string) => void;
   deleteFloorTemplate: (id: string) => void;
+  /** Tables pushed together for big parties, per floor. */
+  tableMerges: TableMerge[];
+  mergeTables: (floor: string, members: string[], seats?: number) => void;
+  unmergeTables: (id: string) => void;
+  setMergeSeats: (id: string, seats: number) => void;
+  /** Object types the venue added to the floor editor palette. */
+  customFloorKinds: CustomFloorKind[];
+  addCustomFloorKind: (kind: Omit<CustomFloorKind, "id">) => void;
+  deleteCustomFloorKind: (id: string) => void;
+
   roomStates: Record<string, RoomState>;
   setRoomState: (room: string, state: RoomState) => void;
   startOrder: (table?: string, partySize?: number) => void;
