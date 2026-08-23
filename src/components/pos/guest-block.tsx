@@ -18,7 +18,7 @@ export function GuestBlock({ onEdit }: { onEdit: () => void }) {
     >
       <span className="min-w-0 flex-1">
         <span className="block truncate text-fs-sm font-bold text-foreground">
-          {guest.name || activeTable || "Guest Name"}
+          {guest.name || tableName || "Guest Name"}
         </span>
         <span className="block truncate text-fs-xs text-muted-foreground">
           {guest.phone || "(XXX) XXX-XXXX"} · {orderType}

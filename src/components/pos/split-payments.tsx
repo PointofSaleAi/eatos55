@@ -40,7 +40,7 @@ export function SplitPayments({
   onClose: () => void;
   onProceed?: (result: SplitResult) => void;
 }) {
-  const { cart, totals, tickets, guest, activeTable, orderDiscountPercent, setOrderDiscountPercent } =
+  const { cart, totals, tickets, guest, activeTable, tableGroupLabel, orderDiscountPercent, setOrderDiscountPercent } =
     usePos();
   const checkNumber = tickets.length + 1;
 
@@ -172,7 +172,7 @@ export function SplitPayments({
                   checkNumber={checkNumber}
                   guests={guest.partySize || 1}
                   arrivedAt={arrivedAt}
-                  table={activeTable ?? ""}
+                  table={tableGroupLabel(activeTable) ?? ""}
                 />
               </ReceiptCard>
             </div>
