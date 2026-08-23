@@ -6,7 +6,9 @@ import { usePos } from "@/lib/pos-store";
  * Opens the guest details sheet.
  */
 export function GuestBlock({ onEdit }: { onEdit: () => void }) {
-  const { guest, orderType, activeTable } = usePos();
+  const { guest, orderType, activeTable, tableGroupLabel } = usePos();
+  // A merged party prints its combined name ("T1 + T2") wherever the table shows.
+  const tableName = tableGroupLabel(activeTable);
   return (
     <button
       type="button"
