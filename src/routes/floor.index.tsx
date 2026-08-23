@@ -326,6 +326,25 @@ function FloorPlan() {
                       <Pencil className="size-5" />
                     </button>
                   ) : null}
+                  {/* Merge mode: pick two or more tables for a big party. */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMerging((v) => !v);
+                      setPicked([]);
+                    }}
+                    aria-label="Merge tables"
+                    aria-pressed={merging}
+                    className={cn(
+                      "grid size-11 shrink-0 place-items-center rounded-pill border border-border transition-colors",
+                      merging
+                        ? "bg-primary text-primary-foreground"
+                        : "text-foreground hover:bg-muted",
+                    )}
+                  >
+                    <Combine className="size-5" />
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => setStaffOpen((v) => !v)}
