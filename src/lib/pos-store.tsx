@@ -421,6 +421,9 @@ type Store = {
   tableSeated: Record<string, number>;
   setTableSeated: (table: string, seated: number) => void;
   setTableState: (table: string, state: TableState) => void;
+  /** Merged label for a table ("T1 + T2") so every screen prints the same name. */
+  tableGroupLabel: (table: string | null) => string | null;
+
   /** Saved layouts per floor; falls back to the seeded arrangement. */
   floorLayouts: Record<string, FloorObject[]>;
   getFloorLayout: (floor: string) => FloorObject[];
