@@ -17,6 +17,7 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { haptic } from "@/lib/haptics";
 import { modeOrderType, money, statusMeta, type Ticket } from "@/lib/demo-data";
+import { usePos } from "@/lib/pos-store";
 
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
@@ -234,6 +235,7 @@ function orderTypeIcon(label: string) {
 }
 
 export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () => void }) {
+  const { tableGroupLabel } = usePos();
   const meta = statusMeta[ticket.status];
   const timer = useTicketTimer(ticket.arrivedMinutesAgo);
   const [open, setOpen] = useState(false);
@@ -255,16 +257,16 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
       <div className="flex items-center gap-2 px-2 py-1.5">
         <button
           type="button"
-          aria-label={`Open order ${orderNo} - ${orderTypeLabel}${ticket.table ? `, table ${ticket.table}` : ""}`}
-          title={ticket.table ? `Table ${ticket.table} · ${orderTypeLabel}` : orderTypeLabel}
+          aria-label={`Open order ${orderNo} - ${orderTypeLabel}${tableLabel ? `, table ${tableLabel}` : ""}`}
+          title={tableLabel ? `Table ${tableLabel} · ${orderTypeLabel}` : orderTypeLabel}
           onClick={onClick}
           className="flex shrink-0 items-center gap-2 rounded-row bg-muted px-2 py-1.5 text-left transition-colors hover:bg-secondary"
         >
           <span className="flex shrink-0 items-center gap-1 text-foreground">
-            {ticket.table ? (
+            {tableLabel ? (
               <>
                 <Table2 className="size-4" aria-hidden />
-                <span className="t-row tabular-nums">{ticket.table}</span>
+                <span className="max-w-24 truncate t-row tabular-nums">{tableLabel}</span>
               </>
             ) : (
               <OrderTypeIcon className="size-4" aria-hidden />
