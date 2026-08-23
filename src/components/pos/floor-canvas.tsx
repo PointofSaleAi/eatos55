@@ -360,7 +360,7 @@ export function FloorCanvas({
                     type="button"
                     onClick={() => onUnmerge(g.id)}
                     aria-label={`Unmerge ${g.label}`}
-                    className="grid size-5 shrink-0 place-items-center rounded-pill border border-border text-destructive transition-opacity active:opacity-80"
+                    className="relative grid size-5 shrink-0 place-items-center rounded-pill border border-border text-destructive transition-opacity after:absolute after:-inset-2.5 after:content-[''] active:opacity-80"
                   >
                     <Unlink className="size-3" aria-hidden />
                   </button>
