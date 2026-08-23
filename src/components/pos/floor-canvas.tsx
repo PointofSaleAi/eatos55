@@ -214,7 +214,8 @@ export function FloorCanvas({
       ) : null}
 
       {tables.map((t) => {
-        const meta = tableStateMeta[t.state];
+        const group = grouped.get(t.name);
+        const meta = tableStateMeta[group ? group.state : t.state];
         const shape = t.shape ?? "round";
         const stool = t.kind === "bar-chair";
         const seated = t.seated ?? 0;
@@ -230,7 +231,7 @@ export function FloorCanvas({
               <button
                 type="button"
                 onClick={() => onOpen(t)}
-                title={t.name}
+                title={group ? group.label : t.name}
                 aria-pressed={picked || undefined}
                 className="group grid place-items-center transition-transform active:scale-[0.97]"
               >
@@ -257,7 +258,7 @@ export function FloorCanvas({
                       {t.label || t.name}
                     </span>
                     {/* Party size and time at the table, the way a host reads a floor. */}
-                    {!stool && !free ? (
+                    {!stool && !free && !group ? (
                       <span className="text-[clamp(0.4rem,0.9vw,0.6rem)] font-bold text-muted-foreground">
                         {seated}/{t.seats}
                         {t.since ? ` · ${t.since}` : ""}
@@ -270,25 +271,65 @@ export function FloorCanvas({
               {/*
                 Status is its own tap target so state can change without opening an order.
                 Phones get a compact dot so labels never collide on a busy floor.
+                Merged members hand this job to the group readout below the halo.
               */}
+              {group ? null : (
+                <button
+                  type="button"
+                  onClick={() => onStatus(t)}
+                  aria-label={`Change status for ${t.name}, currently ${meta.label}`}
+                  className={cn(
+                    "grid size-4 place-items-center rounded-pill border transition-opacity active:opacity-80 sm:size-auto sm:max-w-[5.5rem] sm:truncate sm:border-0 sm:px-1.5 sm:py-0.5 sm:text-[0.5rem] sm:font-bold sm:uppercase sm:tracking-wide",
+                    meta.strip,
+                    meta.text,
+                    "border-current",
+                  )}
+                >
+                  <span className="size-1.5 rounded-full bg-current sm:hidden" aria-hidden />
+                  <span className="hidden sm:inline">{meta.label}</span>
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      })}
+
+      {/* One label, one occupancy readout and one status control for each merged party. */}
+      {geoms.map((geo) => {
+        const g = geo.group;
+        const meta = tableStateMeta[g.state];
+        const first = tables.find((t) => t.name === g.members[0]);
+        return (
+          <div
+            key={`readout-${g.id}`}
+            className="absolute z-30 -translate-x-1/2"
+            style={{ left: `${geo.cx}%`, top: `calc(${Math.min(96, geo.maxY + 7)}% + 0.35rem)` }}
+          >
+            <div className="grid max-w-[9rem] place-items-center gap-0.5 rounded-pill border border-border bg-surface px-2 py-1 text-center shadow-sm">
+              <span className="max-w-full truncate text-[clamp(0.5rem,1.1vw,0.7rem)] font-bold text-foreground">
+                {g.label}
+              </span>
+              <span className="text-[clamp(0.4rem,0.9vw,0.6rem)] font-bold text-muted-foreground">
+                {g.seated}/{g.seats}
+                {g.since ? ` · ${g.since}` : ""}
+              </span>
               <button
                 type="button"
-                onClick={() => onStatus(t)}
-                aria-label={`Change status for ${t.name}, currently ${meta.label}`}
+                onClick={() => first && onStatus(first)}
+                aria-label={`Change status for ${g.label}, currently ${meta.label}`}
                 className={cn(
-                  "grid size-4 place-items-center rounded-pill border transition-opacity active:opacity-80 sm:size-auto sm:max-w-[5.5rem] sm:truncate sm:border-0 sm:px-1.5 sm:py-0.5 sm:text-[0.5rem] sm:font-bold sm:uppercase sm:tracking-wide",
+                  "max-w-full truncate rounded-pill px-1.5 py-0.5 text-[0.5rem] font-bold uppercase tracking-wide transition-opacity active:opacity-80",
                   meta.strip,
                   meta.text,
-                  "border-current",
                 )}
               >
-                <span className="size-1.5 rounded-full bg-current sm:hidden" aria-hidden />
-                <span className="hidden sm:inline">{meta.label}</span>
+                {meta.label}
               </button>
             </div>
           </div>
         );
       })}
+
       {tables.length === 0 && decor.length === 0 ? (
         <p className="grid h-full place-items-center text-fs-sm text-muted-foreground">
           No Tables Found
