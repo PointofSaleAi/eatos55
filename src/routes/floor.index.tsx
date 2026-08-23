@@ -433,6 +433,10 @@ function FloorPlan() {
               onChange={setDraft}
               onReset={() => setResetMode("saved")}
               onResetDefault={() => setResetMode("default")}
+              customKinds={customFloorKinds}
+              onAddCustomKind={addCustomFloorKind}
+              onDeleteCustomKind={deleteCustomFloorKind}
+
               toolbarExtra={
                 /* Templates give staff a starting arrangement to edit. */
                 <DropdownMenu>
