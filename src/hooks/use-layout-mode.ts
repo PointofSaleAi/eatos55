@@ -1,14 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-export type LayoutMode = "adaptive" | "framed";
-
-const KEY = "pos:layout-mode";
 const WIDE = "(min-width: 768px)";
 
-function readStored(): LayoutMode {
-  if (typeof window === "undefined") return "adaptive";
-  return window.localStorage.getItem(KEY) === "framed" ? "framed" : "adaptive";
-}
 
 /** True when the viewport is wide enough for the tablet/desktop layout. */
 export function useWideViewport() {
