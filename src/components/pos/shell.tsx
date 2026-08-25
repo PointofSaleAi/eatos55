@@ -213,7 +213,10 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
         <button
           type="button"
           onClick={() => setMode(mode === "framed" ? "adaptive" : "framed")}
-          className="fixed bottom-3 right-3 z-[60] hidden rounded-pill border border-border bg-surface/90 px-3 py-1.5 text-fs-xs font-bold text-muted-foreground shadow-sm backdrop-blur transition-colors hover:text-foreground md:block"
+          className={cn(
+            "fixed z-[60] hidden rounded-pill border border-border bg-surface/90 px-3 py-1.5 text-fs-xs font-bold text-muted-foreground shadow-sm backdrop-blur transition-colors hover:text-foreground md:block",
+            fullBleed ? "right-3 top-[calc(var(--sat,0px)+4.5rem)]" : "right-3 top-3",
+          )}
         >
           {mode === "framed" ? "Full layout" : "Handheld preview"}
         </button>
