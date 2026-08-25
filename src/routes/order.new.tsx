@@ -187,7 +187,7 @@ function NewOrder() {
 
         <div
           className={cn(
-            "no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pt-3",
+            "no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 pt-2.5",
             searching
               ? "pb-[calc(5rem+var(--kb-inset,0px))]"
               : "pb-[calc(1rem+var(--kb-inset,0px))]",
