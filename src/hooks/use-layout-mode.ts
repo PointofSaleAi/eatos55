@@ -1,14 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-export type LayoutMode = "adaptive" | "framed";
-
-const KEY = "pos:layout-mode";
 const WIDE = "(min-width: 768px)";
 
-function readStored(): LayoutMode {
-  if (typeof window === "undefined") return "adaptive";
-  return window.localStorage.getItem(KEY) === "framed" ? "framed" : "adaptive";
-}
 
 /** True when the viewport is wide enough for the tablet/desktop layout. */
 export function useWideViewport() {
@@ -40,31 +33,17 @@ export function useLandscapeWide() {
 }
 
 /**
- * Layout mode for the shell.
- * `wide` drives the landscape tablet/web layout (rail + split panes + dialogs);
- * `framed` forces the 420px handheld preview on big screens for design review.
+ * Layout mode for the shell. Purely viewport driven: phone widths get the
+ * handheld single pane, 768px and up get the tablet/web layout.
  */
 export function useLayoutMode() {
-  const wideViewport = useWideViewport();
-  const [mode, setMode] = useState<LayoutMode>("adaptive");
-
-  useEffect(() => setMode(readStored()), []);
-
-  const update = useCallback((next: LayoutMode) => {
-    setMode(next);
-    try {
-      window.localStorage.setItem(KEY, next);
-    } catch {
-      /* storage unavailable - session-only */
-    }
-  }, []);
-
-  const wide = wideViewport && mode === "adaptive";
+  const wide = useWideViewport();
 
   useEffect(() => {
     if (typeof document === "undefined") return;
     document.documentElement.dataset["layout"] = wide ? "wide" : "phone";
   }, [wide]);
 
-  return { mode, setMode: update, wide, wideViewport };
+  return { wide, wideViewport: wide };
+
 }

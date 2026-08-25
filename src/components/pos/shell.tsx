@@ -122,7 +122,7 @@ export function useWideLayout() {
  * Phone (<768px): full-bleed single pane with floating tab bar.
  * Landscape tablet/web (>=768px): fills the viewport with a nav rail and, where
  * a section has one, a list pane beside the routed screen.
- * "Handheld preview" pins the 420px framed phone view on big screens.
+ * The handheld frame is chosen by viewport width only, with no manual toggle.
  */
 export function DeviceFrame({ children }: { children: ReactNode }) {
   const [navOpen, setNavOpen] = useState(false);
@@ -134,7 +134,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
   const isSignIn = path === "/";
   // Clock In is an opaque gate: top bar only, no rail / tabs / drawer.
   const clockGate = path === "/access/clock-in";
-  const { mode, setMode, wide, wideViewport } = useLayoutMode();
+  const { wide } = useLayoutMode();
   useSessionGate();
   useGlobalKeyboardAware();
   // Follows the system light/dark appearance unless overridden in Settings.
@@ -209,18 +209,6 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
           </NavDrawerContext.Provider>
         </WideContext.Provider>
       </div>
-      {wideViewport && !clockGate ? (
-        <button
-          type="button"
-          onClick={() => setMode(mode === "framed" ? "adaptive" : "framed")}
-          className={cn(
-            "fixed z-[60] hidden rounded-pill border border-border bg-surface/90 px-3 py-1.5 text-fs-xs font-bold text-muted-foreground shadow-sm backdrop-blur transition-colors hover:text-foreground md:block",
-            fullBleed ? "right-3 top-[calc(var(--sat,0px)+4.5rem)]" : "right-3 top-3",
-          )}
-        >
-          {mode === "framed" ? "Full layout" : "Handheld preview"}
-        </button>
-      ) : null}
     </div>
 
   );
