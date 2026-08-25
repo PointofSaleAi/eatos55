@@ -73,15 +73,15 @@ function NewOrder() {
           wide ? "min-w-0 flex-1" : showMenu ? "min-h-0 flex-1" : "shrink-0",
         )}
       >
-      <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
+      <div className="shrink-0 border-b border-border bg-surface px-3 pb-2 pt-2.5">
 
         <div className="flex items-start gap-2">
-          <MenuButton className="-ml-2 size-11 shrink-0 rounded-card border border-border" />
+          <MenuButton className="-ml-1 size-9 shrink-0 rounded-card border border-border" />
 
           {showMenu ? (
             <div
               className={cn(
-                "no-scrollbar flex min-w-0 flex-1 items-center gap-1.5",
+                "no-scrollbar flex min-w-0 flex-1 items-stretch gap-1.5",
                 wide ? "flex-wrap" : "flex-nowrap overflow-x-auto",
               )}
             >
@@ -95,7 +95,7 @@ function NewOrder() {
                     setCategory(m.categories[0]!);
                   }}
                   className={cn(
-                    "min-h-ctl-md shrink-0 whitespace-nowrap rounded-pill px-3 text-fs-xs font-extrabold uppercase tracking-tight transition-colors",
+                    "flex h-9 shrink-0 items-center justify-center rounded-pill px-3 text-center text-[0.6875rem] font-extrabold uppercase leading-[1.05] tracking-tight transition-colors",
                     m.id === activeMenu
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -116,7 +116,7 @@ function NewOrder() {
               title="Search products"
               onClick={() => setSearching((s) => !s)}
               className={cn(
-                "grid size-10 shrink-0 place-items-center rounded-pill transition-colors hover:bg-muted tap-safe",
+                "grid size-9 shrink-0 place-items-center rounded-pill transition-colors hover:bg-muted tap-safe",
                 searching ? "bg-muted text-accent" : "text-foreground",
               )}
             >
@@ -127,51 +127,62 @@ function NewOrder() {
               aria-label="More options"
               title="More options"
               onClick={() => setMoreOpen(true)}
-              className="-mr-2 grid size-10 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+              className="-mr-1 grid size-9 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
             >
               <MoreVertical className="size-5" />
             </button>
           </div>
         </div>
 
-        <div className={cn("mt-3 grid grid-cols-2 gap-2", wide && "hidden")}>
-          {(["menu", "order"] as const).map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTab(t)}
-              className={cn(
-                "min-h-ctl-lg rounded-pill text-fs-sm font-extrabold uppercase transition-colors",
-                t === tab
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-secondary",
-              )}
-            >
-              {t === "menu" ? "Menu" : `Order${totals.count ? ` · ${totals.count}` : ""}`}
-            </button>
-          ))}
-        </div>
+        {!wide ? (
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {(["menu", "order"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTab(t)}
+                className={cn(
+                  "min-h-ctl-lg rounded-pill text-fs-sm font-extrabold uppercase transition-colors",
+                  t === tab
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:bg-secondary",
+                )}
+              >
+                {t === "menu" ? "Menu" : `Order${totals.count ? ` · ${totals.count}` : ""}`}
+              </button>
+            ))}
+          </div>
+        ) : null}
 
         {showMenu ? (
-          <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          <div
+            className={cn(
+              "mt-2 gap-1.5",
+              wide
+                ? "grid grid-cols-[repeat(auto-fill,minmax(6.75rem,1fr))]"
+                : "no-scrollbar flex flex-nowrap overflow-x-auto",
+            )}
+          >
             {chips.map((c) => (
               <button
                 key={c}
                 type="button"
                 onClick={() => setCategory(c)}
                 className={cn(
-                  "min-h-ctl-md rounded-pill px-3 text-fs-xs font-bold uppercase tracking-tight transition-colors",
+                  "flex h-10 items-center justify-center rounded-card px-2 text-center text-[0.625rem] font-extrabold uppercase leading-[1.1] tracking-tight transition-colors",
+                  wide ? "" : "min-w-[6.5rem] shrink-0",
                   c === category
                     ? "bg-accent text-accent-foreground"
                     : "bg-muted text-muted-foreground hover:bg-secondary",
                 )}
               >
-                {c}
+                <span className="line-clamp-2">{c}</span>
               </button>
             ))}
           </div>
         ) : null}
       </div>
+
 
 
         <div
