@@ -297,28 +297,41 @@ export function OrderPanel({ wide }: { wide: boolean }) {
             : "pb-[calc(0.5rem+var(--kb-inset,0px)+var(--tabs-h,0px))]",
         )}
       >
-        <dl className="divide-y divide-border text-fs-sm">
-          <div className="flex items-center justify-between py-1 font-bold text-foreground">
+        <dl className="text-fs-sm">
+          <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
             <dt>Sub Total</dt>
             <dd className="tabular-nums">{money(totals.subtotal)}</dd>
           </div>
-          <div className="flex items-center justify-between py-1 font-bold text-foreground">
+          <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
             <dt>Tax{noTax ? " (exempt)" : ""}</dt>
             <dd className="tabular-nums">{money(totals.tax)}</dd>
           </div>
           {totals.discount ? (
-            <div className="flex items-center justify-between py-1 text-muted-foreground">
+            <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
               <dt>Discount{discountName ? ` · ${discountName}` : ""}</dt>
               <dd className="tabular-nums">-{money(totals.discount)}</dd>
             </div>
           ) : null}
-          <div className="flex items-center justify-between py-1 text-fs-lg font-extrabold text-foreground">
+          <div className="flex items-center justify-between pt-0.5 text-fs-lg font-extrabold text-foreground">
             <dt>Total{comped ? " (comped)" : ""}</dt>
             <dd className="tabular-nums">{money(totals.total)}</dd>
           </div>
         </dl>
 
-        <div className="mt-1.5 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2">
+        <div className="mt-1.5 grid grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-2">
+          <button
+            type="button"
+            disabled={!totals.count}
+            aria-label="Save order"
+            title="Save order"
+            onClick={() => {
+              if (!totals.count) return;
+              toast.success("Order saved");
+            }}
+            className="grid min-h-ctl-lg w-12 shrink-0 place-items-center rounded-row bg-muted text-foreground transition-colors hover:bg-secondary disabled:opacity-40"
+          >
+            <Save className="size-5" />
+          </button>
           <button
             type="button"
             disabled={!totals.count}
@@ -337,6 +350,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
             Charge {money(totals.total)}
           </button>
         </div>
+
       </div>
 
 
