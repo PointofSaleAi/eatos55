@@ -122,7 +122,7 @@ export function useWideLayout() {
  * Phone (<768px): full-bleed single pane with floating tab bar.
  * Landscape tablet/web (>=768px): fills the viewport with a nav rail and, where
  * a section has one, a list pane beside the routed screen.
- * "Handheld preview" pins the 420px framed phone view on big screens.
+ * The handheld frame is chosen by viewport width only, with no manual toggle.
  */
 export function DeviceFrame({ children }: { children: ReactNode }) {
   const [navOpen, setNavOpen] = useState(false);
