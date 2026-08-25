@@ -202,47 +202,76 @@ export function OrderPanel({ wide }: { wide: boolean }) {
           <span className="truncate">{session.name}</span>
         </div>
 
-        <label className="mt-1.5 flex items-center gap-2 rounded-row bg-muted px-3">
-          <NotebookPen className="size-4 shrink-0 text-muted-foreground" />
-          <input
-            value={orderNotes}
-            onChange={(e) => setOrderNotes(e.target.value)}
-            placeholder="Order Notes"
+        {showNotesField ? (
+          <label className="mt-1.5 flex items-center gap-2 rounded-row bg-muted px-3">
+            <NotebookPen className="size-4 shrink-0 text-muted-foreground" />
+            <input
+              value={orderNotes}
+              onChange={(e) => setOrderNotes(e.target.value)}
+              placeholder="Order Notes"
+              aria-label="Order notes"
+              autoFocus={notesOpen}
+              onBlur={() => setNotesOpen(false)}
+              className="min-h-tap w-full bg-transparent text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
+            />
+          </label>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setNotesOpen(true)}
             aria-label="Order notes"
-            className="min-h-tap w-full bg-transparent text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
-          />
-        </label>
+            className="mt-1.5 flex min-h-ctl-md w-full items-center gap-2 rounded-row bg-muted px-3 text-left"
+          >
+            <NotebookPen className="size-4 shrink-0 text-muted-foreground" />
+            <span className="min-w-0 flex-1 truncate text-fs-xs font-bold text-muted-foreground">
+              {orderNotes || "Order Notes"}
+            </span>
+          </button>
+        )}
       </div>
 
 
-      {/* Items: flat receipt rows */}
-      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-[calc(0.5rem+var(--kb-inset,0px))] pt-2">
+      {/* Items: dense receipt rows, the only scrolling area */}
+      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-[calc(0.5rem+var(--kb-inset,0px))] pt-1.5">
         {cart.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-3 py-10 text-center">
             <Utensils className="size-10 text-muted-foreground/50" />
             <p className="text-fs-sm font-bold text-muted-foreground">Let&apos;s create an order</p>
           </div>
         ) : (
-          <ul>
+          <ul className="divide-y divide-border/60">
             {cart.map((l) => (
-              <li key={l.id}>
-                <div className="grid grid-cols-[3rem_minmax(0,1fr)_auto_1.5rem] items-start gap-2 py-1.5">
-                  <span className="pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">
-                    {l.qty} ea
-                  </span>
+              <li key={l.id} className="py-1">
+                <div className="flex items-start gap-2">
                   <button
                     type="button"
                     onClick={() => changeQty(l.id, 1)}
                     aria-label={`Add one ${l.name}`}
-                    className="min-w-0 rounded-row text-left transition-colors hover:bg-muted"
+                    title={`Add one ${l.name}`}
+                    className="grid size-6 shrink-0 place-items-center rounded-md bg-muted text-fs-xs font-extrabold tabular-nums text-foreground transition-colors hover:bg-secondary"
                   >
-                    <span className="block line-clamp-2 text-fs-sm font-bold text-foreground">
-                      {l.name}
-                    </span>
+                    {l.qty}
                   </button>
-                  <span className="min-w-[4.5rem] text-right text-fs-sm font-bold tabular-nums text-foreground">
-                    {money(l.price * l.qty)}
-                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline gap-2">
+                      <span className="min-w-0 flex-1 truncate text-fs-sm font-bold leading-snug text-foreground">
+                        {l.name}
+                      </span>
+                      <span className="shrink-0 text-fs-sm font-bold tabular-nums text-foreground">
+                        {money(l.price * l.qty)}
+                      </span>
+                    </div>
+                    {l.modifiers?.length ? (
+                      <p className="truncate text-fs-xs font-bold uppercase leading-snug text-tile-blue">
+                        {l.modifiers.join(", ")}
+                      </p>
+                    ) : null}
+                    {l.notes ? (
+                      <p className="truncate text-fs-xs italic leading-snug text-muted-foreground">
+                        {l.notes}
+                      </p>
+                    ) : null}
+                  </div>
                   <button
                     type="button"
                     onClick={() => changeQty(l.id, -1)}
@@ -252,26 +281,11 @@ export function OrderPanel({ wide }: { wide: boolean }) {
                     &minus;
                   </button>
                 </div>
-                {l.modifiers?.length ? (
-                  <div className="pl-12">
-                    {l.modifiers.map((m) => (
-                      <div key={m} className="flex items-start gap-2 pb-1">
-                        <span className="text-fs-xs leading-none text-muted-foreground">&#x2514;</span>
-                        <span className="min-w-0 flex-1 truncate text-fs-xs font-bold text-tile-blue">
-                          - {m}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
-
-                {l.notes ? (
-                  <p className="truncate pl-10 pb-1 text-fs-xs text-muted-foreground">{l.notes}</p>
-                ) : null}
               </li>
             ))}
           </ul>
         )}
+
       </div>
 
       {/* Footer: totals and Save / Fire / Charge */}
