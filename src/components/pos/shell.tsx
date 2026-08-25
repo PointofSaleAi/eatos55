@@ -134,7 +134,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
   const isSignIn = path === "/";
   // Clock In is an opaque gate: top bar only, no rail / tabs / drawer.
   const clockGate = path === "/access/clock-in";
-  const { mode, setMode, wide, wideViewport } = useLayoutMode();
+  const { wide } = useLayoutMode();
   useSessionGate();
   useGlobalKeyboardAware();
   // Follows the system light/dark appearance unless overridden in Settings.
