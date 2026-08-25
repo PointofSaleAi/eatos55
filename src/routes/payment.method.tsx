@@ -1,9 +1,19 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   BadgeDollarSign,
+  Banknote,
   BedDouble,
   Bike,
+  Building2,
+  CalendarClock,
   CreditCard,
+  Link2,
+  Nfc,
+  QrCode,
+  Receipt,
+  Smartphone,
+  Ticket,
+  UserCog,
   Gift,
   HandHeart,
   Heart,
@@ -171,6 +181,27 @@ function PaymentMethod() {
           run: () => openAmount("Cash", "cash", true),
         },
         {
+          id: "card-present",
+          label: "Chip and PIN",
+          icon: CreditCard,
+          kind: "dialog",
+          run: () => openAmount("Chip and PIN", "card"),
+        },
+        {
+          id: "contactless",
+          label: "Contactless",
+          icon: Nfc,
+          kind: "dialog",
+          run: () => openAmount("Contactless", "card"),
+        },
+        {
+          id: "amex",
+          label: "Amex",
+          icon: CreditCard,
+          kind: "dialog",
+          run: () => openAmount("Amex", "card"),
+        },
+        {
           id: "manual-card",
           label: "Manual Card",
           icon: CreditCard,
@@ -199,6 +230,134 @@ function PaymentMethod() {
           run: () => setSplitOpen(true),
         },
 
+      ],
+    },
+    {
+      title: "Wallets",
+      items: [
+        {
+          id: "apple-pay",
+          label: "Apple Pay",
+          icon: Smartphone,
+          kind: "dialog",
+          run: () => openAmount("Apple Pay", "card"),
+        },
+        {
+          id: "google-pay",
+          label: "Google Pay",
+          icon: Smartphone,
+          kind: "dialog",
+          run: () => openAmount("Google Pay", "card"),
+        },
+      ],
+    },
+    {
+      title: "Remote and alternative",
+      items: [
+        {
+          id: "pay-by-link",
+          label: "Pay by Link",
+          icon: Link2,
+          kind: "dialog",
+          run: () =>
+            openRef({
+              title: "Pay by Link",
+              hint: "Send a secure payment link to the guest by email or SMS.",
+              inputLabel: "Email or mobile number",
+              placeholder: "e.g. 07700 900123",
+              numeric: false,
+              method: "other",
+              success: (v) => `Payment link sent to ${v}`,
+            }),
+        },
+        {
+          id: "qr",
+          label: "Scan to Pay",
+          icon: QrCode,
+          kind: "dialog",
+          run: () => openAmount("Scan to Pay", "qr"),
+        },
+        {
+          id: "open-banking",
+          label: "Pay by Bank",
+          icon: Building2,
+          kind: "dialog",
+          run: () => openAmount("Pay by Bank", "other"),
+        },
+        {
+          id: "bank-transfer",
+          label: "Bank Transfer",
+          icon: Landmark,
+          kind: "dialog",
+          run: () =>
+            openRef({
+              title: "Bank transfer",
+              hint: "Record the payment reference once the transfer lands.",
+              inputLabel: "Payment reference",
+              placeholder: "e.g. FT2608251",
+              numeric: false,
+              method: "other",
+              success: (v) => `Bank transfer recorded · ref ${v}`,
+            }),
+        },
+        {
+          id: "paypal",
+          label: "PayPal",
+          icon: Wallet,
+          kind: "dialog",
+          run: () => openAmount("PayPal", "other"),
+        },
+        {
+          id: "klarna",
+          label: "Klarna",
+          icon: CalendarClock,
+          kind: "dialog",
+          run: () => openAmount("Klarna", "other"),
+        },
+      ],
+    },
+    {
+      title: "Cash-like and vouchers",
+      items: [
+        {
+          id: "cheque",
+          label: "Cheque",
+          icon: Receipt,
+          kind: "dialog",
+          run: () =>
+            openRef({
+              title: "Cheque",
+              hint: "Key the cheque number written on the slip.",
+              inputLabel: "Cheque number",
+              placeholder: "e.g. 004128",
+              numeric: true,
+              method: "other",
+              success: (v) => `Cheque ${v} recorded`,
+            }),
+        },
+        {
+          id: "voucher",
+          label: "Voucher",
+          icon: Ticket,
+          kind: "dialog",
+          run: () =>
+            openRef({
+              title: "Voucher",
+              hint: "Scan or key the voucher code.",
+              inputLabel: "Voucher code",
+              placeholder: "e.g. EAT-2026-UK",
+              numeric: false,
+              method: "gift",
+              success: (v) => `Voucher ${v} applied`,
+            }),
+        },
+        {
+          id: "round-up",
+          label: "Donation Round-up",
+          icon: Banknote,
+          kind: "dialog",
+          run: () => openAmount("Donation Round-up", "other"),
+        },
       ],
     },
     {
@@ -261,6 +420,13 @@ function PaymentMethod() {
               success: (v) => `In-kind tender recorded · ${v}`,
             }),
         },
+        {
+          id: "staff",
+          label: "Staff Charge",
+          icon: UserCog,
+          kind: "dialog",
+          run: () => openAmount("Staff Charge", "house"),
+        },
       ],
     },
     {
@@ -278,6 +444,20 @@ function PaymentMethod() {
     {
       title: "Delivery partners",
       items: [
+        {
+          id: "deliveroo",
+          label: "Deliveroo",
+          icon: Bike,
+          kind: "dialog",
+          run: () => openRef(delivery("Deliveroo")),
+        },
+        {
+          id: "just-eat",
+          label: "Just Eat",
+          icon: Utensils,
+          kind: "dialog",
+          run: () => openRef(delivery("Just Eat")),
+        },
         {
           id: "uber",
           label: "Uber Eats",
@@ -307,6 +487,8 @@ function PaymentMethod() {
   const enabled = (id: string) => {
     const on = settings.tenders?.[id as TenderId] ?? true;
     if (id === "room") return on && settings.roomService;
+    // Grubhub is a US-only partner.
+    if (id === "grubhub") return on && settings.currency === "USD";
     return on;
   };
   const groups = allGroups
