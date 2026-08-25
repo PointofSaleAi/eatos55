@@ -3,8 +3,6 @@ import {
   BadgeDollarSign,
   BedDouble,
   Bike,
-  ChevronLeft,
-  ChevronRight,
   CreditCard,
   Gift,
   HandHeart,
