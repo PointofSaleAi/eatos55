@@ -61,15 +61,21 @@ export function OrderPanel({ wide }: { wide: boolean }) {
   const [discountOpen, setDiscountOpen] = useState(false);
   const [discountName, setDiscountName] = useState<string | null>(null);
   const [pinOpen, setPinOpen] = useState(false);
+  const [notesOpen, setNotesOpen] = useState(false);
 
   const orderNumber = activeTicketId
     ? (tickets.find((t) => t.id === activeTicketId)?.number ?? null)
     : null;
 
+  // Once the order has lines the identity block and notes collapse so the item
+  // list gets the height back. Nothing is removed, only condensed.
+  const dense = cart.length > 0;
+  const showNotesField = !dense || notesOpen;
+
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       {/* Guest identity and order level actions */}
-      <div className="shrink-0 border-b border-border px-4 pb-2.5 pt-2.5">
+      <div className="shrink-0 border-b border-border px-4 pb-2 pt-2">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
           <button
             type="button"
@@ -80,13 +86,24 @@ export function OrderPanel({ wide }: { wide: boolean }) {
             <span className="block truncate text-fs-lg font-extrabold leading-tight text-foreground">
               {guest.name || tableGroupLabel(activeTable) || "Guest Name"}
             </span>
-            <span className="block truncate text-fs-sm leading-tight text-muted-foreground">
-              {guest.phone || "(XXX) XXX-XXXX"}
-            </span>
-            <span className="block truncate text-fs-xs font-bold uppercase leading-tight text-muted-foreground">
-              {arrivedAt ? `Arrived at ${arrivedAt}` : "Not started"}
-            </span>
+            {dense ? (
+              <span className="block truncate text-fs-xs font-bold leading-tight text-muted-foreground">
+                {guest.phone || "(XXX) XXX-XXXX"}
+                {" · "}
+                {arrivedAt ? `Arrived ${arrivedAt}` : "Not started"}
+              </span>
+            ) : (
+              <>
+                <span className="block truncate text-fs-sm leading-tight text-muted-foreground">
+                  {guest.phone || "(XXX) XXX-XXXX"}
+                </span>
+                <span className="block truncate text-fs-xs font-bold uppercase leading-tight text-muted-foreground">
+                  {arrivedAt ? `Arrived at ${arrivedAt}` : "Not started"}
+                </span>
+              </>
+            )}
           </button>
+
           <div className="grid shrink-0 grid-cols-3 gap-1">
             <OrderAction
               label="Discount"
