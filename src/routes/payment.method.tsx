@@ -529,7 +529,10 @@ function PaymentMethod() {
 
       <div
         ref={paneRef}
-        className="mx-auto flex min-h-0 w-full max-w-[64rem] flex-1 flex-col justify-between gap-[var(--gap-sec)] overflow-hidden px-[var(--pad-screen)] py-2"
+        className={cn(
+          "mx-auto flex min-h-0 w-full max-w-[64rem] flex-1 flex-col gap-[var(--gap-sec)] px-[var(--pad-screen)] py-2",
+          fit.fits ? "justify-between overflow-hidden" : "justify-start overflow-y-auto",
+        )}
       >
         {groups.map((group) => (
           <section key={group.title} className="flex min-h-0 flex-col">
