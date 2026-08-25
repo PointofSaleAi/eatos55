@@ -521,34 +521,7 @@ function PaymentMethod() {
   const grid = (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="shrink-0 px-[var(--pad-screen)] pt-3">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
-          <h2 className="truncate text-fs-lg font-extrabold text-foreground">Payment Method</h2>
-          {pages.length > 1 ? (
-            <div className="flex shrink-0 items-center gap-1">
-              <button
-                type="button"
-                aria-label="Previous payment methods"
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
-                disabled={page === 0}
-                className="grid size-9 place-items-center rounded-pill border border-border text-foreground disabled:opacity-40"
-              >
-                <ChevronLeft className="size-4" />
-              </button>
-              <span className="text-fs-xs tabular-nums text-muted-foreground">
-                {page + 1}/{pages.length}
-              </span>
-              <button
-                type="button"
-                aria-label="More payment methods"
-                onClick={() => setPage((p) => Math.min(pages.length - 1, p + 1))}
-                disabled={page >= pages.length - 1}
-                className="grid size-9 place-items-center rounded-pill border border-border text-foreground disabled:opacity-40"
-              >
-                <ChevronRight className="size-4" />
-              </button>
-            </div>
-          ) : null}
-        </div>
+        <h2 className="truncate text-fs-lg font-extrabold text-foreground">Payment Method</h2>
         <p className="mt-1 hidden text-fs-xs text-muted-foreground lg:block">
           Cash, manual card entry and Pay by Link are supported online. Connect a card reader for Tap
           to Pay.
@@ -557,16 +530,18 @@ function PaymentMethod() {
 
       <div
         ref={paneRef}
-        className="mx-auto min-h-0 w-full max-w-[64rem] flex-1 overflow-hidden px-[var(--pad-screen)] py-2"
+        className="mx-auto flex min-h-0 w-full max-w-[64rem] flex-1 flex-col justify-between gap-[var(--gap-sec)] overflow-hidden px-[var(--pad-screen)] py-2"
       >
-
-        {(pages[page] ?? []).map((group) => (
-          <section key={group.title} className="mt-[var(--gap-sec)] first:mt-0">
-            <h3 className="text-fs-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
+        {groups.map((group) => (
+          <section key={group.title} className="flex min-h-0 flex-col">
+            <h3
+              className="text-fs-xs font-bold uppercase tracking-[0.08em] text-muted-foreground"
+              style={{ height: HEAD, lineHeight: `${HEAD}px` }}
+            >
               {group.title}
             </h3>
             <div
-              className="mt-1.5 grid gap-[var(--gap-sec)]"
+              className="grid gap-[var(--gap-sec)]"
               style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
             >
               {group.items.map((t) => {
@@ -583,7 +558,7 @@ function PaymentMethod() {
                       t.run();
                     }}
                     aria-pressed={active}
-                    style={{ minHeight: "max(var(--tap), var(--tender-h))" }}
+                    style={{ height: fit.tileH }}
                     className={cn(
                       "flex items-center gap-2.5 rounded-row border px-3 py-2 text-left transition-colors disabled:opacity-40",
                       active
@@ -610,6 +585,7 @@ function PaymentMethod() {
           </section>
         ))}
       </div>
+
 
 
       <div className="shrink-0 border-t border-border bg-surface px-[var(--pad-screen)] pb-[calc(0.75rem+var(--kb-inset,0px)+var(--tabs-h,0px))] pt-3">
