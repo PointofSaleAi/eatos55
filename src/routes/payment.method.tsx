@@ -315,12 +315,11 @@ function PaymentMethod() {
     .map((g) => ({ title: g.title, items: g.items.filter((t) => enabled(t.id)) }))
     .filter((g) => g.items.length > 0);
 
-  // Tiles page instead of scrolling: pack whole groups into the measured pane.
-  // Column count and row height come from the density tokens, so a 390 phone
-  // gets 2 columns and a 1920 desktop gets 4 taller tiles from the same code.
+  // All tenders live on one screen: measure the pane, then choose the column
+  // count and tile height that make the full set fit without scrolling.
   const paneRef = useRef<HTMLDivElement | null>(null);
   const [box, setBox] = useState({ w: 0, h: 0 });
-  const [metrics, setMetrics] = useState({ tileMin: 152, tileH: 52, gap: 8 });
+  const [metrics, setMetrics] = useState({ tileMin: 152, tileH: 52, gap: 8, tap: 44 });
   useEffect(() => {
     const el = paneRef.current;
     if (!el) return;
@@ -338,6 +337,7 @@ function PaymentMethod() {
         tileMin: px("--tender-min", 152),
         tileH: px("--tender-h", 52),
         gap: px("--gap-sec", 8),
+        tap: px("--tap", 44),
       });
     };
 
@@ -351,52 +351,51 @@ function PaymentMethod() {
     return () => ro.disconnect();
   }, []);
 
-  const cols = Math.max(
-    2,
-    Math.min(4, Math.floor((box.w + metrics.gap) / (metrics.tileMin + metrics.gap)) || 2),
-  );
-  const pages = useMemo(() => {
-    const ROW = metrics.tileH;
-    const HEAD = 24;
-    const GAP = metrics.gap;
-    const SECTION_GAP = metrics.gap;
-    const height = box.h || 999;
-    const out: { title: string; items: Tender[] }[][] = [];
-    let current: { title: string; items: Tender[] }[] = [];
-    let used = 0;
-    for (const g of groups) {
-      const rows = Math.ceil(g.items.length / cols);
-      const h = HEAD + rows * ROW + (rows - 1) * GAP + (current.length ? SECTION_GAP : 0);
-      if (current.length && used + h > height) {
-        out.push(current);
-        current = [];
-        used = 0;
+  const HEAD = 22;
+  const fit = useMemo(() => {
+    const gap = metrics.gap;
+    const maxCols = Math.max(
+      2,
+      Math.min(6, Math.floor((box.w + gap) / (metrics.tileMin + gap)) || 2),
+    );
+    const height = box.h || 0;
+    const floor = Math.max(40, Math.min(metrics.tap, metrics.tileH));
+    const rowsFor = (cols: number) =>
+      groups.reduce((sum, g) => sum + Math.ceil(g.items.length / cols), 0);
+    const chromeFor = (cols: number) =>
+      groups.length * HEAD + (rowsFor(cols) - groups.length) * gap + (groups.length - 1) * gap;
+
+    // Prefer the fewest columns (biggest tiles) that still fit the pane height.
+    for (let cols = 2; cols <= maxCols; cols += 1) {
+      const rows = rowsFor(cols);
+      if (!height) break;
+      const avail = height - chromeFor(cols);
+      const h = avail / Math.max(1, rows);
+      if (h >= floor) {
+        return { cols, tileH: Math.min(Math.max(h, floor), metrics.tileH * 1.6), rows };
       }
-      current.push(g);
-      used += h;
     }
-    if (current.length) out.push(current);
-    return out;
+    const cols = maxCols;
+    const rows = rowsFor(cols);
+    const avail = (height || rows * metrics.tileH) - chromeFor(cols);
+    return {
+      cols,
+      tileH: Math.min(Math.max(avail / Math.max(1, rows), floor), metrics.tileH * 1.6),
+      rows,
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    box.w,
     box.h,
-    cols,
+    metrics.tileMin,
     metrics.tileH,
     metrics.gap,
+    metrics.tap,
     JSON.stringify(groups.map((g) => [g.title, g.items.length])),
   ]);
 
+  const cols = fit.cols;
 
-  const [page, setPage] = useState(0);
-  useEffect(() => {
-    setPage((p) => Math.min(p, Math.max(0, pages.length - 1)));
-  }, [pages.length]);
-
-
-
-
-
-  const allTenders = groups.flatMap((g) => g.items);
   const activeTender = allTenders.find((t) => t.id === selected) ?? null;
   const actionLabel = room
     ? `Room charge posted · ${room.number}`
