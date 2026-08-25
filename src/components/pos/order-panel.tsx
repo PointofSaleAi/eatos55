@@ -149,15 +149,6 @@ export function OrderPanel({ wide }: { wide: boolean }) {
             >
               <CircleDollarSign className="size-5" />
             </OrderAction>
-            <OrderAction
-              label="Save order"
-              onPress={() => {
-                if (!totals.count) return;
-                toast.success("Order saved");
-              }}
-            >
-              <Save className="size-5" />
-            </OrderAction>
           </div>
         </div>
 
