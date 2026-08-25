@@ -396,6 +396,7 @@ function PaymentMethod() {
 
   const cols = fit.cols;
 
+  const allTenders = groups.flatMap((g) => g.items);
   const activeTender = allTenders.find((t) => t.id === selected) ?? null;
   const actionLabel = room
     ? `Room charge posted · ${room.number}`
