@@ -316,25 +316,50 @@ function PaymentMethod() {
     .filter((g) => g.items.length > 0);
 
   // Tiles page instead of scrolling: pack whole groups into the measured pane.
+  // Column count and row height come from the density tokens, so a 390 phone
+  // gets 2 columns and a 1920 desktop gets 4 taller tiles from the same code.
   const paneRef = useRef<HTMLDivElement | null>(null);
   const [box, setBox] = useState({ w: 0, h: 0 });
+  const [metrics, setMetrics] = useState({ tileMin: 152, tileH: 52, gap: 8 });
   useEffect(() => {
     const el = paneRef.current;
     if (!el) return;
+    const readMetrics = () => {
+      const cs = getComputedStyle(el);
+      const rootPx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+      // Tokens resolve to rem or px depending on the tier, so normalise to px.
+      const px = (name: string, fallback: number) => {
+        const raw = cs.getPropertyValue(name).trim();
+        const v = parseFloat(raw);
+        if (!Number.isFinite(v) || v <= 0) return fallback;
+        return raw.endsWith("rem") ? v * rootPx : v;
+      };
+      setMetrics({
+        tileMin: px("--tender-min", 152),
+        tileH: px("--tender-h", 52),
+        gap: px("--gap-sec", 8),
+      });
+    };
+
+    readMetrics();
     const ro = new ResizeObserver(([entry]) => {
       const r = entry?.contentRect;
       if (r) setBox({ w: r.width, h: r.height });
+      readMetrics();
     });
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
 
-  const cols = box.w >= 1024 ? 4 : box.w >= 620 ? 3 : 2;
+  const cols = Math.max(
+    2,
+    Math.min(4, Math.floor((box.w + metrics.gap) / (metrics.tileMin + metrics.gap)) || 2),
+  );
   const pages = useMemo(() => {
-    const ROW = 52;
+    const ROW = metrics.tileH;
     const HEAD = 24;
-    const GAP = 8;
-    const SECTION_GAP = 8;
+    const GAP = metrics.gap;
+    const SECTION_GAP = metrics.gap;
     const height = box.h || 999;
     const out: { title: string; items: Tender[] }[][] = [];
     let current: { title: string; items: Tender[] }[] = [];
@@ -353,7 +378,14 @@ function PaymentMethod() {
     if (current.length) out.push(current);
     return out;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [box.h, cols, JSON.stringify(groups.map((g) => [g.title, g.items.length]))]);
+  }, [
+    box.h,
+    cols,
+    metrics.tileH,
+    metrics.gap,
+    JSON.stringify(groups.map((g) => [g.title, g.items.length])),
+  ]);
+
 
   const [page, setPage] = useState(0);
   useEffect(() => {
@@ -375,9 +407,9 @@ function PaymentMethod() {
       : "Select a payment method";
 
   const receipt = (
-    <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3">
+    <div className="min-h-0 flex-1 overflow-y-auto px-[var(--pad-screen)] py-3">
       {nothingToPay ? (
-        <ReceiptCard className="mx-auto max-w-md">
+        <ReceiptCard className="mx-auto w-full max-w-md xl:max-w-none">
           <p className="text-fs-base font-extrabold text-foreground">Nothing to tender yet</p>
           <p className="mt-1 text-fs-sm text-muted-foreground">
             This check has no items, so there is no balance to take payment for. Add products to the
@@ -391,7 +423,7 @@ function PaymentMethod() {
           </Link>
         </ReceiptCard>
       ) : (
-        <ReceiptCard className="mx-auto max-w-md">
+        <ReceiptCard className="mx-auto w-full max-w-md xl:max-w-none">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
             <p className="truncate text-fs-sm font-extrabold text-foreground">
               Order #{orderNumber}
@@ -488,7 +520,7 @@ function PaymentMethod() {
 
   const grid = (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-      <div className="shrink-0 px-4 pt-3">
+      <div className="shrink-0 px-[var(--pad-screen)] pt-3">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
           <h2 className="truncate text-fs-lg font-extrabold text-foreground">Payment Method</h2>
           {pages.length > 1 ? (
@@ -523,14 +555,18 @@ function PaymentMethod() {
         </p>
       </div>
 
-      <div ref={paneRef} className="min-h-0 flex-1 overflow-hidden px-4 py-2">
+      <div
+        ref={paneRef}
+        className="mx-auto min-h-0 w-full max-w-[64rem] flex-1 overflow-hidden px-[var(--pad-screen)] py-2"
+      >
+
         {(pages[page] ?? []).map((group) => (
-          <section key={group.title} className="mt-2 first:mt-0">
+          <section key={group.title} className="mt-[var(--gap-sec)] first:mt-0">
             <h3 className="text-fs-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
               {group.title}
             </h3>
             <div
-              className="mt-1.5 grid gap-2"
+              className="mt-1.5 grid gap-[var(--gap-sec)]"
               style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
             >
               {group.items.map((t) => {
@@ -547,14 +583,16 @@ function PaymentMethod() {
                       t.run();
                     }}
                     aria-pressed={active}
+                    style={{ minHeight: "max(var(--tap), var(--tender-h))" }}
                     className={cn(
-                      "flex min-h-tap items-center gap-2.5 rounded-row border px-3 py-2.5 text-left transition-colors disabled:opacity-40",
+                      "flex items-center gap-2.5 rounded-row border px-3 py-2 text-left transition-colors disabled:opacity-40",
                       active
                         ? "border-success bg-success/10"
                         : "border-border bg-surface hover:bg-muted",
                     )}
                   >
                     <Icon className="size-5 shrink-0 text-foreground" aria-hidden />
+
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-fs-sm font-bold text-foreground">
                         {t.label}
@@ -574,7 +612,7 @@ function PaymentMethod() {
       </div>
 
 
-      <div className="shrink-0 border-t border-border bg-surface px-3 pb-[calc(0.75rem+var(--kb-inset,0px)+var(--tabs-h,0px))] pt-3">
+      <div className="shrink-0 border-t border-border bg-surface px-[var(--pad-screen)] pb-[calc(0.75rem+var(--kb-inset,0px)+var(--tabs-h,0px))] pt-3">
         <button
           type="button"
           disabled={nothingToPay || (!activeTender && !room) || Boolean(activeTender?.unavailable)}
@@ -609,7 +647,7 @@ function PaymentMethod() {
 
       {/* Two-pane on tablet and desktop; stacked on phones. */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
-        <div className="flex min-h-0 shrink-0 flex-col overflow-hidden border-border md:w-[22rem] md:border-r lg:w-[24rem]">
+        <div className="flex min-h-0 shrink-0 flex-col overflow-hidden border-border md:w-[20rem] md:border-r lg:w-[24rem] xl:w-[26rem] 2xl:w-[30rem]">
           {receipt}
         </div>
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">{grid}</div>
