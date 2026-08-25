@@ -37,7 +37,7 @@ export function SplitPane({
     <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
       <div
         className={cn(
-          "flex min-h-0 w-[22rem] shrink-0 flex-col overflow-hidden border-r border-border bg-surface lg:w-[26rem]",
+          "flex min-h-0 w-[19rem] shrink-0 flex-col overflow-hidden border-r border-border bg-surface lg:w-[21rem]",
           listClassName,
         )}
       >

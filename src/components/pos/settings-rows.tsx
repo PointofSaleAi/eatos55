@@ -1,6 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRight, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
@@ -252,6 +259,47 @@ export function SegmentRow({
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/** Dropdown row: one value picked from a list (payment provider, reader model). */
+export function IconSelectRow({
+  icon,
+  color,
+  title,
+  value,
+  options,
+  onChange,
+  disabled,
+}: {
+  icon?: LucideIcon;
+  color?: TileColor;
+  title: string;
+  value: string;
+  options: string[];
+  onChange: (v: string) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <div className={rowBase}>
+      {icon ? <IconTile icon={icon} color={color} /> : null}
+      <span className="min-w-0 flex-1 truncate t-row text-foreground">{title}</span>
+      <Select value={value} onValueChange={onChange} disabled={disabled ?? false}>
+        <SelectTrigger
+          aria-label={title}
+          className="h-ctl-sm w-[11rem] shrink-0 rounded-pill border-border bg-muted px-3 t-value text-foreground"
+        >
+          <SelectValue placeholder="Choose" />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((o) => (
+            <SelectItem key={o} value={o} className="t-row">
+              {o}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

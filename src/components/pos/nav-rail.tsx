@@ -1,12 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { PanelLeftClose, PanelLeftOpen, Settings as SettingsIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { Settings as SettingsIcon } from "lucide-react";
+import { useCallback, useState } from "react";
 import { Wordmark } from "@/components/pos/brand";
 import { railPrimary } from "@/lib/nav-destinations";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
-
-const KEY = "pos:rail-expanded";
 
 /**
  * Landscape navigation rail, laid out like the reference app: venue avatar at
@@ -19,21 +17,8 @@ export function NavRail() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { settings, session } = usePos();
 
-  useEffect(() => {
-    setExpanded(window.localStorage.getItem(KEY) === "1");
-  }, []);
-
-  const toggle = useCallback(() => {
-    setExpanded((v) => {
-      const next = !v;
-      try {
-        window.localStorage.setItem(KEY, next ? "1" : "0");
-      } catch {
-        /* storage unavailable */
-      }
-      return next;
-    });
-  }, []);
+  // Always starts collapsed: expansion is a per-visit choice, never remembered.
+  const toggle = useCallback(() => setExpanded((v) => !v), []);
 
   const venue = settings.restaurantName.split("·")[0]!.trim();
   const venueInitials =
@@ -52,15 +37,17 @@ export function NavRail() {
       )}
     >
       {/* Venue / revenue center */}
-      <div className={cn("flex items-center gap-2 px-3", expanded ? "" : "justify-center")}>
-        <Link
-          to="/settings/general"
+      <div className={cn("flex items-center gap-2 px-3 pt-3", expanded ? "" : "justify-center")}>
+        <button
+          type="button"
+          onClick={toggle}
           title={venue}
-          aria-label={`Venue: ${venue}`}
+          aria-label={expanded ? "Collapse navigation" : "Expand navigation"}
+          aria-expanded={expanded}
           className="grid size-11 shrink-0 place-items-center rounded-full bg-accent text-fs-sm font-extrabold uppercase text-accent-foreground"
         >
           {venueInitials}
-        </Link>
+        </button>
         {expanded ? (
           <span className="min-w-0 flex-1">
             <span className="block truncate text-fs-sm font-extrabold text-foreground">{venue}</span>
@@ -71,20 +58,13 @@ export function NavRail() {
         ) : null}
       </div>
 
-      <div className={cn("flex px-3 pt-2", expanded ? "justify-end" : "justify-center")}>
-        <button
-          type="button"
-          aria-label={expanded ? "Collapse navigation" : "Expand navigation"}
-          title={expanded ? "Collapse navigation" : "Expand navigation"}
-          onClick={toggle}
-          className="grid size-10 place-items-center rounded-pill text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-        >
-          {expanded ? <PanelLeftClose className="size-5" /> : <PanelLeftOpen className="size-5" />}
-        </button>
-      </div>
-
-      {/* Primary destinations */}
-      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 pt-1">
+      {/* Primary destinations. Empty space in this column toggles the rail. */}
+      <div
+        onClick={(e) => {
+          if (e.target === e.currentTarget) toggle();
+        }}
+        className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 pt-3"
+      >
         <ul className="space-y-1">
           {railPrimary.map((l) => {
             const active = pathname === l.to || pathname.startsWith(`${l.to}/`);

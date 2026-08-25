@@ -84,6 +84,23 @@ export type LoginSlide = { id: string; image: string; headline: string; enabled:
 /** Tenders that can be switched on or off per venue. */
 export type TenderId =
   | "cash"
+  | "card-present"
+  | "contactless"
+  | "apple-pay"
+  | "google-pay"
+  | "amex"
+  | "pay-by-link"
+  | "qr"
+  | "open-banking"
+  | "bank-transfer"
+  | "paypal"
+  | "klarna"
+  | "cheque"
+  | "voucher"
+  | "staff"
+  | "round-up"
+  | "deliveroo"
+  | "just-eat"
   | "manual-card"
   | "manual-cc"
   | "external"
@@ -100,6 +117,23 @@ export type TenderId =
 
 export const TENDER_LABELS: Record<TenderId, string> = {
   cash: "Cash",
+  "card-present": "Chip and PIN",
+  contactless: "Contactless",
+  "apple-pay": "Apple Pay",
+  "google-pay": "Google Pay",
+  amex: "Amex",
+  "pay-by-link": "Pay by Link",
+  qr: "Scan to Pay",
+  "open-banking": "Pay by Bank",
+  "bank-transfer": "Bank Transfer",
+  paypal: "PayPal",
+  klarna: "Klarna",
+  cheque: "Cheque",
+  voucher: "Voucher",
+  staff: "Staff Charge",
+  "round-up": "Donation Round-up",
+  deliveroo: "Deliveroo",
+  "just-eat": "Just Eat",
   "manual-card": "Manual Card",
   "manual-cc": "Manual CC",
   external: "External CC",
@@ -117,6 +151,23 @@ export const TENDER_LABELS: Record<TenderId, string> = {
 
 const defaultTenders: Record<TenderId, boolean> = {
   cash: true,
+  "card-present": true,
+  contactless: true,
+  "apple-pay": true,
+  "google-pay": true,
+  amex: true,
+  "pay-by-link": false,
+  qr: false,
+  "open-banking": false,
+  "bank-transfer": false,
+  paypal: false,
+  klarna: false,
+  cheque: false,
+  voucher: false,
+  staff: false,
+  "round-up": false,
+  deliveroo: true,
+  "just-eat": true,
   "manual-card": true,
   "manual-cc": true,
   external: true,
@@ -167,6 +218,11 @@ export type AppSettings = {
   roomService: boolean;
   /** Which tenders appear on the payment method screen. */
   tenders: Record<TenderId, boolean>;
+  /** Processor that clears card payments for this venue. */
+  paymentProvider: "Adyen" | "Stripe";
+  cardReaderModel: string;
+  cardReaderConnection: string;
+  cardReaderStatus: string;
 
   language: string;
 
@@ -262,6 +318,10 @@ const defaultSettings: AppSettings = {
   deviceService: "Table Service",
   roomService: false,
   tenders: defaultTenders,
+  paymentProvider: "Adyen",
+  cardReaderModel: "Adyen S1F2",
+  cardReaderConnection: "Bluetooth",
+  cardReaderStatus: "Not paired",
 
 
   language: "English",
