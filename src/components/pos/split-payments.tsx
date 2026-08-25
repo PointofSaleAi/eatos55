@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 
 export type SplitMode = "standard" | "evenly" | "custom";
 
-const letters = "abcdefghij".split("");
+const letters = "abcdefghijklmnopqrstuvwxy".split("");
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 export type SplitResult = { mode: SplitMode; checks: number; firstTotal: number };
