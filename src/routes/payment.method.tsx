@@ -352,12 +352,10 @@ function PaymentMethod() {
   const HEAD = 22;
   const fit = useMemo(() => {
     const gap = metrics.gap;
-    const maxCols = Math.max(
-      2,
-      Math.min(6, Math.floor((box.w + gap) / (metrics.tileMin + gap)) || 2),
-    );
+    const minTile = Math.min(metrics.tileMin, 140);
+    const maxCols = Math.max(2, Math.min(6, Math.floor((box.w + gap) / (minTile + gap)) || 2));
     const height = box.h || 0;
-    const floor = Math.max(40, Math.min(metrics.tap, metrics.tileH));
+    const floor = Math.max(42, Math.min(metrics.tap, metrics.tileH));
     const rowsFor = (cols: number) =>
       groups.reduce((sum, g) => sum + Math.ceil(g.items.length / cols), 0);
     const chromeFor = (cols: number) =>
@@ -370,17 +368,18 @@ function PaymentMethod() {
       const avail = height - chromeFor(cols);
       const h = avail / Math.max(1, rows);
       if (h >= floor) {
-        return { cols, tileH: Math.min(Math.max(h, floor), metrics.tileH * 1.6), rows };
+        return {
+          cols,
+          tileH: Math.min(Math.max(h, floor), metrics.tileH * 1.6),
+          rows,
+          fits: true,
+        };
       }
     }
     const cols = maxCols;
     const rows = rowsFor(cols);
-    const avail = (height || rows * metrics.tileH) - chromeFor(cols);
-    return {
-      cols,
-      tileH: Math.min(Math.max(avail / Math.max(1, rows), floor), metrics.tileH * 1.6),
-      rows,
-    };
+    const need = rows * floor + chromeFor(cols);
+    return { cols, tileH: floor, rows, fits: !height || need <= height };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     box.w,
@@ -393,6 +392,8 @@ function PaymentMethod() {
   ]);
 
   const cols = fit.cols;
+
+
 
   const allTenders = groups.flatMap((g) => g.items);
   const activeTender = allTenders.find((t) => t.id === selected) ?? null;
