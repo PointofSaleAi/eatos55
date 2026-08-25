@@ -557,8 +557,9 @@ function PaymentMethod() {
 
       <div
         ref={paneRef}
-        className="min-h-0 flex-1 overflow-hidden px-[var(--pad-screen)] py-2"
+        className="mx-auto min-h-0 w-full max-w-[64rem] flex-1 overflow-hidden px-[var(--pad-screen)] py-2"
       >
+
         {(pages[page] ?? []).map((group) => (
           <section key={group.title} className="mt-[var(--gap-sec)] first:mt-0">
             <h3 className="text-fs-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
