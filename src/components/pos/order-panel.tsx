@@ -232,7 +232,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
 
 
       {/* Items: dense receipt rows, the only scrolling area */}
-      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-4 pb-[calc(0.5rem+var(--kb-inset,0px))] pt-1.5">
+      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 pb-[calc(0.5rem+var(--kb-inset,0px))] pt-1.5">
         {cart.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-3 py-10 text-center">
             <Utensils className="size-10 text-muted-foreground/50" />
@@ -242,7 +242,8 @@ export function OrderPanel({ wide }: { wide: boolean }) {
           <ul className="divide-y divide-border/60">
             {cart.map((l) => (
               <li key={l.id} className="py-1">
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-1.5 pr-0.5">
+
                   <button
                     type="button"
                     onClick={() => changeQty(l.id, 1)}
