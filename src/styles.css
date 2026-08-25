@@ -127,6 +127,10 @@
   --sheet-w: 26.25rem; /* one max width for sheets, docks and rails */
   --gap-sec: clamp(0.5rem, 0.3rem + 1vw, 0.875rem);
   --pad-screen: clamp(0.75rem, 0.5rem + 1.2vw, 1.25rem);
+  /* Tile grids: min column width + tile height, so grids reflow by width. */
+  --tender-min: 9.5rem;
+  --tender-h: 3.25rem;
+
 
 
 
@@ -344,7 +348,88 @@
   }
 }
 
+/* ---- Form-factor density tiers ----
+   The :root clamps above cover phones (320-767). Beyond that the clamps are
+   already at their maximum, so each tier re-declares the same token names with
+   a step up in density. One block re-tunes every screen. Tap targets never drop
+   below 44px, and the short-viewport block below still wins on stubby screens. */
+
+/* Tablet landscape / common POS terminal (1024-1365). */
+@media (min-width: 1024px) {
+  :root {
+    --fs-xs: 0.8125rem;
+    --fs-sm: 1rem;
+    --fs-base: 1.125rem;
+    --fs-lg: 1.3125rem;
+    --fs-xl: 1.75rem;
+    --fs-2xl: 2.25rem;
+    --fs-key: 2.5rem;
+    --fs-money: 3.75rem;
+    --ctl-sm: 3rem;
+    --ctl-md: 3.25rem;
+    --ctl-lg: 3.5rem;
+    --row-h: 4rem;
+    --tile-h: 8.5rem;
+    --key-h: 4.25rem;
+    --tender-min: 10rem;
+    --tender-h: 3.5rem;
+    --gap-sec: 1rem;
+    --pad-screen: 1.25rem;
+  }
+}
+
+/* Wide POS / laptop (1366-1919). */
+@media (min-width: 1366px) {
+  :root {
+    --fs-xs: 0.875rem;
+    --fs-sm: 1.0625rem;
+    --fs-base: 1.1875rem;
+    --fs-lg: 1.4375rem;
+    --fs-xl: 1.875rem;
+    --fs-2xl: 2.5rem;
+    --fs-key: 2.75rem;
+    --fs-money: 4rem;
+    --ctl-sm: 3.25rem;
+    --ctl-md: 3.5rem;
+    --ctl-lg: 3.75rem;
+    --row-h: 4.25rem;
+    --tile-h: 9.5rem;
+    --key-h: 4.75rem;
+    --tender-min: 11rem;
+    --tender-h: 3.75rem;
+    --sheet-w: 28rem;
+    --gap-sec: 1.125rem;
+    --pad-screen: 1.5rem;
+  }
+}
+
+/* Desktop / large web (1920 and up). */
+@media (min-width: 1920px) {
+  :root {
+    --fs-xs: 1rem;
+    --fs-sm: 1.125rem;
+    --fs-base: 1.3125rem;
+    --fs-lg: 1.5625rem;
+    --fs-xl: 2.125rem;
+    --fs-2xl: 2.875rem;
+    --fs-key: 3.25rem;
+    --fs-money: 4.75rem;
+    --ctl-sm: 3.5rem;
+    --ctl-md: 3.75rem;
+    --ctl-lg: 4.25rem;
+    --row-h: 4.75rem;
+    --tile-h: 11rem;
+    --key-h: 5.25rem;
+    --tender-min: 12rem;
+    --tender-h: 4.25rem;
+    --sheet-w: 32rem;
+    --gap-sec: 1.375rem;
+    --pad-screen: 2rem;
+  }
+}
+
 /* Short viewports (small Androids, 568-620px tall): compact step, taps stay 44px. */
+
 @media (max-height: 620px) {
   :root {
     --ctl-sm: 2.75rem;
