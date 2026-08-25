@@ -242,7 +242,8 @@ export function OrderPanel({ wide }: { wide: boolean }) {
           <ul className="divide-y divide-border/60">
             {cart.map((l) => (
               <li key={l.id} className="py-1">
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-1.5 pr-0.5">
+
                   <button
                     type="button"
                     onClick={() => changeQty(l.id, 1)}
