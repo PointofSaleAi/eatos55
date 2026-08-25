@@ -535,7 +535,7 @@ function PaymentMethod() {
         )}
       >
         {groups.map((group) => (
-          <section key={group.title} className="flex min-h-0 flex-col">
+          <section key={group.title} className="flex shrink-0 flex-col">
             <h3
               className="text-fs-xs font-bold uppercase tracking-[0.08em] text-muted-foreground"
               style={{ height: HEAD, lineHeight: `${HEAD}px` }}
