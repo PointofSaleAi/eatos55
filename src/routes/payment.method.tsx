@@ -3,8 +3,6 @@ import {
   BadgeDollarSign,
   BedDouble,
   Bike,
-  ChevronLeft,
-  ChevronRight,
   CreditCard,
   Gift,
   HandHeart,
@@ -315,12 +313,11 @@ function PaymentMethod() {
     .map((g) => ({ title: g.title, items: g.items.filter((t) => enabled(t.id)) }))
     .filter((g) => g.items.length > 0);
 
-  // Tiles page instead of scrolling: pack whole groups into the measured pane.
-  // Column count and row height come from the density tokens, so a 390 phone
-  // gets 2 columns and a 1920 desktop gets 4 taller tiles from the same code.
+  // All tenders live on one screen: measure the pane, then choose the column
+  // count and tile height that make the full set fit without scrolling.
   const paneRef = useRef<HTMLDivElement | null>(null);
   const [box, setBox] = useState({ w: 0, h: 0 });
-  const [metrics, setMetrics] = useState({ tileMin: 152, tileH: 52, gap: 8 });
+  const [metrics, setMetrics] = useState({ tileMin: 152, tileH: 52, gap: 8, tap: 44 });
   useEffect(() => {
     const el = paneRef.current;
     if (!el) return;
@@ -338,6 +335,7 @@ function PaymentMethod() {
         tileMin: px("--tender-min", 152),
         tileH: px("--tender-h", 52),
         gap: px("--gap-sec", 8),
+        tap: px("--tap", 44),
       });
     };
 
@@ -351,48 +349,49 @@ function PaymentMethod() {
     return () => ro.disconnect();
   }, []);
 
-  const cols = Math.max(
-    2,
-    Math.min(4, Math.floor((box.w + metrics.gap) / (metrics.tileMin + metrics.gap)) || 2),
-  );
-  const pages = useMemo(() => {
-    const ROW = metrics.tileH;
-    const HEAD = 24;
-    const GAP = metrics.gap;
-    const SECTION_GAP = metrics.gap;
-    const height = box.h || 999;
-    const out: { title: string; items: Tender[] }[][] = [];
-    let current: { title: string; items: Tender[] }[] = [];
-    let used = 0;
-    for (const g of groups) {
-      const rows = Math.ceil(g.items.length / cols);
-      const h = HEAD + rows * ROW + (rows - 1) * GAP + (current.length ? SECTION_GAP : 0);
-      if (current.length && used + h > height) {
-        out.push(current);
-        current = [];
-        used = 0;
+  const HEAD = 22;
+  const fit = useMemo(() => {
+    const gap = metrics.gap;
+    const minTile = Math.min(metrics.tileMin, 140);
+    const maxCols = Math.max(2, Math.min(6, Math.floor((box.w + gap) / (minTile + gap)) || 2));
+    const height = box.h || 0;
+    const floor = Math.max(42, Math.min(metrics.tap, metrics.tileH));
+    const rowsFor = (cols: number) =>
+      groups.reduce((sum, g) => sum + Math.ceil(g.items.length / cols), 0);
+    const chromeFor = (cols: number) =>
+      groups.length * HEAD + (rowsFor(cols) - groups.length) * gap + (groups.length - 1) * gap;
+
+    // Prefer the fewest columns (biggest tiles) that still fit the pane height.
+    for (let cols = 2; cols <= maxCols; cols += 1) {
+      const rows = rowsFor(cols);
+      if (!height) break;
+      const avail = height - chromeFor(cols);
+      const h = avail / Math.max(1, rows);
+      if (h >= floor) {
+        return {
+          cols,
+          tileH: Math.min(Math.max(h, floor), metrics.tileH * 1.6),
+          rows,
+          fits: true,
+        };
       }
-      current.push(g);
-      used += h;
     }
-    if (current.length) out.push(current);
-    return out;
+    const cols = maxCols;
+    const rows = rowsFor(cols);
+    const need = rows * floor + chromeFor(cols);
+    return { cols, tileH: floor, rows, fits: !height || need <= height };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    box.w,
     box.h,
-    cols,
+    metrics.tileMin,
     metrics.tileH,
     metrics.gap,
+    metrics.tap,
     JSON.stringify(groups.map((g) => [g.title, g.items.length])),
   ]);
 
-
-  const [page, setPage] = useState(0);
-  useEffect(() => {
-    setPage((p) => Math.min(p, Math.max(0, pages.length - 1)));
-  }, [pages.length]);
-
-
+  const cols = fit.cols;
 
 
 
@@ -521,34 +520,7 @@ function PaymentMethod() {
   const grid = (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="shrink-0 px-[var(--pad-screen)] pt-3">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
-          <h2 className="truncate text-fs-lg font-extrabold text-foreground">Payment Method</h2>
-          {pages.length > 1 ? (
-            <div className="flex shrink-0 items-center gap-1">
-              <button
-                type="button"
-                aria-label="Previous payment methods"
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
-                disabled={page === 0}
-                className="grid size-9 place-items-center rounded-pill border border-border text-foreground disabled:opacity-40"
-              >
-                <ChevronLeft className="size-4" />
-              </button>
-              <span className="text-fs-xs tabular-nums text-muted-foreground">
-                {page + 1}/{pages.length}
-              </span>
-              <button
-                type="button"
-                aria-label="More payment methods"
-                onClick={() => setPage((p) => Math.min(pages.length - 1, p + 1))}
-                disabled={page >= pages.length - 1}
-                className="grid size-9 place-items-center rounded-pill border border-border text-foreground disabled:opacity-40"
-              >
-                <ChevronRight className="size-4" />
-              </button>
-            </div>
-          ) : null}
-        </div>
+        <h2 className="truncate text-fs-lg font-extrabold text-foreground">Payment Method</h2>
         <p className="mt-1 hidden text-fs-xs text-muted-foreground lg:block">
           Cash, manual card entry and Pay by Link are supported online. Connect a card reader for Tap
           to Pay.
@@ -557,16 +529,21 @@ function PaymentMethod() {
 
       <div
         ref={paneRef}
-        className="mx-auto min-h-0 w-full max-w-[64rem] flex-1 overflow-hidden px-[var(--pad-screen)] py-2"
+        className={cn(
+          "mx-auto flex min-h-0 w-full max-w-[64rem] flex-1 flex-col gap-[var(--gap-sec)] px-[var(--pad-screen)] py-2",
+          fit.fits ? "justify-between overflow-hidden" : "justify-start overflow-y-auto",
+        )}
       >
-
-        {(pages[page] ?? []).map((group) => (
-          <section key={group.title} className="mt-[var(--gap-sec)] first:mt-0">
-            <h3 className="text-fs-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
+        {groups.map((group) => (
+          <section key={group.title} className="flex shrink-0 flex-col">
+            <h3
+              className="text-fs-xs font-bold uppercase tracking-[0.08em] text-muted-foreground"
+              style={{ height: HEAD, lineHeight: `${HEAD}px` }}
+            >
               {group.title}
             </h3>
             <div
-              className="mt-1.5 grid gap-[var(--gap-sec)]"
+              className="grid gap-[var(--gap-sec)]"
               style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
             >
               {group.items.map((t) => {
@@ -583,7 +560,7 @@ function PaymentMethod() {
                       t.run();
                     }}
                     aria-pressed={active}
-                    style={{ minHeight: "max(var(--tap), var(--tender-h))" }}
+                    style={{ height: fit.tileH }}
                     className={cn(
                       "flex items-center gap-2.5 rounded-row border px-3 py-2 text-left transition-colors disabled:opacity-40",
                       active
@@ -610,6 +587,7 @@ function PaymentMethod() {
           </section>
         ))}
       </div>
+
 
 
       <div className="shrink-0 border-t border-border bg-surface px-[var(--pad-screen)] pb-[calc(0.75rem+var(--kb-inset,0px)+var(--tabs-h,0px))] pt-3">
