@@ -198,7 +198,7 @@ function NewOrder() {
           <p className="px-4 py-24 text-center text-fs-sm text-muted-foreground">No Active Menu</p>
         ) : (
 
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(8.25rem,1fr))] gap-3">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(7.25rem,1fr))] gap-2">
             {items.map((item) => {
               const low =
                 typeof item.stock === "number" &&
