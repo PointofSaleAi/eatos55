@@ -37,7 +37,7 @@ export function NavRail() {
       )}
     >
       {/* Venue / revenue center */}
-      <div className={cn("flex items-center gap-2 px-3", expanded ? "" : "justify-center")}>
+      <div className={cn("flex items-center gap-2 px-3 pt-3", expanded ? "" : "justify-center")}>
         <button
           type="button"
           onClick={toggle}
