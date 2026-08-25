@@ -285,7 +285,7 @@ export function IconSelectRow({
     <div className={rowBase}>
       {icon ? <IconTile icon={icon} color={color} /> : null}
       <span className="min-w-0 flex-1 truncate t-row text-foreground">{title}</span>
-      <Select value={value} onValueChange={onChange} disabled={disabled}>
+      <Select value={value} onValueChange={onChange} disabled={disabled ?? false}>
         <SelectTrigger
           aria-label={title}
           className="h-ctl-sm w-[11rem] shrink-0 rounded-pill border-border bg-muted px-3 t-value text-foreground"
