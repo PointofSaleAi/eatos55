@@ -12,7 +12,8 @@ export function SettingsPullDown({ open, onClose }: { open: boolean; onClose: ()
 
   return (
     <div className="absolute inset-0 z-30 flex flex-col">
-      <div className="no-scrollbar max-h-full overflow-y-auto bg-shell pb-4 pt-[5.5rem]">
+      <div className="no-scrollbar max-h-full overflow-y-auto bg-shell pt-[5.5rem]"
+        style={{ paddingBottom: "calc(1rem + var(--tabs-h, 0px))" }}>
         <div className="mx-auto w-full max-w-[92rem] px-[clamp(0.75rem,2vw,1.5rem)]">
           <ShiftDashboard onClose={onClose} />
         </div>
