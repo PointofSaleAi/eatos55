@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AccountActions, AccountInfo } from "@/components/pos/account-bar";
 import { ClockPanel } from "@/components/pos/clock-panel";
