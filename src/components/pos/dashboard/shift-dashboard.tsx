@@ -18,7 +18,7 @@ import { useState } from "react";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 import { formatMoney } from "@/lib/brand";
 import type { Ticket, TicketStatus } from "@/lib/demo-data";
-import { floors, formatDwell, tableStateMeta } from "@/lib/floor-data";
+import { floorTables, floors, formatDwell, tableStateMeta } from "@/lib/floor-data";
 import { usePos } from "@/lib/pos-store";
 import { useShiftSummary } from "@/lib/shift-summary";
 import { cn } from "@/lib/utils";
@@ -108,7 +108,14 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
 
   const rows: Ticket[] = tab === "all" ? tickets : tickets.filter((t) => t.status === tab);
 
-  const floorEntries = Object.entries(tableStates);
+  const floorEntries = floorTables
+    .filter((t) => t.floor === floor)
+    .map((t) => ({
+      name: t.name,
+      state: tableStates[t.name] ?? t.state,
+      seats: t.seats,
+      seatedMinutesAgo: t.seatedMinutesAgo,
+    }));
   const now = new Date();
   const dwell = (since: string | undefined) => {
     if (!since) return null;
@@ -248,9 +255,11 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
             ))}
           </div>
           <ul className="no-scrollbar flex max-h-[9rem] flex-wrap gap-1.5 overflow-y-auto">
-            {floorEntries.map(([name, state]) => {
+            {floorEntries.map(({ name, state, seats, seatedMinutesAgo }) => {
               const meta = tableStateMeta[state];
-              const time = dwell(tableSince[name]);
+              const time =
+                dwell(tableSince[name]) ??
+                (seatedMinutesAgo === undefined ? null : formatDwell(seatedMinutesAgo));
               return (
                 <li key={name}>
                   <button
@@ -262,9 +271,9 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
                       <span className="truncate text-fs-xs font-extrabold text-shell-foreground">
                         {name}
                       </span>
-                      {time ? (
-                        <span className="shrink-0 text-fs-2xs text-shell-foreground/60">{time}</span>
-                      ) : null}
+                      <span className="shrink-0 text-fs-2xs text-shell-foreground/60">
+                        {time ?? `${seats}p`}
+                      </span>
                     </span>
                     <span className={cn("mt-0.5 block truncate text-fs-2xs font-bold", meta.text)}>
                       {meta.label}

@@ -84,7 +84,7 @@ export function useShiftSummary() {
       { id: "tip", label: "Total Tip", value: formatMoney(tips), ...(delta(tips, prevTips) !== undefined ? { delta: delta(tips, prevTips)! } : {}) },
       { id: "hours", label: "Total Hours", value: hoursLabel(minutes) },
       { id: "ordering", label: "Ordering", value: String(count("ordering")) },
-      { id: "ready", label: "Ready to Serve", value: String(count("ready")) },
+      { id: "ready", label: "Ready", value: String(count("ready")) },
       { id: "done", label: "Completed", value: String(count("paid")) },
     ];
 
