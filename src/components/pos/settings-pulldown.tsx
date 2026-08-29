@@ -114,7 +114,7 @@ export function SettingsPullDown({ open, onClose }: { open: boolean; onClose: ()
   return (
     <div className="absolute inset-0 z-30 flex flex-col">
       {/* Panel hugs its content; the rest of the screen dims and dismisses. */}
-      <div className="max-h-full overflow-y-auto bg-shell pb-4 pt-9 no-scrollbar">
+      <div className="max-h-full overflow-y-auto bg-shell pb-4 pt-[4.5rem] no-scrollbar">
         <div className="mx-auto grid w-full max-w-[72rem] grid-cols-1 gap-x-[clamp(0.75rem,2vw,2rem)] gap-y-2 px-[clamp(0.75rem,2vw,1.5rem)] sm:grid-cols-2 lg:grid-cols-3">
         {entries.map((e) => {
           const locked = Boolean(e.manager) && !canManageSettings;
@@ -158,7 +158,7 @@ export function SettingsPullDown({ open, onClose }: { open: boolean; onClose: ()
         type="button"
         aria-label="Close settings menu"
         onClick={onClose}
-        className="min-h-0 flex-1 bg-shell/60"
+        className="min-h-0 flex-1 bg-shell/50"
       />
     </div>
   );
