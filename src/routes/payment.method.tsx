@@ -1,5 +1,5 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
-import { hasDeliveryPartner, type DeliveryPartnerId } from "@/lib/brand";
+import { brand, hasDeliveryPartner, type DeliveryPartnerId } from "@/lib/brand";
 import {
   BadgeDollarSign,
   Banknote,

@@ -38,7 +38,7 @@ import {
   ToggleColumnHeaders,
   type TileColor,
 } from "@/components/pos/settings-rows";
-import { hasDeliveryPartner, type DeliveryPartnerId } from "@/lib/brand";
+import { brand, hasDeliveryPartner, type DeliveryPartnerId } from "@/lib/brand";
 import { usePos, TENDER_LABELS, type TenderId } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/settings/payment-methods")({
