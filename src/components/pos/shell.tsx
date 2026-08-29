@@ -25,7 +25,7 @@ import { ConfirmProvider } from "@/components/pos/confirm-sheet";
 import { LiveRegionProvider } from "@/components/pos/live-region";
 import { NavDrawer } from "@/components/pos/nav-drawer";
 import { NavRail } from "@/components/pos/nav-rail";
-import { SplitPane, useSectionPane } from "@/components/pos/split-pane";
+import { SplitPane, isSettingsTopLevel, useSectionPane } from "@/components/pos/split-pane";
 import { useLayoutMode } from "@/hooks/use-layout-mode";
 import { OfflineBanner } from "@/components/pos/offline-banner";
 import { useAppearance } from "@/hooks/use-appearance";
@@ -274,7 +274,7 @@ export function ScreenHeader({
 /** Sub screen header: back chevron + labelled title, original design styling. */
 export function SubHeader({
   title,
-  backLabel = "Back",
+  backLabel,
   backTo,
   right,
 }: {
@@ -283,14 +283,26 @@ export function SubHeader({
   backTo?: string | undefined;
   right?: ReactNode;
 }) {
+  const canGoBack = useCanGoBack();
+  const wide = useWideLayout();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  // No chevron when the sidebar already exposes this screen, or when there is
+  // genuinely nowhere to go back to.
+  const sidebarReachable = wide && isSettingsTopLevel(pathname);
+  const showBack = !sidebarReachable && (canGoBack || Boolean(backTo));
+
   return (
     <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <div className="flex min-w-0 items-center gap-2">
-          <BackButton
-            fallbackTo={backTo}
-            label={backLabel ? `Back to ${backLabel}` : "Go back"}
-          />
+          {showBack ? (
+            <BackButton
+              fallbackTo={backTo}
+              label={backLabel ? `Back to ${backLabel}` : "Go back"}
+            />
+          ) : wide ? null : (
+            <MenuButton className="-ml-1" />
+          )}
           <div className="min-w-0">
             <h1 className="truncate t-title text-foreground">{title}</h1>
           </div>

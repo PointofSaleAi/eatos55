@@ -88,6 +88,14 @@ const settingsGroups: SettingsLink[][] = [
   ],
 ];
 
+/** Top level settings destinations reachable straight from the sidebar. */
+const settingsTopLevel = new Set(settingsGroups.flat().map((l) => l.to));
+
+/** True when this path is a sidebar destination, so the sidebar is the way back. */
+export function isSettingsTopLevel(pathname: string) {
+  return settingsTopLevel.has(pathname.replace(/\/+$/, "") || "/");
+}
+
 /** Apple-style settings sidebar used as the list pane in landscape. */
 export function SettingsNavList() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
