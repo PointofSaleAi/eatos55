@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { brand, formatTime, hasDeliveryPartner } from "@/lib/brand";
+import { brand, formatTime } from "@/lib/brand";
 import loginSlide1 from "@/assets/login-1.jpg.asset.json";
 import loginSlide2 from "@/assets/login-2.jpg.asset.json";
 import loginSlide3 from "@/assets/login-3.jpg.asset.json";
@@ -167,8 +167,8 @@ const defaultTenders: Record<TenderId, boolean> = {
   voucher: false,
   staff: false,
   "round-up": false,
-  deliveroo: hasDeliveryPartner("deliveroo"),
-  "just-eat": hasDeliveryPartner("just-eat"),
+  deliveroo: false,
+  "just-eat": false,
   "manual-card": true,
   "manual-cc": true,
   external: true,
@@ -181,7 +181,7 @@ const defaultTenders: Record<TenderId, boolean> = {
   room: true,
   uber: true,
   doordash: true,
-  grubhub: hasDeliveryPartner("grubhub"),
+  grubhub: true,
 };
 
 /**
@@ -260,7 +260,8 @@ export type AppSettings = {
   /** Per tender: close the order automatically once payment succeeds. */
   tenderAutoClose: Record<TenderId, boolean>;
   /** Processor that clears card payments for this venue. */
-  paymentProvider: "Adyen" | "Stripe";
+  /** Chosen in Settings from the build's provider catalog; empty until set. */
+  paymentProvider: string;
   cardReaderModel: string;
   cardReaderConnection: string;
   cardReaderStatus: string;
@@ -342,7 +343,7 @@ const defaultSettings: AppSettings = {
   tipPresets: "18% · 20% · 25%",
   tipBasis: "Pre-tax",
   customTip: "Allowed",
-  taxRate: brand.venue.taxRate,
+  taxRate: "0%",
   inclusivePricing: true,
   emailReceipts: false,
   receiptFooter: "Thank you!",
@@ -360,8 +361,8 @@ const defaultSettings: AppSettings = {
   roomService: false,
   tenders: defaultTenders,
   tenderAutoClose: defaultTenderAutoClose,
-  paymentProvider: brand.defaultProvider,
-  cardReaderModel: brand.defaultReader,
+  paymentProvider: "",
+  cardReaderModel: "",
   cardReaderConnection: "Bluetooth",
   cardReaderStatus: "Not paired",
 
@@ -373,7 +374,8 @@ const defaultSettings: AppSettings = {
   weatherTemp: "24°",
   weatherCondition: "Partly cloudy",
 
-  taxAlias: "Tax",
+  // Wording only: the variant decides Tax vs VAT, never the rate.
+  taxAlias: brand.taxLabel,
   appVersion: "5.200.27",
   restartApp: true,
   restartTime: "02:30 PM",

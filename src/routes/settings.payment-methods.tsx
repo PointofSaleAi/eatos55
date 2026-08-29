@@ -38,7 +38,7 @@ import {
   ToggleColumnHeaders,
   type TileColor,
 } from "@/components/pos/settings-rows";
-import { brand, hasDeliveryPartner, type DeliveryPartnerId } from "@/lib/brand";
+import { brand, isTenderVisible, tenderLabel } from "@/lib/brand";
 import { usePos, TENDER_LABELS, type TenderId } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/settings/payment-methods")({
@@ -130,19 +130,14 @@ const sections: { title: string; rows: Row[] }[] = [
   },
 ];
 
-const readerModels: Record<string, string[]> = {
-  Adyen: ["Adyen S1F2", "Adyen S1E2", "Adyen AMS1", "Tap to Pay on device"],
-  Stripe: ["BBPOS WisePOS E", "Stripe Reader S700", "Tap to Pay on device"],
-};
-
 const connections = ["Bluetooth", "LAN", "Cloud"];
 
-const DELIVERY_IDS = new Set(["deliveroo", "just-eat", "uber", "doordash", "grubhub"]);
+/** Nothing is preselected per region: provider and reader are venue choices. */
+const NOT_SET = "Not set";
 
 function PaymentMethodsSettings() {
   const { settings, updateSettings, canManageSettings } = usePos();
   const tenders = settings.tenders;
-  // Delivery partners are regional: Grubhub is US-only, Deliveroo/Just Eat are not US.
 
   const autoClose = settings.tenderAutoClose;
 
@@ -152,15 +147,14 @@ function PaymentMethodsSettings() {
   const setAutoClose = (id: TenderId, value: boolean) =>
     updateSettings({ tenderAutoClose: { ...autoClose, [id]: value } });
 
-  const provider = settings.paymentProvider;
-  const models = readerModels[provider] ?? [];
+  const provider = settings.paymentProvider || NOT_SET;
+  const models = [NOT_SET, ...brand.readerCatalog];
 
   const setProvider = (value: string) => {
     if (!canManageSettings) return;
-    const next = value === "Stripe" ? "Stripe" : "Adyen";
     updateSettings({
-      paymentProvider: next,
-      cardReaderModel: readerModels[next]![0]!,
+      paymentProvider: value === NOT_SET ? "" : value,
+      cardReaderModel: "",
       cardReaderStatus: "Not paired",
     });
   };
@@ -176,7 +170,7 @@ function PaymentMethodsSettings() {
             icon={Radio}
             color="magenta"
             value={provider}
-            options={["Adyen", "Stripe"]}
+            options={[NOT_SET, ...brand.providerCatalog]}
             onChange={setProvider}
             disabled={!canManageSettings}
           />
@@ -198,9 +192,11 @@ function PaymentMethodsSettings() {
             title="Reader"
             icon={CreditCard}
             color="blue"
-            value={settings.cardReaderModel}
+            value={settings.cardReaderModel || NOT_SET}
             options={models}
-            onChange={(v) => canManageSettings && updateSettings({ cardReaderModel: v })}
+            onChange={(v) =>
+              canManageSettings && updateSettings({ cardReaderModel: v === NOT_SET ? "" : v })
+            }
             disabled={!canManageSettings}
           />
           <IconSelectRow
@@ -236,9 +232,7 @@ function PaymentMethodsSettings() {
         </GroupCard>
 
         {sections.map((section) => {
-          const rows = section.rows.filter((row) =>
-        DELIVERY_IDS.has(row.id) ? hasDeliveryPartner(row.id as DeliveryPartnerId) : true,
-      );
+          const rows = section.rows.filter((row) => isTenderVisible(row.id));
           if (rows.length === 0) return null;
           return (
             <div key={section.title}>
@@ -255,7 +249,7 @@ function PaymentMethodsSettings() {
                   return (
                     <IconDualToggleRow
                       key={row.id}
-                      title={TENDER_LABELS[row.id]}
+                      title={tenderLabel(row.id, TENDER_LABELS[row.id])}
                       icon={row.icon}
                       color={row.color}
                       checked={enabled}

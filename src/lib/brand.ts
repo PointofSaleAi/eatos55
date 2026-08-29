@@ -13,30 +13,49 @@
 
 export type BrandId = "eatos-us" | "lcros-uk" | "eatos-ae";
 
-export type DeliveryPartnerId = "deliveroo" | "just-eat" | "uber" | "doordash" | "grubhub";
-
 export interface BrandConfig {
   id: BrandId;
   /** Display name, e.g. "eatOS" or "lcrOS". */
   appName: string;
   /** Wordmark alt text. */
   tagline: string;
+  /** Formatting locale: en-US or en-GB (UAE follows en-GB day/month order). */
   locale: string;
+  /** Currency fallback used until the venue picks one in Settings. */
   currency: string;
+  /** Currencies offered in Settings, not a lock. */
   currencyOptions: string[];
-  /** Receipt/totals label: "Tax" (US sales tax) or "VAT" (UK 20%, UAE 5%). */
+  /**
+   * Receipt/totals wording only. Rates are venue data, never a brand fact:
+   * there is no regional default rate anywhere in this config on purpose.
+   */
   taxLabel: "Tax" | "VAT";
-  /** VAT rate percent when taxLabel is "VAT", else null. */
-  vatRate: number | null;
-  /** Delivery partner tenders offered in this region. */
-  deliveryPartners: DeliveryPartnerId[];
-  /** Default payment provider for the region. */
-  defaultProvider: "Adyen" | "Stripe";
-  /** Default reader model paired with the provider. */
-  defaultReader: string;
+  /**
+   * Mirrors the POS `hideUsOnlyPayments` flag: outside the US, US-only
+   * tenders are hidden from the tender catalog.
+   */
+  hideUsOnlyPayments: boolean;
+  /** Display renames applied to shared tenders, e.g. Grubhub shown as Just Eat. */
+  tenderAliases: Record<string, string>;
+  /** Providers offered in Settings. Nothing is preselected per region. */
+  providerCatalog: string[];
+  /** Reader models offered in Settings. Nothing is preselected per region. */
+  readerCatalog: string[];
   /** Demo venue defaults shown until Back Office syncs real ones. */
-  venue: { address: string; city: string; phone: string; taxId: string; timezone: string; taxRate: string };
+  venue: { address: string; city: string; phone: string; taxId: string; timezone: string };
 }
+
+/**
+ * Tenders that exist only in the US catalog. Hidden when
+ * hideUsOnlyPayments is true.
+ */
+export const US_ONLY_TENDERS = ["grubhub"] as const;
+
+/**
+ * Synthetic partner ids kept for compatibility. The real POS has one shared
+ * tender catalog and renames entries per region, so these never render.
+ */
+const ALIAS_SHADOW_TENDERS = ["deliveroo", "just-eat"] as const;
 
 const variants: Record<BrandId, BrandConfig> = {
   "eatos-us": {
@@ -45,19 +64,18 @@ const variants: Record<BrandId, BrandConfig> = {
     tagline: "eatOS - Restaurants Made Simple",
     locale: "en-US",
     currency: "USD",
-    currencyOptions: ["USD", "CAD"],
+    currencyOptions: ["USD", "CAD", "EUR", "GBP", "AED"],
     taxLabel: "Tax",
-    vatRate: null,
-    deliveryPartners: ["uber", "doordash", "grubhub"],
-    defaultProvider: "Stripe",
-    defaultReader: "BBPOS WisePOS E",
+    hideUsOnlyPayments: false,
+    tenderAliases: {},
+    providerCatalog: ["Adyen", "Stripe", "CardConnect", "Bolt", "Poynt"],
+    readerCatalog: ["BBPOS WisePOS E", "Adyen S1F2", "Castles S1F2", "MagTek eDynamo", "Poynt Smart Terminal"],
     venue: {
       address: "418 W 25th St",
       city: "New York, NY 10001",
       phone: "(212) 555-0148",
       taxId: "88-4102397",
       timezone: "America/New_York",
-      taxRate: "8.75%",
     },
   },
   "lcros-uk": {
@@ -66,40 +84,40 @@ const variants: Record<BrandId, BrandConfig> = {
     tagline: "lcrOS - Restaurants Made Simple",
     locale: "en-GB",
     currency: "GBP",
-    currencyOptions: ["GBP", "EUR"],
+    currencyOptions: ["GBP", "EUR", "USD", "AED"],
     taxLabel: "VAT",
-    vatRate: 20,
-    deliveryPartners: ["deliveroo", "just-eat", "uber", "doordash"],
-    defaultProvider: "Adyen",
-    defaultReader: "Adyen S1F2",
+    hideUsOnlyPayments: true,
+    tenderAliases: { grubhub: "Just Eat", "in-kind": "Deliveroo" },
+    providerCatalog: ["Adyen"],
+    readerCatalog: ["Adyen S1F2", "Castles S1F2"],
     venue: {
       address: "25 Great Chapel St",
       city: "London W1F 4AH",
       phone: "+44 20 7946 0958",
       taxId: "GB 123 4567 89",
       timezone: "Europe/London",
-      taxRate: "20%",
     },
   },
   "eatos-ae": {
     id: "eatos-ae",
     appName: "eatOS",
     tagline: "eatOS - Restaurants Made Simple",
-    locale: "en-AE",
+    // No en-AE formatting exists in the POS wiring; UAE follows en-GB.
+    locale: "en-GB",
     currency: "AED",
-    currencyOptions: ["AED"],
+    currencyOptions: ["AED", "USD", "GBP", "EUR"],
     taxLabel: "VAT",
-    vatRate: 5,
-    deliveryPartners: ["deliveroo", "uber", "doordash"],
-    defaultProvider: "Adyen",
-    defaultReader: "Adyen S1F2",
+    hideUsOnlyPayments: true,
+    tenderAliases: {},
+    // No dedicated UAE provider or reader matrix exists; the full catalog shows.
+    providerCatalog: ["Adyen", "Stripe"],
+    readerCatalog: ["Adyen S1F2", "Castles S1F2", "BBPOS WisePOS E"],
     venue: {
       address: "Sheikh Zayed Rd, Trade Centre 1",
       city: "Dubai",
       phone: "+971 4 555 0148",
       taxId: "100123456700003",
       timezone: "Asia/Dubai",
-      taxRate: "5%",
     },
   },
 };
@@ -108,9 +126,23 @@ const envBrand = import.meta.env['VITE_BRAND'] as BrandId | undefined;
 
 export const brand: BrandConfig = variants[envBrand ?? "eatos-us"] ?? variants["eatos-us"];
 
-/** True when a delivery partner tender applies to this region. */
-export const hasDeliveryPartner = (id: DeliveryPartnerId) =>
-  brand.deliveryPartners.includes(id);
+/**
+ * Region visibility for a tender id. Venue enable toggles are applied by the
+ * caller; this only answers whether the build ships the tender at all.
+ */
+export const isTenderVisible = (id: string) => {
+  if ((ALIAS_SHADOW_TENDERS as readonly string[]).includes(id)) return false;
+  if (brand.hideUsOnlyPayments && (US_ONLY_TENDERS as readonly string[]).includes(id)) {
+    // A regional alias keeps the shared tender visible under its local name.
+    return Boolean(brand.tenderAliases[id]);
+  }
+  return true;
+};
+
+/** Local display name for a tender, applying the region's rename map. */
+export const tenderLabel = (id: string, fallback: string) =>
+  brand.tenderAliases[id] ?? fallback;
+
 
 /** Format an amount in the variant currency, e.g. £12.50 or AED 12.50. */
 export const formatMoney = (n: number) =>
