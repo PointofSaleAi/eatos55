@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { brand } from "@/lib/brand";
 import {
   Outlet,
   Link,
@@ -84,16 +85,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#111111" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-title", content: "eatOS" },
+      { name: "apple-mobile-web-app-title", content: `${brand.appName}` },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { name: "format-detection", content: "telephone=no" },
-      { title: "EATOS Handheld - Restaurant POS" },
+      { title: `${brand.appName} Handheld - Restaurant POS` },
       {
         name: "description",
         content:
-          "EATOS Handheld: a fast operator POS for tickets, orders, payments and store settings.",
+          `${brand.appName} Handheld: a fast operator POS for tickets, orders, payments and store settings.`,
       },
-      { property: "og:title", content: "EATOS Handheld - Restaurant POS" },
+      { property: "og:title", content: `${brand.appName} Handheld - Restaurant POS` },
       {
         property: "og:description",
         content: "A faster, clearer handheld operator experience for every shift.",

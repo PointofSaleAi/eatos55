@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { ArrowLeft, ChevronDown, Eye, EyeOff } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
@@ -10,12 +11,12 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/access/create-account")({
   head: () => ({
     meta: [
-      { title: "Create an Account - eatOS Point of Sale" },
-      { name: "description", content: "Onboard a restaurant onto the eatOS Point of Sale app." },
-      { property: "og:title", content: "Create an Account - eatOS Point of Sale" },
+      { title: `Create an Account - ${brand.appName} Point of Sale` },
+      { name: "description", content: `Onboard a restaurant onto the ${brand.appName} Point of Sale app.` },
+      { property: "og:title", content: `Create an Account - ${brand.appName} Point of Sale` },
       {
         property: "og:description",
-        content: "Onboard a restaurant onto the eatOS Point of Sale app.",
+        content: `Onboard a restaurant onto the ${brand.appName} Point of Sale app.`,
       },
     ],
   }),
@@ -181,12 +182,12 @@ function CreateAccount() {
           <Checkbox
             checked={agree}
             onCheckedChange={(v) => setAgree(v === true)}
-            aria-label="Accept the eatOS Seller Agreement and e-Sign Consent"
+            aria-label={`Accept the ${brand.appName} Seller Agreement and e-Sign Consent`}
             className="mt-0.5 size-6 rounded-none"
           />
 
           <span>
-            eatOS's <span className="font-extrabold">Seller Agreement</span> and{" "}
+            {brand.appName}'s <span className="font-extrabold">Seller Agreement</span> and{" "}
             <span className="font-extrabold">e-Sign Consent</span>
           </span>
         </label>
@@ -198,7 +199,7 @@ function CreateAccount() {
           className="h-12 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground hover:bg-accent/90 disabled:opacity-40"
           onClick={() => {
             signIn();
-            toast.success("Account created - welcome to eatOS");
+            toast.success(`Account created - welcome to ${brand.appName}`);
             navigate({ to: "/access/clock-in" });
           }}
         >

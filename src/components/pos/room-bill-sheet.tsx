@@ -1,5 +1,6 @@
 import { Printer, X } from "lucide-react";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
+import { brand, formatDateTime } from "@/lib/brand";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useWideViewport } from "@/hooks/use-layout-mode";
@@ -42,13 +43,7 @@ export function RoomBillSheet({
   const { dragStyle, handleProps } = useSheetDrag(onClose);
 
   const stay = room?.stay;
-  const stamp = new Date().toLocaleString("en-US", {
-    month: "2-digit",
-    day: "2-digit",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const stamp = formatDateTime();
 
   const paper = room ? (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-3 pb-3">
@@ -106,7 +101,7 @@ export function RoomBillSheet({
 
           <div className="mt-2.5 space-y-1 border-t border-dashed border-border pt-2.5">
             <BillRow label="Sub total" value={money(totals.subtotal)} />
-            <BillRow label="Tax" value={money(totals.tax)} />
+            <BillRow label={brand.taxLabel} value={money(totals.tax)} />
             <BillRow label="Tip" value={money(totals.tip)} />
             <div className="mt-1 flex items-baseline justify-between gap-2 border-t border-border pt-1.5">
               <span className="text-fs-sm font-extrabold uppercase tracking-[0.06em] text-foreground">

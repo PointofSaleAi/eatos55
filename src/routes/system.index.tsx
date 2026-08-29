@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { toast } from "sonner";
 import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
 import { ActionRow, Card, NavRow, SectionLabel } from "@/components/pos/primitives";
@@ -8,9 +9,9 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/system/")({
   head: () => ({
     meta: [
-      { title: "Control Center - EATOS Handheld" },
+      { title: `Control Center - ${brand.appName} Handheld` },
       { name: "description", content: "Device operations: network, hardware, integrations, support." },
-      { property: "og:title", content: "Control Center - EATOS Handheld" },
+      { property: "og:title", content: `Control Center - ${brand.appName} Handheld` },
       {
         property: "og:description",
         content: "Device operations: network, hardware, integrations, support.",
@@ -33,7 +34,7 @@ function ControlCenter() {
             {issues ? `${issues} device${issues > 1 ? "s" : ""} need attention` : "All systems normal"}
           </p>
           <p className="mt-1 text-fs-xs text-muted-foreground">
-            {settings.offlineMode ? "Offline mode is on" : "Connected to EATOS cloud"} · Version 4.12
+            {settings.offlineMode ? "Offline mode is on" : `Connected to ${brand.appName} cloud`} · Version 4.12
           </p>
         </Card>
 

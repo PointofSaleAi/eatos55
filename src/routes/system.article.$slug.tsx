@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { ChevronRight } from "lucide-react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { EmptyState } from "@/components/pos/primitives";
@@ -8,12 +9,12 @@ import { helpArticles } from "@/lib/help-content";
 export const Route = createFileRoute("/system/article/$slug")({
   head: () => ({
     meta: [
-      { title: "Support guide - EATOS Handheld" },
-      { name: "description", content: "Step-by-step guidance for using the EATOS handheld." },
-      { property: "og:title", content: "Support guide - EATOS Handheld" },
+      { title: `Support guide - ${brand.appName} Handheld` },
+      { name: "description", content: `Step-by-step guidance for using the ${brand.appName} handheld.` },
+      { property: "og:title", content: `Support guide - ${brand.appName} Handheld` },
       {
         property: "og:description",
-        content: "Step-by-step guidance for using the EATOS handheld.",
+        content: `Step-by-step guidance for using the ${brand.appName} handheld.`,
       },
     ],
   }),

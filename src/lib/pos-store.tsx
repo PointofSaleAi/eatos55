@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { brand, formatTime, hasDeliveryPartner } from "@/lib/brand";
 import loginSlide1 from "@/assets/login-1.jpg.asset.json";
 import loginSlide2 from "@/assets/login-2.jpg.asset.json";
 import loginSlide3 from "@/assets/login-3.jpg.asset.json";
@@ -166,8 +167,8 @@ const defaultTenders: Record<TenderId, boolean> = {
   voucher: false,
   staff: false,
   "round-up": false,
-  deliveroo: true,
-  "just-eat": true,
+  deliveroo: hasDeliveryPartner("deliveroo"),
+  "just-eat": hasDeliveryPartner("just-eat"),
   "manual-card": true,
   "manual-cc": true,
   external: true,
@@ -180,7 +181,7 @@ const defaultTenders: Record<TenderId, boolean> = {
   room: true,
   uber: true,
   doordash: true,
-  grubhub: true,
+  grubhub: hasDeliveryPartner("grubhub"),
 };
 
 /**
@@ -329,19 +330,19 @@ const defaultLoginSlides: LoginSlide[] = [
 ];
 
 const defaultSettings: AppSettings = {
-  restaurantName: "EATOS Kitchen · Downtown",
-  restaurantAddress: "418 W 25th St",
-  restaurantCity: "New York, NY 10001",
-  restaurantPhone: "(212) 555-0148",
-  taxId: "88-4102397",
-  timezone: "America/New_York",
-  currency: "USD",
+  restaurantName: `${brand.appName} Kitchen · Downtown`,
+  restaurantAddress: brand.venue.address,
+  restaurantCity: brand.venue.city,
+  restaurantPhone: brand.venue.phone,
+  taxId: brand.venue.taxId,
+  timezone: brand.venue.timezone,
+  currency: brand.currency,
   autoPrintReceipts: true,
   askForTip: true,
   tipPresets: "18% · 20% · 25%",
   tipBasis: "Pre-tax",
   customTip: "Allowed",
-  taxRate: "8.75%",
+  taxRate: brand.venue.taxRate,
   inclusivePricing: true,
   emailReceipts: false,
   receiptFooter: "Thank you!",
@@ -359,8 +360,8 @@ const defaultSettings: AppSettings = {
   roomService: false,
   tenders: defaultTenders,
   tenderAutoClose: defaultTenderAutoClose,
-  paymentProvider: "Adyen",
-  cardReaderModel: "Adyen S1F2",
+  paymentProvider: brand.defaultProvider,
+  cardReaderModel: brand.defaultReader,
   cardReaderConnection: "Bluetooth",
   cardReaderStatus: "Not paired",
 
@@ -1039,10 +1040,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
                       no: String((t.payments?.length ?? 0) + 1),
                       method: "Tip",
                       amount,
-                      at: new Date().toLocaleTimeString("en-US", {
-                        hour: "numeric",
-                        minute: "2-digit",
-                      }),
+                      at: formatTime(),
                     },
                   ],
                 }
@@ -1148,7 +1146,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setOrderNotes("");
         setComped(false);
         setArrivedAt(
-          new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+          formatTime(),
         );
         if (partySize && partySize > 0) {
           setGuestState((g) => ({ ...g, partySize }));
@@ -1174,7 +1172,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         const item = [...menu, ...liveMenu].find((m) => m.id === menuId);
         if (!item) return;
         setArrivedAt((a) =>
-          a || new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+          a || formatTime(),
         );
         const qty = opts?.qty ?? 1;
         const price = opts?.price ?? item.price;
@@ -1276,10 +1274,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         const change = Math.max(0, Math.round((tendered - (total - paidSoFar)) * 100) / 100);
         const paymentLabel =
           opts?.label ?? (method === "cash" ? "Cash" : method === "qr" ? "QR Code" : "Card");
-        const at = new Date().toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "2-digit",
-        });
+        const at = formatTime();
         const finalAmount = Math.max(0, Math.round((total - paidSoFar) * 100) / 100);
         // Every tender taken on this order, earlier partials first.
         const rows = [
@@ -1337,10 +1332,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
             seats: guest.partySize || 1,
             total,
             date: ticketDate,
-            arrivedAt: new Date().toLocaleTimeString("en-US", {
-              hour: "numeric",
-              minute: "2-digit",
-            }),
+            arrivedAt: formatTime(),
             arrivedMinutesAgo: 0,
             status: "paid",
             mode,

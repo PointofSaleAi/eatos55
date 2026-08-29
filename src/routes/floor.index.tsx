@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import {
   Check,
   ChevronDown,
@@ -67,12 +68,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/floor/")({
   head: () => ({
     meta: [
-      { title: "Floor Plan - eatOS Point of Sale" },
+      { title: `Floor Plan - ${brand.appName} Point of Sale` },
       {
         name: "description",
         content: "Live table status by floor and section, in grid or seating layout view.",
       },
-      { property: "og:title", content: "Floor Plan - eatOS Point of Sale" },
+      { property: "og:title", content: `Floor Plan - ${brand.appName} Point of Sale` },
       {
         property: "og:description",
         content: "Live table status by floor and section, in grid or seating layout view.",

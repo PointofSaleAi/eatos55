@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import { brand } from "@/lib/brand";
 import {
   BadgePercent,
   Boxes,
@@ -131,7 +132,7 @@ export const settingsDetails: Record<string, DetailScreen> = {
         kind: "choice",
         label: "Currency",
         field: "currency",
-        options: ["USD", "CAD", "EUR", "GBP"],
+        options: brand.currencyOptions,
       },
     ],
   },

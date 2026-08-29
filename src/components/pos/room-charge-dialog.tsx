@@ -1,5 +1,6 @@
 import { BedDouble, Check, ChevronLeft, ChevronRight, Printer, Search, X } from "lucide-react";
 import { toast } from "sonner";
+import { formatTime } from "@/lib/brand";
 import { useEffect, useMemo, useState } from "react";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { RoomBillSheet } from "@/components/pos/room-bill-sheet";
@@ -412,10 +413,7 @@ export function RoomChargeDialog({
       venue={settings.restaurantName}
       onClose={() => setBillOpen(false)}
       onPrint={() => {
-        const at = new Date().toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "2-digit",
-        });
+        const at = formatTime();
         setPrintedAt(at);
         setBillOpen(false);
         toast.success(`Bill printed for signature at ${at}`);

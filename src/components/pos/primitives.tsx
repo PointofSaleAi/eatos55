@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import {
   Bike,
   Car,
@@ -239,7 +240,7 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
   const meta = statusMeta[ticket.status];
   const timer = useTicketTimer(ticket.arrivedMinutesAgo);
   const [open, setOpen] = useState(false);
-  const dateLabel = new Date(`${ticket.date}T12:00:00`).toLocaleDateString("en-GB", {
+  const dateLabel = new Date(`${ticket.date}T12:00:00`).toLocaleDateString(brand.locale, {
     day: "2-digit",
     month: "short",
     year: "numeric",

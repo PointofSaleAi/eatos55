@@ -13,6 +13,7 @@ import {
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
 import {
   money,
@@ -304,7 +305,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
             <dd className="tabular-nums">{money(totals.subtotal)}</dd>
           </div>
           <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
-            <dt>Tax{noTax ? " (exempt)" : ""}</dt>
+            <dt>{brand.taxLabel}{noTax ? " (exempt)" : ""}</dt>
             <dd className="tabular-nums">{money(totals.tax)}</dd>
           </div>
           {totals.discount ? (

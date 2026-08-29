@@ -1,3 +1,4 @@
+import { brand } from "@/lib/brand";
 /** Content for the help centre articles and the Contact Us categories. */
 export type HelpArticle = {
   title: string;
@@ -125,7 +126,7 @@ export const helpArticles: Record<string, HelpArticle> = {
     sections: [
       {
         heading: "Set up the device",
-        body: "Choose table service or quick service, name the device, then sign in with your eatOS account and clock in with your PIN.",
+        body: `Choose table service or quick service, name the device, then sign in with your ${brand.appName} account and clock in with your PIN.`,
       },
       {
         heading: "Connect hardware",

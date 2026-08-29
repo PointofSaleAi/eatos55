@@ -1,3 +1,5 @@
+import { formatMoney } from "@/lib/brand";
+
 export type TicketStatus = "ordering" | "preparing" | "payment" | "paid" | "ready";
 
 export type MenuMode = "dine-in" | "takeaway" | "delivery" | "bar";
@@ -318,8 +320,8 @@ export const helpArticles = [
   { id: "a5", title: "Fix a stuck kitchen ticket", detail: "5 steps · 4 min read" },
 ];
 
-export const money = (n: number) =>
-  n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+/** Money formatted in the active brand variant's locale and currency. */
+export const money = formatMoney;
 
 /** Build/version string shown on the sign-in screen. */
 export const APP_VERSION = "5.200.27(+11350) / 3.44.2/31.07.26";

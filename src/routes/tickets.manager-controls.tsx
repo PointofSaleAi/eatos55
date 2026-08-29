@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { LockKeyhole } from "lucide-react";
 import { toast } from "sonner";
 import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
@@ -8,9 +9,9 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/tickets/manager-controls")({
   head: () => ({
     meta: [
-      { title: "Manager controls - EATOS Handheld" },
+      { title: `Manager controls - ${brand.appName} Handheld` },
       { name: "description", content: "Session controls, alerts and protected shift actions." },
-      { property: "og:title", content: "Manager controls - EATOS Handheld" },
+      { property: "og:title", content: `Manager controls - ${brand.appName} Handheld` },
       {
         property: "og:description",
         content: "Session controls, alerts and protected shift actions.",

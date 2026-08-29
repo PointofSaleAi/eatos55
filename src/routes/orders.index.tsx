@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { ScreenBody } from "@/components/pos/shell";
@@ -10,9 +11,9 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/orders/")({
   head: () => ({
     meta: [
-      { title: "Orders - EATOS Handheld" },
+      { title: `Orders - ${brand.appName} Handheld` },
       { name: "description", content: "Every order taken this shift with totals and status." },
-      { property: "og:title", content: "Orders - EATOS Handheld" },
+      { property: "og:title", content: `Orders - ${brand.appName} Handheld` },
       {
         property: "og:description",
         content: "Every order taken this shift with totals and status.",

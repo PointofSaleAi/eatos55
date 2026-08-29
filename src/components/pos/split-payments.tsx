@@ -12,6 +12,7 @@ import {
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
+import { formatTime } from "@/lib/brand";
 import { ReceiptCard, ReceiptRow } from "@/components/pos/receipt";
 import { PrintSplitSheet, SplitWithSheet } from "@/components/pos/split-sheets";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -45,7 +46,7 @@ export function SplitPayments({
   const checkNumber = tickets.length + 1;
 
   const [arrivedAt] = useState(() =>
-    new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
+    formatTime(),
   );
   const [mode, setMode] = useState<SplitMode>("standard");
   const [checks, setChecks] = useState<string[]>(["a", "b"]);

@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
@@ -8,9 +9,9 @@ import { Input } from "@/components/ui/input";
 export const Route = createFileRoute("/system/help-center")({
   head: () => ({
     meta: [
-      { title: "Help center - EATOS Handheld" },
+      { title: `Help center - ${brand.appName} Handheld` },
       { name: "description", content: "Guides for tickets, payments, hardware and shift handover." },
-      { property: "og:title", content: "Help center - EATOS Handheld" },
+      { property: "og:title", content: `Help center - ${brand.appName} Handheld` },
       {
         property: "og:description",
         content: "Guides for tickets, payments, hardware and shift handover.",

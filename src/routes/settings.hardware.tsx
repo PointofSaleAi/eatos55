@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { CreditCard, Inbox, Printer, ScanLine, Tablet } from "lucide-react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
@@ -6,12 +7,12 @@ import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
 export const Route = createFileRoute("/settings/hardware")({
   head: () => ({
     meta: [
-      { title: "Hardware - EATOS Handheld settings" },
+      { title: `Hardware - ${brand.appName} Handheld settings` },
       {
         name: "description",
         content: "Manage printers, card readers, cash drawer and hardware emulators.",
       },
-      { property: "og:title", content: "Hardware - EATOS Handheld settings" },
+      { property: "og:title", content: `Hardware - ${brand.appName} Handheld settings` },
       {
         property: "og:description",
         content: "Manage printers, card readers, cash drawer and hardware emulators.",

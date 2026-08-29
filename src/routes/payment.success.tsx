@@ -1,15 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { PaymentCompleteCard } from "@/components/pos/payment-complete-dialog";
 
 export const Route = createFileRoute("/payment/success")({
   head: () => ({
     meta: [
-      { title: "Payment Successful - eatOS Point of Sale" },
+      { title: `Payment Successful - ${brand.appName} Point of Sale` },
       {
         name: "description",
         content: "Payment confirmation with change due, receipt sharing and printing options.",
       },
-      { property: "og:title", content: "Payment Successful - eatOS Point of Sale" },
+      { property: "og:title", content: `Payment Successful - ${brand.appName} Point of Sale` },
       {
         property: "og:description",
         content: "Payment confirmation with change due, receipt sharing and printing options.",

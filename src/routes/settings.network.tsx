@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { Server } from "lucide-react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, IconValueRow } from "@/components/pos/settings-rows";
@@ -7,12 +8,12 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/network")({
   head: () => ({
     meta: [
-      { title: "Network - EATOS Handheld settings" },
+      { title: `Network - ${brand.appName} Handheld settings` },
       {
         name: "description",
         content: "Server connection used for data exchange between the handheld and the venue.",
       },
-      { property: "og:title", content: "Network - EATOS Handheld settings" },
+      { property: "og:title", content: `Network - ${brand.appName} Handheld settings` },
       {
         property: "og:description",
         content: "Server connection used for data exchange between the handheld and the venue.",

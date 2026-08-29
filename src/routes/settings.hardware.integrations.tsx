@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 
 export const Route = createFileRoute("/settings/hardware/integrations")({
   head: () => ({
     meta: [
-      { title: "Integrations - EATOS Handheld hardware" },
+      { title: `Integrations - ${brand.appName} Handheld hardware` },
       { name: "description", content: "Manage third-party integrations on the Handheld app." },
-      { property: "og:title", content: "Integrations - EATOS Handheld hardware" },
+      { property: "og:title", content: `Integrations - ${brand.appName} Handheld hardware` },
       {
         property: "og:description",
         content: "Manage third-party integrations on the Handheld app.",
