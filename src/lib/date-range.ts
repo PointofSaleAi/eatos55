@@ -1,5 +1,9 @@
 /** Date-period helpers for the tickets screen (single day, week, month, custom). */
 
+import { brand } from "@/lib/brand";
+
+const LOCALE = brand.locale;
+
 export type RangePreset =
   | "today"
   | "yesterday"
