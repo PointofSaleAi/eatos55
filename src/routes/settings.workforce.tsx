@@ -49,6 +49,28 @@ function WorkforceSettings() {
             <IconNavRow title="Employee" icon={Users} color="indigo" topic="employee" />
           </div>
         </GroupCard>
+
+        <GroupLabel>Shift dashboard</GroupLabel>
+        <GroupCard>
+          {canManageSettings ? (
+            <IconToggleRow
+              title="Show shift totals to servers"
+              subtitle="Sale, tip and hour figures on the pull down dashboard"
+              icon={Eye}
+              color="green"
+              checked={settings.serverShiftTotals}
+              onChange={(v) => updateSettings({ serverShiftTotals: v })}
+            />
+          ) : (
+            <IconValueRow
+              title="Show shift totals to servers"
+              subtitle="A manager controls this switch"
+              icon={Eye}
+              color="grey"
+              value={settings.serverShiftTotals ? "On" : "Off"}
+            />
+          )}
+        </GroupCard>
       </ScreenBody>
     </>
   );
