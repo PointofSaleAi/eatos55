@@ -63,7 +63,6 @@ function WorkforceSettings() {
           {canManageSettings ? (
             <IconToggleRow
               title="Show shift totals to servers"
-              subtitle="Sale, tip and hour figures on the pull down dashboard"
               icon={Eye}
               color="green"
               checked={settings.serverShiftTotals}
@@ -72,7 +71,6 @@ function WorkforceSettings() {
           ) : (
             <IconValueRow
               title="Show shift totals to servers"
-              subtitle="A manager controls this switch"
               icon={Eye}
               color="grey"
               value={settings.serverShiftTotals ? "On" : "Off"}
