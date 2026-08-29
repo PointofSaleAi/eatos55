@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import {
   ArrowLeftRight,
   Bell,
@@ -179,7 +180,7 @@ export function AccountActions() {
               </span>
               <div className="min-w-0">
                 <p className="text-fs-sm font-extrabold text-foreground">
-                  eatOS ver {settings.appVersion}
+                  {brand.appName} ver {settings.appVersion}
                 </p>
                 <p className="text-fs-xs text-muted-foreground">{brand.appName} Point Of Sale Inc.</p>
               </div>
@@ -189,7 +190,7 @@ export function AccountActions() {
               smooth.
             </p>
             <p className="mt-2 text-fs-xs leading-snug text-muted-foreground">
-              Here&apos;s what&apos;s new with eatOS Point Of Sale
+              Here&apos;s what&apos;s new with {brand.appName} Point Of Sale
             </p>
             <ul className="mt-1 space-y-1 pl-3">
               {whatsNew.map((n) => (

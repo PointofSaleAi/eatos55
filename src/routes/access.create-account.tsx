@@ -187,7 +187,7 @@ function CreateAccount() {
           />
 
           <span>
-            eatOS's <span className="font-extrabold">Seller Agreement</span> and{" "}
+            {brand.appName}'s <span className="font-extrabold">Seller Agreement</span> and{" "}
             <span className="font-extrabold">e-Sign Consent</span>
           </span>
         </label>
