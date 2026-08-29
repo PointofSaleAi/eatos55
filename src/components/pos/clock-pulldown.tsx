@@ -23,6 +23,16 @@ export function ClockPullDown() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [pin, setPin] = useState("");
 
+  // The rail's shift assistant opens the same pull-down pad.
+  useEffect(() => {
+    const onOpen = () => {
+      setOpen(false);
+      setMenuOpen(true);
+    };
+    window.addEventListener("pos:open-dashboard", onOpen);
+    return () => window.removeEventListener("pos:open-dashboard", onOpen);
+  }, []);
+
   const close = () => {
     setOpen(false);
     setPin("");
