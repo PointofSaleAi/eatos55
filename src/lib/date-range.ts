@@ -99,9 +99,9 @@ export function shiftRange(range: TicketRange, dir: number): TicketRange {
 }
 
 const short = (s: string) =>
-  parseIso(s).toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
+  parseIso(s).toLocaleDateString(LOCALE, { day: "2-digit", month: "short" });
 const long = (s: string) =>
-  parseIso(s).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+  parseIso(s).toLocaleDateString(LOCALE, { day: "2-digit", month: "short", year: "numeric" });
 
 /** Human label for the period pill. */
 export function rangeLabel(range: TicketRange, today: string): string {
@@ -111,7 +111,7 @@ export function rangeLabel(range: TicketRange, today: string): string {
     return long(range.start);
   }
   if (range.preset === "month" || range.preset === "lastMonth") {
-    return parseIso(range.start).toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+    return parseIso(range.start).toLocaleDateString(LOCALE, { month: "long", year: "numeric" });
   }
   const sameYear = parseIso(range.start).getFullYear() === parseIso(range.end).getFullYear();
   return `${sameYear ? short(range.start) : long(range.start)} – ${long(range.end)}`;
