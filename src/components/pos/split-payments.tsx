@@ -45,7 +45,7 @@ export function SplitPayments({
   const checkNumber = tickets.length + 1;
 
   const [arrivedAt] = useState(() =>
-    new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
+    formatTime(),
   );
   const [mode, setMode] = useState<SplitMode>("standard");
   const [checks, setChecks] = useState<string[]>(["a", "b"]);

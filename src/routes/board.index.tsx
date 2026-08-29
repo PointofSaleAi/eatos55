@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowDownUp, CalendarDays, RefreshCw, XCircle } from "lucide-react";
 import { useState } from "react";
+import { formatTime } from "@/lib/brand";
 import { toast } from "sonner";
 
 import {} from "@/components/pos/shell";
@@ -99,7 +100,7 @@ function Board() {
               <XCircle className="size-5" />
             </button>
             <p className="ml-1 text-fs-sm font-bold text-muted-foreground">
-              {new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
+              {formatTime()}
             </p>
           </div>
         </div>
