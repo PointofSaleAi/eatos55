@@ -112,8 +112,8 @@ export function SettingsPullDown({ open, onClose }: { open: boolean; onClose: ()
   };
 
   return (
-    <div className="absolute inset-0 z-30 overflow-y-auto bg-gate-overlay pb-[clamp(1rem,4dvh,2.5rem)] pt-[4.5rem] no-scrollbar">
-      <div className="mx-auto grid w-full max-w-[80rem] grid-cols-1 gap-x-[clamp(1rem,3vw,3rem)] gap-y-[clamp(1.25rem,3dvh,2.5rem)] px-[clamp(0.75rem,3vw,2.5rem)] sm:grid-cols-2 lg:grid-cols-3">
+    <div className="absolute inset-0 z-30 overflow-y-auto bg-shell pb-[clamp(0.75rem,3dvh,1.5rem)] pt-3 no-scrollbar">
+      <div className="mx-auto grid w-full max-w-[72rem] grid-cols-1 gap-x-[clamp(0.75rem,2vw,2rem)] gap-y-2 px-[clamp(0.75rem,2vw,1.5rem)] sm:grid-cols-2 lg:grid-cols-3">
         {entries.map((e) => {
           const locked = Boolean(e.manager) && !canManageSettings;
           return (
@@ -132,19 +132,19 @@ export function SettingsPullDown({ open, onClose }: { open: boolean; onClose: ()
                 if (e.to) navigate({ to: e.to });
               }}
               className={cn(
-                "group border-l-2 pl-3 text-left transition-opacity sm:pl-4",
+                "group rounded-row border-l-2 py-2 pl-3 pr-2 text-left transition-colors",
                 locked
-                  ? "cursor-not-allowed border-white/15 opacity-40"
-                  : "border-white/30 hover:opacity-80",
+                  ? "cursor-not-allowed border-shell-foreground/15 opacity-40"
+                  : "border-shell-foreground/30 hover:border-shell-foreground hover:bg-shell-foreground/10",
               )}
             >
-              <span className="flex items-center gap-2 text-white">
-                <e.icon className="size-6 shrink-0" strokeWidth={2} aria-hidden />
-                <span className="border-b-2 border-white/70 pb-0.5 text-[clamp(1.25rem,2.6vw,2rem)] font-extrabold leading-none tracking-tight">
+              <span className="flex items-center gap-2 text-shell-foreground">
+                <e.icon className="size-5 shrink-0" strokeWidth={2} aria-hidden />
+                <span className="text-[clamp(1.0625rem,1.7vw,1.375rem)] font-extrabold leading-none tracking-tight">
                   {e.title}
                 </span>
               </span>
-              <span className="mt-2 block max-w-[26rem] text-[clamp(0.75rem,1.1vw,0.9375rem)] font-medium leading-snug text-white/80">
+              <span className="mt-1 block text-[clamp(0.6875rem,0.95vw,0.8125rem)] font-medium leading-snug text-shell-foreground/70">
                 {e.copy}
               </span>
             </button>
