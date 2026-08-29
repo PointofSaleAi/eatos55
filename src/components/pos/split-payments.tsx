@@ -12,6 +12,7 @@ import {
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
+import { formatTime } from "@/lib/brand";
 import { ReceiptCard, ReceiptRow } from "@/components/pos/receipt";
 import { PrintSplitSheet, SplitWithSheet } from "@/components/pos/split-sheets";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";

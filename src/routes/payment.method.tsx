@@ -1,4 +1,5 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { hasDeliveryPartner, type DeliveryPartnerId } from "@/lib/brand";
 import {
   BadgeDollarSign,
   Banknote,
@@ -490,12 +491,13 @@ function PaymentMethod() {
     },
   ];
 
+  const DELIVERY_IDS = new Set(["deliveroo", "just-eat", "uber", "doordash", "grubhub"]);
   // Only enabled tenders are offered; Room Charge also needs the room module.
   const enabled = (id: string) => {
     const on = settings.tenders?.[id as TenderId] ?? true;
     if (id === "room") return on && settings.roomService;
-    // Grubhub is a US-only partner.
-    if (id === "grubhub") return on && settings.currency === "USD";
+    // Delivery partners are regional (Grubhub is US-only, Deliveroo/Just Eat are not US).
+    if (DELIVERY_IDS.has(id)) return on && hasDeliveryPartner(id as DeliveryPartnerId);
     return on;
   };
   const groups = allGroups

@@ -38,6 +38,7 @@ import {
   ToggleColumnHeaders,
   type TileColor,
 } from "@/components/pos/settings-rows";
+import { hasDeliveryPartner, type DeliveryPartnerId } from "@/lib/brand";
 import { usePos, TENDER_LABELS, type TenderId } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/settings/payment-methods")({
@@ -136,11 +137,12 @@ const readerModels: Record<string, string[]> = {
 
 const connections = ["Bluetooth", "LAN", "Cloud"];
 
+const DELIVERY_IDS = new Set(["deliveroo", "just-eat", "uber", "doordash", "grubhub"]);
+
 function PaymentMethodsSettings() {
   const { settings, updateSettings, canManageSettings } = usePos();
   const tenders = settings.tenders;
-  // Grubhub is a US-only partner, so it is hidden for other currencies.
-  const usVenue = settings.currency === "USD";
+  // Delivery partners are regional: Grubhub is US-only, Deliveroo/Just Eat are not US.
 
   const autoClose = settings.tenderAutoClose;
 
@@ -234,7 +236,9 @@ function PaymentMethodsSettings() {
         </GroupCard>
 
         {sections.map((section) => {
-          const rows = section.rows.filter((row) => (row.id === "grubhub" ? usVenue : true));
+          const rows = section.rows.filter((row) =>
+        DELIVERY_IDS.has(row.id) ? hasDeliveryPartner(row.id as DeliveryPartnerId) : true,
+      );
           if (rows.length === 0) return null;
           return (
             <div key={section.title}>
