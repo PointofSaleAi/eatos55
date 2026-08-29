@@ -151,8 +151,15 @@ export function SettingsPullDown({ open, onClose }: { open: boolean; onClose: ()
               </span>
             </button>
           );
-        })}
+          })}
+        </div>
       </div>
+      <button
+        type="button"
+        aria-label="Close settings menu"
+        onClick={onClose}
+        className="min-h-0 flex-1 bg-shell/60"
+      />
     </div>
   );
 }
