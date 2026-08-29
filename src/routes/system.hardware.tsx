@@ -49,7 +49,7 @@ function Hardware() {
         <Card className="overflow-hidden">
           <ActionRow
             title="Pair a new device"
-            detail=`Scan for nearby ${brand.appName} hardware`
+            detail={`Scan for nearby ${brand.appName} hardware`}
             onClick={() => toast.info("Scanning for devices…")}
           />
           <ActionRow

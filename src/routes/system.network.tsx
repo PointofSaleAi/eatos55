@@ -26,7 +26,7 @@ function Network() {
       <ScreenBody>
         <SectionLabel>Connection</SectionLabel>
         <Card className="overflow-hidden">
-          <ValueRow title="Wi-Fi" value=`${brand.appName}-Staff · Strong` />
+          <ValueRow title="Wi-Fi" value={`${brand.appName}-Staff · Strong`} />
           <ValueRow title="IP address" value="10.0.4.118" />
           <ValueRow title="Cellular fallback" value="Active · LTE" />
           <ValueRow title="Last sync" value="42 seconds ago" />
@@ -46,7 +46,7 @@ function Network() {
         <Card className="overflow-hidden">
           <ActionRow
             title="Test connection"
-            detail=`Ping the ${brand.appName} cloud`
+            detail={`Ping the ${brand.appName} cloud`}
             onClick={() => toast.success("Connection healthy · 38 ms")}
           />
           <ActionRow

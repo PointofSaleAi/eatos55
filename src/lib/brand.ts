@@ -73,7 +73,7 @@ const variants: Record<BrandId, BrandConfig> = {
   },
 };
 
-const envBrand = import.meta.env.VITE_BRAND as BrandId | undefined;
+const envBrand = import.meta.env['VITE_BRAND'] as BrandId | undefined;
 
 export const brand: BrandConfig = variants[envBrand ?? "eatos-us"] ?? variants["eatos-us"];
 
