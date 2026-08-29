@@ -1,5 +1,5 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
-import { brand, isTenderVisible } from "@/lib/brand";
+import { brand, isTenderVisible, tenderLabel } from "@/lib/brand";
 import {
   BadgeDollarSign,
   Banknote,
@@ -491,7 +491,6 @@ function PaymentMethod() {
     },
   ];
 
-  const DELIVERY_IDS = new Set(["deliveroo", "just-eat", "uber", "doordash", "grubhub"]);
   // Only enabled tenders are offered; Room Charge also needs the room module.
   const enabled = (id: string) => {
     const on = settings.tenders?.[id as TenderId] ?? true;
@@ -500,7 +499,13 @@ function PaymentMethod() {
     return on && isTenderVisible(id);
   };
   const groups = allGroups
-    .map((g) => ({ title: g.title, items: g.items.filter((t) => enabled(t.id)) }))
+    .map((g) => ({
+      title: g.title,
+      items: g.items
+        .filter((t) => enabled(t.id))
+        // Shared tenders carry a regional display name, e.g. Grubhub as Just Eat.
+        .map((t) => ({ ...t, label: tenderLabel(t.id, t.label) })),
+    }))
     .filter((g) => g.items.length > 0);
 
   // All tenders live on one screen: measure the pane, then choose the column
