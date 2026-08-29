@@ -32,7 +32,7 @@ export function SplitPane({
 }: {
   list: ReactNode;
   children: ReactNode;
-  listClassName?: string;
+  listClassName?: string | undefined;
 }) {
   return (
     <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
