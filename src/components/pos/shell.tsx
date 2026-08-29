@@ -107,7 +107,11 @@ function useSessionGate() {
 function LandscapeContent({ children }: { children: ReactNode }) {
   const pane = useSectionPane();
   if (!pane) return <>{children}</>;
-  return <SplitPane list={pane.list}>{pane.replaceChildren ?? children}</SplitPane>;
+  return (
+    <SplitPane list={pane.list} listClassName={pane.listClassName}>
+      {pane.replaceChildren ?? children}
+    </SplitPane>
+  );
 }
 
 const WideContext = createContext(false);

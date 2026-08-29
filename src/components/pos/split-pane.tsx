@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronRight, Inbox } from "lucide-react";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { TicketsScreen } from "@/components/pos/tickets-screen";
 import { cn } from "@/lib/utils";
 import {
@@ -16,6 +16,7 @@ import {
   Utensils,
   Wallet,
   Wifi,
+  SlidersHorizontal,
   type LucideIcon,
 } from "lucide-react";
 
@@ -108,7 +109,7 @@ export function SettingsNavList() {
     <div
       className={cn(
         "flex min-h-0 flex-1 flex-col transition-[width] duration-200",
-        collapsed ? "w-[4.75rem]" : "w-full",
+        collapsed ? "w-[4.75rem]" : "w-[19rem] lg:w-[21rem]",
       )}
     >
       <div className="shrink-0 border-b border-border px-2 pb-3 pt-4">
@@ -166,7 +167,11 @@ export function SettingsNavList() {
  * Picks the list pane for the current section in landscape.
  * Returns null when the route has no companion list (payment flows, access…).
  */
-export function useSectionPane(): { list: ReactNode; replaceChildren?: ReactNode } | null {
+export function useSectionPane(): {
+  list: ReactNode;
+  replaceChildren?: ReactNode;
+  listClassName?: string;
+} | null {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const p = pathname.replace(/\/+$/, "") || "/";
 
@@ -188,7 +193,9 @@ export function useSectionPane(): { list: ReactNode; replaceChildren?: ReactNode
   }
   if (p.startsWith("/settings") || p.startsWith("/system")) {
     return {
+      // The settings pane owns its width so it can collapse to icons.
       list: <SettingsNavList />,
+      listClassName: "w-auto lg:w-auto",
     };
   }
   return null;
