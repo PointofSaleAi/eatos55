@@ -1,5 +1,7 @@
 import {
   ClipboardList,
+  Columns3,
+  FilePlus2,
   CreditCard,
   FileText,
   Grid2x2,
@@ -57,11 +59,11 @@ export const navGroups: NavGroup[] = [
  * then new order, floor plan, tickets, rooms and the order status board.
  */
 export const railPrimary: NavLink[] = [
-  { to: "/order/menu", label: "Menu", icon: Grid2x2 },
-  { to: "/order/new", label: "New Order", icon: ClipboardList },
+  { to: "/order/menu", label: "Menu", icon: LayoutGrid },
+  { to: "/order/new", label: "New Order", icon: FilePlus2 },
   { to: "/floor", label: "Floor Plan", icon: Sofa },
   { to: "/tickets", label: "Tickets", icon: Receipt },
-  { to: "/rooms", label: "Rooms", icon: LayoutGrid },
-  { to: "/board", label: "Order Status", icon: Utensils },
+  { to: "/rooms", label: "Rooms", icon: Grid2x2 },
+  { to: "/board", label: "Order Status", icon: Columns3 },
 ];
 
