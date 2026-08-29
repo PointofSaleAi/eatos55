@@ -656,7 +656,15 @@ export type Guest = {
   customLabel?: string | undefined;
 };
 
-const PosContext = createContext<Store | null>(null);
+// Keep one context instance per browser session. A hot update to this module
+// otherwise creates a second context object, so consumers that still hold the
+// old one read null and throw "usePos must be used inside PosProvider".
+const contextRegistry = globalThis as typeof globalThis & {
+  __posContext?: ReturnType<typeof createContext<Store | null>>;
+};
+const PosContext =
+  contextRegistry.__posContext ??
+  (contextRegistry.__posContext = createContext<Store | null>(null));
 
 export function PosProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session>({
