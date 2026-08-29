@@ -4,15 +4,32 @@ import { TenderScreen } from "@/components/pos/tender-screen";
 import { money } from "@/lib/demo-data";
 import { useAnnounce } from "@/components/pos/live-region";
 import { haptic } from "@/lib/haptics";
-import { type TenderMethod, usePos } from "@/lib/pos-store";
+import { type TenderId, type TenderMethod, usePos } from "@/lib/pos-store";
 
 const kinds: Record<
   string,
-  { title: string; method: TenderMethod; half?: boolean; success: string }
+  {
+    title: string;
+    method: TenderMethod;
+    half?: boolean;
+    success: string;
+    tenderId?: TenderId;
+  }
 > = {
-  gift: { title: "Gift Card", method: "gift", success: "Gift card applied" },
-  house: { title: "House Account", method: "house", success: "Charged to house account" },
-  split: { title: "Split Payment", method: "split", half: true, success: "Split payment applied" },
+  gift: { title: "Gift Card", method: "gift", success: "Gift card applied", tenderId: "gift" },
+  house: {
+    title: "House Account",
+    method: "house",
+    success: "Charged to house account",
+    tenderId: "house",
+  },
+  split: {
+    title: "Split Payment",
+    method: "split",
+    half: true,
+    success: "Split payment applied",
+    tenderId: "split",
+  },
   other: { title: "Other Tender", method: "other", success: "Payment recorded" },
 };
 
@@ -65,7 +82,10 @@ function TenderRoute() {
         }
         haptic("success");
         announce("Payment complete");
-        commitPayment(cfg.method, amount, notes ? { notes } : undefined);
+        commitPayment(cfg.method, amount, {
+          ...(cfg.tenderId ? { tenderId: cfg.tenderId } : {}),
+          ...(notes ? { notes } : {}),
+        });
         toast.success(cfg.success);
         navigate({ to: "/payment/success" });
       }}

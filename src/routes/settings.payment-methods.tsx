@@ -32,9 +32,10 @@ import {
   Caption,
   GroupCard,
   GroupLabel,
+  IconDualToggleRow,
   IconSelectRow,
-  IconToggleRow,
   IconValueRow,
+  ToggleColumnHeaders,
   type TileColor,
 } from "@/components/pos/settings-rows";
 import { usePos, TENDER_LABELS, type TenderId } from "@/lib/pos-store";
@@ -141,8 +142,13 @@ function PaymentMethodsSettings() {
   // Grubhub is a US-only partner, so it is hidden for other currencies.
   const usVenue = settings.currency === "USD";
 
+  const autoClose = settings.tenderAutoClose;
+
   const set = (id: TenderId, value: boolean) =>
     updateSettings({ tenders: { ...tenders, [id]: value } });
+
+  const setAutoClose = (id: TenderId, value: boolean) =>
+    updateSettings({ tenderAutoClose: { ...autoClose, [id]: value } });
 
   const provider = settings.paymentProvider;
   const models = readerModels[provider] ?? [];
@@ -233,20 +239,36 @@ function PaymentMethodsSettings() {
           return (
             <div key={section.title}>
               <GroupLabel>{section.title}</GroupLabel>
+              <ToggleColumnHeaders
+                primary="Enabled"
+                secondary="Auto Close Payment"
+                shortPrimary="On"
+                shortSecondary="Auto Close"
+              />
               <GroupCard>
-                {rows.map((row) => (
-                  <IconToggleRow
-                    key={row.id}
-                    title={TENDER_LABELS[row.id]}
-                    icon={row.icon}
-                    color={row.color}
-                    checked={row.locked ? true : tenders[row.id]}
-                    onChange={(v) => {
-                      if (row.locked || !canManageSettings) return;
-                      set(row.id, v);
-                    }}
-                  />
-                ))}
+                {rows.map((row) => {
+                  const enabled = row.locked ? true : tenders[row.id];
+                  return (
+                    <IconDualToggleRow
+                      key={row.id}
+                      title={TENDER_LABELS[row.id]}
+                      icon={row.icon}
+                      color={row.color}
+                      checked={enabled}
+                      onChange={(v) => {
+                        if (row.locked || !canManageSettings) return;
+                        set(row.id, v);
+                      }}
+                      secondaryLabel="Auto Close Payment"
+                      secondaryChecked={autoClose[row.id]}
+                      secondaryDisabled={!enabled || !canManageSettings}
+                      onSecondaryChange={(v) => {
+                        if (!enabled || !canManageSettings) return;
+                        setAutoClose(row.id, v);
+                      }}
+                    />
+                  );
+                })}
               </GroupCard>
               {section.title === "Lodging" && !settings.roomService ? (
                 <Caption>
@@ -259,6 +281,10 @@ function PaymentMethodsSettings() {
         <Caption>
           Only the methods switched on here appear on the payment screen. Cash always stays available
           so a check can be tendered.
+        </Caption>
+        <Caption>
+          If Auto Close Payment is enabled, the order closes automatically once a payment with that
+          method completes successfully.
         </Caption>
       </ScreenBody>
     </>

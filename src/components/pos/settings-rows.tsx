@@ -193,6 +193,87 @@ export function IconValueRow(props: RowShellProps & { onClick?: () => void; topi
   );
 }
 
+/** Column captions for two-toggle lists (Enabled / Auto Close Payment). */
+export function ToggleColumnHeaders({
+  primary,
+  secondary,
+  shortPrimary,
+  shortSecondary,
+}: {
+  primary: string;
+  secondary: string;
+  shortPrimary?: string;
+  shortSecondary?: string;
+}) {
+  return (
+    <div className="flex items-end gap-row px-4 pb-1">
+      <span className="min-w-0 flex-1" />
+      <span className="relative h-4 w-11 shrink-0">
+        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 whitespace-nowrap t-caption text-muted-foreground">
+          <span className="sm:hidden">{shortPrimary ?? primary}</span>
+          <span className="hidden sm:inline">{primary}</span>
+        </span>
+      </span>
+      <span className="relative h-4 w-11 shrink-0">
+        <span className="absolute bottom-0 right-0 whitespace-nowrap t-caption text-muted-foreground">
+          <span className="sm:hidden">{shortSecondary ?? secondary}</span>
+          <span className="hidden sm:inline">{secondary}</span>
+        </span>
+      </span>
+    </div>
+  );
+}
+
+/** Row with two independent switches, the second one optionally disabled. */
+export function IconDualToggleRow({
+  checked,
+  onChange,
+  secondaryChecked,
+  onSecondaryChange,
+  secondaryDisabled,
+  secondaryLabel,
+  ...rest
+}: RowShellProps & {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  secondaryChecked: boolean;
+  onSecondaryChange: (v: boolean) => void;
+  secondaryDisabled?: boolean;
+  secondaryLabel: string;
+}) {
+  return (
+    <div className={rowBase}>
+      <RowInner
+        {...rest}
+        right={
+          <>
+            <span className="grid size-11 shrink-0 place-items-center">
+              <Switch
+                checked={checked}
+                onCheckedChange={onChange}
+                aria-label={rest.title}
+                className="tap-safe shrink-0"
+              />
+            </span>
+            <span className="grid size-11 shrink-0 place-items-center">
+              <Switch
+                checked={secondaryChecked}
+                onCheckedChange={onSecondaryChange}
+                disabled={secondaryDisabled}
+                aria-label={`${secondaryLabel} - ${rest.title}`}
+                className={cn(
+                  "tap-safe shrink-0",
+                  secondaryDisabled ? "opacity-40" : undefined,
+                )}
+              />
+            </span>
+          </>
+        }
+      />
+    </div>
+  );
+}
+
 export function IconToggleRow({
   checked,
   onChange,
