@@ -260,7 +260,8 @@ export type AppSettings = {
   /** Per tender: close the order automatically once payment succeeds. */
   tenderAutoClose: Record<TenderId, boolean>;
   /** Processor that clears card payments for this venue. */
-  paymentProvider: "Adyen" | "Stripe";
+  /** Chosen in Settings from the build's provider catalog; empty until set. */
+  paymentProvider: string;
   cardReaderModel: string;
   cardReaderConnection: string;
   cardReaderStatus: string;
