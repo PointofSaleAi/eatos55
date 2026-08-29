@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { formatMoney } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
 import type { Ticket } from "@/lib/demo-data";
 
@@ -51,7 +52,6 @@ export function useShiftSummary() {
     session,
     tableStates,
     tableSince,
-    formatMoney,
     ticketDate,
   } = usePos();
 
@@ -137,7 +137,6 @@ export function useShiftSummary() {
     settings.clockedInAt,
     tableStates,
     tableSince,
-    formatMoney,
     ticketDate,
   ]);
 }
