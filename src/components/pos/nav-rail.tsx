@@ -33,7 +33,7 @@ export function NavRail() {
       aria-label="Main"
       className={cn(
         "hidden shrink-0 flex-col border-r border-border bg-surface pt-[calc(0.75rem+var(--sat,0px))] pb-[calc(0.75rem+var(--sab,0px))] transition-[width] duration-200 md:flex",
-        expanded ? "w-60" : "w-[5.25rem]",
+        expanded ? "w-60" : "w-[4.5rem]",
       )}
     >
       {/* Venue / revenue center */}
@@ -63,7 +63,7 @@ export function NavRail() {
         onClick={(e) => {
           if (e.target === e.currentTarget) toggle();
         }}
-        className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 pt-3"
+        className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-2 pt-3"
       >
         <ul className="space-y-1">
           {railPrimary.map((l) => {
@@ -76,10 +76,10 @@ export function NavRail() {
                   title={l.label}
                   aria-label={l.label}
                   className={cn(
-                    "flex min-h-ctl-lg items-center gap-3 rounded-card px-2 text-fs-sm transition-colors",
-                    expanded ? "justify-start" : "flex-col justify-center gap-1 py-2",
+                    "flex min-h-ctl-lg items-center gap-3 rounded-card text-fs-sm transition-colors",
+                    expanded ? "justify-start px-2" : "justify-center px-0",
                     active
-                      ? "bg-muted font-extrabold text-foreground"
+                      ? "bg-accent/15 font-extrabold text-accent"
                       : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
                   )}
                 >
@@ -99,10 +99,10 @@ export function NavRail() {
               title="Settings"
               aria-label="Settings"
               className={cn(
-                "flex min-h-ctl-lg items-center gap-3 rounded-card px-2 text-fs-sm transition-colors",
-                expanded ? "justify-start" : "flex-col justify-center gap-1 py-2",
+                "flex min-h-ctl-lg items-center gap-3 rounded-card text-fs-sm transition-colors",
+                expanded ? "justify-start px-2" : "justify-center px-0",
                 pathname.startsWith("/settings")
-                  ? "bg-muted font-extrabold text-foreground"
+                  ? "bg-accent/15 font-extrabold text-accent"
                   : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
               )}
             >
