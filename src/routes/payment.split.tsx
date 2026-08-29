@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { toast } from "sonner";
 import { SplitPayments } from "@/components/pos/split-payments";
 import { money } from "@/lib/demo-data";
@@ -6,13 +7,13 @@ import { money } from "@/lib/demo-data";
 export const Route = createFileRoute("/payment/split")({
   head: () => ({
     meta: [
-      { title: "Split Payments - eatOS Point of Sale" },
+      { title: `Split Payments - ${brand.appName} Point of Sale` },
       {
         name: "description",
         content:
           "Split a check evenly or item by item, review each child check and take payment on the same screen.",
       },
-      { property: "og:title", content: "Split Payments - eatOS Point of Sale" },
+      { property: "og:title", content: `Split Payments - ${brand.appName} Point of Sale` },
       {
         property: "og:description",
         content: "Split a check evenly or item by item and take payment on the same screen.",

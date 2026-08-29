@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { toast } from "sonner";
 import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
 import { ActionRow, Card, SectionLabel } from "@/components/pos/primitives";
@@ -8,9 +9,9 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/access/select-station")({
   head: () => ({
     meta: [
-      { title: "Select station - EATOS Handheld" },
+      { title: `Select station - ${brand.appName} Handheld` },
       { name: "description", content: "Choose the revenue center you are working tonight." },
-      { property: "og:title", content: "Select station - EATOS Handheld" },
+      { property: "og:title", content: `Select station - ${brand.appName} Handheld` },
       {
         property: "og:description",
         content: "Choose the revenue center you are working tonight.",

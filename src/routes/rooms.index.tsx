@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { Circle, CircleDot } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -14,9 +15,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/rooms/")({
   head: () => ({
     meta: [
-      { title: "Rooms - eatOS Point of Sale" },
+      { title: `Rooms - ${brand.appName} Point of Sale` },
       { name: "description", content: "Room service areas with guest names and open balances." },
-      { property: "og:title", content: "Rooms - eatOS Point of Sale" },
+      { property: "og:title", content: `Rooms - ${brand.appName} Point of Sale` },
       {
         property: "og:description",
         content: "Room service areas with guest names and open balances.",

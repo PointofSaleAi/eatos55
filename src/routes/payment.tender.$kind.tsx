@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { toast } from "sonner";
 import { TenderScreen } from "@/components/pos/tender-screen";
 import { money } from "@/lib/demo-data";
@@ -36,9 +37,9 @@ const kinds: Record<
 export const Route = createFileRoute("/payment/tender/$kind")({
   head: () => ({
     meta: [
-      { title: "Tender Amount - eatOS Point of Sale" },
+      { title: `Tender Amount - ${brand.appName} Point of Sale` },
       { name: "description", content: "Enter the amount to tender for this payment method." },
-      { property: "og:title", content: "Tender Amount - eatOS Point of Sale" },
+      { property: "og:title", content: `Tender Amount - ${brand.appName} Point of Sale` },
       {
         property: "og:description",
         content: "Enter the amount to tender for this payment method.",

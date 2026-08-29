@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -18,9 +19,9 @@ export const Route = createFileRoute("/access/manager-pin")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
-      { title: "Manager PIN - EATOS Handheld" },
+      { title: `Manager PIN - ${brand.appName} Handheld` },
       { name: "description", content: "Manager approval for protected handheld actions." },
-      { property: "og:title", content: "Manager PIN - EATOS Handheld" },
+      { property: "og:title", content: `Manager PIN - ${brand.appName} Handheld` },
       { property: "og:description", content: "Manager approval for protected handheld actions." },
     ],
   }),

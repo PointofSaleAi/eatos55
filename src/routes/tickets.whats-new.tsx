@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { Sparkles } from "lucide-react";
 import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
 import { Card, SectionLabel } from "@/components/pos/primitives";
@@ -7,10 +8,10 @@ import { releaseNotes } from "@/lib/demo-data";
 export const Route = createFileRoute("/tickets/whats-new")({
   head: () => ({
     meta: [
-      { title: "What is new - EATOS Handheld" },
-      { name: "description", content: "Product updates shipped to the EATOS handheld app." },
-      { property: "og:title", content: "What is new - EATOS Handheld" },
-      { property: "og:description", content: "Product updates shipped to the EATOS handheld app." },
+      { title: `What is new - ${brand.appName} Handheld` },
+      { name: "description", content: `Product updates shipped to the ${brand.appName} handheld app.` },
+      { property: "og:title", content: `What is new - ${brand.appName} Handheld` },
+      { property: "og:description", content: `Product updates shipped to the ${brand.appName} handheld app.` },
     ],
   }),
   component: WhatsNew,

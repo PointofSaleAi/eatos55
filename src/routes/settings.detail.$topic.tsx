@@ -1,4 +1,5 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { Check, ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
@@ -17,12 +18,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/settings/detail/$topic")({
   head: () => ({
     meta: [
-      { title: "Settings detail - EATOS Handheld" },
+      { title: `Settings detail - ${brand.appName} Handheld` },
       {
         name: "description",
         content: "Device, menu, payment, hardware and workforce settings detail on the handheld.",
       },
-      { property: "og:title", content: "Settings detail - EATOS Handheld" },
+      { property: "og:title", content: `Settings detail - ${brand.appName} Handheld` },
       {
         property: "og:description",
         content: "Device, menu, payment, hardware and workforce settings detail on the handheld.",

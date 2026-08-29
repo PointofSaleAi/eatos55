@@ -44,13 +44,13 @@ import { usePos, TENDER_LABELS, type TenderId } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/payment-methods")({
   head: () => ({
     meta: [
-      { title: "Payment Methods - eatOS Point of Sale settings" },
+      { title: `Payment Methods - ${brand.appName} Point of Sale settings` },
       {
         name: "description",
         content:
           "Choose your payment provider, pair a card reader, then switch tenders on or off so only the payment methods you accept appear at tender.",
       },
-      { property: "og:title", content: "Payment Methods - eatOS Point of Sale settings" },
+      { property: "og:title", content: `Payment Methods - ${brand.appName} Point of Sale settings` },
       {
         property: "og:description",
         content:

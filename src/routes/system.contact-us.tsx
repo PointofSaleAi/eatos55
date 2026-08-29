@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { Check, ChevronDown, FileText, Home, HelpCircle, Rocket, Search, Tablet } from "lucide-react";
 import { useState } from "react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
@@ -7,15 +8,15 @@ import { Wordmark } from "@/components/pos/brand";
 export const Route = createFileRoute("/system/contact-us")({
   head: () => ({
     meta: [
-      { title: "Contact Us - EATOS Help Center" },
+      { title: `Contact Us - ${brand.appName} Help Center` },
       {
         name: "description",
-        content: "Search the EATOS help center or browse FAQs, guides and how-to articles.",
+        content: `Search the ${brand.appName} help center or browse FAQs, guides and how-to articles.`,
       },
-      { property: "og:title", content: "Contact Us - EATOS Help Center" },
+      { property: "og:title", content: `Contact Us - ${brand.appName} Help Center` },
       {
         property: "og:description",
-        content: "Search the EATOS help center or browse FAQs, guides and how-to articles.",
+        content: `Search the ${brand.appName} help center or browse FAQs, guides and how-to articles.`,
       },
     ],
   }),

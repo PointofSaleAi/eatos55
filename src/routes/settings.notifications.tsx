@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { Bell, MessageSquare, Volume2 } from "lucide-react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, IconToggleRow } from "@/components/pos/settings-rows";
@@ -7,12 +8,12 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/notifications")({
   head: () => ({
     meta: [
-      { title: "Notifications - EATOS Handheld settings" },
+      { title: `Notifications - ${brand.appName} Handheld settings` },
       {
         name: "description",
         content: "Choose which order and shift alerts this handheld shows.",
       },
-      { property: "og:title", content: "Notifications - EATOS Handheld settings" },
+      { property: "og:title", content: `Notifications - ${brand.appName} Handheld settings` },
       {
         property: "og:description",
         content: "Choose which order and shift alerts this handheld shows.",

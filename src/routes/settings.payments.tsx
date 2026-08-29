@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import {
   BadgePercent,
   Coins,
@@ -15,12 +16,12 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/payments")({
   head: () => ({
     meta: [
-      { title: "Payments - EATOS Handheld settings" },
+      { title: `Payments - ${brand.appName} Handheld settings` },
       {
         name: "description",
         content: "Gratuity, taxes, discounts, service charge, cash management and receipts.",
       },
-      { property: "og:title", content: "Payments - EATOS Handheld settings" },
+      { property: "og:title", content: `Payments - ${brand.appName} Handheld settings` },
       {
         property: "og:description",
         content: "Gratuity, taxes, discounts, service charge, cash management and receipts.",

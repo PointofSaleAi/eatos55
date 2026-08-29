@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import {
   BarChart3,
   BedDouble,
@@ -26,12 +27,12 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/general")({
   head: () => ({
     meta: [
-      { title: "General - EATOS Handheld settings" },
+      { title: `General - ${brand.appName} Handheld settings` },
       {
         name: "description",
         content: "Device service, restaurant information, language, currency and tax alias.",
       },
-      { property: "og:title", content: "General - EATOS Handheld settings" },
+      { property: "og:title", content: `General - ${brand.appName} Handheld settings` },
       {
         property: "og:description",
         content: "Device service, restaurant information, language, currency and tax alias.",

@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { toast } from "sonner";
 import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
 import { ActionRow, Card, SectionLabel } from "@/components/pos/primitives";
@@ -7,9 +8,9 @@ import { hardware } from "@/lib/demo-data";
 export const Route = createFileRoute("/system/hardware")({
   head: () => ({
     meta: [
-      { title: "Hardware - EATOS Handheld" },
+      { title: `Hardware - ${brand.appName} Handheld` },
       { name: "description", content: "Printers, card reader, cash drawer and display pairing." },
-      { property: "og:title", content: "Hardware - EATOS Handheld" },
+      { property: "og:title", content: `Hardware - ${brand.appName} Handheld` },
       { property: "og:description", content: "Printers, card reader, cash drawer and display pairing." },
     ],
   }),
@@ -48,7 +49,7 @@ function Hardware() {
         <Card className="overflow-hidden">
           <ActionRow
             title="Pair a new device"
-            detail="Scan for nearby EATOS hardware"
+            detail=`Scan for nearby ${brand.appName} hardware`
             onClick={() => toast.info("Scanning for devices…")}
           />
           <ActionRow

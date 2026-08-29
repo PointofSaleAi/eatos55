@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { Ban, MoreVertical, Plus, Search, Tag } from "lucide-react";
 import { useRef, useState } from "react";
 import { GuestBlock } from "@/components/pos/guest-block";
@@ -17,9 +18,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/order/new")({
   head: () => ({
     meta: [
-      { title: "New Order - eatOS Point of Sale" },
+      { title: `New Order - ${brand.appName} Point of Sale` },
       { name: "description", content: "Add products, scan barcodes and build a guest order." },
-      { property: "og:title", content: "New Order - eatOS Point of Sale" },
+      { property: "og:title", content: `New Order - ${brand.appName} Point of Sale` },
       {
         property: "og:description",
         content: "Add products, scan barcodes and build a guest order.",

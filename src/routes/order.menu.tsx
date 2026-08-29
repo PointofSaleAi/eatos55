@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { Barcode, Check, Tag } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { usePos } from "@/lib/pos-store";
@@ -7,9 +8,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/order/menu")({
   head: () => ({
     meta: [
-      { title: "Menu - eatOS Point of Sale" },
+      { title: `Menu - ${brand.appName} Point of Sale` },
       { name: "description", content: "Switch between barcode scanning and open price items." },
-      { property: "og:title", content: "Menu - eatOS Point of Sale" },
+      { property: "og:title", content: `Menu - ${brand.appName} Point of Sale` },
       {
         property: "og:description",
         content: "Switch between barcode scanning and open price items.",

@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { toast } from "sonner";
 import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
 import { ActionRow, Card, NavRow, SectionLabel, ToggleRow } from "@/components/pos/primitives";
@@ -9,9 +10,9 @@ import { useConfirm } from "@/components/pos/confirm-sheet";
 export const Route = createFileRoute("/settings/more")({
   head: () => ({
     meta: [
-      { title: "More settings - EATOS Handheld" },
+      { title: `More settings - ${brand.appName} Handheld` },
       { name: "description", content: "Advanced device options, support and legal information." },
-      { property: "og:title", content: "More settings - EATOS Handheld" },
+      { property: "og:title", content: `More settings - ${brand.appName} Handheld` },
       {
         property: "og:description",
         content: "Advanced device options, support and legal information.",

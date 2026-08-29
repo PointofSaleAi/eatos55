@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
@@ -7,9 +8,9 @@ import { Card, SectionLabel, ToggleRow } from "@/components/pos/primitives";
 export const Route = createFileRoute("/system/integrations")({
   head: () => ({
     meta: [
-      { title: "Integrations - EATOS Handheld" },
+      { title: `Integrations - ${brand.appName} Handheld` },
       { name: "description", content: "Connect delivery, accounting and loyalty partners." },
-      { property: "og:title", content: "Integrations - EATOS Handheld" },
+      { property: "og:title", content: `Integrations - ${brand.appName} Handheld` },
       { property: "og:description", content: "Connect delivery, accounting and loyalty partners." },
     ],
   }),
@@ -21,7 +22,7 @@ const partners = [
   { id: "ubereats", name: "Uber Eats", detail: "Delivery orders into the queue", on: false },
   { id: "quickbooks", name: "QuickBooks", detail: "Nightly sales journal", on: true },
   { id: "mailchimp", name: "Mailchimp", detail: "Guest email capture", on: false },
-  { id: "loyalty", name: "EATOS Loyalty", detail: "Points on every closed ticket", on: true },
+  { id: "loyalty", name: `${brand.appName} Loyalty`, detail: "Points on every closed ticket", on: true },
 ];
 
 function Integrations() {

@@ -15,9 +15,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/tickets/$ticketId")({
   head: () => ({
     meta: [
-      { title: "Ticket detail - EATOS Handheld" },
+      { title: `Ticket detail - ${brand.appName} Handheld` },
       { name: "description", content: "Items, status and actions for a single ticket." },
-      { property: "og:title", content: "Ticket detail - EATOS Handheld" },
+      { property: "og:title", content: `Ticket detail - ${brand.appName} Handheld` },
       { property: "og:description", content: "Items, status and actions for a single ticket." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

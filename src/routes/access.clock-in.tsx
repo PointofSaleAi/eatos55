@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ClockPanel } from "@/components/pos/clock-panel";
@@ -9,9 +10,9 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/access/clock-in")({
   head: () => ({
     meta: [
-      { title: "Clock In - eatOS Point of Sale" },
+      { title: `Clock In - ${brand.appName} Point of Sale` },
       { name: "description", content: "PIN, biometric and break controls to run your shift." },
-      { property: "og:title", content: "Clock In - eatOS Point of Sale" },
+      { property: "og:title", content: `Clock In - ${brand.appName} Point of Sale` },
       {
         property: "og:description",
         content: "PIN, biometric and break controls to run your shift.",

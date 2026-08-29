@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import {
   Bell,
   Briefcase,
@@ -32,12 +33,12 @@ import { useConfirm } from "@/components/pos/confirm-sheet";
 export const Route = createFileRoute("/settings/")({
   head: () => ({
     meta: [
-      { title: "Settings - EATOS Handheld" },
+      { title: `Settings - ${brand.appName} Handheld` },
       {
         name: "description",
         content: "Device, menu, payments, workforce and hardware settings for the handheld app.",
       },
-      { property: "og:title", content: "Settings - EATOS Handheld" },
+      { property: "og:title", content: `Settings - ${brand.appName} Handheld` },
       {
         property: "og:description",
         content: "Device, menu, payments, workforce and hardware settings for the handheld app.",

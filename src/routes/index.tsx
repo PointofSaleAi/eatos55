@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -15,12 +16,12 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Point of Sale - eatOS Sign in" },
-      { name: "description", content: "Secure team access to the eatOS Point of Sale app." },
-      { property: "og:title", content: "Point of Sale - eatOS Sign in" },
+      { title: `Point of Sale - ${brand.appName} Sign in` },
+      { name: "description", content: `Secure team access to the ${brand.appName} Point of Sale app.` },
+      { property: "og:title", content: `Point of Sale - ${brand.appName} Sign in` },
       {
         property: "og:description",
-        content: "Secure team access to the eatOS Point of Sale app.",
+        content: `Secure team access to the ${brand.appName} Point of Sale app.`,
       },
     ],
   }),

@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { Bug, FileUp, MessageCircleMore, MessageSquare, RotateCw, Triangle } from "lucide-react";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
@@ -15,15 +16,15 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/system/customer-support")({
   head: () => ({
     meta: [
-      { title: "Customer Support - EATOS Handheld" },
+      { title: `Customer Support - ${brand.appName} Handheld` },
       {
         name: "description",
-        content: "User feedback tools, live chat, Live Pin and log uploads for EATOS support.",
+        content: `User feedback tools, live chat, Live Pin and log uploads for ${brand.appName} support.`,
       },
-      { property: "og:title", content: "Customer Support - EATOS Handheld" },
+      { property: "og:title", content: `Customer Support - ${brand.appName} Handheld` },
       {
         property: "og:description",
-        content: "User feedback tools, live chat, Live Pin and log uploads for EATOS support.",
+        content: `User feedback tools, live chat, Live Pin and log uploads for ${brand.appName} support.`,
       },
     ],
   }),
@@ -104,7 +105,7 @@ function CustomerSupport() {
             title="Upload Logs"
             icon={FileUp}
             color="black"
-            onClick={() => toast.success("Device logs uploaded to EATOS support")}
+            onClick={() => toast.success(`Device logs uploaded to ${brand.appName} support`)}
           />
         </GroupCard>
       </ScreenBody>

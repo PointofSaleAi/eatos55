@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { BriefcaseBusiness, Users } from "lucide-react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
@@ -6,12 +7,12 @@ import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
 export const Route = createFileRoute("/settings/workforce")({
   head: () => ({
     meta: [
-      { title: "Workforce - EATOS Handheld settings" },
+      { title: `Workforce - ${brand.appName} Handheld settings` },
       {
         name: "description",
         content: "Track employee clock-in and clock-out times from the handheld.",
       },
-      { property: "og:title", content: "Workforce - EATOS Handheld settings" },
+      { property: "og:title", content: `Workforce - ${brand.appName} Handheld settings` },
       {
         property: "og:description",
         content: "Track employee clock-in and clock-out times from the handheld.",

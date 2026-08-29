@@ -47,13 +47,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/payment/method")({
   head: () => ({
     meta: [
-      { title: "Select Payment Method - eatOS Point of Sale" },
+      { title: `Select Payment Method - ${brand.appName} Point of Sale` },
       {
         name: "description",
         content:
           "Review the check and choose cash, card, split check, room charge, gift card, loyalty or a delivery partner.",
       },
-      { property: "og:title", content: "Select Payment Method - eatOS Point of Sale" },
+      { property: "og:title", content: `Select Payment Method - ${brand.appName} Point of Sale` },
       {
         property: "og:description",
         content:

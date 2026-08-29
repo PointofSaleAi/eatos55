@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { brand } from "@/lib/brand";
 import { Clock, RotateCw } from "lucide-react";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
@@ -15,12 +16,12 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/control-center")({
   head: () => ({
     meta: [
-      { title: "Control Center - EATOS Handheld settings" },
+      { title: `Control Center - ${brand.appName} Handheld settings` },
       {
         name: "description",
         content: "Device settings, hardware control and the scheduled app restart time.",
       },
-      { property: "og:title", content: "Control Center - EATOS Handheld settings" },
+      { property: "og:title", content: `Control Center - ${brand.appName} Handheld settings` },
       {
         property: "og:description",
         content: "Device settings, hardware control and the scheduled app restart time.",
