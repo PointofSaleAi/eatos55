@@ -1,8 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
-import { BriefcaseBusiness, Users } from "lucide-react";
+import { BriefcaseBusiness, Eye, Users } from "lucide-react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
-import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
+import {
+  GroupCard,
+  GroupLabel,
+  IconNavRow,
+  IconToggleRow,
+  IconValueRow,
+} from "@/components/pos/settings-rows";
+import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/settings/workforce")({
   head: () => ({
@@ -23,6 +30,7 @@ export const Route = createFileRoute("/settings/workforce")({
 });
 
 function WorkforceSettings() {
+  const { settings, updateSettings, canManageSettings } = usePos();
   return (
     <>
       <SubHeader title="Workforce" />
@@ -48,6 +56,26 @@ function WorkforceSettings() {
           <div className="border-t border-border">
             <IconNavRow title="Employee" icon={Users} color="indigo" topic="employee" />
           </div>
+        </GroupCard>
+
+        <GroupLabel>Shift dashboard</GroupLabel>
+        <GroupCard>
+          {canManageSettings ? (
+            <IconToggleRow
+              title="Show shift totals to servers"
+              icon={Eye}
+              color="green"
+              checked={settings.serverShiftTotals}
+              onChange={(v) => updateSettings({ serverShiftTotals: v })}
+            />
+          ) : (
+            <IconValueRow
+              title="Show shift totals to servers"
+              icon={Eye}
+              color="grey"
+              value={settings.serverShiftTotals ? "On" : "Off"}
+            />
+          )}
         </GroupCard>
       </ScreenBody>
     </>

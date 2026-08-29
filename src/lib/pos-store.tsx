@@ -282,6 +282,8 @@ export type AppSettings = {
   restartTime: string;
   paymentPlatform: string;
   clockedInAt: string;
+  /** Manager switch: lets servers see sale, tip and hour totals on the dashboard. */
+  serverShiftTotals: boolean;
   sentry: boolean;
   instabug: boolean;
   livePin: string;
@@ -381,6 +383,7 @@ const defaultSettings: AppSettings = {
   restartTime: "02:30 PM",
   paymentPlatform: "NA",
   clockedInAt: "5:43 PM",
+  serverShiftTotals: false,
   sentry: false,
   instabug: true,
   livePin: "F179488",
