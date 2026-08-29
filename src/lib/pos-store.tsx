@@ -330,7 +330,7 @@ const defaultLoginSlides: LoginSlide[] = [
 ];
 
 const defaultSettings: AppSettings = {
-  restaurantName: "EATOS Kitchen · Downtown",
+  restaurantName: `${brand.appName} Kitchen · Downtown`,
   restaurantAddress: "418 W 25th St",
   restaurantCity: "New York, NY 10001",
   restaurantPhone: "(212) 555-0148",
