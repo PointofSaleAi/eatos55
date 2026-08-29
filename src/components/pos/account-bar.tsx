@@ -181,7 +181,7 @@ export function AccountActions() {
                 <p className="text-fs-sm font-extrabold text-foreground">
                   eatOS ver {settings.appVersion}
                 </p>
-                <p className="text-fs-xs text-muted-foreground">eatOS Point Of Sale Inc.</p>
+                <p className="text-fs-xs text-muted-foreground">{brand.appName} Point Of Sale Inc.</p>
               </div>
             </div>
             <p className="mt-3 text-fs-xs leading-snug text-muted-foreground">
