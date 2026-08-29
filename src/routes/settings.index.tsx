@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Navigate, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import {
   Bell,
@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { MenuButton, ScreenBody } from "@/components/pos/shell";
+import { MenuButton, ScreenBody, useWideLayout } from "@/components/pos/shell";
 import { GroupCard, IconNavRow, type TileColor } from "@/components/pos/settings-rows";
 import { EmptyState } from "@/components/pos/primitives";
 import { PinSheet } from "@/components/pos/pin-sheet";
@@ -63,6 +63,7 @@ function SettingsHub() {
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [pinOpen, setPinOpen] = useState(false);
+  const wide = useWideLayout();
 
   const groups = useMemo<Row[][]>(
     () => [
@@ -84,10 +85,10 @@ function SettingsHub() {
         { title: "Payments", icon: Wallet, color: "indigo", to: "/settings/payments" },
         { title: "Workforce", icon: Briefcase, color: "purple", to: "/settings/workforce" },
         {
-          title: "Sales Summary Report",
+          title: "Reports",
           icon: FileText,
           color: "slate",
-          to: "/settings/sales-summary",
+          to: "/settings/reports",
         },
       ],
       [
@@ -139,6 +140,10 @@ function SettingsHub() {
     .split(" ")
     .map((p) => p[0])
     .join("");
+
+  // Landscape keeps the settings sidebar alongside the detail pane, so the hub
+  // list would be a duplicate: land on General instead of an empty pane.
+  if (wide) return <Navigate to="/settings/general" replace />;
 
   return (
     <>
