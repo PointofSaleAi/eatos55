@@ -28,7 +28,7 @@ function SalesSummary() {
 
   return (
     <>
-      <SubHeader title="Sales Summary Report" />
+      <SubHeader title="Sales Summary Report" backLabel="Reports" backTo="/settings/reports" />
       <ScreenBody className="py-2">
         <p className="px-1 pb-4 text-fs-sm text-muted-foreground">{ticketDate}</p>
         <GroupCard>

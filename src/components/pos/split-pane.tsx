@@ -74,7 +74,7 @@ const settingsGroups: SettingsLink[][] = [
     { to: "/settings/menu", label: "Menu", icon: Utensils },
     { to: "/settings/payments", label: "Payments", icon: Wallet },
     { to: "/settings/workforce", label: "Workforce", icon: Briefcase },
-    { to: "/settings/sales-summary", label: "Sales Summary Report", icon: FileText },
+    { to: "/settings/reports", label: "Reports", icon: FileText },
   ],
   [
     { to: "/settings/network", label: "Network", icon: Wifi },
@@ -152,16 +152,6 @@ export function useSectionPane(): { list: ReactNode; replaceChildren?: ReactNode
   if (p.startsWith("/settings") || p.startsWith("/system")) {
     return {
       list: <SettingsNavList />,
-      ...(p === "/settings"
-        ? {
-            replaceChildren: (
-              <PaneEmpty
-                title="Settings"
-                detail="Choose a topic on the left to review or change it."
-              />
-            ),
-          }
-        : {}),
     };
   }
   return null;

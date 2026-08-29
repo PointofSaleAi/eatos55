@@ -56,7 +56,7 @@ const entries: Entry[] = [
     title: "Reports",
     copy: "View your daily performance data.",
     icon: BarChart3,
-    to: "/settings/sales-summary",
+    to: "/settings/reports",
   },
   {
     title: "Advanced",
