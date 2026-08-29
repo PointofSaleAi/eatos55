@@ -374,7 +374,8 @@ const defaultSettings: AppSettings = {
   weatherTemp: "24°",
   weatherCondition: "Partly cloudy",
 
-  taxAlias: "Tax",
+  // Wording only: the variant decides Tax vs VAT, never the rate.
+  taxAlias: brand.taxLabel,
   appVersion: "5.200.27",
   restartApp: true,
   restartTime: "02:30 PM",
