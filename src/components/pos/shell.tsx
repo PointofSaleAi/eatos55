@@ -1,4 +1,4 @@
-import { Link, useRouter, useRouterState } from "@tanstack/react-router";
+import { Link, useCanGoBack, useRouter, useRouterState } from "@tanstack/react-router";
 import {
   Check,
   ChevronLeft,
