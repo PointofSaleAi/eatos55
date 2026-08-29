@@ -1,5 +1,7 @@
 import {
   ClipboardList,
+  Columns3,
+  FilePlus2,
   CreditCard,
   FileText,
   Grid2x2,
@@ -53,14 +55,15 @@ export const navGroups: NavGroup[] = [
 ];
 
 /**
- * Rail destinations in the order used by the reference app:
- * New Order, Floor Plan, Rooms, Tickets, Order Status.
+ * Rail destinations in the order used by the reference app: the menu grid first,
+ * then new order, floor plan, tickets, rooms and the order status board.
  */
 export const railPrimary: NavLink[] = [
-  { to: "/order/new", label: "New Order", icon: ClipboardList },
+  { to: "/order/menu", label: "Menu", icon: LayoutGrid },
+  { to: "/order/new", label: "New Order", icon: FilePlus2 },
   { to: "/floor", label: "Floor Plan", icon: Sofa },
-  { to: "/rooms", label: "Rooms", icon: Grid2x2 },
   { to: "/tickets", label: "Tickets", icon: Receipt },
-  { to: "/board", label: "Order Status", icon: LayoutGrid },
+  { to: "/rooms", label: "Rooms", icon: Grid2x2 },
+  { to: "/board", label: "Order Status", icon: Columns3 },
 ];
 

@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AccountActions, AccountInfo } from "@/components/pos/account-bar";
 import { ClockPanel } from "@/components/pos/clock-panel";
@@ -22,6 +22,16 @@ export function ClockPullDown() {
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [pin, setPin] = useState("");
+
+  // The rail's shift assistant opens the same pull-down pad.
+  useEffect(() => {
+    const onOpen = () => {
+      setOpen(false);
+      setMenuOpen(true);
+    };
+    window.addEventListener("pos:open-dashboard", onOpen);
+    return () => window.removeEventListener("pos:open-dashboard", onOpen);
+  }, []);
 
   const close = () => {
     setOpen(false);
