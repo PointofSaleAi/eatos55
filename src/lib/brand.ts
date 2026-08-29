@@ -32,6 +32,10 @@ export interface BrandConfig {
   deliveryPartners: DeliveryPartnerId[];
   /** Default payment provider for the region. */
   defaultProvider: "Adyen" | "Stripe";
+  /** Default reader model paired with the provider. */
+  defaultReader: string;
+  /** Demo venue defaults shown until Back Office syncs real ones. */
+  venue: { address: string; city: string; phone: string; taxId: string; timezone: string; taxRate: string };
 }
 
 const variants: Record<BrandId, BrandConfig> = {
@@ -46,6 +50,15 @@ const variants: Record<BrandId, BrandConfig> = {
     vatRate: null,
     deliveryPartners: ["uber", "doordash", "grubhub"],
     defaultProvider: "Stripe",
+    defaultReader: "BBPOS WisePOS E",
+    venue: {
+      address: "418 W 25th St",
+      city: "New York, NY 10001",
+      phone: "(212) 555-0148",
+      taxId: "88-4102397",
+      timezone: "America/New_York",
+      taxRate: "8.75%",
+    },
   },
   "lcros-uk": {
     id: "lcros-uk",
@@ -58,6 +71,15 @@ const variants: Record<BrandId, BrandConfig> = {
     vatRate: 20,
     deliveryPartners: ["deliveroo", "just-eat", "uber", "doordash"],
     defaultProvider: "Adyen",
+    defaultReader: "Adyen S1F2",
+    venue: {
+      address: "25 Great Chapel St",
+      city: "London W1F 4AH",
+      phone: "+44 20 7946 0958",
+      taxId: "GB 123 4567 89",
+      timezone: "Europe/London",
+      taxRate: "20%",
+    },
   },
   "eatos-ae": {
     id: "eatos-ae",
@@ -70,6 +92,15 @@ const variants: Record<BrandId, BrandConfig> = {
     vatRate: 5,
     deliveryPartners: ["deliveroo", "uber", "doordash"],
     defaultProvider: "Adyen",
+    defaultReader: "Adyen S1F2",
+    venue: {
+      address: "Sheikh Zayed Rd, Trade Centre 1",
+      city: "Dubai",
+      phone: "+971 4 555 0148",
+      taxId: "100123456700003",
+      timezone: "Asia/Dubai",
+      taxRate: "5%",
+    },
   },
 };
 
