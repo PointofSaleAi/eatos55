@@ -30,17 +30,25 @@ npm run dev
 One codebase builds three regional apps. Set `VITE_BRAND` at build time:
 
 ```bash
-VITE_BRAND=eatos-us  bun run build   # eatOS (US): USD, en-US, sales tax, Stripe, Grubhub
-VITE_BRAND=lcros-uk  bun run build   # lcrOS (UK): GBP, en-GB, VAT 20%, Adyen, Deliveroo/Just Eat
-VITE_BRAND=eatos-ae  bun run build   # eatOS (UAE): AED, en-AE, VAT 5%, Adyen, Deliveroo
+VITE_BRAND=eatos-us  bun run build   # eatOS (US): USD, en-US, "Tax" wording, full tender catalog
+VITE_BRAND=lcros-uk  bun run build   # lcrOS (UK): GBP, en-GB, "VAT" wording, Just Eat / Deliveroo names
+VITE_BRAND=eatos-ae  bun run build   # eatOS (UAE): AED, en-GB formats, "VAT" wording
 ```
 
 Default (no variable) is `eatos-us`. Everything regional lives in `src/lib/brand.ts`:
-app name and wordmark alt text, locale, currency (and the currency options in
-Settings > General), tax label ("Tax" vs "VAT"), regional delivery partners,
-default payment provider and reader, and demo venue defaults. Screens never
-hardcode a region; they read `brand` or the `formatMoney` / `formatTime` /
-`formatDate` / `formatDateTime` helpers.
+app name and wordmark alt text, locale, currency fallback (and the currency
+options in Settings > General), tax wording ("Tax" vs "VAT"), the
+`hideUsOnlyPayments` flag, tender display renames, and the provider and reader
+catalogs. Screens never hardcode a region; they read `brand` or the
+`formatMoney` / `formatTime` / `formatDate` / `formatDateTime` helpers.
+
+Not variant data, on purpose: tax rates, the payment provider, the card reader
+model, and which delivery partners are switched on are all venue settings, not
+build-time facts. There is no default 8.75% / 20% / 5% rate and no "Stripe for
+US, Adyen elsewhere" matrix anywhere in the config. The variant only decides
+wording, formats, tender visibility and tender naming. Do not reintroduce
+hardcoded regional rates or provider defaults.
+
 
 Note: `public/manifest.webmanifest` is static, so swap its `name`/`short_name`
 per variant in your CI packaging step (lcrOS build: "lcrOS Handheld" / "lcrOS").
