@@ -36,7 +36,7 @@ function PayByCard() {
       initialAmount={due ? String(due) : ""}
       actionLabel={(amount) => `Charge ${money(amount || due)}`}
       onCommit={(amount) => {
-        commitPayment("card", amount);
+        commitPayment("card", amount, { tenderId: "card-present" });
         toast.success("Card payment approved");
         navigate({ to: "/payment/success" });
       }}

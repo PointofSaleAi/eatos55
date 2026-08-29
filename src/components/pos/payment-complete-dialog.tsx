@@ -1,5 +1,5 @@
 import { Mail, MessageSquare, Printer, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cashDenominations, money } from "@/lib/demo-data";
@@ -26,7 +26,7 @@ export function PaymentCompleteCard({
   onDone: () => void;
   className?: string;
 }) {
-  const { lastPayment, guest } = usePos();
+  const { lastPayment, guest, settings } = usePos();
   const [choice, setChoice] = useState<Receipt | null>(null);
   const [email, setEmail] = useState(guest.email ?? "");
   const [phone, setPhone] = useState(guest.phone ?? "");
@@ -42,6 +42,17 @@ export function PaymentCompleteCard({
         .map((d) => `${notes[d]} x $${d}`)
         .join(", ")
     : "";
+
+  // Auto Close Payment: settings decide per tender whether the order closes itself.
+  const tenderId = lastPayment?.tenderId;
+  const autoClose = tenderId ? (settings.tenderAutoClose[tenderId] ?? false) : false;
+  const doneRef = useRef(onDone);
+  doneRef.current = onDone;
+  useEffect(() => {
+    if (!autoClose || !lastPayment) return;
+    const t = window.setTimeout(() => doneRef.current(), 1600);
+    return () => window.clearTimeout(t);
+  }, [autoClose, lastPayment]);
 
   const send = (what: string) => {
     toast.success(what);

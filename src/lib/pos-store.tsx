@@ -183,6 +183,44 @@ const defaultTenders: Record<TenderId, boolean> = {
   grubhub: true,
 };
 
+/**
+ * Auto Close Payment per tender: when on, the completion card dismisses itself
+ * after a successful payment with that method. Defaults keep today's behaviour.
+ */
+const defaultTenderAutoClose: Record<TenderId, boolean> = {
+  cash: true,
+  "card-present": false,
+  contactless: false,
+  "apple-pay": false,
+  "google-pay": false,
+  amex: false,
+  "pay-by-link": true,
+  qr: false,
+  "open-banking": false,
+  "bank-transfer": false,
+  paypal: false,
+  klarna: false,
+  cheque: false,
+  voucher: false,
+  staff: false,
+  "round-up": false,
+  deliveroo: false,
+  "just-eat": false,
+  "manual-card": true,
+  "manual-cc": false,
+  external: false,
+  split: false,
+  account: false,
+  house: false,
+  gift: false,
+  loyalty: false,
+  "in-kind": false,
+  room: true,
+  uber: false,
+  doordash: false,
+  grubhub: false,
+};
+
 
 
 
@@ -218,6 +256,8 @@ export type AppSettings = {
   roomService: boolean;
   /** Which tenders appear on the payment method screen. */
   tenders: Record<TenderId, boolean>;
+  /** Per tender: close the order automatically once payment succeeds. */
+  tenderAutoClose: Record<TenderId, boolean>;
   /** Processor that clears card payments for this venue. */
   paymentProvider: "Adyen" | "Stripe";
   cardReaderModel: string;
@@ -318,6 +358,7 @@ const defaultSettings: AppSettings = {
   deviceService: "Table Service",
   roomService: false,
   tenders: defaultTenders,
+  tenderAutoClose: defaultTenderAutoClose,
   paymentProvider: "Adyen",
   cardReaderModel: "Adyen S1F2",
   cardReaderConnection: "Bluetooth",
@@ -419,6 +460,8 @@ export type PartialPayment = {
 export type LastPayment = {
   ticketId: string;
   method: TenderMethod;
+  /** Settings tender the payment was taken with, for per-tender auto close. */
+  tenderId?: TenderId;
   total: number;
   tendered: number;
   change: number;
@@ -565,6 +608,7 @@ type Store = {
       signedBill?: boolean;
       tip?: number;
       notes?: Record<number, number>;
+      tenderId?: TenderId;
     },
   ) => string;
   lastPayment: LastPayment;
@@ -702,6 +746,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
           ...s,
           ...saved,
           tenders: { ...defaultTenders, ...(saved.tenders ?? {}) },
+          tenderAutoClose: {
+            ...defaultTenderAutoClose,
+            ...(saved.tenderAutoClose ?? {}),
+          },
         }));
       }
 
@@ -1314,6 +1362,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setLastPayment({
           ticketId: id,
           method,
+          ...(opts?.tenderId ? { tenderId: opts.tenderId } : {}),
           total,
           tendered,
           change,

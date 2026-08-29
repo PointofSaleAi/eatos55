@@ -140,7 +140,11 @@ function PaymentMethod() {
       return;
     }
     haptic("success");
-    commitPayment(cfg.method, amount, { label: cfg.label, ...(notes ? { notes } : {}) });
+    commitPayment(cfg.method, amount, {
+      label: cfg.label,
+      ...(selected ? { tenderId: selected as TenderId } : {}),
+      ...(notes ? { notes } : {}),
+    });
     announce("Payment complete");
     toast.success(`Paid in full with ${cfg.label}`);
     setDoneOpen(true);
@@ -151,7 +155,10 @@ function PaymentMethod() {
 
   const finish = (cfg: RefConfig, value: string) => {
     haptic("success");
-    commitPayment(cfg.method, due, { label: cfg.title });
+    commitPayment(cfg.method, due, {
+      label: cfg.title,
+      ...(selected ? { tenderId: selected as TenderId } : {}),
+    });
     announce("Payment complete");
     toast.success(cfg.success(value));
     setDoneOpen(true);

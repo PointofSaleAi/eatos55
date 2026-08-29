@@ -39,7 +39,7 @@ function PayByCash() {
         }
         haptic("success");
         announce("Payment complete");
-        commitPayment("cash", amount, notes ? { notes } : undefined);
+        commitPayment("cash", amount, { tenderId: "cash", ...(notes ? { notes } : {}) });
         const change = Math.round((amount - due) * 100) / 100;
         toast.success(
           change > 0 ? `Paid · change due ${money(change)}` : "Paid in full with cash",
