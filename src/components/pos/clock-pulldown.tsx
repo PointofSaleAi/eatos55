@@ -5,19 +5,22 @@ import { toast } from "sonner";
 import { AccountActions, AccountInfo } from "@/components/pos/account-bar";
 import { ClockPanel } from "@/components/pos/clock-panel";
 import { PinPad } from "@/components/pos/pin-pad";
+import { SettingsPullDown } from "@/components/pos/settings-pulldown";
 import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { usePos } from "@/lib/pos-store";
 
 /**
- * Dark top bar (design parity) plus the pull-down clock pad: the handle hanging
- * from the bar reveals the PIN keypad with Clock Out / Break / Clock In,
- * biometrics, revenue center and Log Out.
+ * Dark top bar (design parity) with two pull surfaces: the handle hanging from
+ * the bar pulls down the settings map, and the switch-user control on the left
+ * reveals the clock PIN keypad (Clock Out / Break / Clock In, biometrics,
+ * revenue center and Log Out).
  */
 export function ClockPullDown() {
   const navigate = useNavigate();
   const { session, settings, clockIn, clockOut, signOut } = usePos();
   const wide = useLandscapeWide();
   const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [pin, setPin] = useState("");
 
   const close = () => {
@@ -39,22 +42,33 @@ export function ClockPullDown() {
     <>
       <div className="relative z-40 shrink-0 bg-shell">
         <div className="flex h-12 items-center gap-2 px-2">
-          <AccountInfo onSwitchUser={() => setOpen(true)} />
+          <AccountInfo
+            onSwitchUser={() => {
+              setMenuOpen(false);
+              setOpen(true);
+            }}
+          />
           <div className="min-w-0 flex-1" />
           <AccountActions />
         </div>
         <div className="pointer-events-none absolute inset-x-0 top-full flex justify-center">
           <button
             type="button"
-            aria-label={open ? "Close clock pad" : "Open clock pad"}
-            aria-expanded={open}
-            onClick={() => (open ? close() : setOpen(true))}
+            aria-label={menuOpen ? "Close settings menu" : "Open settings menu"}
+            aria-expanded={menuOpen}
+            onClick={() => {
+              close();
+              setMenuOpen((v) => !v);
+            }}
             className="pointer-events-auto flex h-6 tap-safe w-32 items-center justify-center rounded-b-2xl bg-shell text-shell-foreground/80 transition-colors hover:text-shell-foreground"
           >
-            {open ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+            {menuOpen ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
           </button>
         </div>
       </div>
+
+      <SettingsPullDown open={menuOpen} onClose={() => setMenuOpen(false)} />
+
 
       {open ? (
         <div className="absolute inset-0 z-30 flex flex-col overflow-hidden bg-gate-overlay px-[clamp(0.75rem,5vw,5rem)] pb-[clamp(0.75rem,3dvh,2rem)] pt-[5.5rem] sm:pt-10">
