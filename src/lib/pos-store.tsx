@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { brand, formatTime, hasDeliveryPartner } from "@/lib/brand";
+import { brand, formatTime, isTenderVisible, tenderLabel } from "@/lib/brand";
 import loginSlide1 from "@/assets/login-1.jpg.asset.json";
 import loginSlide2 from "@/assets/login-2.jpg.asset.json";
 import loginSlide3 from "@/assets/login-3.jpg.asset.json";
@@ -167,8 +167,8 @@ const defaultTenders: Record<TenderId, boolean> = {
   voucher: false,
   staff: false,
   "round-up": false,
-  deliveroo: hasDeliveryPartner("deliveroo"),
-  "just-eat": hasDeliveryPartner("just-eat"),
+  deliveroo: false,
+  "just-eat": false,
   "manual-card": true,
   "manual-cc": true,
   external: true,
@@ -181,7 +181,7 @@ const defaultTenders: Record<TenderId, boolean> = {
   room: true,
   uber: true,
   doordash: true,
-  grubhub: hasDeliveryPartner("grubhub"),
+  grubhub: true,
 };
 
 /**
@@ -342,7 +342,7 @@ const defaultSettings: AppSettings = {
   tipPresets: "18% · 20% · 25%",
   tipBasis: "Pre-tax",
   customTip: "Allowed",
-  taxRate: brand.venue.taxRate,
+  taxRate: "0%",
   inclusivePricing: true,
   emailReceipts: false,
   receiptFooter: "Thank you!",
@@ -360,8 +360,8 @@ const defaultSettings: AppSettings = {
   roomService: false,
   tenders: defaultTenders,
   tenderAutoClose: defaultTenderAutoClose,
-  paymentProvider: brand.defaultProvider,
-  cardReaderModel: brand.defaultReader,
+  paymentProvider: "",
+  cardReaderModel: "",
   cardReaderConnection: "Bluetooth",
   cardReaderStatus: "Not paired",
 

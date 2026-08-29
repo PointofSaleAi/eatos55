@@ -38,7 +38,7 @@ import {
   ToggleColumnHeaders,
   type TileColor,
 } from "@/components/pos/settings-rows";
-import { brand, hasDeliveryPartner, type DeliveryPartnerId } from "@/lib/brand";
+import { brand, isTenderVisible, tenderLabel } from "@/lib/brand";
 import { usePos, TENDER_LABELS, type TenderId } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/settings/payment-methods")({
@@ -236,9 +236,7 @@ function PaymentMethodsSettings() {
         </GroupCard>
 
         {sections.map((section) => {
-          const rows = section.rows.filter((row) =>
-        DELIVERY_IDS.has(row.id) ? hasDeliveryPartner(row.id as DeliveryPartnerId) : true,
-      );
+          const rows = section.rows.filter((row) => isTenderVisible(row.id));
           if (rows.length === 0) return null;
           return (
             <div key={section.title}>
@@ -255,7 +253,7 @@ function PaymentMethodsSettings() {
                   return (
                     <IconDualToggleRow
                       key={row.id}
-                      title={TENDER_LABELS[row.id]}
+                      title={tenderLabel(row.id, TENDER_LABELS[row.id])}
                       icon={row.icon}
                       color={row.color}
                       checked={enabled}
