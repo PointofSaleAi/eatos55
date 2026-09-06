@@ -50,6 +50,7 @@ import { Route as SystemHardwareRouteImport } from './routes/system.hardware'
 import { Route as SystemHelpCenterRouteImport } from './routes/system.help-center'
 import { Route as SystemIntegrationsRouteImport } from './routes/system.integrations'
 import { Route as SystemNetworkRouteImport } from './routes/system.network'
+import { Route as TapToPayWelcomeRouteImport } from './routes/tap-to-pay.welcome'
 import { Route as TicketsIndexRouteImport } from './routes/tickets.index'
 import { Route as TicketsTicketIdRouteImport } from './routes/tickets.$ticketId'
 import { Route as TicketsFilterRouteImport } from './routes/tickets.filter'
@@ -268,6 +269,11 @@ const SystemNetworkRoute = SystemNetworkRouteImport.update({
   path: '/system/network',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TapToPayWelcomeRoute = TapToPayWelcomeRouteImport.update({
+  id: '/tap-to-pay/welcome',
+  path: '/tap-to-pay/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TicketsIndexRoute = TicketsIndexRouteImport.update({
   id: '/tickets/',
   path: '/tickets/',
@@ -367,6 +373,7 @@ export interface FileRoutesByFullPath {
   '/system/help-center': typeof SystemHelpCenterRoute
   '/system/integrations': typeof SystemIntegrationsRoute
   '/system/network': typeof SystemNetworkRoute
+  '/tap-to-pay/welcome': typeof TapToPayWelcomeRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -422,6 +429,7 @@ export interface FileRoutesByTo {
   '/system/help-center': typeof SystemHelpCenterRoute
   '/system/integrations': typeof SystemIntegrationsRoute
   '/system/network': typeof SystemNetworkRoute
+  '/tap-to-pay/welcome': typeof TapToPayWelcomeRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -478,6 +486,7 @@ export interface FileRoutesById {
   '/system/help-center': typeof SystemHelpCenterRoute
   '/system/integrations': typeof SystemIntegrationsRoute
   '/system/network': typeof SystemNetworkRoute
+  '/tap-to-pay/welcome': typeof TapToPayWelcomeRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -535,6 +544,7 @@ export interface FileRouteTypes {
     | '/system/help-center'
     | '/system/integrations'
     | '/system/network'
+    | '/tap-to-pay/welcome'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -590,6 +600,7 @@ export interface FileRouteTypes {
     | '/system/help-center'
     | '/system/integrations'
     | '/system/network'
+    | '/tap-to-pay/welcome'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -645,6 +656,7 @@ export interface FileRouteTypes {
     | '/system/help-center'
     | '/system/integrations'
     | '/system/network'
+    | '/tap-to-pay/welcome'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -701,6 +713,7 @@ export interface RootRouteChildren {
   SystemHelpCenterRoute: typeof SystemHelpCenterRoute
   SystemIntegrationsRoute: typeof SystemIntegrationsRoute
   SystemNetworkRoute: typeof SystemNetworkRoute
+  TapToPayWelcomeRoute: typeof TapToPayWelcomeRoute
   TicketsTicketIdRoute: typeof TicketsTicketIdRoute
   TicketsFilterRoute: typeof TicketsFilterRoute
   TicketsManagerControlsRoute: typeof TicketsManagerControlsRoute
@@ -1009,6 +1022,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SystemNetworkRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tap-to-pay/welcome': {
+      id: '/tap-to-pay/welcome'
+      path: '/tap-to-pay/welcome'
+      fullPath: '/tap-to-pay/welcome'
+      preLoaderRoute: typeof TapToPayWelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tickets/': {
       id: '/tickets/'
       path: '/tickets'
@@ -1143,6 +1163,7 @@ const rootRouteChildren: RootRouteChildren = {
   SystemHelpCenterRoute: SystemHelpCenterRoute,
   SystemIntegrationsRoute: SystemIntegrationsRoute,
   SystemNetworkRoute: SystemNetworkRoute,
+  TapToPayWelcomeRoute: TapToPayWelcomeRoute,
   TicketsTicketIdRoute: TicketsTicketIdRoute,
   TicketsFilterRoute: TicketsFilterRoute,
   TicketsManagerControlsRoute: TicketsManagerControlsRoute,
