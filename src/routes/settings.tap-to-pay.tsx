@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { CreditCard, FileText, Smartphone, Wallet } from "lucide-react";
 import { brand } from "@/lib/brand";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
@@ -37,6 +37,7 @@ export const Route = createFileRoute("/settings/tap-to-pay")({
  * of the two permanent homes for the education screens (requirement 4.2).
  */
 function TapToPaySettings() {
+  const navigate = useNavigate();
   const { settings, updateSettings, canManageSettings } = usePos();
   const state = settings.tapToPayState;
   const ready = state === "ready";
@@ -95,15 +96,17 @@ function TapToPaySettings() {
             title="Taking a contactless card"
             icon={CreditCard}
             color="blue"
-            to="/tap-to-pay/education/$step"
-            params={{ step: "cards" }}
+            onClick={() =>
+              navigate({ to: "/tap-to-pay/education/$step", params: { step: "cards" } })
+            }
           />
           <IconNavRow
             title="Taking Apple Pay and digital wallets"
             icon={Wallet}
             color="black"
-            to="/tap-to-pay/education/$step"
-            params={{ step: "wallets" }}
+            onClick={() =>
+              navigate({ to: "/tap-to-pay/education/$step", params: { step: "wallets" } })
+            }
           />
         </GroupCard>
         <Caption>
