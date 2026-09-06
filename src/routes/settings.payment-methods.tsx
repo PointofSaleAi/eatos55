@@ -231,17 +231,11 @@ function PaymentMethodsSettings() {
           return (
             <div key={section.title}>
               <GroupLabel>{section.title}</GroupLabel>
-              <ToggleColumnHeaders
-                primary="Enabled"
-                secondary="Auto Close Payment"
-                shortPrimary="On"
-                shortSecondary="Auto Close"
-              />
               <GroupCard>
                 {rows.map((row) => {
                   const enabled = row.locked ? true : tenders[row.id];
                   return (
-                    <IconDualToggleRow
+                    <IconToggleChipRow
                       key={row.id}
                       title={tenderLabel(row.id, TENDER_LABELS[row.id])}
                       icon={row.icon}
@@ -251,10 +245,11 @@ function PaymentMethodsSettings() {
                         if (row.locked || !canManageSettings) return;
                         set(row.id, v);
                       }}
-                      secondaryLabel="Auto Close Payment"
-                      secondaryChecked={autoClose[row.id]}
-                      secondaryDisabled={!enabled || !canManageSettings}
-                      onSecondaryChange={(v) => {
+                      chipLabel="Auto close"
+                      chipShortLabel="Auto"
+                      chipOn={autoClose[row.id]}
+                      chipDisabled={!enabled || !canManageSettings}
+                      onChipChange={(v) => {
                         if (!enabled || !canManageSettings) return;
                         setAutoClose(row.id, v);
                       }}
