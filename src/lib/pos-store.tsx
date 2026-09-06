@@ -381,6 +381,14 @@ const defaultSettings: AppSettings = {
   cardReaderConnection: "Bluetooth",
   cardReaderStatus: "Not paired",
 
+  tapToPayState: "notSetUp",
+  tapToPayDeviceLabel: "iPhone 15 · Front counter",
+  tapToPayAwarenessShownAt: "",
+  tapToPayDismissedAt: "",
+  tapToPayTermsAcceptedAt: "",
+
+
+
 
   language: "English",
 
