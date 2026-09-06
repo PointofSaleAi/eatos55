@@ -249,7 +249,7 @@ export function IconToggleChipRow({
               disabled={chipDisabled ?? false}
               onClick={() => onChipChange(!chipOn)}
               className={cn(
-                "min-h-ctl-sm shrink-0 whitespace-nowrap rounded-pill border px-3 t-badge transition-colors",
+                "tap-safe h-8 shrink-0 whitespace-nowrap rounded-pill border px-3 t-badge transition-colors",
                 chipOn
                   ? "border-transparent bg-accent text-accent-foreground"
                   : "border-border text-muted-foreground hover:text-foreground",
