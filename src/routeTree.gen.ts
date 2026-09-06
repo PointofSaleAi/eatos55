@@ -63,6 +63,7 @@ import { Route as SettingsDetailTopicRouteImport } from './routes/settings.detai
 import { Route as SettingsHardwareIntegrationsRouteImport } from './routes/settings.hardware.integrations'
 import { Route as SettingsPaymentPickerFieldRouteImport } from './routes/settings.payment-picker.$field'
 import { Route as SystemArticleSlugRouteImport } from './routes/system.article.$slug'
+import { Route as TapToPaySetupFromRouteImport } from './routes/tap-to-pay.setup.$from'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -336,6 +337,11 @@ const SystemArticleSlugRoute = SystemArticleSlugRouteImport.update({
   path: '/system/article/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TapToPaySetupFromRoute = TapToPaySetupFromRouteImport.update({
+  id: '/tap-to-pay/setup/$from',
+  path: '/tap-to-pay/setup/$from',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -392,6 +398,7 @@ export interface FileRoutesByFullPath {
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
   '/settings/payment-picker/$field': typeof SettingsPaymentPickerFieldRoute
   '/system/article/$slug': typeof SystemArticleSlugRoute
+  '/tap-to-pay/setup/$from': typeof TapToPaySetupFromRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -448,6 +455,7 @@ export interface FileRoutesByTo {
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
   '/settings/payment-picker/$field': typeof SettingsPaymentPickerFieldRoute
   '/system/article/$slug': typeof SystemArticleSlugRoute
+  '/tap-to-pay/setup/$from': typeof TapToPaySetupFromRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -505,6 +513,7 @@ export interface FileRoutesById {
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
   '/settings/payment-picker/$field': typeof SettingsPaymentPickerFieldRoute
   '/system/article/$slug': typeof SystemArticleSlugRoute
+  '/tap-to-pay/setup/$from': typeof TapToPaySetupFromRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -563,6 +572,7 @@ export interface FileRouteTypes {
     | '/settings/hardware/integrations'
     | '/settings/payment-picker/$field'
     | '/system/article/$slug'
+    | '/tap-to-pay/setup/$from'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -619,6 +629,7 @@ export interface FileRouteTypes {
     | '/settings/hardware/integrations'
     | '/settings/payment-picker/$field'
     | '/system/article/$slug'
+    | '/tap-to-pay/setup/$from'
   id:
     | '__root__'
     | '/'
@@ -675,6 +686,7 @@ export interface FileRouteTypes {
     | '/settings/hardware/integrations'
     | '/settings/payment-picker/$field'
     | '/system/article/$slug'
+    | '/tap-to-pay/setup/$from'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -731,6 +743,7 @@ export interface RootRouteChildren {
   SettingsDetailTopicRoute: typeof SettingsDetailTopicRoute
   SettingsPaymentPickerFieldRoute: typeof SettingsPaymentPickerFieldRoute
   SystemArticleSlugRoute: typeof SystemArticleSlugRoute
+  TapToPaySetupFromRoute: typeof TapToPaySetupFromRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1113,6 +1126,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SystemArticleSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tap-to-pay/setup/$from': {
+      id: '/tap-to-pay/setup/$from'
+      path: '/tap-to-pay/setup/$from'
+      fullPath: '/tap-to-pay/setup/$from'
+      preLoaderRoute: typeof TapToPaySetupFromRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1181,6 +1201,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsDetailTopicRoute: SettingsDetailTopicRoute,
   SettingsPaymentPickerFieldRoute: SettingsPaymentPickerFieldRoute,
   SystemArticleSlugRoute: SystemArticleSlugRoute,
+  TapToPaySetupFromRoute: TapToPaySetupFromRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
