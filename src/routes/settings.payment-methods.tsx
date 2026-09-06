@@ -129,8 +129,6 @@ const sections: { title: string; rows: Row[] }[] = [
   },
 ];
 
-const connections = ["Bluetooth", "LAN", "Cloud"];
-
 /** Nothing is preselected per region: provider and reader are venue choices. */
 const NOT_SET = "Not set";
 
@@ -147,16 +145,7 @@ function PaymentMethodsSettings() {
     updateSettings({ tenderAutoClose: { ...autoClose, [id]: value } });
 
   const provider = settings.paymentProvider || NOT_SET;
-  const models = [NOT_SET, ...brand.readerCatalog];
 
-  const setProvider = (value: string) => {
-    if (!canManageSettings) return;
-    updateSettings({
-      paymentProvider: value === NOT_SET ? "" : value,
-      cardReaderModel: "",
-      cardReaderStatus: "Not paired",
-    });
-  };
 
   return (
     <>
