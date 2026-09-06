@@ -285,55 +285,7 @@ export function IconToggleChipRow({
 }
 
 
-/** Row with two independent switches, the second one optionally disabled. */
-export function IconDualToggleRow({
-  checked,
-  onChange,
-  secondaryChecked,
-  onSecondaryChange,
-  secondaryDisabled,
-  secondaryLabel,
-  ...rest
-}: RowShellProps & {
-  checked: boolean;
-  onChange: (v: boolean) => void;
-  secondaryChecked: boolean;
-  onSecondaryChange: (v: boolean) => void;
-  secondaryDisabled?: boolean;
-  secondaryLabel: string;
-}) {
-  return (
-    <div className={rowBase}>
-      <RowInner
-        {...rest}
-        right={
-          <>
-            <span className="grid size-11 shrink-0 place-items-center">
-              <Switch
-                checked={checked}
-                onCheckedChange={onChange}
-                aria-label={rest.title}
-                className="tap-safe shrink-0"
-              />
-            </span>
-            <span className="grid size-11 shrink-0 place-items-center">
-              <Switch
-                checked={secondaryChecked}
-                onCheckedChange={onSecondaryChange}
-                disabled={secondaryDisabled}
-                aria-label={`${secondaryLabel} - ${rest.title}`}
-                className={cn(
-                  "tap-safe shrink-0",
-                  secondaryDisabled ? "opacity-40" : undefined,
-                )}
-              />
-            </span>
-          </>
-        }
-      />
-    </div>
-  );
-}
+
 
 export function IconToggleRow({
   checked,
