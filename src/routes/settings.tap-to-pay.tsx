@@ -1,0 +1,125 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { CreditCard, FileText, Smartphone, Wallet } from "lucide-react";
+import { brand } from "@/lib/brand";
+import { ScreenBody, SubHeader } from "@/components/pos/shell";
+import { Caption, GroupCard, GroupLabel, IconNavRow, IconValueRow } from "@/components/pos/settings-rows";
+import {
+  AppleAssetSlot,
+  TTP,
+  TTP_SET_UP,
+  ttpCopy,
+  ttpStatusLabel,
+} from "@/components/pos/tap-to-pay";
+import { usePos } from "@/lib/pos-store";
+
+export const Route = createFileRoute("/settings/tap-to-pay")({
+  head: () => ({
+    meta: [
+      { title: `${TTP} - ${brand.appName} payment settings` },
+      {
+        name: "description",
+        content:
+          "Turn Tap to Pay on iPhone on for this device, review the Apple terms and open Apple's merchant education at any time.",
+      },
+      { property: "og:title", content: `${TTP} - ${brand.appName} payment settings` },
+      {
+        property: "og:description",
+        content: "Enable Tap to Pay on iPhone for this device and reopen the merchant education.",
+      },
+    ],
+  }),
+  component: TapToPaySettings,
+});
+
+/**
+ * Screens 05, 06 and 07 in one place. This row is a permanent entry point
+ * outside every communication and the checkout flow (requirement 3.6) and one
+ * of the two permanent homes for the education screens (requirement 4.2).
+ */
+function TapToPaySettings() {
+  const { settings, updateSettings, canManageSettings } = usePos();
+  const state = settings.tapToPayState;
+  const ready = state === "ready";
+
+  return (
+    <>
+      <SubHeader title={TTP} />
+      <ScreenBody className="py-2">
+        <AppleAssetSlot label={TTP} detail="Apple-supplied lockup from the Marketing Toolkit" />
+
+        <GroupCard className="mt-4">
+          <IconValueRow
+            title="This device"
+            icon={Smartphone}
+            color="blue"
+            value={
+              state === "ineligible"
+                ? ttpCopy.unavailable
+                : `${ttpStatusLabel(state)} · ${settings.tapToPayDeviceLabel}`
+            }
+          />
+          <IconValueRow
+            title="Terms and Conditions"
+            icon={FileText}
+            color="slate"
+            value={
+              settings.tapToPayTermsAcceptedAt
+                ? `Accepted ${new Date(settings.tapToPayTermsAcceptedAt).toLocaleDateString()}`
+                : "Not accepted"
+            }
+          />
+        </GroupCard>
+
+        {state === "ineligible" ? (
+          <Caption>{ttpCopy.unavailable}</Caption>
+        ) : ready ? (
+          <Caption>
+            This iPhone takes contactless cards and digital wallets. On tablet, payments are taken on
+            a supported iPhone signed in to the same venue.
+          </Caption>
+        ) : (
+          <div className="mt-3">
+            <Link
+              to="/tap-to-pay/setup/$from"
+              params={{ from: "settings" }}
+              className="flex h-ctl-lg w-full items-center justify-center rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
+            >
+              {TTP_SET_UP}
+            </Link>
+          </div>
+        )}
+
+        <GroupLabel>How it works</GroupLabel>
+        <GroupCard>
+          <IconNavRow
+            title="Taking a contactless card"
+            icon={CreditCard}
+            color="blue"
+            to="/tap-to-pay/education/$step"
+            params={{ step: "cards" }}
+          />
+          <IconNavRow
+            title="Taking Apple Pay and digital wallets"
+            icon={Wallet}
+            color="black"
+            to="/tap-to-pay/education/$step"
+            params={{ step: "wallets" }}
+          />
+        </GroupCard>
+        <Caption>
+          Apple draws these screens, so they stay available whether or not {TTP} is switched on yet.
+        </Caption>
+
+        {ready && canManageSettings ? (
+          <button
+            type="button"
+            onClick={() => updateSettings({ tapToPayState: "notSetUp" })}
+            className="mt-4 h-ctl-md w-full rounded-row border border-border text-fs-sm font-bold text-destructive"
+          >
+            Turn off on this iPhone
+          </button>
+        ) : null}
+      </ScreenBody>
+    </>
+  );
+}
