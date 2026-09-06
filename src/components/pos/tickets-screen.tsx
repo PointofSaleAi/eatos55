@@ -1,4 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
+import { TapToPayNudge } from "@/components/pos/tap-to-pay";
 import {
   Calendar,
   ChevronLeft,
@@ -532,7 +533,9 @@ export function TicketsScreen({
                 ? "Pull to refresh"
                 : ""}
         </div>
+        <TapToPayNudge className="mb-3" />
         {list.length ? (
+
           <div className="space-y-3">
             {list.map((t) => (
               <SwipeRow

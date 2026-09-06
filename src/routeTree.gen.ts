@@ -42,6 +42,7 @@ import { Route as SettingsPaymentMethodsRouteImport } from './routes/settings.pa
 import { Route as SettingsPaymentsRouteImport } from './routes/settings.payments'
 import { Route as SettingsReportsRouteImport } from './routes/settings.reports'
 import { Route as SettingsSalesSummaryRouteImport } from './routes/settings.sales-summary'
+import { Route as SettingsTapToPayRouteImport } from './routes/settings.tap-to-pay'
 import { Route as SettingsWorkforceRouteImport } from './routes/settings.workforce'
 import { Route as SystemIndexRouteImport } from './routes/system.index'
 import { Route as SystemContactUsRouteImport } from './routes/system.contact-us'
@@ -50,6 +51,8 @@ import { Route as SystemHardwareRouteImport } from './routes/system.hardware'
 import { Route as SystemHelpCenterRouteImport } from './routes/system.help-center'
 import { Route as SystemIntegrationsRouteImport } from './routes/system.integrations'
 import { Route as SystemNetworkRouteImport } from './routes/system.network'
+import { Route as SystemTapToPayRecordingRouteImport } from './routes/system.tap-to-pay-recording'
+import { Route as TapToPayWelcomeRouteImport } from './routes/tap-to-pay.welcome'
 import { Route as TicketsIndexRouteImport } from './routes/tickets.index'
 import { Route as TicketsTicketIdRouteImport } from './routes/tickets.$ticketId'
 import { Route as TicketsFilterRouteImport } from './routes/tickets.filter'
@@ -62,6 +65,8 @@ import { Route as SettingsDetailTopicRouteImport } from './routes/settings.detai
 import { Route as SettingsHardwareIntegrationsRouteImport } from './routes/settings.hardware.integrations'
 import { Route as SettingsPaymentPickerFieldRouteImport } from './routes/settings.payment-picker.$field'
 import { Route as SystemArticleSlugRouteImport } from './routes/system.article.$slug'
+import { Route as TapToPayEducationStepRouteImport } from './routes/tap-to-pay.education.$step'
+import { Route as TapToPaySetupFromRouteImport } from './routes/tap-to-pay.setup.$from'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -228,6 +233,11 @@ const SettingsSalesSummaryRoute = SettingsSalesSummaryRouteImport.update({
   path: '/settings/sales-summary',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsTapToPayRoute = SettingsTapToPayRouteImport.update({
+  id: '/settings/tap-to-pay',
+  path: '/settings/tap-to-pay',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsWorkforceRoute = SettingsWorkforceRouteImport.update({
   id: '/settings/workforce',
   path: '/settings/workforce',
@@ -266,6 +276,16 @@ const SystemIntegrationsRoute = SystemIntegrationsRouteImport.update({
 const SystemNetworkRoute = SystemNetworkRouteImport.update({
   id: '/system/network',
   path: '/system/network',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SystemTapToPayRecordingRoute = SystemTapToPayRecordingRouteImport.update({
+  id: '/system/tap-to-pay-recording',
+  path: '/system/tap-to-pay-recording',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TapToPayWelcomeRoute = TapToPayWelcomeRouteImport.update({
+  id: '/tap-to-pay/welcome',
+  path: '/tap-to-pay/welcome',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TicketsIndexRoute = TicketsIndexRouteImport.update({
@@ -330,6 +350,16 @@ const SystemArticleSlugRoute = SystemArticleSlugRouteImport.update({
   path: '/system/article/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TapToPayEducationStepRoute = TapToPayEducationStepRouteImport.update({
+  id: '/tap-to-pay/education/$step',
+  path: '/tap-to-pay/education/$step',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TapToPaySetupFromRoute = TapToPaySetupFromRouteImport.update({
+  id: '/tap-to-pay/setup/$from',
+  path: '/tap-to-pay/setup/$from',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -360,6 +390,7 @@ export interface FileRoutesByFullPath {
   '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/reports': typeof SettingsReportsRoute
   '/settings/sales-summary': typeof SettingsSalesSummaryRoute
+  '/settings/tap-to-pay': typeof SettingsTapToPayRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
   '/system/contact-us': typeof SystemContactUsRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
@@ -367,6 +398,8 @@ export interface FileRoutesByFullPath {
   '/system/help-center': typeof SystemHelpCenterRoute
   '/system/integrations': typeof SystemIntegrationsRoute
   '/system/network': typeof SystemNetworkRoute
+  '/system/tap-to-pay-recording': typeof SystemTapToPayRecordingRoute
+  '/tap-to-pay/welcome': typeof TapToPayWelcomeRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -385,6 +418,8 @@ export interface FileRoutesByFullPath {
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
   '/settings/payment-picker/$field': typeof SettingsPaymentPickerFieldRoute
   '/system/article/$slug': typeof SystemArticleSlugRoute
+  '/tap-to-pay/education/$step': typeof TapToPayEducationStepRoute
+  '/tap-to-pay/setup/$from': typeof TapToPaySetupFromRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -415,6 +450,7 @@ export interface FileRoutesByTo {
   '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/reports': typeof SettingsReportsRoute
   '/settings/sales-summary': typeof SettingsSalesSummaryRoute
+  '/settings/tap-to-pay': typeof SettingsTapToPayRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
   '/system/contact-us': typeof SystemContactUsRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
@@ -422,6 +458,8 @@ export interface FileRoutesByTo {
   '/system/help-center': typeof SystemHelpCenterRoute
   '/system/integrations': typeof SystemIntegrationsRoute
   '/system/network': typeof SystemNetworkRoute
+  '/system/tap-to-pay-recording': typeof SystemTapToPayRecordingRoute
+  '/tap-to-pay/welcome': typeof TapToPayWelcomeRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -440,6 +478,8 @@ export interface FileRoutesByTo {
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
   '/settings/payment-picker/$field': typeof SettingsPaymentPickerFieldRoute
   '/system/article/$slug': typeof SystemArticleSlugRoute
+  '/tap-to-pay/education/$step': typeof TapToPayEducationStepRoute
+  '/tap-to-pay/setup/$from': typeof TapToPaySetupFromRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -471,6 +511,7 @@ export interface FileRoutesById {
   '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/reports': typeof SettingsReportsRoute
   '/settings/sales-summary': typeof SettingsSalesSummaryRoute
+  '/settings/tap-to-pay': typeof SettingsTapToPayRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
   '/system/contact-us': typeof SystemContactUsRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
@@ -478,6 +519,8 @@ export interface FileRoutesById {
   '/system/help-center': typeof SystemHelpCenterRoute
   '/system/integrations': typeof SystemIntegrationsRoute
   '/system/network': typeof SystemNetworkRoute
+  '/system/tap-to-pay-recording': typeof SystemTapToPayRecordingRoute
+  '/tap-to-pay/welcome': typeof TapToPayWelcomeRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
   '/tickets/manager-controls': typeof TicketsManagerControlsRoute
@@ -496,6 +539,8 @@ export interface FileRoutesById {
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
   '/settings/payment-picker/$field': typeof SettingsPaymentPickerFieldRoute
   '/system/article/$slug': typeof SystemArticleSlugRoute
+  '/tap-to-pay/education/$step': typeof TapToPayEducationStepRoute
+  '/tap-to-pay/setup/$from': typeof TapToPaySetupFromRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -528,6 +573,7 @@ export interface FileRouteTypes {
     | '/settings/payments'
     | '/settings/reports'
     | '/settings/sales-summary'
+    | '/settings/tap-to-pay'
     | '/settings/workforce'
     | '/system/contact-us'
     | '/system/customer-support'
@@ -535,6 +581,8 @@ export interface FileRouteTypes {
     | '/system/help-center'
     | '/system/integrations'
     | '/system/network'
+    | '/system/tap-to-pay-recording'
+    | '/tap-to-pay/welcome'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -553,6 +601,8 @@ export interface FileRouteTypes {
     | '/settings/hardware/integrations'
     | '/settings/payment-picker/$field'
     | '/system/article/$slug'
+    | '/tap-to-pay/education/$step'
+    | '/tap-to-pay/setup/$from'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -583,6 +633,7 @@ export interface FileRouteTypes {
     | '/settings/payments'
     | '/settings/reports'
     | '/settings/sales-summary'
+    | '/settings/tap-to-pay'
     | '/settings/workforce'
     | '/system/contact-us'
     | '/system/customer-support'
@@ -590,6 +641,8 @@ export interface FileRouteTypes {
     | '/system/help-center'
     | '/system/integrations'
     | '/system/network'
+    | '/system/tap-to-pay-recording'
+    | '/tap-to-pay/welcome'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -608,6 +661,8 @@ export interface FileRouteTypes {
     | '/settings/hardware/integrations'
     | '/settings/payment-picker/$field'
     | '/system/article/$slug'
+    | '/tap-to-pay/education/$step'
+    | '/tap-to-pay/setup/$from'
   id:
     | '__root__'
     | '/'
@@ -638,6 +693,7 @@ export interface FileRouteTypes {
     | '/settings/payments'
     | '/settings/reports'
     | '/settings/sales-summary'
+    | '/settings/tap-to-pay'
     | '/settings/workforce'
     | '/system/contact-us'
     | '/system/customer-support'
@@ -645,6 +701,8 @@ export interface FileRouteTypes {
     | '/system/help-center'
     | '/system/integrations'
     | '/system/network'
+    | '/system/tap-to-pay-recording'
+    | '/tap-to-pay/welcome'
     | '/tickets/$ticketId'
     | '/tickets/filter'
     | '/tickets/manager-controls'
@@ -663,6 +721,8 @@ export interface FileRouteTypes {
     | '/settings/hardware/integrations'
     | '/settings/payment-picker/$field'
     | '/system/article/$slug'
+    | '/tap-to-pay/education/$step'
+    | '/tap-to-pay/setup/$from'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -694,6 +754,7 @@ export interface RootRouteChildren {
   SettingsPaymentsRoute: typeof SettingsPaymentsRoute
   SettingsReportsRoute: typeof SettingsReportsRoute
   SettingsSalesSummaryRoute: typeof SettingsSalesSummaryRoute
+  SettingsTapToPayRoute: typeof SettingsTapToPayRoute
   SettingsWorkforceRoute: typeof SettingsWorkforceRoute
   SystemContactUsRoute: typeof SystemContactUsRoute
   SystemCustomerSupportRoute: typeof SystemCustomerSupportRoute
@@ -701,6 +762,8 @@ export interface RootRouteChildren {
   SystemHelpCenterRoute: typeof SystemHelpCenterRoute
   SystemIntegrationsRoute: typeof SystemIntegrationsRoute
   SystemNetworkRoute: typeof SystemNetworkRoute
+  SystemTapToPayRecordingRoute: typeof SystemTapToPayRecordingRoute
+  TapToPayWelcomeRoute: typeof TapToPayWelcomeRoute
   TicketsTicketIdRoute: typeof TicketsTicketIdRoute
   TicketsFilterRoute: typeof TicketsFilterRoute
   TicketsManagerControlsRoute: typeof TicketsManagerControlsRoute
@@ -718,6 +781,8 @@ export interface RootRouteChildren {
   SettingsDetailTopicRoute: typeof SettingsDetailTopicRoute
   SettingsPaymentPickerFieldRoute: typeof SettingsPaymentPickerFieldRoute
   SystemArticleSlugRoute: typeof SystemArticleSlugRoute
+  TapToPayEducationStepRoute: typeof TapToPayEducationStepRoute
+  TapToPaySetupFromRoute: typeof TapToPaySetupFromRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -953,6 +1018,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsSalesSummaryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/tap-to-pay': {
+      id: '/settings/tap-to-pay'
+      path: '/settings/tap-to-pay'
+      fullPath: '/settings/tap-to-pay'
+      preLoaderRoute: typeof SettingsTapToPayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/workforce': {
       id: '/settings/workforce'
       path: '/settings/workforce'
@@ -1007,6 +1079,20 @@ declare module '@tanstack/react-router' {
       path: '/system/network'
       fullPath: '/system/network'
       preLoaderRoute: typeof SystemNetworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/system/tap-to-pay-recording': {
+      id: '/system/tap-to-pay-recording'
+      path: '/system/tap-to-pay-recording'
+      fullPath: '/system/tap-to-pay-recording'
+      preLoaderRoute: typeof SystemTapToPayRecordingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tap-to-pay/welcome': {
+      id: '/tap-to-pay/welcome'
+      path: '/tap-to-pay/welcome'
+      fullPath: '/tap-to-pay/welcome'
+      preLoaderRoute: typeof TapToPayWelcomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tickets/': {
@@ -1093,6 +1179,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SystemArticleSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tap-to-pay/education/$step': {
+      id: '/tap-to-pay/education/$step'
+      path: '/tap-to-pay/education/$step'
+      fullPath: '/tap-to-pay/education/$step'
+      preLoaderRoute: typeof TapToPayEducationStepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tap-to-pay/setup/$from': {
+      id: '/tap-to-pay/setup/$from'
+      path: '/tap-to-pay/setup/$from'
+      fullPath: '/tap-to-pay/setup/$from'
+      preLoaderRoute: typeof TapToPaySetupFromRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1136,6 +1236,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsPaymentsRoute: SettingsPaymentsRoute,
   SettingsReportsRoute: SettingsReportsRoute,
   SettingsSalesSummaryRoute: SettingsSalesSummaryRoute,
+  SettingsTapToPayRoute: SettingsTapToPayRoute,
   SettingsWorkforceRoute: SettingsWorkforceRoute,
   SystemContactUsRoute: SystemContactUsRoute,
   SystemCustomerSupportRoute: SystemCustomerSupportRoute,
@@ -1143,6 +1244,8 @@ const rootRouteChildren: RootRouteChildren = {
   SystemHelpCenterRoute: SystemHelpCenterRoute,
   SystemIntegrationsRoute: SystemIntegrationsRoute,
   SystemNetworkRoute: SystemNetworkRoute,
+  SystemTapToPayRecordingRoute: SystemTapToPayRecordingRoute,
+  TapToPayWelcomeRoute: TapToPayWelcomeRoute,
   TicketsTicketIdRoute: TicketsTicketIdRoute,
   TicketsFilterRoute: TicketsFilterRoute,
   TicketsManagerControlsRoute: TicketsManagerControlsRoute,
@@ -1160,6 +1263,8 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsDetailTopicRoute: SettingsDetailTopicRoute,
   SettingsPaymentPickerFieldRoute: SettingsPaymentPickerFieldRoute,
   SystemArticleSlugRoute: SystemArticleSlugRoute,
+  TapToPayEducationStepRoute: TapToPayEducationStepRoute,
+  TapToPaySetupFromRoute: TapToPaySetupFromRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

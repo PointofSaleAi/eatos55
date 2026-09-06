@@ -8,6 +8,7 @@ import {
   Receipt,
   ReceiptText,
   ScrollText,
+  Smartphone,
 } from "lucide-react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, IconNavRow, IconValueRow } from "@/components/pos/settings-rows";
@@ -44,6 +45,12 @@ function PaymentsSettings() {
             icon={CreditCard}
             color="blue"
             to="/settings/payment-methods"
+          />
+          <IconNavRow
+            title="Tap to Pay on iPhone"
+            icon={Smartphone}
+            color="black"
+            to="/settings/tap-to-pay"
           />
           <IconNavRow title="Gratuity" icon={HandCoins} color="magenta" topic="gratuity" />
 

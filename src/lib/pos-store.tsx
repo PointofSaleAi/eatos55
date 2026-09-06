@@ -225,6 +225,14 @@ const defaultTenderAutoClose: Record<TenderId, boolean> = {
 
 
 
+/** Per-device Tap to Pay on iPhone status. */
+export type TapToPayState =
+  | "notSetUp"
+  | "configuring"
+  | "ready"
+  | "needsAttention"
+  | "ineligible";
+
 export type AppSettings = {
   restaurantName: string;
   restaurantAddress: string;
@@ -265,6 +273,19 @@ export type AppSettings = {
   cardReaderModel: string;
   cardReaderConnection: string;
   cardReaderStatus: string;
+
+  /**
+   * Tap to Pay on iPhone. Apple requirement 3.3 needs proof that the awareness
+   * screen was shown, so in production these belong server side per merchant,
+   * never in device storage that a reinstall can wipe.
+   */
+  tapToPayState: TapToPayState;
+  tapToPayDeviceLabel: string;
+  tapToPayAwarenessShownAt: string;
+  tapToPayDismissedAt: string;
+  tapToPayTermsAcceptedAt: string;
+
+
 
   language: string;
 
@@ -367,6 +388,14 @@ const defaultSettings: AppSettings = {
   cardReaderModel: "",
   cardReaderConnection: "Bluetooth",
   cardReaderStatus: "Not paired",
+
+  tapToPayState: "notSetUp",
+  tapToPayDeviceLabel: "iPhone 15 · Front counter",
+  tapToPayAwarenessShownAt: "",
+  tapToPayDismissedAt: "",
+  tapToPayTermsAcceptedAt: "",
+
+
 
 
   language: "English",

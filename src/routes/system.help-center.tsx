@@ -3,6 +3,7 @@ import { brand } from "@/lib/brand";
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
+import { TTP } from "@/components/pos/tap-to-pay";
 import { ActionRow, Card, EmptyState, SectionLabel } from "@/components/pos/primitives";
 import { Input } from "@/components/ui/input";
 
@@ -50,7 +51,37 @@ function HelpCenter() {
         </div>
       </div>
       <ScreenBody>
+        {/* Requirement 4.2: education stays reachable from Help, forever. */}
+        <SectionLabel>{TTP}</SectionLabel>
+        <Card className="overflow-hidden">
+          <ActionRow
+            title="Taking a contactless card"
+            detail="How it works · Apple guide"
+            onClick={() =>
+              navigate({ to: "/tap-to-pay/education/$step", params: { step: "cards" } })
+            }
+          />
+          <ActionRow
+            title="Taking Apple Pay and digital wallets"
+            detail="How it works · Apple guide"
+            onClick={() =>
+              navigate({ to: "/tap-to-pay/education/$step", params: { step: "wallets" } })
+            }
+          />
+          <ActionRow
+            title={`Set up ${TTP}`}
+            detail="Use this iPhone as your card reader"
+            onClick={() => navigate({ to: "/settings/tap-to-pay" })}
+          />
+          <ActionRow
+            title="App review recording guide"
+            detail="The six clips Apple asks for"
+            onClick={() => navigate({ to: "/system/tap-to-pay-recording" })}
+          />
+        </Card>
+
         <SectionLabel>Popular guides</SectionLabel>
+
         {results.length ? (
           <Card className="overflow-hidden">
             {results.map((a) => (
