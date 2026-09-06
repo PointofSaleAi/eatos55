@@ -22,8 +22,9 @@ export const Route = createFileRoute("/settings/payment-picker/$field")({
       },
     ],
   }),
-  component: PaymentPicker;
+  component: PaymentPicker,
 });
+
 
 const NOT_SET = "Not set";
 const CONNECTIONS = ["Bluetooth", "LAN", "Cloud"];
