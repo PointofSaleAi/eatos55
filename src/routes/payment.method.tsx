@@ -716,11 +716,36 @@ function PaymentMethod() {
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="shrink-0 px-[var(--pad-screen)] pt-3">
         <h2 className="truncate text-fs-lg font-extrabold text-foreground">Payment Method</h2>
+
+        {/*
+         * Requirements 2.1 to 2.5: this button is always here, always first,
+         * always above the fold, always with the exact same label, whether or
+         * not this iPhone has been set up yet. If it has not, it starts setup
+         * and the ticket is kept.
+         */}
+        <button
+          type="button"
+          onClick={() => {
+            if (settings.tapToPayState === "ready") {
+              setSelected("tap-to-pay");
+              commitPayment("card", due, { tenderId: "contactless", label: TTP });
+              navigate({ to: "/payment/success" });
+              return;
+            }
+            navigate({ to: "/tap-to-pay/setup/$from", params: { from: "checkout" } });
+          }}
+          className="mt-3 flex h-ctl-lg w-full items-center justify-center gap-2 rounded-row bg-primary px-3 text-fs-base font-extrabold text-primary-foreground transition-colors"
+        >
+          <TapToPayMark className="size-5 shrink-0" />
+          <span className="truncate">{TTP}</span>
+        </button>
+
         <p className="mt-1 hidden text-fs-xs text-muted-foreground lg:block">
-          Cash, manual card entry and Pay by Link are supported online. Connect a card reader for Tap
-          to Pay.
+          Cash, manual card entry and Pay by Link are supported online. Connect a card reader for
+          other card payments.
         </p>
       </div>
+
 
       <div
         ref={paneRef}
