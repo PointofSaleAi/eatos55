@@ -266,6 +266,19 @@ export type AppSettings = {
   cardReaderConnection: string;
   cardReaderStatus: string;
 
+  /**
+   * Tap to Pay on iPhone. Apple requirement 3.3 needs proof that the awareness
+   * screen was shown, so in production these belong server side per merchant,
+   * never in device storage that a reinstall can wipe.
+   */
+  tapToPayState: TapToPayState;
+  tapToPayDeviceLabel: string;
+  tapToPayAwarenessShownAt: string;
+  tapToPayDismissedAt: string;
+  tapToPayTermsAcceptedAt: string;
+
+
+
   language: string;
 
   /** Sign-in carousel slides shown beside the form in landscape. */
