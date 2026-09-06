@@ -193,32 +193,97 @@ export function IconValueRow(props: RowShellProps & { onClick?: () => void; topi
   );
 }
 
-/** Column captions for two-toggle lists (Enabled / Auto Close Payment). */
-export function ToggleColumnHeaders({
-  primary,
-  secondary,
-  shortPrimary,
-  shortSecondary,
+/** Drill-down row: the value is chosen on a full picker screen. */
+export function IconPickerRow({
+  icon,
+  color,
+  title,
+  value,
+  field,
+  disabled,
 }: {
-  primary: string;
-  secondary: string;
-  shortPrimary?: string;
-  shortSecondary?: string;
+  icon?: LucideIcon;
+  color?: TileColor;
+  title: string;
+  value: string;
+  field: string;
+  disabled?: boolean;
+}) {
+  if (disabled) {
+    return (
+      <div className={rowBase}>
+        <RowInner icon={icon} color={color} title={title} value={value} />
+      </div>
+    );
+  }
+  return (
+    <Link
+      to="/settings/payment-picker/$field"
+      params={{ field }}
+      className={cn(rowBase, "transition-colors hover:bg-muted")}
+    >
+      <RowInner icon={icon} color={color} title={title} value={value} chevron />
+    </Link>
+  );
+}
+
+/** Row with an Enabled switch plus a small tappable chip for a second option. */
+export function IconToggleChipRow({
+  checked,
+  onChange,
+  chipLabel,
+  chipShortLabel,
+  chipOn,
+  onChipChange,
+  chipDisabled,
+  ...rest
+}: RowShellProps & {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  chipLabel: string;
+  chipShortLabel?: string;
+  chipOn: boolean;
+  onChipChange: (v: boolean) => void;
+  chipDisabled?: boolean;
 }) {
   return (
-    <div className="flex items-end gap-row px-4 pb-1">
-      <span className="min-w-0 flex-1" />
-      <span className="w-11 shrink-0 text-center t-caption leading-tight text-muted-foreground">
-        <span className="sm:hidden">{shortPrimary ?? primary}</span>
-        <span className="hidden sm:inline">{primary}</span>
-      </span>
-      <span className="w-11 shrink-0 text-center t-caption leading-tight text-muted-foreground">
-        <span className="sm:hidden">{shortSecondary ?? secondary}</span>
-        <span className="hidden sm:inline">{secondary}</span>
-      </span>
+    <div className={rowBase}>
+      <RowInner
+        {...rest}
+        right={
+          <>
+            <button
+              type="button"
+              aria-pressed={chipOn}
+              aria-label={`${chipLabel} - ${rest.title}`}
+              disabled={chipDisabled ?? false}
+              onClick={() => onChipChange(!chipOn)}
+              className={cn(
+                "min-h-ctl-sm shrink-0 whitespace-nowrap rounded-pill border px-3 t-badge transition-colors",
+                chipOn
+                  ? "border-transparent bg-accent text-accent-foreground"
+                  : "border-border text-muted-foreground hover:text-foreground",
+                chipDisabled ? "pointer-events-none opacity-40" : undefined,
+              )}
+            >
+              <span className="sm:hidden">{chipShortLabel ?? chipLabel}</span>
+              <span className="hidden sm:inline">{chipLabel}</span>
+            </button>
+            <span className="grid size-11 shrink-0 place-items-center">
+              <Switch
+                checked={checked}
+                onCheckedChange={onChange}
+                aria-label={rest.title}
+                className="tap-safe shrink-0"
+              />
+            </span>
+          </>
+        }
+      />
     </div>
   );
 }
+
 
 /** Row with two independent switches, the second one optionally disabled. */
 export function IconDualToggleRow({
