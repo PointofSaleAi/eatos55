@@ -3,6 +3,7 @@ import { brand } from "@/lib/brand";
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { ScreenBody, ScreenHeader } from "@/components/pos/shell";
+import { TTP } from "@/components/pos/tap-to-pay";
 import { ActionRow, Card, EmptyState, SectionLabel } from "@/components/pos/primitives";
 import { Input } from "@/components/ui/input";
 
