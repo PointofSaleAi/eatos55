@@ -195,24 +195,14 @@ export function IconValueRow(props: RowShellProps & { onClick?: () => void; topi
 
 /** Drill-down row: the value is chosen on a full picker screen. */
 export function IconPickerRow({
-  icon,
-  color,
-  title,
-  value,
   field,
   disabled,
-}: {
-  icon?: LucideIcon;
-  color?: TileColor;
-  title: string;
-  value: string;
-  field: string;
-  disabled?: boolean;
-}) {
+  ...rest
+}: RowShellProps & { field: string; disabled?: boolean }) {
   if (disabled) {
     return (
       <div className={rowBase}>
-        <RowInner icon={icon} color={color} title={title} value={value} />
+        <RowInner {...rest} />
       </div>
     );
   }
@@ -222,7 +212,7 @@ export function IconPickerRow({
       params={{ field }}
       className={cn(rowBase, "transition-colors hover:bg-muted")}
     >
-      <RowInner icon={icon} color={color} title={title} value={value} chevron />
+      <RowInner {...rest} chevron />
     </Link>
   );
 }
