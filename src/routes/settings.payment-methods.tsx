@@ -164,13 +164,12 @@ function PaymentMethodsSettings() {
       <ScreenBody className="py-2">
         <GroupLabel>Payment provider</GroupLabel>
         <GroupCard>
-          <IconSelectRow
+          <IconPickerRow
             title="Provider"
             icon={Radio}
             color="magenta"
             value={provider}
-            options={[NOT_SET, ...brand.providerCatalog]}
-            onChange={setProvider}
+            field="provider"
             disabled={!canManageSettings}
           />
           <IconValueRow
