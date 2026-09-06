@@ -1,4 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
+import { TapToPayNudge } from "@/components/pos/tap-to-pay";
 import {
   Calendar,
   ChevronLeft,
