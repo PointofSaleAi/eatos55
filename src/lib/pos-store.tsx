@@ -225,6 +225,14 @@ const defaultTenderAutoClose: Record<TenderId, boolean> = {
 
 
 
+/** Per-device Tap to Pay on iPhone status. */
+export type TapToPayState =
+  | "notSetUp"
+  | "configuring"
+  | "ready"
+  | "needsAttention"
+  | "ineligible";
+
 export type AppSettings = {
   restaurantName: string;
   restaurantAddress: string;
