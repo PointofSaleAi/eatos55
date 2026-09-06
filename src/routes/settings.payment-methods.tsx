@@ -32,10 +32,9 @@ import {
   Caption,
   GroupCard,
   GroupLabel,
-  IconDualToggleRow,
-  IconSelectRow,
+  IconPickerRow,
+  IconToggleChipRow,
   IconValueRow,
-  ToggleColumnHeaders,
   type TileColor,
 } from "@/components/pos/settings-rows";
 import { brand, isTenderVisible, tenderLabel } from "@/lib/brand";
@@ -130,8 +129,6 @@ const sections: { title: string; rows: Row[] }[] = [
   },
 ];
 
-const connections = ["Bluetooth", "LAN", "Cloud"];
-
 /** Nothing is preselected per region: provider and reader are venue choices. */
 const NOT_SET = "Not set";
 
@@ -148,16 +145,7 @@ function PaymentMethodsSettings() {
     updateSettings({ tenderAutoClose: { ...autoClose, [id]: value } });
 
   const provider = settings.paymentProvider || NOT_SET;
-  const models = [NOT_SET, ...brand.readerCatalog];
 
-  const setProvider = (value: string) => {
-    if (!canManageSettings) return;
-    updateSettings({
-      paymentProvider: value === NOT_SET ? "" : value,
-      cardReaderModel: "",
-      cardReaderStatus: "Not paired",
-    });
-  };
 
   return (
     <>
@@ -165,13 +153,12 @@ function PaymentMethodsSettings() {
       <ScreenBody className="py-2">
         <GroupLabel>Payment provider</GroupLabel>
         <GroupCard>
-          <IconSelectRow
+          <IconPickerRow
             title="Provider"
             icon={Radio}
             color="magenta"
             value={provider}
-            options={[NOT_SET, ...brand.providerCatalog]}
-            onChange={setProvider}
+            field="provider"
             disabled={!canManageSettings}
           />
           <IconValueRow
@@ -188,24 +175,20 @@ function PaymentMethodsSettings() {
 
         <GroupLabel>Card reader</GroupLabel>
         <GroupCard>
-          <IconSelectRow
+          <IconPickerRow
             title="Reader"
             icon={CreditCard}
             color="blue"
             value={settings.cardReaderModel || NOT_SET}
-            options={models}
-            onChange={(v) =>
-              canManageSettings && updateSettings({ cardReaderModel: v === NOT_SET ? "" : v })
-            }
+            field="reader"
             disabled={!canManageSettings}
           />
-          <IconSelectRow
+          <IconPickerRow
             title="Connection"
             icon={Nfc}
             color="sky"
             value={settings.cardReaderConnection}
-            options={connections}
-            onChange={(v) => canManageSettings && updateSettings({ cardReaderConnection: v })}
+            field="connection"
             disabled={!canManageSettings}
           />
           <IconValueRow
@@ -237,17 +220,11 @@ function PaymentMethodsSettings() {
           return (
             <div key={section.title}>
               <GroupLabel>{section.title}</GroupLabel>
-              <ToggleColumnHeaders
-                primary="Enabled"
-                secondary="Auto Close Payment"
-                shortPrimary="On"
-                shortSecondary="Auto Close"
-              />
               <GroupCard>
                 {rows.map((row) => {
                   const enabled = row.locked ? true : tenders[row.id];
                   return (
-                    <IconDualToggleRow
+                    <IconToggleChipRow
                       key={row.id}
                       title={tenderLabel(row.id, TENDER_LABELS[row.id])}
                       icon={row.icon}
@@ -257,10 +234,11 @@ function PaymentMethodsSettings() {
                         if (row.locked || !canManageSettings) return;
                         set(row.id, v);
                       }}
-                      secondaryLabel="Auto Close Payment"
-                      secondaryChecked={autoClose[row.id]}
-                      secondaryDisabled={!enabled || !canManageSettings}
-                      onSecondaryChange={(v) => {
+                      chipLabel="Auto close"
+                      chipShortLabel="Auto"
+                      chipOn={autoClose[row.id]}
+                      chipDisabled={!enabled || !canManageSettings}
+                      onChipChange={(v) => {
                         if (!enabled || !canManageSettings) return;
                         setAutoClose(row.id, v);
                       }}
@@ -281,7 +259,7 @@ function PaymentMethodsSettings() {
           so a check can be tendered.
         </Caption>
         <Caption>
-          If Auto Close Payment is enabled, the order closes automatically once a payment with that
+          If Auto close is switched on for a method, the order closes itself once a payment with that
           method completes successfully.
         </Caption>
       </ScreenBody>

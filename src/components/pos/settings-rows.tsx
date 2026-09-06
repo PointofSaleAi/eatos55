@@ -193,49 +193,48 @@ export function IconValueRow(props: RowShellProps & { onClick?: () => void; topi
   );
 }
 
-/** Column captions for two-toggle lists (Enabled / Auto Close Payment). */
-export function ToggleColumnHeaders({
-  primary,
-  secondary,
-  shortPrimary,
-  shortSecondary,
-}: {
-  primary: string;
-  secondary: string;
-  shortPrimary?: string;
-  shortSecondary?: string;
-}) {
+/** Drill-down row: the value is chosen on a full picker screen. */
+export function IconPickerRow({
+  field,
+  disabled,
+  ...rest
+}: RowShellProps & { field: string; disabled?: boolean }) {
+  if (disabled) {
+    return (
+      <div className={rowBase}>
+        <RowInner {...rest} />
+      </div>
+    );
+  }
   return (
-    <div className="flex items-end gap-row px-4 pb-1">
-      <span className="min-w-0 flex-1" />
-      <span className="w-11 shrink-0 text-center t-caption leading-tight text-muted-foreground">
-        <span className="sm:hidden">{shortPrimary ?? primary}</span>
-        <span className="hidden sm:inline">{primary}</span>
-      </span>
-      <span className="w-11 shrink-0 text-center t-caption leading-tight text-muted-foreground">
-        <span className="sm:hidden">{shortSecondary ?? secondary}</span>
-        <span className="hidden sm:inline">{secondary}</span>
-      </span>
-    </div>
+    <Link
+      to="/settings/payment-picker/$field"
+      params={{ field }}
+      className={cn(rowBase, "transition-colors hover:bg-muted")}
+    >
+      <RowInner {...rest} chevron />
+    </Link>
   );
 }
 
-/** Row with two independent switches, the second one optionally disabled. */
-export function IconDualToggleRow({
+/** Row with an Enabled switch plus a small tappable chip for a second option. */
+export function IconToggleChipRow({
   checked,
   onChange,
-  secondaryChecked,
-  onSecondaryChange,
-  secondaryDisabled,
-  secondaryLabel,
+  chipLabel,
+  chipShortLabel,
+  chipOn,
+  onChipChange,
+  chipDisabled,
   ...rest
 }: RowShellProps & {
   checked: boolean;
   onChange: (v: boolean) => void;
-  secondaryChecked: boolean;
-  onSecondaryChange: (v: boolean) => void;
-  secondaryDisabled?: boolean;
-  secondaryLabel: string;
+  chipLabel: string;
+  chipShortLabel?: string;
+  chipOn: boolean;
+  onChipChange: (v: boolean) => void;
+  chipDisabled?: boolean;
 }) {
   return (
     <div className={rowBase}>
@@ -243,6 +242,23 @@ export function IconDualToggleRow({
         {...rest}
         right={
           <>
+            <button
+              type="button"
+              aria-pressed={chipOn}
+              aria-label={`${chipLabel} - ${rest.title}`}
+              disabled={chipDisabled ?? false}
+              onClick={() => onChipChange(!chipOn)}
+              className={cn(
+                "tap-safe h-8 shrink-0 whitespace-nowrap rounded-pill border px-3 t-badge transition-colors",
+                chipOn
+                  ? "border-transparent bg-accent text-accent-foreground"
+                  : "border-border text-muted-foreground hover:text-foreground",
+                chipDisabled ? "pointer-events-none opacity-40" : undefined,
+              )}
+            >
+              <span className="sm:hidden">{chipShortLabel ?? chipLabel}</span>
+              <span className="hidden sm:inline">{chipLabel}</span>
+            </button>
             <span className="grid size-11 shrink-0 place-items-center">
               <Switch
                 checked={checked}
@@ -251,24 +267,15 @@ export function IconDualToggleRow({
                 className="tap-safe shrink-0"
               />
             </span>
-            <span className="grid size-11 shrink-0 place-items-center">
-              <Switch
-                checked={secondaryChecked}
-                onCheckedChange={onSecondaryChange}
-                disabled={secondaryDisabled}
-                aria-label={`${secondaryLabel} - ${rest.title}`}
-                className={cn(
-                  "tap-safe shrink-0",
-                  secondaryDisabled ? "opacity-40" : undefined,
-                )}
-              />
-            </span>
           </>
         }
       />
     </div>
   );
 }
+
+
+
 
 export function IconToggleRow({
   checked,
