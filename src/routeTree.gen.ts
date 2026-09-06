@@ -42,6 +42,7 @@ import { Route as SettingsPaymentMethodsRouteImport } from './routes/settings.pa
 import { Route as SettingsPaymentsRouteImport } from './routes/settings.payments'
 import { Route as SettingsReportsRouteImport } from './routes/settings.reports'
 import { Route as SettingsSalesSummaryRouteImport } from './routes/settings.sales-summary'
+import { Route as SettingsTapToPayRouteImport } from './routes/settings.tap-to-pay'
 import { Route as SettingsWorkforceRouteImport } from './routes/settings.workforce'
 import { Route as SystemIndexRouteImport } from './routes/system.index'
 import { Route as SystemContactUsRouteImport } from './routes/system.contact-us'
@@ -231,6 +232,11 @@ const SettingsSalesSummaryRoute = SettingsSalesSummaryRouteImport.update({
   path: '/settings/sales-summary',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsTapToPayRoute = SettingsTapToPayRouteImport.update({
+  id: '/settings/tap-to-pay',
+  path: '/settings/tap-to-pay',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsWorkforceRoute = SettingsWorkforceRouteImport.update({
   id: '/settings/workforce',
   path: '/settings/workforce',
@@ -378,6 +384,7 @@ export interface FileRoutesByFullPath {
   '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/reports': typeof SettingsReportsRoute
   '/settings/sales-summary': typeof SettingsSalesSummaryRoute
+  '/settings/tap-to-pay': typeof SettingsTapToPayRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
   '/system/contact-us': typeof SystemContactUsRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
@@ -436,6 +443,7 @@ export interface FileRoutesByTo {
   '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/reports': typeof SettingsReportsRoute
   '/settings/sales-summary': typeof SettingsSalesSummaryRoute
+  '/settings/tap-to-pay': typeof SettingsTapToPayRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
   '/system/contact-us': typeof SystemContactUsRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
@@ -495,6 +503,7 @@ export interface FileRoutesById {
   '/settings/payments': typeof SettingsPaymentsRoute
   '/settings/reports': typeof SettingsReportsRoute
   '/settings/sales-summary': typeof SettingsSalesSummaryRoute
+  '/settings/tap-to-pay': typeof SettingsTapToPayRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
   '/system/contact-us': typeof SystemContactUsRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
@@ -555,6 +564,7 @@ export interface FileRouteTypes {
     | '/settings/payments'
     | '/settings/reports'
     | '/settings/sales-summary'
+    | '/settings/tap-to-pay'
     | '/settings/workforce'
     | '/system/contact-us'
     | '/system/customer-support'
@@ -613,6 +623,7 @@ export interface FileRouteTypes {
     | '/settings/payments'
     | '/settings/reports'
     | '/settings/sales-summary'
+    | '/settings/tap-to-pay'
     | '/settings/workforce'
     | '/system/contact-us'
     | '/system/customer-support'
@@ -671,6 +682,7 @@ export interface FileRouteTypes {
     | '/settings/payments'
     | '/settings/reports'
     | '/settings/sales-summary'
+    | '/settings/tap-to-pay'
     | '/settings/workforce'
     | '/system/contact-us'
     | '/system/customer-support'
@@ -730,6 +742,7 @@ export interface RootRouteChildren {
   SettingsPaymentsRoute: typeof SettingsPaymentsRoute
   SettingsReportsRoute: typeof SettingsReportsRoute
   SettingsSalesSummaryRoute: typeof SettingsSalesSummaryRoute
+  SettingsTapToPayRoute: typeof SettingsTapToPayRoute
   SettingsWorkforceRoute: typeof SettingsWorkforceRoute
   SystemContactUsRoute: typeof SystemContactUsRoute
   SystemCustomerSupportRoute: typeof SystemCustomerSupportRoute
@@ -992,6 +1005,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsSalesSummaryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/tap-to-pay': {
+      id: '/settings/tap-to-pay'
+      path: '/settings/tap-to-pay'
+      fullPath: '/settings/tap-to-pay'
+      preLoaderRoute: typeof SettingsTapToPayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/workforce': {
       id: '/settings/workforce'
       path: '/settings/workforce'
@@ -1196,6 +1216,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsPaymentsRoute: SettingsPaymentsRoute,
   SettingsReportsRoute: SettingsReportsRoute,
   SettingsSalesSummaryRoute: SettingsSalesSummaryRoute,
+  SettingsTapToPayRoute: SettingsTapToPayRoute,
   SettingsWorkforceRoute: SettingsWorkforceRoute,
   SystemContactUsRoute: SystemContactUsRoute,
   SystemCustomerSupportRoute: SystemCustomerSupportRoute,
