@@ -34,6 +34,7 @@ import { PinSheet } from "@/components/pos/pin-sheet";
 import { ReceiptCard, ReceiptRow } from "@/components/pos/receipt";
 import { ReferenceTenderDialog } from "@/components/pos/reference-tender-dialog";
 import { RoomChargeDialog } from "@/components/pos/room-charge-dialog";
+import { TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
 import { BackButton } from "@/components/pos/shell";
 import { SplitPayments } from "@/components/pos/split-payments";
 import { X } from "lucide-react";
