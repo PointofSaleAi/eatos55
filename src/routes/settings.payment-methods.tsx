@@ -186,24 +186,20 @@ function PaymentMethodsSettings() {
 
         <GroupLabel>Card reader</GroupLabel>
         <GroupCard>
-          <IconSelectRow
+          <IconPickerRow
             title="Reader"
             icon={CreditCard}
             color="blue"
             value={settings.cardReaderModel || NOT_SET}
-            options={models}
-            onChange={(v) =>
-              canManageSettings && updateSettings({ cardReaderModel: v === NOT_SET ? "" : v })
-            }
+            field="reader"
             disabled={!canManageSettings}
           />
-          <IconSelectRow
+          <IconPickerRow
             title="Connection"
             icon={Nfc}
             color="sky"
             value={settings.cardReaderConnection}
-            options={connections}
-            onChange={(v) => canManageSettings && updateSettings({ cardReaderConnection: v })}
+            field="connection"
             disabled={!canManageSettings}
           />
           <IconValueRow
