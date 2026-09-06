@@ -32,10 +32,9 @@ import {
   Caption,
   GroupCard,
   GroupLabel,
-  IconDualToggleRow,
-  IconSelectRow,
+  IconPickerRow,
+  IconToggleChipRow,
   IconValueRow,
-  ToggleColumnHeaders,
   type TileColor,
 } from "@/components/pos/settings-rows";
 import { brand, isTenderVisible, tenderLabel } from "@/lib/brand";

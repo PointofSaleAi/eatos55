@@ -60,6 +60,7 @@ import { Route as TicketsWhatsNewRouteImport } from './routes/tickets.whats-new'
 import { Route as PaymentTenderKindRouteImport } from './routes/payment.tender.$kind'
 import { Route as SettingsDetailTopicRouteImport } from './routes/settings.detail.$topic'
 import { Route as SettingsHardwareIntegrationsRouteImport } from './routes/settings.hardware.integrations'
+import { Route as SettingsPaymentPickerFieldRouteImport } from './routes/settings.payment-picker.$field'
 import { Route as SystemArticleSlugRouteImport } from './routes/system.article.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -318,6 +319,12 @@ const SettingsHardwareIntegrationsRoute =
     path: '/integrations',
     getParentRoute: () => SettingsHardwareRoute,
   } as any)
+const SettingsPaymentPickerFieldRoute =
+  SettingsPaymentPickerFieldRouteImport.update({
+    id: '/settings/payment-picker/$field',
+    path: '/settings/payment-picker/$field',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SystemArticleSlugRoute = SystemArticleSlugRouteImport.update({
   id: '/system/article/$slug',
   path: '/system/article/$slug',
@@ -376,6 +383,7 @@ export interface FileRoutesByFullPath {
   '/payment/tender/$kind': typeof PaymentTenderKindRoute
   '/settings/detail/$topic': typeof SettingsDetailTopicRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
+  '/settings/payment-picker/$field': typeof SettingsPaymentPickerFieldRoute
   '/system/article/$slug': typeof SystemArticleSlugRoute
 }
 export interface FileRoutesByTo {
@@ -430,6 +438,7 @@ export interface FileRoutesByTo {
   '/payment/tender/$kind': typeof PaymentTenderKindRoute
   '/settings/detail/$topic': typeof SettingsDetailTopicRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
+  '/settings/payment-picker/$field': typeof SettingsPaymentPickerFieldRoute
   '/system/article/$slug': typeof SystemArticleSlugRoute
 }
 export interface FileRoutesById {
@@ -485,6 +494,7 @@ export interface FileRoutesById {
   '/payment/tender/$kind': typeof PaymentTenderKindRoute
   '/settings/detail/$topic': typeof SettingsDetailTopicRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
+  '/settings/payment-picker/$field': typeof SettingsPaymentPickerFieldRoute
   '/system/article/$slug': typeof SystemArticleSlugRoute
 }
 export interface FileRouteTypes {
@@ -541,6 +551,7 @@ export interface FileRouteTypes {
     | '/payment/tender/$kind'
     | '/settings/detail/$topic'
     | '/settings/hardware/integrations'
+    | '/settings/payment-picker/$field'
     | '/system/article/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -595,6 +606,7 @@ export interface FileRouteTypes {
     | '/payment/tender/$kind'
     | '/settings/detail/$topic'
     | '/settings/hardware/integrations'
+    | '/settings/payment-picker/$field'
     | '/system/article/$slug'
   id:
     | '__root__'
@@ -649,6 +661,7 @@ export interface FileRouteTypes {
     | '/payment/tender/$kind'
     | '/settings/detail/$topic'
     | '/settings/hardware/integrations'
+    | '/settings/payment-picker/$field'
     | '/system/article/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -703,6 +716,7 @@ export interface RootRouteChildren {
   TicketsIndexRoute: typeof TicketsIndexRoute
   PaymentTenderKindRoute: typeof PaymentTenderKindRoute
   SettingsDetailTopicRoute: typeof SettingsDetailTopicRoute
+  SettingsPaymentPickerFieldRoute: typeof SettingsPaymentPickerFieldRoute
   SystemArticleSlugRoute: typeof SystemArticleSlugRoute
 }
 
@@ -1065,6 +1079,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsHardwareIntegrationsRouteImport
       parentRoute: typeof SettingsHardwareRoute
     }
+    '/settings/payment-picker/$field': {
+      id: '/settings/payment-picker/$field'
+      path: '/settings/payment-picker/$field'
+      fullPath: '/settings/payment-picker/$field'
+      preLoaderRoute: typeof SettingsPaymentPickerFieldRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/system/article/$slug': {
       id: '/system/article/$slug'
       path: '/system/article/$slug'
@@ -1137,6 +1158,7 @@ const rootRouteChildren: RootRouteChildren = {
   TicketsIndexRoute: TicketsIndexRoute,
   PaymentTenderKindRoute: PaymentTenderKindRoute,
   SettingsDetailTopicRoute: SettingsDetailTopicRoute,
+  SettingsPaymentPickerFieldRoute: SettingsPaymentPickerFieldRoute,
   SystemArticleSlugRoute: SystemArticleSlugRoute,
 }
 export const routeTree = rootRouteImport
