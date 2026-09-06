@@ -259,7 +259,7 @@ function PaymentMethodsSettings() {
           so a check can be tendered.
         </Caption>
         <Caption>
-          If Auto Close Payment is enabled, the order closes automatically once a payment with that
+          If Auto close is switched on for a method, the order closes itself once a payment with that
           method completes successfully.
         </Caption>
       </ScreenBody>
