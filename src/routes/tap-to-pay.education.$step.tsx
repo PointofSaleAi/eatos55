@@ -120,7 +120,7 @@ function TapToPayEducation() {
           ))}
         </div>
 
-        <div className="mt-5 overflow-hidden rounded-card border border-border bg-muted" style={{ height: 320 }}>
+        <div className="mt-5 overflow-hidden rounded-card border border-border bg-white" style={{ height: 320, backgroundColor: "#ffffff" }}>
           <video
             key={current.video}
             src={current.video}
