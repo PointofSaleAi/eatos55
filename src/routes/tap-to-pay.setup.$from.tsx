@@ -70,6 +70,15 @@ function TapToPaySetup() {
   const [detecting, setDetecting] = useState(false);
   const [detected, setDetected] = useState(false);
 
+  const termsBody = useMemo(() => {
+    const footerIndex = tapToPayTerms.findIndex((b) => b.tag === "h2" && b.text === "Apple Footer");
+    return footerIndex >= 0 ? tapToPayTerms.slice(0, footerIndex) : tapToPayTerms;
+  }, []);
+
+  const acceptedOn = settings.tapToPayTermsAcceptedAt
+    ? new Date(settings.tapToPayTermsAcceptedAt).toLocaleDateString()
+    : "";
+
   const backToSource = () => {
     if (fromCheckout) navigate({ to: "/payment/method" });
     else if (from === "settings") navigate({ to: "/settings/tap-to-pay" });
