@@ -285,8 +285,17 @@ function TapToPaySetup() {
             >
               Cancel
             </button>
-            <div className="mt-3 aspect-[16/11] w-full rounded-card bg-black" aria-hidden />
-            <div className="-mt-4 rounded-sheet border border-border bg-surface px-4 pb-5 pt-6 elev-1">
+            <div className="mt-3 overflow-hidden rounded-card bg-white">
+              <video
+                src={appleIdVideo.url}
+                className="aspect-video w-full object-contain"
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            </div>
+            <div className="mt-3 rounded-sheet border border-border bg-surface px-4 pb-5 pt-6 elev-1">
               <h1 className="text-center text-fs-2xl font-extrabold text-foreground">{TTP}</h1>
               <p className="mt-2 text-center text-fs-sm leading-relaxed text-muted-foreground">
                 Accept payments from contactless credit and debit cards, Apple Pay, or other
@@ -296,31 +305,110 @@ function TapToPaySetup() {
                 Your business information will be shared with Apple and linked to{" "}
                 antonio1568silva@gmail.com.
               </p>
-              <Link
-                to="/tap-to-pay/activate"
-                className="mt-4 block text-center text-fs-sm font-semibold text-accent"
+              <button
+                type="button"
+                onClick={() => setStep("appleTerms")}
+                className="mt-4 block w-full text-center text-fs-sm font-semibold text-accent"
               >
                 {TTP} Terms and Conditions
-              </Link>
+              </button>
               <p className="mt-8 text-center text-fs-sm font-semibold text-accent">
                 About {TTP} &amp; Privacy...
               </p>
               <button
                 type="button"
-                onClick={() => setStep("ready")}
+                onClick={() => setStep("appleTerms")}
                 className="mt-4 h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
               >
                 Continue with This Apple ID
               </button>
               <button
                 type="button"
-                onClick={() => setStep("ready")}
+                onClick={() => setStep("appleTerms")}
                 className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-semibold text-accent"
               >
                 Use a Different Apple ID
               </button>
             </div>
           </>
+        ) : null}
+
+        {step === "appleTerms" ? (
+          <>
+            <h1 className="text-left text-fs-2xl font-extrabold leading-tight text-foreground">
+              {TTP}
+              <br />
+              Terms and Conditions
+            </h1>
+            <div className="mt-5 flex-1 space-y-3">
+              {termsBody.map((b, i) =>
+                b.tag === "h1" || b.tag === "h2" || b.tag === "h3" ? (
+                  <h2
+                    key={i}
+                    className="pt-3 text-fs-lg font-extrabold leading-snug text-foreground"
+                  >
+                    {b.text}
+                  </h2>
+                ) : b.tag === "h4" ? (
+                  <h3 key={i} className="pt-2 text-fs-base font-bold text-foreground">
+                    {b.text}
+                  </h3>
+                ) : b.tag === "li" ? (
+                  <p
+                    key={i}
+                    className="pl-4 text-fs-sm leading-relaxed text-muted-foreground before:mr-2 before:content-['•']"
+                  >
+                    {b.text}
+                  </p>
+                ) : (
+                  <p key={i} className="text-fs-sm leading-relaxed text-muted-foreground">
+                    {b.text}
+                  </p>
+                ),
+              )}
+            </div>
+            <div className="mt-auto flex items-center gap-3 border-t border-border bg-background pt-3">
+              <button
+                type="button"
+                onClick={() => setStep("appleId")}
+                className="h-ctl-md flex-1 rounded-row bg-muted text-fs-base font-semibold text-foreground"
+              >
+                Disagree
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  updateSettings({ tapToPayTermsAcceptedAt: new Date().toISOString() });
+                  setStep("linked");
+                }}
+                className="h-ctl-md flex-1 rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
+              >
+                Agree
+              </button>
+            </div>
+          </>
+        ) : null}
+
+        {step === "linked" ? (
+          <div className="flex flex-1 flex-col items-center justify-center text-center">
+            <CheckCircle2 className="size-16 text-success" aria-hidden />
+            <h1 className="mt-4 text-fs-2xl font-extrabold leading-tight text-foreground">
+              Your account is linked
+            </h1>
+            <p className="mt-2 max-w-[22rem] text-fs-base leading-relaxed text-muted-foreground">
+              This Apple ID is now linked to {brand.appName}. You can start taking contactless cards
+              and digital wallets on this iPhone.
+            </p>
+            <div className="mt-auto w-full pt-8">
+              <button
+                type="button"
+                onClick={() => setStep("ready")}
+                className="h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
         ) : null}
 
         {step === "ready" ? (
