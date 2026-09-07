@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, CheckCircle2, ChevronRight, Loader2, Lock, X } from "lucide-react";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import appleIdVideo from "@/assets/tap-to-pay-apple-id.mp4.asset.json";
@@ -409,27 +409,7 @@ function TapToPaySetup() {
         ) : null}
 
         {step === "linked" ? (
-          <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <div className="flex flex-col items-center justify-center">
-              <CheckCircle2 className="size-16 text-success" aria-hidden />
-              <h1 className="mt-4 text-fs-2xl font-extrabold leading-tight text-foreground">
-                Your account is linked
-              </h1>
-              <p className="mt-2 max-w-[22rem] text-fs-base leading-relaxed text-muted-foreground">
-                This Apple ID is now linked to {brand.appName}. You can start taking contactless cards
-                and digital wallets on this iPhone.
-              </p>
-              <div className="mt-8 w-full">
-                <button
-                  type="button"
-                  onClick={() => setStep("ready")}
-                  className="h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
-                >
-                  Continue
-                </button>
-              </div>
-            </div>
-          </div>
+          <LinkedSuccess onContinue={() => setStep("ready")} />
         ) : null}
 
         {step === "ready" ? (
