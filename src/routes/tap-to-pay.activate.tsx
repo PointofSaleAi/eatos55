@@ -115,11 +115,11 @@ function TapToPayActivate() {
                 ),
               )}
             </div>
-            <div className="sticky bottom-0 mt-6 flex items-center justify-between gap-3 border-t border-border bg-background py-3">
+            <div className="mt-auto flex items-center gap-3 border-t border-border bg-background pt-3">
               <button
                 type="button"
                 onClick={() => navigate({ to: "/settings/tap-to-pay" })}
-                className="h-ctl-md rounded-row px-2 text-fs-base font-semibold text-foreground"
+                className="h-ctl-md flex-1 rounded-row bg-muted text-fs-base font-semibold text-foreground"
               >
                 Disagree
               </button>
@@ -129,7 +129,7 @@ function TapToPayActivate() {
                   updateSettings({ tapToPayTermsAcceptedAt: new Date().toISOString() });
                   setStep("passcode");
                 }}
-                className="h-ctl-md rounded-row px-2 text-fs-base font-extrabold text-accent"
+                className="h-ctl-md flex-1 rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
               >
                 Agree
               </button>
