@@ -38,7 +38,7 @@ const PROGRESS_STEPS = [
 function TapToPayActivate() {
   const navigate = useNavigate();
   const { settings, updateSettings } = usePos();
-  const [step, setStep] = useState<Step>("terms");
+  const [step, setStep] = useState<Step>(settings.tapToPayTermsAcceptedAt ? "passcode" : "terms");
   const [done, setDone] = useState(0);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
