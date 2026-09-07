@@ -144,48 +144,18 @@ function TapToPaySetup() {
           </>
         ) : null}
 
-        {step === "configuring" ? (
-          <>
-            <TapToPayMark className="size-8 text-foreground" />
-            <h1 className="mt-4 text-fs-2xl font-extrabold text-foreground">Setting up {TTP}</h1>
-            <p className="mt-2 text-fs-sm text-muted-foreground">
-              Keep this iPhone unlocked and connected.
-            </p>
-            <div className="mt-5 h-1.5 overflow-hidden rounded-pill bg-muted">
-              <div
-                className="h-full rounded-pill bg-accent transition-all duration-700"
-                style={{ width: prepared ? "92%" : "48%" }}
-              />
-            </div>
-            <ul className="mt-4 space-y-2 text-fs-sm">
-              <li className="flex items-center gap-2 text-success">
-                <CheckCircle2 className="size-4" aria-hidden /> Checked this iPhone
-              </li>
-              <li className="flex items-center gap-2 text-success">
-                <CheckCircle2 className="size-4" aria-hidden /> Linked your merchant account
-              </li>
-              <li
-                className={
-                  prepared ? "flex items-center gap-2 text-success" : "flex items-center gap-2 text-muted-foreground"
-                }
-              >
-                {prepared ? (
-                  <CheckCircle2 className="size-4" aria-hidden />
-                ) : (
-                  <Circle className="size-4" aria-hidden />
-                )}
-                Preparing the reader
-              </li>
-            </ul>
-            <p className="mt-4 text-fs-xs text-muted-foreground">
-              This can take a minute the first time.
-            </p>
-          </>
-        ) : null}
-
         {step === "ready" ? (
           <>
-            <h1 className="text-fs-2xl font-extrabold text-foreground">{TTP}</h1>
+            <div className="overflow-hidden rounded-sheet border border-border bg-surface p-1 elev-1">
+              <img
+                src={tapToPayImage.url}
+                alt="Contactless card held near an iPhone for Tap to Pay on iPhone"
+                className="aspect-[16/11] w-full rounded-card object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <h1 className="mt-6 text-fs-2xl font-extrabold text-foreground">{TTP}</h1>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <TtpStatusPill state="ready" />
               <span className="text-fs-sm text-muted-foreground">
@@ -197,41 +167,24 @@ function TapToPaySetup() {
               How it works
             </p>
             <div className="mt-2 divide-y divide-border rounded-card border border-border bg-surface">
-              {(
-                [
-                  { step: "cards" as const, title: "Taking a contactless card" },
-                  { step: "wallets" as const, title: "Taking Apple Pay and wallets" },
-                ]
-              ).map((row) => (
+              {[
+                { step: "1", title: "Taking a contactless card" },
+                { step: "2", title: "Taking Apple Pay and wallets" },
+              ].map((row) => (
                 <Link
                   key={row.step}
                   to="/tap-to-pay/education/$step"
                   params={{ step: row.step }}
                   className="flex min-h-ctl-lg items-center gap-3 px-3 py-2 transition-colors hover:bg-muted"
                 >
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-fs-sm font-bold text-foreground">
-                      {row.title}
-                    </span>
-                    <span className="block text-fs-xs text-muted-foreground">Apple guide</span>
+                  <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
+                    {row.title}
                   </span>
                   <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                 </Link>
               ))}
-              <div className="flex min-h-ctl-lg items-center gap-3 px-3 py-2">
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-fs-sm font-bold text-foreground">
-                    Terms and Conditions
-                  </span>
-                  <span className="block text-fs-xs text-muted-foreground">
-                    Accepted{" "}
-                    {new Date(
-                      settings.tapToPayTermsAcceptedAt || Date.now(),
-                    ).toLocaleDateString()}
-                  </span>
-                </span>
-              </div>
             </div>
+
 
             <div className="mt-auto pt-8">
               <button
