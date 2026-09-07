@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, CheckCircle2, ChevronRight, Loader2, Lock, X } from "lucide-react";
+import { AlertTriangle, AlertTriangle as _A, Check, ChevronRight, Loader2, Lock, X } from "lucide-react";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import appleIdVideo from "@/assets/tap-to-pay-apple-id.mp4.asset.json";
 import { brand } from "@/lib/brand";
