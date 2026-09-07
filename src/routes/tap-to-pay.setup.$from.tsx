@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, CheckCircle2, ChevronRight, Loader2, Lock, X } from "lucide-react";
+import { AlertTriangle, Check, ChevronRight, Loader2, Lock, X } from "lucide-react";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import appleIdVideo from "@/assets/tap-to-pay-apple-id.mp4.asset.json";
 import { brand } from "@/lib/brand";
@@ -61,23 +61,23 @@ function LinkedSuccess({ onContinue }: { onContinue: () => void }) {
   }, [onContinue]);
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center text-center">
-      <div className="flex flex-col items-center justify-center">
-        <CheckCircle2 className="size-16 text-success" aria-hidden />
-        <h1 className="mt-4 text-fs-2xl font-extrabold leading-tight text-foreground">
-          Your account is linked
+    <div className="-mx-[var(--pad-screen)] -mt-5 flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="relative flex h-[13rem] shrink-0 items-center justify-center bg-black">
+        <span className="absolute left-4 top-4 text-fs-sm font-semibold text-white/50">Cancel</span>
+        <span className="grid size-24 place-items-center rounded-full border-[3px] border-[#0a84ff]">
+          <Check className="size-12 text-[#0a84ff]" strokeWidth={2.5} aria-hidden />
+        </span>
+      </div>
+      <div className="flex flex-1 flex-col items-center rounded-t-[1.75rem] bg-white px-6 pt-8">
+        <h1 className="flex items-center gap-2 text-fs-2xl font-extrabold text-black">
+          Account Linked
+          <Check className="size-6 text-[#0a84ff]" strokeWidth={3} aria-hidden />
         </h1>
-        <p className="mt-2 max-w-[22rem] text-fs-base leading-relaxed text-muted-foreground">
-          This Apple ID is now linked to {brand.appName}. You can start taking contactless cards
-          and digital wallets on this iPhone.
-        </p>
-        <p className="mt-4 text-fs-sm text-muted-foreground" aria-live="polite">
-          Continuing…
-        </p>
       </div>
     </div>
   );
 }
+
 
 function TapToPaySetup() {
   const { from } = useParams({ from: "/tap-to-pay/setup/$from" });
@@ -92,8 +92,12 @@ function TapToPaySetup() {
   const [bankAccount, setBankAccount] = useState(BANK_ACCOUNTS[0]);
   const [payoutSchedule, setPayoutSchedule] = useState(PAYOUT_SCHEDULES[0]);
   const [readerSheet, setReaderSheet] = useState(false);
+  const [appleIdSheet, setAppleIdSheet] = useState(false);
+  const [altAppleId, setAltAppleId] = useState("");
+  const [altPassword, setAltPassword] = useState("");
   const [detecting, setDetecting] = useState(false);
   const [detected, setDetected] = useState(false);
+
 
   const termsBody = useMemo(() => {
     const footerIndex = tapToPayTerms.findIndex((b) => b.tag === "h2" && b.text === "Apple Footer");
@@ -321,15 +325,15 @@ function TapToPaySetup() {
         ) : null}
 
         {step === "appleId" ? (
-          <>
-            <button
-              type="button"
-              onClick={() => setStep("payments")}
-              className="self-start text-fs-sm font-semibold text-accent"
-            >
-              Cancel
-            </button>
-            <div className="mt-3 overflow-hidden rounded-card bg-white">
+          <div className="-mx-[var(--pad-screen)] -mt-5 flex min-h-0 flex-1 flex-col overflow-hidden">
+            <div className="relative shrink-0 bg-black">
+              <button
+                type="button"
+                onClick={() => setStep("payments")}
+                className="absolute left-4 top-4 z-10 text-fs-sm font-semibold text-white"
+              >
+                Cancel
+              </button>
               <video
                 src={appleIdVideo.url}
                 className="aspect-video w-full object-contain"
@@ -339,43 +343,44 @@ function TapToPaySetup() {
                 playsInline
               />
             </div>
-            <div className="mt-3 rounded-sheet border border-border bg-surface px-4 pb-5 pt-6 elev-1">
-              <h1 className="text-center text-fs-2xl font-extrabold text-foreground">{TTP}</h1>
-              <p className="mt-2 text-center text-fs-sm leading-relaxed text-muted-foreground">
+            <div className="flex flex-1 flex-col rounded-t-[1.75rem] bg-white px-6 pb-6 pt-7">
+              <h1 className="text-center text-fs-2xl font-extrabold text-black">{TTP}</h1>
+              <p className="mt-3 text-center text-fs-sm leading-relaxed text-neutral-600">
                 Accept payments from contactless credit and debit cards, Apple Pay, or other
                 contactless payment devices using only your iPhone.
               </p>
-              <p className="mt-4 text-center text-fs-sm leading-relaxed text-muted-foreground">
-                Your business information will be shared with Apple and linked to{" "}
+              <p className="mt-4 text-center text-fs-sm leading-relaxed text-neutral-600">
+                Your business information will be shared with Apple and linked to
                 antonio1568silva@gmail.com.
               </p>
               <button
                 type="button"
                 onClick={() => setStep("appleTerms")}
-                className="mt-4 block w-full text-center text-fs-sm font-semibold text-accent"
+                className="mt-4 block w-full text-center text-fs-sm font-semibold text-[#0a84ff]"
               >
                 {TTP} Terms and Conditions
               </button>
-              <p className="mt-8 text-center text-fs-sm font-semibold text-accent">
+              <p className="mt-auto pt-8 text-center text-fs-sm font-semibold text-[#0a84ff]">
                 About {TTP} &amp; Privacy...
               </p>
               <button
                 type="button"
                 onClick={() => setStep("appleTerms")}
-                className="mt-4 h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
+                className="mt-4 h-ctl-lg w-full rounded-row bg-[#0a84ff] text-fs-base font-extrabold text-white"
               >
                 Continue with This Apple ID
               </button>
               <button
                 type="button"
-                onClick={() => setStep("appleTerms")}
-                className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-semibold text-accent"
+                onClick={() => setAppleIdSheet(true)}
+                className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-semibold text-[#0a84ff]"
               >
                 Use a Different Apple ID
               </button>
             </div>
-          </>
+          </div>
         ) : null}
+
 
         {step === "appleTerms" ? (
           <>
@@ -625,6 +630,55 @@ function TapToPaySetup() {
                 )}
               </button>
             </div>
+          </div>
+        </div>
+      ) : null}
+
+      {appleIdSheet ? (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <button
+            type="button"
+            aria-label="Close Apple ID sign in"
+            onClick={() => setAppleIdSheet(false)}
+            className="absolute inset-0 bg-black/50"
+          />
+          <div className="relative mx-auto w-full max-w-[34rem] rounded-t-[1.75rem] bg-[#1c1c1e] px-6 pb-[calc(1.5rem+var(--tabs-h,0px))] pt-6">
+            <h2 className="text-center text-fs-xl font-extrabold text-white">
+              Sign in with your Apple ID
+            </h2>
+            <p className="mx-auto mt-2 max-w-[20rem] text-center text-fs-sm leading-relaxed text-white/70">
+              This lets you use {TTP} with a different Apple account.
+            </p>
+            <input
+              type="email"
+              inputMode="email"
+              autoComplete="username"
+              value={altAppleId}
+              onChange={(e) => setAltAppleId(e.target.value)}
+              placeholder="Email or phone number"
+              className="mt-5 h-ctl-lg w-full rounded-row border border-white/20 bg-transparent px-4 text-fs-base text-white placeholder:text-white/45"
+            />
+            <input
+              type="password"
+              autoComplete="current-password"
+              value={altPassword}
+              onChange={(e) => setAltPassword(e.target.value)}
+              placeholder="Password"
+              className="mt-3 h-ctl-lg w-full rounded-row border border-white/20 bg-transparent px-4 text-fs-base text-white placeholder:text-white/45"
+            />
+            <p className="mt-3 text-right text-fs-sm font-semibold text-[#0a84ff]">
+              Forgot Apple ID or password?
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setAppleIdSheet(false);
+                setStep("appleTerms");
+              }}
+              className="mt-5 h-ctl-lg w-full rounded-row bg-white text-fs-base font-extrabold text-black"
+            >
+              Sign in
+            </button>
           </div>
         </div>
       ) : null}
