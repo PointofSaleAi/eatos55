@@ -85,7 +85,7 @@ function TapToPaySettings() {
               params={{ from: "settings" }}
               className="flex h-ctl-lg w-full items-center justify-center rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
             >
-              {TTP_SET_UP}
+              Set Up {TTP}
             </Link>
           </div>
         )}
