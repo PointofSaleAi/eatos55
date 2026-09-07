@@ -59,6 +59,14 @@ function TapToPaySetup() {
       tapToPayTermsAcceptedAt: new Date().toISOString(),
       tapToPayState: "ready",
     });
+    setStep("payments");
+  };
+
+  const confirmPayments = () => {
+    updateSettings({
+      cardReaderModel: reader === "None" ? "" : reader,
+      tapToPayState: ttpEnabled ? "ready" : "notSetUp",
+    });
     setStep("ready");
   };
 
