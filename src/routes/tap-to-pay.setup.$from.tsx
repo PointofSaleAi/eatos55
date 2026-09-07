@@ -104,9 +104,6 @@ function TapToPaySetup() {
     return footerIndex >= 0 ? tapToPayTerms.slice(0, footerIndex) : tapToPayTerms;
   }, []);
 
-  const acceptedOn = settings.tapToPayTermsAcceptedAt
-    ? new Date(settings.tapToPayTermsAcceptedAt).toLocaleDateString()
-    : "";
 
   const backToSource = () => {
     if (fromCheckout) navigate({ to: "/payment/method" });
