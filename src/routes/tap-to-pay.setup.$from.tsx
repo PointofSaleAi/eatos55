@@ -79,7 +79,7 @@ function TapToPaySetup() {
       cardReaderModel: reader || "",
       tapToPayState: ttpEnabled ? "ready" : "notSetUp",
     });
-    setStep("ready");
+    setStep("appleId");
   };
 
   return (
@@ -197,25 +197,22 @@ function TapToPaySetup() {
                   />
                 </button>
               </div>
-              <label className="flex min-h-ctl-lg items-center gap-3 px-3 py-2">
+              <button
+                type="button"
+                onClick={() => setReaderSheet(true)}
+                className="flex min-h-ctl-lg w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-muted"
+              >
                 <span className="min-w-0 flex-1">
                   <span className="block text-fs-base font-bold text-foreground">Card reader</span>
                   <span className="block text-fs-sm text-muted-foreground">
                     Select your card reader
                   </span>
                 </span>
-                <select
-                  value={reader}
-                  onChange={(e) => setReader(e.target.value)}
-                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-muted-foreground"
-                >
-                  {READERS.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                <span className="max-w-[9rem] shrink-0 truncate text-fs-sm font-semibold text-muted-foreground">
+                  {reader}
+                </span>
+                <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+              </button>
             </div>
 
             <p className="mt-6 text-fs-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
@@ -266,7 +263,7 @@ function TapToPaySetup() {
                 onClick={confirmPayments}
                 className="h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
               >
-                Continue
+                Manage your Apple ID
               </button>
               <button
                 type="button"
