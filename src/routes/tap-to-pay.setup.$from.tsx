@@ -204,7 +204,7 @@ function TapToPaySetup() {
                 <select
                   value={reader}
                   onChange={(e) => setReader(e.target.value)}
-                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-accent"
+                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-[#007AFF]"
                 >
                   {READERS.map((r) => (
                     <option key={r} value={r}>
