@@ -120,12 +120,17 @@ function TapToPayEducation() {
           ))}
         </div>
 
-        <div className="mt-5 overflow-hidden rounded-card">
-          <img
-            src={tapToPayImage.url}
-            alt="Contactless payment being taken on an iPhone"
+        <div className="mt-5 overflow-hidden rounded-card border border-border bg-muted">
+          <video
+            key={current.video}
+            src={current.video}
             className="mx-auto h-auto w-full max-w-[18rem] object-contain"
-            loading={index === 0 ? "eager" : "lazy"}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            aria-label={`${current.title} demonstration`}
           />
         </div>
 
@@ -157,7 +162,7 @@ function TapToPayEducation() {
             <button
               type="button"
               onClick={() => go(index - 1)}
-              className="flex h-ctl-lg flex-1 items-center justify-center gap-1 rounded-pill bg-muted text-fs-base font-bold text-foreground"
+              className="flex h-ctl-lg flex-1 items-center justify-center gap-1 rounded-row bg-muted text-fs-base font-bold text-foreground"
             >
               <ChevronLeft className="size-4" aria-hidden />
               Previous
@@ -166,7 +171,7 @@ function TapToPayEducation() {
           <button
             type="button"
             onClick={() => (isLast ? navigate({ to: "/settings/tap-to-pay" }) : go(index + 1))}
-            className="flex h-ctl-lg flex-[1.4] items-center justify-center gap-1 rounded-pill bg-primary text-fs-base font-bold text-primary-foreground"
+            className="flex h-ctl-lg flex-[1.4] items-center justify-center gap-1 rounded-row bg-primary text-fs-base font-bold text-primary-foreground"
           >
             {isLast ? "Got It" : "Next"}
             {isLast ? null : <ChevronRight className="size-4" aria-hidden />}
