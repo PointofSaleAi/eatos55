@@ -102,12 +102,7 @@ function TapToPaySetup() {
   const [altPassword, setAltPassword] = useState("");
   const [detecting, setDetecting] = useState(false);
   const [detected, setDetected] = useState(false);
-
-
-  const termsBody = useMemo(() => {
-    const footerIndex = tapToPayTerms.findIndex((b) => b.tag === "h2" && b.text === "Apple Footer");
-    return footerIndex >= 0 ? tapToPayTerms.slice(0, footerIndex) : tapToPayTerms;
-  }, []);
+  const [termsSheet, setTermsSheet] = useState(false);
 
   const acceptedOn = settings.tapToPayTermsAcceptedAt
     ? new Date(settings.tapToPayTermsAcceptedAt).toLocaleDateString()
@@ -357,7 +352,7 @@ function TapToPaySetup() {
               </p>
               <button
                 type="button"
-                onClick={() => setStep("appleTerms")}
+                onClick={() => setTermsSheet(true)}
                 className="mt-4 block w-full text-center text-fs-sm font-semibold text-[#0a84ff]"
               >
                 {TTP} Terms and Conditions
@@ -367,7 +362,7 @@ function TapToPaySetup() {
               </p>
               <button
                 type="button"
-                onClick={() => setStep("appleTerms")}
+                onClick={() => setTermsSheet(true)}
                 className="mt-4 h-ctl-lg w-full rounded-row bg-black text-fs-base font-extrabold text-white"
               >
                 Continue with This Apple ID
@@ -441,7 +436,7 @@ function TapToPaySetup() {
               ))}
               <button
                 type="button"
-                onClick={() => setStep("appleTerms")}
+                onClick={() => setTermsSheet(true)}
                 className="flex min-h-ctl-lg w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-muted"
               >
                 <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
