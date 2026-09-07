@@ -31,7 +31,16 @@ export const Route = createFileRoute("/tap-to-pay/setup/$from")({
 
 type Step = "passcode" | "terms" | "payments" | "ready" | "failed";
 
-const READERS = ["None", "eatOS S1F2", "Verifone P400", "Ingenico Lane 3000"];
+const READERS = [
+  "Adyen Terminal",
+  "Adyen NYC1 Bluetooth",
+  "Adyen Tap to Pay NFC",
+  "CardConnect",
+  "Stripe Tap to Pay NFC",
+  "Stripe",
+  "IdTech",
+];
+const DEFAULT_READER = "Adyen Tap to Pay NFC";
 const BANK_ACCOUNTS = ["Barclays ····4471", "HSBC ····8820", "Lloyds ····1093"];
 const PAYOUT_SCHEDULES = ["Daily", "Weekly", "Monthly"];
 
