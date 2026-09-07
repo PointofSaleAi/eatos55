@@ -1,6 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { CreditCard } from "lucide-react";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import { brand } from "@/lib/brand";
 import {
