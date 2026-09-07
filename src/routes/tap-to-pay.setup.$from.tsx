@@ -53,7 +53,7 @@ function TapToPaySetup() {
 
   const [step, setStep] = useState<Step>("terms");
   const [ttpEnabled, setTtpEnabled] = useState(true);
-  const [reader, setReader] = useState(settings.cardReaderModel || READERS[0]);
+  const [reader, setReader] = useState(settings.cardReaderModel || DEFAULT_READER);
   const [bankAccount, setBankAccount] = useState(BANK_ACCOUNTS[0]);
   const [payoutSchedule, setPayoutSchedule] = useState(PAYOUT_SCHEDULES[0]);
 
