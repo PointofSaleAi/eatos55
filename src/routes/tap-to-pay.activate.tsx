@@ -198,8 +198,8 @@ function TapToPayActivate() {
         ) : null}
 
         {step === "ready" ? (
-          <div className="flex flex-1 flex-col items-center text-center">
-            <CheckCircle2 className="mt-6 size-9 text-success" aria-hidden />
+          <div className="flex flex-1 flex-col items-center justify-center text-center">
+            <CheckCircle2 className="size-16 text-success" aria-hidden />
             <h1 className="mt-4 text-fs-2xl font-extrabold leading-tight text-foreground">
               {TTP} is ready
             </h1>
