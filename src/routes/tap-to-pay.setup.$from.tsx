@@ -54,6 +54,31 @@ const DEFAULT_READER = "Adyen Tap to Pay NFC";
 const BANK_ACCOUNTS = ["Barclays ····4471", "HSBC ····8820", "Lloyds ····1093"];
 const PAYOUT_SCHEDULES = ["Daily", "Weekly", "Monthly"];
 
+function LinkedSuccess({ onContinue }: { onContinue: () => void }) {
+  useEffect(() => {
+    const t = window.setTimeout(onContinue, 3000);
+    return () => window.clearTimeout(t);
+  }, [onContinue]);
+
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center text-center">
+      <div className="flex flex-col items-center justify-center">
+        <CheckCircle2 className="size-16 text-success" aria-hidden />
+        <h1 className="mt-4 text-fs-2xl font-extrabold leading-tight text-foreground">
+          Your account is linked
+        </h1>
+        <p className="mt-2 max-w-[22rem] text-fs-base leading-relaxed text-muted-foreground">
+          This Apple ID is now linked to {brand.appName}. You can start taking contactless cards
+          and digital wallets on this iPhone.
+        </p>
+        <p className="mt-4 text-fs-sm text-muted-foreground" aria-live="polite">
+          Continuing…
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function TapToPaySetup() {
   const { from } = useParams({ from: "/tap-to-pay/setup/$from" });
   const navigate = useNavigate();
