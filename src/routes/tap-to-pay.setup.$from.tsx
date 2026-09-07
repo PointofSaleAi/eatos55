@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useState } from "react";
-import { AlertTriangle, ChevronRight, Lock } from "lucide-react";
+import { AlertTriangle, ChevronRight, Loader2, Lock, X } from "lucide-react";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import { brand } from "@/lib/brand";
 import { TTP, TTP_SET_UP, TtpBenefits, TtpStatusPill, ttpCopy } from "@/components/pos/tap-to-pay";
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/tap-to-pay/setup/$from")({
   component: TapToPaySetup,
 });
 
-type Step = "passcode" | "terms" | "payments" | "ready" | "failed";
+type Step = "passcode" | "terms" | "payments" | "appleId" | "ready" | "failed";
 
 const READERS = [
   "Adyen Terminal",
@@ -56,6 +56,9 @@ function TapToPaySetup() {
   const [reader, setReader] = useState(settings.cardReaderModel || DEFAULT_READER);
   const [bankAccount, setBankAccount] = useState(BANK_ACCOUNTS[0]);
   const [payoutSchedule, setPayoutSchedule] = useState(PAYOUT_SCHEDULES[0]);
+  const [readerSheet, setReaderSheet] = useState(false);
+  const [detecting, setDetecting] = useState(false);
+  const [detected, setDetected] = useState(false);
 
   const backToSource = () => {
     if (fromCheckout) navigate({ to: "/payment/method" });
@@ -76,7 +79,7 @@ function TapToPaySetup() {
       cardReaderModel: reader || "",
       tapToPayState: ttpEnabled ? "ready" : "notSetUp",
     });
-    setStep("ready");
+    setStep("appleId");
   };
 
   return (
@@ -194,25 +197,22 @@ function TapToPaySetup() {
                   />
                 </button>
               </div>
-              <label className="flex min-h-ctl-lg items-center gap-3 px-3 py-2">
+              <button
+                type="button"
+                onClick={() => setReaderSheet(true)}
+                className="flex min-h-ctl-lg w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-muted"
+              >
                 <span className="min-w-0 flex-1">
                   <span className="block text-fs-base font-bold text-foreground">Card reader</span>
                   <span className="block text-fs-sm text-muted-foreground">
-                    Select your card reader
+                    {detected ? "Reader detected" : "Select your card reader"}
                   </span>
                 </span>
-                <select
-                  value={reader}
-                  onChange={(e) => setReader(e.target.value)}
-                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-muted-foreground"
-                >
-                  {READERS.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                <span className="max-w-[9rem] shrink-0 truncate text-fs-sm font-semibold text-muted-foreground">
+                  {reader}
+                </span>
+                <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+              </button>
             </div>
 
             <p className="mt-6 text-fs-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
@@ -263,7 +263,7 @@ function TapToPaySetup() {
                 onClick={confirmPayments}
                 className="h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
               >
-                Continue
+                Manage your Apple ID
               </button>
               <button
                 type="button"
@@ -271,6 +271,53 @@ function TapToPaySetup() {
                 className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-semibold text-accent"
               >
                 Back
+              </button>
+            </div>
+          </>
+        ) : null}
+
+        {step === "appleId" ? (
+          <>
+            <button
+              type="button"
+              onClick={() => setStep("payments")}
+              className="self-start text-fs-sm font-semibold text-accent"
+            >
+              Cancel
+            </button>
+            <div className="mt-3 aspect-[16/11] w-full rounded-card bg-black" aria-hidden />
+            <div className="-mt-4 rounded-sheet border border-border bg-surface px-4 pb-5 pt-6 elev-1">
+              <h1 className="text-center text-fs-2xl font-extrabold text-foreground">{TTP}</h1>
+              <p className="mt-2 text-center text-fs-sm leading-relaxed text-muted-foreground">
+                Accept payments from contactless credit and debit cards, Apple Pay, or other
+                contactless payment devices using only your iPhone.
+              </p>
+              <p className="mt-4 text-center text-fs-sm leading-relaxed text-muted-foreground">
+                Your business information will be shared with Apple and linked to{" "}
+                antonio1568silva@gmail.com.
+              </p>
+              <Link
+                to="/tap-to-pay/activate"
+                className="mt-4 block text-center text-fs-sm font-semibold text-accent"
+              >
+                {TTP} Terms and Conditions
+              </Link>
+              <p className="mt-8 text-center text-fs-sm font-semibold text-accent">
+                About {TTP} &amp; Privacy...
+              </p>
+              <button
+                type="button"
+                onClick={() => setStep("ready")}
+                className="mt-4 h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
+              >
+                Continue with This Apple ID
+              </button>
+              <button
+                type="button"
+                onClick={() => setStep("ready")}
+                className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-semibold text-accent"
+              >
+                Use a Different Apple ID
               </button>
             </div>
           </>
@@ -378,6 +425,84 @@ function TapToPaySetup() {
           </>
         ) : null}
       </div>
+
+      {readerSheet ? (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <button
+            type="button"
+            aria-label="Close card reader list"
+            onClick={() => setReaderSheet(false)}
+            className="absolute inset-0 bg-black/40"
+          />
+          <div className="relative mx-auto w-full max-w-[34rem] rounded-t-sheet bg-surface pb-[calc(1rem+var(--tabs-h,0px))] pt-2 elev-1">
+            <div className="mx-auto h-1.5 w-10 rounded-pill bg-border" aria-hidden />
+            <div className="flex items-center justify-between px-4 py-3">
+              <h2 className="text-fs-base font-extrabold text-foreground">
+                Select Card Reader Type
+              </h2>
+              <button
+                type="button"
+                aria-label="Close"
+                onClick={() => setReaderSheet(false)}
+                className="grid size-8 place-items-center rounded-pill text-muted-foreground transition-colors hover:bg-muted"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+            <div className="max-h-[50vh] divide-y divide-border overflow-y-auto">
+              {READERS.map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => {
+                    setReader(r);
+                    setDetected(false);
+                  }}
+                  className="flex min-h-ctl-lg w-full items-center gap-3 px-4 py-2 text-left transition-colors hover:bg-muted"
+                >
+                  <span
+                    className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${
+                      reader === r ? "border-accent" : "border-border"
+                    }`}
+                  >
+                    {reader === r ? (
+                      <span className="size-2.5 rounded-full bg-accent" aria-hidden />
+                    ) : null}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
+                    {r}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <div className="px-4 pt-3">
+              <button
+                type="button"
+                disabled={detecting}
+                onClick={() => {
+                  setDetecting(true);
+                  setDetected(false);
+                  window.setTimeout(() => {
+                    setDetecting(false);
+                    setDetected(true);
+                    setReaderSheet(false);
+                  }, 1800);
+                }}
+                className="flex h-ctl-lg w-full items-center justify-center gap-2 rounded-row bg-primary text-fs-base font-extrabold uppercase tracking-[0.08em] text-primary-foreground disabled:opacity-70"
+              >
+                {detecting ? (
+                  <>
+                    <Loader2 className="size-5 animate-spin" aria-hidden />
+                    Detecting
+                  </>
+                ) : (
+                  "Detect"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
