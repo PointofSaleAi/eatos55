@@ -50,8 +50,6 @@ function TapToPaySettings() {
           />
         </div>
 
-        <AppleAssetSlot label={TTP} detail="Apple-supplied lockup from the Marketing Toolkit" />
-
         <GroupCard className="mt-4">
           <IconValueRow
             title="This device"
@@ -93,29 +91,6 @@ function TapToPaySettings() {
             </Link>
           </div>
         )}
-
-        <GroupLabel>How it works</GroupLabel>
-        <GroupCard>
-          <IconNavRow
-            title="Taking a contactless card"
-            icon={CreditCard}
-            color="blue"
-            onClick={() =>
-              navigate({ to: "/tap-to-pay/education/$step", params: { step: "cards" } })
-            }
-          />
-          <IconNavRow
-            title="Taking Apple Pay and digital wallets"
-            icon={Wallet}
-            color="black"
-            onClick={() =>
-              navigate({ to: "/tap-to-pay/education/$step", params: { step: "wallets" } })
-            }
-          />
-        </GroupCard>
-        <Caption>
-          Apple draws these screens, so they stay available whether or not {TTP} is switched on yet.
-        </Caption>
 
         {ready && canManageSettings ? (
           <button
