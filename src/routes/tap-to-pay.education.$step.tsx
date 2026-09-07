@@ -124,7 +124,7 @@ function TapToPayEducation() {
           <video
             key={current.video}
             src={current.video}
-            className="mx-auto h-auto w-full max-w-[350px] object-contain"
+            className="mx-auto h-auto w-full max-w-[18rem] object-contain"
             autoPlay
             loop
             muted
