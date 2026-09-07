@@ -36,7 +36,7 @@ export const Route = createFileRoute("/tap-to-pay/setup/$from")({
   component: TapToPaySetup,
 });
 
-type Step = "passcode" | "terms" | "configuring" | "ready" | "failed";
+type Step = "passcode" | "terms" | "ready" | "failed";
 
 function TapToPaySetup() {
   const { from } = useParams({ from: "/tap-to-pay/setup/$from" });
@@ -45,23 +45,7 @@ function TapToPaySetup() {
   const fromCheckout = from === "checkout";
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
 
-  // Demo pre-flight: a device with no passcode cannot be configured.
   const [step, setStep] = useState<Step>("terms");
-  const [prepared, setPrepared] = useState(false);
-
-  useEffect(() => {
-    if (step !== "configuring") return;
-    const t = setTimeout(() => setPrepared(true), 900);
-    const done = setTimeout(() => {
-      updateSettings({ tapToPayState: "ready" });
-      setStep("ready");
-    }, 1600);
-    return () => {
-      clearTimeout(t);
-      clearTimeout(done);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step]);
 
   const backToSource = () => {
     if (fromCheckout) navigate({ to: "/payment/method" });
@@ -72,9 +56,9 @@ function TapToPaySetup() {
   const acceptTerms = () => {
     updateSettings({
       tapToPayTermsAcceptedAt: new Date().toISOString(),
-      tapToPayState: "configuring",
+      tapToPayState: "ready",
     });
-    setStep("configuring");
+    setStep("ready");
   };
 
   return (
