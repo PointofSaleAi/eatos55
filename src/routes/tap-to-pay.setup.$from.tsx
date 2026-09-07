@@ -73,7 +73,7 @@ function TapToPaySetup() {
 
   const confirmPayments = () => {
     updateSettings({
-      cardReaderModel: !reader || reader === "None" ? "" : reader,
+      cardReaderModel: reader || "",
       tapToPayState: ttpEnabled ? "ready" : "notSetUp",
     });
     setStep("ready");
