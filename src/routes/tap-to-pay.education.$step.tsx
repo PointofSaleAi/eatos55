@@ -1,7 +1,11 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, CreditCard, Lock, Smartphone, Wallet, Watch } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
+import contactlessVideo from "@/assets/tap-to-pay-contactless_1.mp4.asset.json";
+import applePayPhoneVideo from "@/assets/tap-to-pay-apple-pay-iphone.mp4.asset.json";
+import applePayWatchVideo from "@/assets/tap-to-pay-apple-pay-watch.mp4.asset.json";
+import walletsVideo from "@/assets/tap-to-pay-digital-wallets.mp4.asset.json";
+import pinEntryVideo from "@/assets/tap-to-pay-pin-entry.mp4.asset.json";
 import { brand } from "@/lib/brand";
 import { TTP } from "@/components/pos/tap-to-pay";
 
@@ -29,6 +33,7 @@ type Step = {
   title: string;
   points: string[];
   tip?: string;
+  video: string;
 };
 
 const steps: Step[] = [
@@ -40,6 +45,7 @@ const steps: Step[] = [
       "When the checkmark appears, the card has been read and the payment is being processed securely.",
     ],
     tip: "For best results, align the chip of the card near the top edge of the iPhone and hold it steady.",
+    video: contactlessVideo.url,
   },
   {
     icon: Smartphone,
@@ -48,6 +54,7 @@ const steps: Step[] = [
       "Customers can pay using Apple Pay on their iPhone.",
       "Ask them to hold their iPhone near the top of your device until the payment is confirmed.",
     ],
+    video: applePayPhoneVideo.url,
   },
   {
     icon: Watch,
@@ -56,6 +63,7 @@ const steps: Step[] = [
       "Customers can also pay using Apple Pay on Apple Watch.",
       "Hold the watch near the top of your iPhone until the payment completes.",
     ],
+    video: applePayWatchVideo.url,
   },
   {
     icon: Wallet,
@@ -64,6 +72,7 @@ const steps: Step[] = [
       "Tap to Pay on iPhone supports other contactless wallets and wearable devices.",
       "Customers can hold their compatible phone or wearable near the top of your device to complete the payment.",
     ],
+    video: walletsVideo.url,
   },
   {
     icon: Lock,
@@ -73,6 +82,7 @@ const steps: Step[] = [
       "When required, a secure PIN entry screen will automatically appear on the device. Customers can enter their PIN directly on the screen.",
       "Accessibility options are available for customers who need assistance.",
     ],
+    video: pinEntryVideo.url,
   },
 ];
 
@@ -110,12 +120,17 @@ function TapToPayEducation() {
           ))}
         </div>
 
-        <div className="mt-5 overflow-hidden rounded-card">
-          <img
-            src={tapToPayImage.url}
-            alt="Contactless payment being taken on an iPhone"
+        <div className="mt-5 overflow-hidden rounded-card border border-border bg-muted">
+          <video
+            key={current.video}
+            src={current.video}
             className="mx-auto h-auto w-full max-w-[18rem] object-contain"
-            loading={index === 0 ? "eager" : "lazy"}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            aria-label={`${current.title} demonstration`}
           />
         </div>
 
@@ -147,7 +162,7 @@ function TapToPayEducation() {
             <button
               type="button"
               onClick={() => go(index - 1)}
-              className="flex h-ctl-lg flex-1 items-center justify-center gap-1 rounded-pill bg-muted text-fs-base font-bold text-foreground"
+              className="flex h-ctl-lg flex-1 items-center justify-center gap-1 rounded-row bg-muted text-fs-base font-bold text-foreground"
             >
               <ChevronLeft className="size-4" aria-hidden />
               Previous
@@ -156,7 +171,7 @@ function TapToPayEducation() {
           <button
             type="button"
             onClick={() => (isLast ? navigate({ to: "/settings/tap-to-pay" }) : go(index + 1))}
-            className="flex h-ctl-lg flex-[1.4] items-center justify-center gap-1 rounded-pill bg-primary text-fs-base font-bold text-primary-foreground"
+            className="flex h-ctl-lg flex-[1.4] items-center justify-center gap-1 rounded-row bg-primary text-fs-base font-bold text-primary-foreground"
           >
             {isLast ? "Got It" : "Next"}
             {isLast ? null : <ChevronRight className="size-4" aria-hidden />}
