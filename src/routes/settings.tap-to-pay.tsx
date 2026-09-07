@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { FileText, Smartphone } from "lucide-react";
+import { Smartphone } from "lucide-react";
 import { brand } from "@/lib/brand";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
@@ -57,16 +57,6 @@ function TapToPaySettings() {
               state === "ineligible"
                 ? ttpCopy.unavailable
                 : `${ttpStatusLabel(state)} · ${settings.tapToPayDeviceLabel}`
-            }
-          />
-          <IconValueRow
-            title="Terms and Conditions"
-            icon={FileText}
-            color="slate"
-            value={
-              settings.tapToPayTermsAcceptedAt
-                ? `Accepted ${new Date(settings.tapToPayTermsAcceptedAt).toLocaleDateString()}`
-                : "Not accepted"
             }
           />
         </GroupCard>
