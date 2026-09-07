@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, CheckCircle2, Lock } from "lucide-react";
 import { brand } from "@/lib/brand";
 import { TTP } from "@/components/pos/tap-to-pay";
