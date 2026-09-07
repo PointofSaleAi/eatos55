@@ -471,12 +471,21 @@ function TapToPaySetup() {
                   <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                 </Link>
               ))}
-              <div className="flex min-h-ctl-lg items-center gap-3 px-3 py-2">
+              <button
+                type="button"
+                onClick={() => setStep("appleTerms")}
+                className="flex min-h-ctl-lg w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-muted"
+              >
                 <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
                   Terms and Conditions
                 </span>
+                {acceptedOn ? (
+                  <span className="shrink-0 text-fs-sm text-muted-foreground">
+                    Accepted {acceptedOn}
+                  </span>
+                ) : null}
                 <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-              </div>
+              </button>
             </div>
 
 
