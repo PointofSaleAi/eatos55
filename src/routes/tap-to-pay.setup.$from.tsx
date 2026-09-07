@@ -193,31 +193,76 @@ function TapToPaySetup() {
 
         {step === "ready" ? (
           <>
-            <CheckCircle2 className="size-8 text-success" aria-hidden />
-            <h1 className="mt-4 text-fs-2xl font-extrabold text-foreground">{TTP} is ready</h1>
-            <p className="mt-2 text-fs-sm leading-relaxed text-muted-foreground">
-              This iPhone can now take contactless cards and digital wallets. Terms accepted on{" "}
-              {new Date(settings.tapToPayTermsAcceptedAt || Date.now()).toLocaleDateString()}.
+            <h1 className="text-fs-2xl font-extrabold text-foreground">{TTP}</h1>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <TtpStatusPill state="ready" />
+              <span className="text-fs-sm text-muted-foreground">
+                {settings.tapToPayDeviceLabel}
+              </span>
+            </div>
+
+            <p className="mt-6 text-fs-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
+              How it works
             </p>
+            <div className="mt-2 divide-y divide-border rounded-card border border-border bg-surface">
+              {(
+                [
+                  { step: "cards" as const, title: "Taking a contactless card" },
+                  { step: "wallets" as const, title: "Taking Apple Pay and wallets" },
+                ]
+              ).map((row) => (
+                <Link
+                  key={row.step}
+                  to="/tap-to-pay/education/$step"
+                  params={{ step: row.step }}
+                  className="flex min-h-ctl-lg items-center gap-3 px-3 py-2 transition-colors hover:bg-muted"
+                >
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-fs-sm font-bold text-foreground">
+                      {row.title}
+                    </span>
+                    <span className="block text-fs-xs text-muted-foreground">Apple guide</span>
+                  </span>
+                  <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                </Link>
+              ))}
+              <div className="flex min-h-ctl-lg items-center gap-3 px-3 py-2">
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-fs-sm font-bold text-foreground">
+                    Terms and Conditions
+                  </span>
+                  <span className="block text-fs-xs text-muted-foreground">
+                    Accepted{" "}
+                    {new Date(
+                      settings.tapToPayTermsAcceptedAt || Date.now(),
+                    ).toLocaleDateString()}
+                  </span>
+                </span>
+              </div>
+            </div>
+
             <div className="mt-auto pt-8">
-              {/* Requirement 4.1: education opens immediately, no extra tap needed. */}
-              <Link
-                to="/tap-to-pay/education/$step"
-                params={{ step: "cards" }}
-                className="flex h-ctl-lg w-full items-center justify-center rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
-              >
-                See how to take a payment
-              </Link>
               <button
                 type="button"
                 onClick={backToSource}
-                className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-semibold text-accent"
+                className="h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
               >
                 {fromCheckout ? "Back to the ticket" : "Done"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  updateSettings({ tapToPayState: "notSetUp" });
+                  setStep("terms");
+                }}
+                className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-bold text-destructive"
+              >
+                Turn off on this iPhone
               </button>
             </div>
           </>
         ) : null}
+
 
         {step === "failed" ? (
           <>
