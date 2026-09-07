@@ -321,11 +321,7 @@ function TapToPaySetup() {
                 <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
                   Terms and Conditions
                 </span>
-                <span className="shrink-0 text-fs-sm text-muted-foreground">
-                  {settings.tapToPayTermsAcceptedAt
-                    ? `Accepted ${new Date(settings.tapToPayTermsAcceptedAt).toLocaleDateString()}`
-                    : "Not accepted"}
-                </span>
+                <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
               </div>
             </div>
 

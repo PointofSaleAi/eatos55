@@ -11,7 +11,7 @@ import { usePos, type TapToPayState } from "@/lib/pos-store";
  * reads exactly "Tap to Pay on iPhone" with nothing appended.
  */
 export const TTP = "Tap to Pay on iPhone";
-export const TTP_SET_UP = `Set Up ${TTP}`;
+export const TTP_SET_UP = "Continue";
 
 export const ttpCopy = {
   awarenessTitle: "Accept payments right on this iPhone",
