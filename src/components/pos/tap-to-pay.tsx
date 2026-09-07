@@ -1,6 +1,9 @@
 import { Link } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { CheckCircle2, ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { tapToPayTerms } from "@/lib/tap-to-pay-terms";
 import { usePos, type TapToPayState } from "@/lib/pos-store";
 
 /**
@@ -159,6 +162,82 @@ export function TapToPayNudge({ className }: { className?: string }) {
         {TTP_SET_UP}
       </Link>
     </div>
+  );
+}
+
+/**
+ * Apple-style full-screen Terms and Conditions sheet. Slides up over the
+ * current screen with a scrollable body and pill actions pinned to the
+ * bottom, matching the system Tap to Pay on iPhone terms UI.
+ */
+export function TapToPayTermsSheet({
+  open,
+  onOpenChange,
+  onAgree,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onAgree: () => void;
+}) {
+  const termsBody = useMemo(() => {
+    const footerIndex = tapToPayTerms.findIndex((b) => b.tag === "h2" && b.text === "Apple Footer");
+    return footerIndex >= 0 ? tapToPayTerms.slice(0, footerIndex) : tapToPayTerms;
+  }, []);
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        hideClose
+        side="bottom"
+        className="flex h-[100dvh] flex-col overflow-hidden rounded-t-[1.75rem] border-t border-border bg-white px-5 pb-[calc(1rem+var(--safe-bottom,0px))] pt-7"
+      >
+        <SheetTitle className="text-left text-fs-2xl font-extrabold leading-tight text-black">
+          {TTP}
+          <br />
+          Terms and Conditions
+        </SheetTitle>
+        <div className="mt-5 min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain pr-1">
+          {termsBody.map((b, i) =>
+            b.tag === "h1" || b.tag === "h2" || b.tag === "h3" ? (
+              <h2 key={i} className="pt-3 text-fs-lg font-extrabold leading-snug text-black">
+                {b.text}
+              </h2>
+            ) : b.tag === "h4" ? (
+              <h3 key={i} className="pt-2 text-fs-base font-bold text-black">
+                {b.text}
+              </h3>
+            ) : b.tag === "li" ? (
+              <p
+                key={i}
+                className="pl-4 text-fs-sm leading-relaxed text-neutral-600 before:mr-2 before:content-['•']"
+              >
+                {b.text}
+              </p>
+            ) : (
+              <p key={i} className="text-fs-sm leading-relaxed text-neutral-600">
+                {b.text}
+              </p>
+            ),
+          )}
+        </div>
+        <div className="flex shrink-0 items-center gap-3 pt-4">
+          <button
+            type="button"
+            onClick={() => onOpenChange(false)}
+            className="h-ctl-md flex-1 rounded-full border border-neutral-300 bg-white text-fs-base font-bold text-[#0a84ff]"
+          >
+            Disagree
+          </button>
+          <button
+            type="button"
+            onClick={onAgree}
+            className="h-ctl-md flex-1 rounded-full border border-neutral-300 bg-white text-fs-base font-bold text-[#0a84ff]"
+          >
+            Agree
+          </button>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
 

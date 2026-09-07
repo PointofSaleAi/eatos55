@@ -1,11 +1,17 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertTriangle, Check, ChevronRight, Loader2, Lock, X } from "lucide-react";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import appleIdImage from "@/assets/tap-to-pay-apple-id-bg.png.asset.json";
 import { brand } from "@/lib/brand";
-import { TTP, TTP_SET_UP, TtpBenefits, TtpStatusPill, ttpCopy } from "@/components/pos/tap-to-pay";
-import { tapToPayTerms } from "@/lib/tap-to-pay-terms";
+import {
+  TTP,
+  TTP_SET_UP,
+  TapToPayTermsSheet,
+  TtpBenefits,
+  TtpStatusPill,
+  ttpCopy,
+} from "@/components/pos/tap-to-pay";
 
 import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
@@ -36,7 +42,6 @@ type Step =
   | "terms"
   | "payments"
   | "appleId"
-  | "appleTerms"
   | "linked"
   | "ready"
   | "failed";
@@ -97,12 +102,7 @@ function TapToPaySetup() {
   const [altPassword, setAltPassword] = useState("");
   const [detecting, setDetecting] = useState(false);
   const [detected, setDetected] = useState(false);
-
-
-  const termsBody = useMemo(() => {
-    const footerIndex = tapToPayTerms.findIndex((b) => b.tag === "h2" && b.text === "Apple Footer");
-    return footerIndex >= 0 ? tapToPayTerms.slice(0, footerIndex) : tapToPayTerms;
-  }, []);
+  const [termsSheet, setTermsSheet] = useState(false);
 
   const acceptedOn = settings.tapToPayTermsAcceptedAt
     ? new Date(settings.tapToPayTermsAcceptedAt).toLocaleDateString()
@@ -352,7 +352,7 @@ function TapToPaySetup() {
               </p>
               <button
                 type="button"
-                onClick={() => setStep("appleTerms")}
+                onClick={() => setTermsSheet(true)}
                 className="mt-4 block w-full text-center text-fs-sm font-semibold text-[#0a84ff]"
               >
                 {TTP} Terms and Conditions
@@ -362,7 +362,7 @@ function TapToPaySetup() {
               </p>
               <button
                 type="button"
-                onClick={() => setStep("appleTerms")}
+                onClick={() => setTermsSheet(true)}
                 className="mt-4 h-ctl-lg w-full rounded-row bg-black text-fs-base font-extrabold text-white"
               >
                 Continue with This Apple ID
@@ -379,61 +379,15 @@ function TapToPaySetup() {
         ) : null}
 
 
-        {step === "appleTerms" ? (
-          <>
-            <h1 className="text-left text-fs-2xl font-extrabold leading-tight text-foreground">
-              {TTP}
-              <br />
-              Terms and Conditions
-            </h1>
-            <div className="mt-5 flex-1 space-y-3">
-              {termsBody.map((b, i) =>
-                b.tag === "h1" || b.tag === "h2" || b.tag === "h3" ? (
-                  <h2
-                    key={i}
-                    className="pt-3 text-fs-lg font-extrabold leading-snug text-foreground"
-                  >
-                    {b.text}
-                  </h2>
-                ) : b.tag === "h4" ? (
-                  <h3 key={i} className="pt-2 text-fs-base font-bold text-foreground">
-                    {b.text}
-                  </h3>
-                ) : b.tag === "li" ? (
-                  <p
-                    key={i}
-                    className="pl-4 text-fs-sm leading-relaxed text-muted-foreground before:mr-2 before:content-['•']"
-                  >
-                    {b.text}
-                  </p>
-                ) : (
-                  <p key={i} className="text-fs-sm leading-relaxed text-muted-foreground">
-                    {b.text}
-                  </p>
-                ),
-              )}
-            </div>
-            <div className="mt-auto flex items-center gap-3 border-t border-border bg-background pt-3">
-              <button
-                type="button"
-                onClick={() => setStep("appleId")}
-                className="h-ctl-md flex-1 rounded-row bg-muted text-fs-base font-semibold text-foreground"
-              >
-                Disagree
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  updateSettings({ tapToPayTermsAcceptedAt: new Date().toISOString() });
-                  setStep("linked");
-                }}
-                className="h-ctl-md flex-1 rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
-              >
-                Agree
-              </button>
-            </div>
-          </>
-        ) : null}
+        <TapToPayTermsSheet
+          open={termsSheet}
+          onOpenChange={setTermsSheet}
+          onAgree={() => {
+            updateSettings({ tapToPayTermsAcceptedAt: new Date().toISOString() });
+            setTermsSheet(false);
+            if (step === "appleId") setStep("linked");
+          }}
+        />
 
         {step === "linked" ? (
           <LinkedSuccess onContinue={() => setStep("ready")} />
@@ -482,7 +436,7 @@ function TapToPaySetup() {
               ))}
               <button
                 type="button"
-                onClick={() => setStep("appleTerms")}
+                onClick={() => setTermsSheet(true)}
                 className="flex min-h-ctl-lg w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-muted"
               >
                 <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
@@ -669,7 +623,7 @@ function TapToPaySetup() {
               type="button"
               onClick={() => {
                 setAppleIdSheet(false);
-                setStep("appleTerms");
+                setTermsSheet(true);
               }}
               className="mt-5 h-ctl-lg w-full rounded-row bg-black text-fs-base font-extrabold text-white"
             >
