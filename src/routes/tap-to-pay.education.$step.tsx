@@ -29,6 +29,7 @@ type Step = {
   title: string;
   points: string[];
   tip?: string;
+  video: string;
 };
 
 const steps: Step[] = [
