@@ -170,7 +170,7 @@ function TapToPayEducation() {
           ) : null}
           <button
             type="button"
-            onClick={() => (isLast ? navigate({ to: "/settings/tap-to-pay" }) : go(index + 1))}
+            onClick={() => (isLast ? navigate({ to: "/tap-to-pay/activate" }) : go(index + 1))}
             className="flex h-ctl-lg flex-[1.4] items-center justify-center gap-1 rounded-row bg-primary text-fs-base font-bold text-primary-foreground"
           >
             {isLast ? "Got It" : "Next"}
