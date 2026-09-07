@@ -410,22 +410,24 @@ function TapToPaySetup() {
 
         {step === "linked" ? (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <CheckCircle2 className="size-16 text-success" aria-hidden />
-            <h1 className="mt-4 text-fs-2xl font-extrabold leading-tight text-foreground">
-              Your account is linked
-            </h1>
-            <p className="mt-2 max-w-[22rem] text-fs-base leading-relaxed text-muted-foreground">
-              This Apple ID is now linked to {brand.appName}. You can start taking contactless cards
-              and digital wallets on this iPhone.
-            </p>
-            <div className="mt-auto w-full pt-8">
-              <button
-                type="button"
-                onClick={() => setStep("ready")}
-                className="h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
-              >
-                Continue
-              </button>
+            <div className="flex flex-col items-center justify-center">
+              <CheckCircle2 className="size-16 text-success" aria-hidden />
+              <h1 className="mt-4 text-fs-2xl font-extrabold leading-tight text-foreground">
+                Your account is linked
+              </h1>
+              <p className="mt-2 max-w-[22rem] text-fs-base leading-relaxed text-muted-foreground">
+                This Apple ID is now linked to {brand.appName}. You can start taking contactless cards
+                and digital wallets on this iPhone.
+              </p>
+              <div className="mt-8 w-full">
+                <button
+                  type="button"
+                  onClick={() => setStep("ready")}
+                  className="h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
+                >
+                  Continue
+                </button>
+              </div>
             </div>
           </div>
         ) : null}
@@ -515,30 +517,32 @@ function TapToPaySetup() {
 
 
         {step === "failed" ? (
-          <>
-            <AlertTriangle className="size-8 text-warning" aria-hidden />
-            <h1 className="mt-4 text-fs-2xl font-extrabold text-foreground">Setup did not finish</h1>
-            <p className="mt-2 text-fs-sm leading-relaxed text-muted-foreground">
-              We could not reach the payments service. Check your connection and try again, nothing
-              has been charged.
-            </p>
-            <div className="mt-auto pt-8">
-              <button
-                type="button"
-                onClick={() => setStep("terms")}
-                className="h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
-              >
-                Try again
-              </button>
-              <button
-                type="button"
-                onClick={backToSource}
-                className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-semibold text-accent"
-              >
-                Take payment another way
-              </button>
+          <div className="flex flex-1 flex-col items-center justify-center text-center">
+            <div className="flex flex-col items-center justify-center">
+              <AlertTriangle className="size-16 text-warning" aria-hidden />
+              <h1 className="mt-4 text-fs-2xl font-extrabold text-foreground">Setup did not finish</h1>
+              <p className="mt-2 max-w-[22rem] text-fs-base leading-relaxed text-muted-foreground">
+                We could not reach the payments service. Check your connection and try again, nothing
+                has been charged.
+              </p>
+              <div className="mt-8 w-full">
+                <button
+                  type="button"
+                  onClick={() => setStep("terms")}
+                  className="h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
+                >
+                  Try again
+                </button>
+                <button
+                  type="button"
+                  onClick={backToSource}
+                  className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-semibold text-accent"
+                >
+                  Take payment another way
+                </button>
+              </div>
             </div>
-          </>
+          </div>
         ) : null}
       </div>
 
