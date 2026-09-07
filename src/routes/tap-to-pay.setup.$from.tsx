@@ -31,7 +31,16 @@ export const Route = createFileRoute("/tap-to-pay/setup/$from")({
 
 type Step = "passcode" | "terms" | "payments" | "ready" | "failed";
 
-const READERS = ["None", "eatOS S1F2", "Verifone P400", "Ingenico Lane 3000"];
+const READERS = [
+  "Adyen Terminal",
+  "Adyen NYC1 Bluetooth",
+  "Adyen Tap to Pay NFC",
+  "CardConnect",
+  "Stripe Tap to Pay NFC",
+  "Stripe",
+  "IdTech",
+];
+const DEFAULT_READER = "Adyen Tap to Pay NFC";
 const BANK_ACCOUNTS = ["Barclays ····4471", "HSBC ····8820", "Lloyds ····1093"];
 const PAYOUT_SCHEDULES = ["Daily", "Weekly", "Monthly"];
 
@@ -44,7 +53,7 @@ function TapToPaySetup() {
 
   const [step, setStep] = useState<Step>("terms");
   const [ttpEnabled, setTtpEnabled] = useState(true);
-  const [reader, setReader] = useState(settings.cardReaderModel || READERS[0]);
+  const [reader, setReader] = useState(settings.cardReaderModel || DEFAULT_READER);
   const [bankAccount, setBankAccount] = useState(BANK_ACCOUNTS[0]);
   const [payoutSchedule, setPayoutSchedule] = useState(PAYOUT_SCHEDULES[0]);
 
@@ -64,7 +73,7 @@ function TapToPaySetup() {
 
   const confirmPayments = () => {
     updateSettings({
-      cardReaderModel: !reader || reader === "None" ? "" : reader,
+      cardReaderModel: reader || "",
       tapToPayState: ttpEnabled ? "ready" : "notSetUp",
     });
     setStep("ready");
@@ -155,7 +164,7 @@ function TapToPaySetup() {
 
         {step === "payments" ? (
           <>
-            <h1 className="text-fs-2xl font-extrabold text-foreground">Payments</h1>
+            <h1 className="text-center text-fs-2xl font-extrabold text-foreground">Payments</h1>
 
             <p className="mt-6 text-fs-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
               Taking payment
@@ -195,7 +204,7 @@ function TapToPaySetup() {
                 <select
                   value={reader}
                   onChange={(e) => setReader(e.target.value)}
-                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-accent"
+                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-[#007AFF]"
                 >
                   {READERS.map((r) => (
                     <option key={r} value={r}>
@@ -218,7 +227,7 @@ function TapToPaySetup() {
                 <select
                   value={bankAccount}
                   onChange={(e) => setBankAccount(e.target.value)}
-                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-accent"
+                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-[#007AFF]"
                 >
                   {BANK_ACCOUNTS.map((b) => (
                     <option key={b} value={b}>
@@ -237,7 +246,7 @@ function TapToPaySetup() {
                 <select
                   value={payoutSchedule}
                   onChange={(e) => setPayoutSchedule(e.target.value)}
-                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-accent"
+                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-[#007AFF]"
                 >
                   {PAYOUT_SCHEDULES.map((p) => (
                     <option key={p} value={p}>
