@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, Check, ChevronRight, Loader2, Lock, X } from "lucide-react";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
-import appleIdVideo from "@/assets/tap-to-pay-apple-id.mp4.asset.json";
+import appleIdImage from "@/assets/tap-to-pay-apple-id-bg.png.asset.json";
 import { brand } from "@/lib/brand";
 import { TTP, TTP_SET_UP, TtpBenefits, TtpStatusPill, ttpCopy } from "@/components/pos/tap-to-pay";
 import { tapToPayTerms } from "@/lib/tap-to-pay-terms";
@@ -334,13 +334,10 @@ function TapToPaySetup() {
               >
                 Cancel
               </button>
-              <video
-                src={appleIdVideo.url}
+              <img
+                src={appleIdImage.url}
+                alt="Tap to Pay on iPhone contactless symbol on black background"
                 className="aspect-video w-full object-contain"
-                autoPlay
-                muted
-                loop
-                playsInline
               />
             </div>
             <div className="flex flex-1 flex-col rounded-t-[1.75rem] bg-white px-6 pb-6 pt-7">
@@ -366,7 +363,7 @@ function TapToPaySetup() {
               <button
                 type="button"
                 onClick={() => setStep("appleTerms")}
-                className="mt-4 h-ctl-lg w-full rounded-row bg-[#0a84ff] text-fs-base font-extrabold text-white"
+                className="mt-4 h-ctl-lg w-full rounded-row bg-black text-fs-base font-extrabold text-white"
               >
                 Continue with This Apple ID
               </button>
