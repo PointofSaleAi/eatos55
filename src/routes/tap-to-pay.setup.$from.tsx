@@ -321,15 +321,15 @@ function TapToPaySetup() {
         ) : null}
 
         {step === "appleId" ? (
-          <>
-            <button
-              type="button"
-              onClick={() => setStep("payments")}
-              className="self-start text-fs-sm font-semibold text-accent"
-            >
-              Cancel
-            </button>
-            <div className="mt-3 overflow-hidden rounded-card bg-white">
+          <div className="-mx-[var(--pad-screen)] -mt-5 flex min-h-0 flex-1 flex-col overflow-hidden">
+            <div className="relative shrink-0 bg-black">
+              <button
+                type="button"
+                onClick={() => setStep("payments")}
+                className="absolute left-4 top-4 z-10 text-fs-sm font-semibold text-white"
+              >
+                Cancel
+              </button>
               <video
                 src={appleIdVideo.url}
                 className="aspect-video w-full object-contain"
@@ -339,43 +339,44 @@ function TapToPaySetup() {
                 playsInline
               />
             </div>
-            <div className="mt-3 rounded-sheet border border-border bg-surface px-4 pb-5 pt-6 elev-1">
-              <h1 className="text-center text-fs-2xl font-extrabold text-foreground">{TTP}</h1>
-              <p className="mt-2 text-center text-fs-sm leading-relaxed text-muted-foreground">
+            <div className="flex flex-1 flex-col rounded-t-[1.75rem] bg-white px-6 pb-6 pt-7">
+              <h1 className="text-center text-fs-2xl font-extrabold text-black">{TTP}</h1>
+              <p className="mt-3 text-center text-fs-sm leading-relaxed text-neutral-600">
                 Accept payments from contactless credit and debit cards, Apple Pay, or other
                 contactless payment devices using only your iPhone.
               </p>
-              <p className="mt-4 text-center text-fs-sm leading-relaxed text-muted-foreground">
-                Your business information will be shared with Apple and linked to{" "}
+              <p className="mt-4 text-center text-fs-sm leading-relaxed text-neutral-600">
+                Your business information will be shared with Apple and linked to
                 antonio1568silva@gmail.com.
               </p>
               <button
                 type="button"
                 onClick={() => setStep("appleTerms")}
-                className="mt-4 block w-full text-center text-fs-sm font-semibold text-accent"
+                className="mt-4 block w-full text-center text-fs-sm font-semibold text-[#0a84ff]"
               >
                 {TTP} Terms and Conditions
               </button>
-              <p className="mt-8 text-center text-fs-sm font-semibold text-accent">
+              <p className="mt-auto pt-8 text-center text-fs-sm font-semibold text-[#0a84ff]">
                 About {TTP} &amp; Privacy...
               </p>
               <button
                 type="button"
                 onClick={() => setStep("appleTerms")}
-                className="mt-4 h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
+                className="mt-4 h-ctl-lg w-full rounded-row bg-[#0a84ff] text-fs-base font-extrabold text-white"
               >
                 Continue with This Apple ID
               </button>
               <button
                 type="button"
-                onClick={() => setStep("appleTerms")}
-                className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-semibold text-accent"
+                onClick={() => setAppleIdSheet(true)}
+                className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-semibold text-[#0a84ff]"
               >
                 Use a Different Apple ID
               </button>
             </div>
-          </>
+          </div>
         ) : null}
+
 
         {step === "appleTerms" ? (
           <>
