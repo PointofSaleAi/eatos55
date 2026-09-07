@@ -246,7 +246,7 @@ function TapToPaySetup() {
                 <select
                   value={payoutSchedule}
                   onChange={(e) => setPayoutSchedule(e.target.value)}
-                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-[#007AFF]"
+                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-muted-foreground"
                 >
                   {PAYOUT_SCHEDULES.map((p) => (
                     <option key={p} value={p}>
