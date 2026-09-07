@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertTriangle, Check, ChevronRight, Loader2, Lock, X } from "lucide-react";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import appleIdImage from "@/assets/tap-to-pay-apple-id-bg.png.asset.json";
@@ -623,7 +623,7 @@ function TapToPaySetup() {
               type="button"
               onClick={() => {
                 setAppleIdSheet(false);
-                setStep("appleTerms");
+                setTermsSheet(true);
               }}
               className="mt-5 h-ctl-lg w-full rounded-row bg-black text-fs-base font-extrabold text-white"
             >
