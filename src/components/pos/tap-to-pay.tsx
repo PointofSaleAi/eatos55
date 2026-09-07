@@ -1,6 +1,9 @@
 import { Link } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { CheckCircle2, ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { tapToPayTerms } from "@/lib/tap-to-pay-terms";
 import { usePos, type TapToPayState } from "@/lib/pos-store";
 
 /**
