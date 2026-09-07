@@ -164,7 +164,7 @@ function TapToPaySetup() {
 
         {step === "payments" ? (
           <>
-            <h1 className="text-fs-2xl font-extrabold text-foreground">Payments</h1>
+            <h1 className="text-center text-fs-2xl font-extrabold text-foreground">Payments</h1>
 
             <p className="mt-6 text-fs-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
               Taking payment
