@@ -29,7 +29,11 @@ export const Route = createFileRoute("/tap-to-pay/setup/$from")({
   component: TapToPaySetup,
 });
 
-type Step = "passcode" | "terms" | "ready" | "failed";
+type Step = "passcode" | "terms" | "payments" | "ready" | "failed";
+
+const READERS = ["None", "eatOS S1F2", "Verifone P400", "Ingenico Lane 3000"];
+const BANK_ACCOUNTS = ["Barclays ····4471", "HSBC ····8820", "Lloyds ····1093"];
+const PAYOUT_SCHEDULES = ["Daily", "Weekly", "Monthly"];
 
 function TapToPaySetup() {
   const { from } = useParams({ from: "/tap-to-pay/setup/$from" });
