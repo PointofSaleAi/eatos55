@@ -120,41 +120,31 @@ function TapToPaySetup() {
               />
             </div>
 
-            <div className="mt-6 flex items-start gap-3">
-              <span className="grid size-11 shrink-0 place-items-center rounded-row bg-muted text-foreground">
-                <CreditCard className="size-5" aria-hidden />
-              </span>
-              <div className="min-w-0 flex-1">
-                <h1 className="text-fs-2xl font-extrabold leading-tight text-foreground">
-                  {TTP} Terms and Conditions
-                </h1>
-                <p className="mt-2 text-fs-sm leading-relaxed text-muted-foreground">
-                  Apple system sheet, drawn by iOS. Never rebuilt or skinned by us.
-                </p>
-              </div>
+            <h1 className="mt-6 text-fs-2xl font-extrabold leading-tight text-foreground">
+              {ttpCopy.awarenessTitle}
+            </h1>
+            <p className="mt-2 text-fs-sm leading-relaxed text-muted-foreground">
+              {ttpCopy.awarenessBody}
+            </p>
+
+            <div className="mt-5">
+              <TtpBenefits />
             </div>
 
-            <p className="mt-5 text-fs-xs leading-relaxed text-muted-foreground">
-              The merchant signs in with their Apple Account and accepts Apple's terms on this sheet.
-              No consent screen of ours may come before it.
-            </p>
             <div className="mt-auto pt-8">
               <button
                 type="button"
                 onClick={acceptTerms}
                 className="h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
               >
-                Continue
+                {TTP_SET_UP}
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  updateSettings({ tapToPayState: "needsAttention" });
-                  setStep("failed");
-                }}
-                className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-semibold text-muted-foreground"
+                onClick={backToSource}
+                className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-semibold text-accent"
               >
-                Simulate a failure
+                {ttpCopy.later}
               </button>
             </div>
           </>
