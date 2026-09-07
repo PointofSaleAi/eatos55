@@ -31,7 +31,15 @@ export const Route = createFileRoute("/tap-to-pay/setup/$from")({
   component: TapToPaySetup,
 });
 
-type Step = "passcode" | "terms" | "payments" | "appleId" | "ready" | "failed";
+type Step =
+  | "passcode"
+  | "terms"
+  | "payments"
+  | "appleId"
+  | "appleTerms"
+  | "linked"
+  | "ready"
+  | "failed";
 
 const READERS = [
   "Adyen Terminal",
