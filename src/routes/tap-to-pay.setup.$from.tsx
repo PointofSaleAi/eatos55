@@ -163,6 +163,8 @@ function TapToPaySetup() {
               {[
                 { step: "1", title: "Taking a contactless card" },
                 { step: "2", title: "Taking Apple Pay and wallets" },
+                { step: "3", title: "Apple Pay on Apple Watch" },
+                { step: "5", title: "Secure PIN Entry" },
               ].map((row) => (
                 <Link
                   key={row.step}
@@ -176,16 +178,28 @@ function TapToPaySetup() {
                   <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                 </Link>
               ))}
+              <div className="flex min-h-ctl-lg items-center gap-3 px-3 py-2">
+                <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
+                  Terms and Conditions
+                </span>
+                <span className="shrink-0 text-fs-sm text-muted-foreground">
+                  {settings.tapToPayTermsAcceptedAt
+                    ? `Accepted ${new Date(settings.tapToPayTermsAcceptedAt).toLocaleDateString()}`
+                    : "Not accepted"}
+                </span>
+              </div>
             </div>
 
 
             <div className="mt-auto pt-8">
               <button
                 type="button"
-                onClick={backToSource}
+                onClick={() =>
+                  navigate({ to: "/tap-to-pay/education/$step", params: { step: "1" } })
+                }
                 className="h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
               >
-                {fromCheckout ? "Back to the ticket" : "Done"}
+                Continue
               </button>
               <button
                 type="button"
