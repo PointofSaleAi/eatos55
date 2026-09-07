@@ -205,7 +205,7 @@ function TapToPaySetup() {
                 <span className="min-w-0 flex-1">
                   <span className="block text-fs-base font-bold text-foreground">Card reader</span>
                   <span className="block text-fs-sm text-muted-foreground">
-                    Select your card reader
+                    {detected ? "Reader detected" : "Select your card reader"}
                   </span>
                 </span>
                 <span className="max-w-[9rem] shrink-0 truncate text-fs-sm font-semibold text-muted-foreground">
@@ -294,7 +294,7 @@ function TapToPaySetup() {
               </p>
               <p className="mt-4 text-center text-fs-sm leading-relaxed text-muted-foreground">
                 Your business information will be shared with Apple and linked to{" "}
-                {settings.tapToPayAppleId ?? "antonio1568silva@gmail.com"}.
+                antonio1568silva@gmail.com.
               </p>
               <Link
                 to="/tap-to-pay/activate"
