@@ -4,7 +4,7 @@ import { brand } from "@/lib/brand";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, IconValueRow } from "@/components/pos/settings-rows";
-import { TTP, TTP_SET_UP, ttpCopy, ttpStatusLabel } from "@/components/pos/tap-to-pay";
+import { TTP, ttpCopy, ttpStatusLabel } from "@/components/pos/tap-to-pay";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/settings/tap-to-pay")({
