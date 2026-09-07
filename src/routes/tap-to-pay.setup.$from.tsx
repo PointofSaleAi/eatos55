@@ -1,9 +1,11 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
-import { useState } from "react";
-import { AlertTriangle, ChevronRight, Loader2, Lock, X } from "lucide-react";
+import { useMemo, useState } from "react";
+import { AlertTriangle, CheckCircle2, ChevronRight, Loader2, Lock, X } from "lucide-react";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
+import appleIdVideo from "@/assets/tap-to-pay-apple-id.mp4.asset.json";
 import { brand } from "@/lib/brand";
 import { TTP, TTP_SET_UP, TtpBenefits, TtpStatusPill, ttpCopy } from "@/components/pos/tap-to-pay";
+import { tapToPayTerms } from "@/lib/tap-to-pay-terms";
 
 import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
