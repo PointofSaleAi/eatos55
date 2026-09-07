@@ -92,8 +92,12 @@ function TapToPaySetup() {
   const [bankAccount, setBankAccount] = useState(BANK_ACCOUNTS[0]);
   const [payoutSchedule, setPayoutSchedule] = useState(PAYOUT_SCHEDULES[0]);
   const [readerSheet, setReaderSheet] = useState(false);
+  const [appleIdSheet, setAppleIdSheet] = useState(false);
+  const [altAppleId, setAltAppleId] = useState("");
+  const [altPassword, setAltPassword] = useState("");
   const [detecting, setDetecting] = useState(false);
   const [detected, setDetected] = useState(false);
+
 
   const termsBody = useMemo(() => {
     const footerIndex = tapToPayTerms.findIndex((b) => b.tag === "h2" && b.text === "Apple Footer");
