@@ -27,6 +27,7 @@ import { Route as PaymentCashRouteImport } from './routes/payment.cash'
 import { Route as PaymentMethodRouteImport } from './routes/payment.method'
 import { Route as PaymentSplitRouteImport } from './routes/payment.split'
 import { Route as PaymentSuccessRouteImport } from './routes/payment.success'
+import { Route as PaymentTapToPayRouteImport } from './routes/payment.tap-to-pay'
 import { Route as RoomsIndexRouteImport } from './routes/rooms.index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SettingsControlCenterRouteImport } from './routes/settings.control-center'
@@ -157,6 +158,11 @@ const PaymentSplitRoute = PaymentSplitRouteImport.update({
 const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
   id: '/payment/success',
   path: '/payment/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentTapToPayRoute = PaymentTapToPayRouteImport.update({
+  id: '/payment/tap-to-pay',
+  path: '/payment/tap-to-pay',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RoomsIndexRoute = RoomsIndexRouteImport.update({
@@ -383,6 +389,7 @@ export interface FileRoutesByFullPath {
   '/payment/method': typeof PaymentMethodRoute
   '/payment/split': typeof PaymentSplitRoute
   '/payment/success': typeof PaymentSuccessRoute
+  '/payment/tap-to-pay': typeof PaymentTapToPayRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/hardware': typeof SettingsHardwareRouteWithChildren
@@ -444,6 +451,7 @@ export interface FileRoutesByTo {
   '/payment/method': typeof PaymentMethodRoute
   '/payment/split': typeof PaymentSplitRoute
   '/payment/success': typeof PaymentSuccessRoute
+  '/payment/tap-to-pay': typeof PaymentTapToPayRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/hardware': typeof SettingsHardwareRouteWithChildren
@@ -506,6 +514,7 @@ export interface FileRoutesById {
   '/payment/method': typeof PaymentMethodRoute
   '/payment/split': typeof PaymentSplitRoute
   '/payment/success': typeof PaymentSuccessRoute
+  '/payment/tap-to-pay': typeof PaymentTapToPayRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
   '/settings/hardware': typeof SettingsHardwareRouteWithChildren
@@ -569,6 +578,7 @@ export interface FileRouteTypes {
     | '/payment/method'
     | '/payment/split'
     | '/payment/success'
+    | '/payment/tap-to-pay'
     | '/settings/control-center'
     | '/settings/general'
     | '/settings/hardware'
@@ -630,6 +640,7 @@ export interface FileRouteTypes {
     | '/payment/method'
     | '/payment/split'
     | '/payment/success'
+    | '/payment/tap-to-pay'
     | '/settings/control-center'
     | '/settings/general'
     | '/settings/hardware'
@@ -691,6 +702,7 @@ export interface FileRouteTypes {
     | '/payment/method'
     | '/payment/split'
     | '/payment/success'
+    | '/payment/tap-to-pay'
     | '/settings/control-center'
     | '/settings/general'
     | '/settings/hardware'
@@ -753,6 +765,7 @@ export interface RootRouteChildren {
   PaymentMethodRoute: typeof PaymentMethodRoute
   PaymentSplitRoute: typeof PaymentSplitRoute
   PaymentSuccessRoute: typeof PaymentSuccessRoute
+  PaymentTapToPayRoute: typeof PaymentTapToPayRoute
   SettingsControlCenterRoute: typeof SettingsControlCenterRoute
   SettingsGeneralRoute: typeof SettingsGeneralRoute
   SettingsHardwareRoute: typeof SettingsHardwareRouteWithChildren
@@ -924,6 +937,13 @@ declare module '@tanstack/react-router' {
       path: '/payment/success'
       fullPath: '/payment/success'
       preLoaderRoute: typeof PaymentSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/tap-to-pay': {
+      id: '/payment/tap-to-pay'
+      path: '/payment/tap-to-pay'
+      fullPath: '/payment/tap-to-pay'
+      preLoaderRoute: typeof PaymentTapToPayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rooms/': {
@@ -1243,6 +1263,7 @@ const rootRouteChildren: RootRouteChildren = {
   PaymentMethodRoute: PaymentMethodRoute,
   PaymentSplitRoute: PaymentSplitRoute,
   PaymentSuccessRoute: PaymentSuccessRoute,
+  PaymentTapToPayRoute: PaymentTapToPayRoute,
   SettingsControlCenterRoute: SettingsControlCenterRoute,
   SettingsGeneralRoute: SettingsGeneralRoute,
   SettingsHardwareRoute: SettingsHardwareRouteWithChildren,
