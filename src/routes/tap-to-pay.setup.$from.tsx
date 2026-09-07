@@ -1,9 +1,9 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { AlertTriangle, CheckCircle2, Circle, CreditCard, Lock } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Circle, Lock } from "lucide-react";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import { brand } from "@/lib/brand";
-import { TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
+import { TTP, TapToPayMark, TTP_SET_UP, TtpBenefits, ttpCopy } from "@/components/pos/tap-to-pay";
 import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 
