@@ -121,9 +121,11 @@ function TapToPaySetup() {
             </div>
 
             <h1 className="mt-6 text-fs-2xl font-extrabold leading-tight text-foreground">
-              {ttpCopy.awarenessTitle}
+              Accept payments right
+              <br />
+              on this iPhone
             </h1>
-            <p className="mt-2 text-fs-sm leading-relaxed text-muted-foreground">
+            <p className="mt-2 text-fs-base leading-relaxed text-muted-foreground">
               {ttpCopy.awarenessBody}
             </p>
 
