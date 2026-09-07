@@ -729,8 +729,7 @@ function PaymentMethod() {
           onClick={() => {
             if (settings.tapToPayState === "ready") {
               setSelected("tap-to-pay");
-              commitPayment("card", due, { tenderId: "contactless", label: TTP });
-              navigate({ to: "/payment/success" });
+              navigate({ to: "/payment/tap-to-pay" });
               return;
             }
             navigate({ to: "/tap-to-pay/setup/$from", params: { from: "checkout" } });
