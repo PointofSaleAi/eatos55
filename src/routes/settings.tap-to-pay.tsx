@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { CreditCard, FileText, Smartphone, Wallet } from "lucide-react";
 import { brand } from "@/lib/brand";
+import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, GroupLabel, IconNavRow, IconValueRow } from "@/components/pos/settings-rows";
 import {
@@ -46,6 +47,15 @@ function TapToPaySettings() {
     <>
       <SubHeader title={TTP} />
       <ScreenBody className="py-2">
+        <div className="mb-4 overflow-hidden rounded-card border border-border bg-muted">
+          <img
+            src={tapToPayImage.url}
+            alt="Contactless card held near an iPhone for Tap to Pay on iPhone"
+            className="h-auto w-full object-cover"
+            loading="lazy"
+          />
+        </div>
+
         <AppleAssetSlot label={TTP} detail="Apple-supplied lockup from the Marketing Toolkit" />
 
         <GroupCard className="mt-4">
