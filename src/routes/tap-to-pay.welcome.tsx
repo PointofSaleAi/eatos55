@@ -1,6 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { CreditCard } from "lucide-react";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import { brand } from "@/lib/brand";
 import {
@@ -60,14 +59,9 @@ function TapToPayWelcome() {
           />
         </div>
 
-        <div className="mt-6 flex items-start gap-3">
-          <span className="grid size-11 shrink-0 place-items-center rounded-row bg-muted text-foreground">
-            <CreditCard className="size-5" aria-hidden />
-          </span>
-          <h1 className="min-w-0 flex-1 text-fs-2xl font-extrabold leading-tight text-foreground">
-            {ttpCopy.awarenessTitle}
-          </h1>
-        </div>
+        <h1 className="mt-6 text-fs-2xl font-extrabold leading-tight text-foreground">
+          {ttpCopy.awarenessTitle}
+        </h1>
         <p className="mt-2 text-fs-sm leading-relaxed text-muted-foreground">
           {ttpCopy.awarenessBody}
         </p>
