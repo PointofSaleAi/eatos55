@@ -27,12 +27,10 @@ export const Route = createFileRoute("/settings/tap-to-pay")({
 });
 
 /**
- * Screens 05, 06 and 07 in one place. This row is a permanent entry point
- * outside every communication and the checkout flow (requirement 3.6) and one
- * of the two permanent homes for the education screens (requirement 4.2).
+ * Permanent Tap to Pay on iPhone settings entry point outside every
+ * communication and the checkout flow (requirement 3.6).
  */
 function TapToPaySettings() {
-  const navigate = useNavigate();
   const { settings, updateSettings, canManageSettings } = usePos();
   const state = settings.tapToPayState;
   const ready = state === "ready";
