@@ -483,21 +483,6 @@ function TapToPaySetup() {
                   <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                 </Link>
               ))}
-              <button
-                type="button"
-                onClick={() => setStep("appleTerms")}
-                className="flex min-h-ctl-lg w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-muted"
-              >
-                <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
-                  Terms and Conditions
-                </span>
-                {acceptedOn ? (
-                  <span className="shrink-0 text-fs-sm text-muted-foreground">
-                    Accepted {acceptedOn}
-                  </span>
-                ) : null}
-                <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-              </button>
             </div>
 
 
@@ -640,13 +625,13 @@ function TapToPaySetup() {
             type="button"
             aria-label="Close Apple ID sign in"
             onClick={() => setAppleIdSheet(false)}
-            className="absolute inset-0 bg-black/50"
+            className="absolute inset-0 bg-black/40"
           />
-          <div className="relative mx-auto w-full max-w-[34rem] rounded-t-[1.75rem] bg-[#1c1c1e] px-6 pb-[calc(1.5rem+var(--tabs-h,0px))] pt-6">
-            <h2 className="text-center text-fs-xl font-extrabold text-white">
+          <div className="relative mx-auto w-full max-w-[34rem] rounded-t-[1.75rem] border border-b-0 border-border bg-white px-6 pb-[calc(1.5rem+var(--tabs-h,0px))] pt-6 elev-1">
+            <h2 className="text-center text-fs-xl font-extrabold text-black">
               Sign in with your Apple ID
             </h2>
-            <p className="mx-auto mt-2 max-w-[20rem] text-center text-fs-sm leading-relaxed text-white/70">
+            <p className="mx-auto mt-2 max-w-[20rem] text-center text-fs-sm leading-relaxed text-neutral-500">
               This lets you use {TTP} with a different Apple account.
             </p>
             <input
@@ -656,7 +641,7 @@ function TapToPaySetup() {
               value={altAppleId}
               onChange={(e) => setAltAppleId(e.target.value)}
               placeholder="Email or phone number"
-              className="mt-5 h-ctl-lg w-full rounded-row border border-white/20 bg-transparent px-4 text-fs-base text-white placeholder:text-white/45"
+              className="mt-5 h-ctl-lg w-full rounded-row border border-neutral-200 bg-transparent px-4 text-fs-base text-black placeholder:text-neutral-400"
             />
             <input
               type="password"
@@ -664,7 +649,7 @@ function TapToPaySetup() {
               value={altPassword}
               onChange={(e) => setAltPassword(e.target.value)}
               placeholder="Password"
-              className="mt-3 h-ctl-lg w-full rounded-row border border-white/20 bg-transparent px-4 text-fs-base text-white placeholder:text-white/45"
+              className="mt-3 h-ctl-lg w-full rounded-row border border-neutral-200 bg-transparent px-4 text-fs-base text-black placeholder:text-neutral-400"
             />
             <p className="mt-3 text-right text-fs-sm font-semibold text-[#0a84ff]">
               Forgot Apple ID or password?
@@ -675,7 +660,7 @@ function TapToPaySetup() {
                 setAppleIdSheet(false);
                 setStep("appleTerms");
               }}
-              className="mt-5 h-ctl-lg w-full rounded-row bg-white text-fs-base font-extrabold text-black"
+              className="mt-5 h-ctl-lg w-full rounded-row bg-black text-fs-base font-extrabold text-white"
             >
               Sign in
             </button>
