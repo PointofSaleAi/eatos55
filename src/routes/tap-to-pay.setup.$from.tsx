@@ -4,8 +4,14 @@ import { AlertTriangle, Check, ChevronRight, Loader2, Lock, X } from "lucide-rea
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import appleIdImage from "@/assets/tap-to-pay-apple-id-bg.png.asset.json";
 import { brand } from "@/lib/brand";
-import { TTP, TTP_SET_UP, TtpBenefits, TtpStatusPill, ttpCopy } from "@/components/pos/tap-to-pay";
-import { tapToPayTerms } from "@/lib/tap-to-pay-terms";
+import {
+  TTP,
+  TTP_SET_UP,
+  TapToPayTermsSheet,
+  TtpBenefits,
+  TtpStatusPill,
+  ttpCopy,
+} from "@/components/pos/tap-to-pay";
 
 import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
@@ -36,7 +42,6 @@ type Step =
   | "terms"
   | "payments"
   | "appleId"
-  | "appleTerms"
   | "linked"
   | "ready"
   | "failed";
