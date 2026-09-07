@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { AlertTriangle, CheckCircle2, Circle, Lock } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Circle, CreditCard, Lock } from "lucide-react";
+import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import { brand } from "@/lib/brand";
-import { AppleAssetSlot, TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
+import { TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
 import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 
@@ -20,6 +21,8 @@ export const Route = createFileRoute("/tap-to-pay/setup/$from")({
         property: "og:description",
         content: "Accept the Apple terms, then prepare this iPhone to take card payments.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: TapToPaySetup,
@@ -108,12 +111,30 @@ function TapToPaySetup() {
 
         {step === "terms" ? (
           <>
-            <AppleAssetSlot
-              label={`${TTP} Terms and Conditions`}
-              detail="Apple system sheet, drawn by iOS. Never rebuilt or skinned by us."
-              className="min-h-[14rem]"
-            />
-            <p className="mt-4 text-fs-xs leading-relaxed text-muted-foreground">
+            <div className="overflow-hidden rounded-sheet border border-border bg-surface p-1 elev-1">
+              <img
+                src={tapToPayImage.url}
+                alt="Contactless card held near an iPhone for Tap to Pay on iPhone"
+                className="aspect-[16/11] w-full rounded-card object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <div className="mt-6 flex items-start gap-3">
+              <span className="grid size-11 shrink-0 place-items-center rounded-row bg-muted text-foreground">
+                <CreditCard className="size-5" aria-hidden />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-fs-2xl font-extrabold leading-tight text-foreground">
+                  {TTP} Terms and Conditions
+                </h1>
+                <p className="mt-2 text-fs-sm leading-relaxed text-muted-foreground">
+                  Apple system sheet, drawn by iOS. Never rebuilt or skinned by us.
+                </p>
+              </div>
+            </div>
+
+            <p className="mt-5 text-fs-xs leading-relaxed text-muted-foreground">
               The merchant signs in with their Apple Account and accepts Apple's terms on this sheet.
               No consent screen of ours may come before it.
             </p>

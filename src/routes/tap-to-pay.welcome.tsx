@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { CreditCard } from "lucide-react";
+import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import { brand } from "@/lib/brand";
 import {
-  AppleAssetSlot,
   TTP,
   TTP_SET_UP,
   TtpBenefits,
@@ -50,11 +51,23 @@ function TapToPayWelcome() {
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-background px-[var(--pad-screen)] pb-[calc(1rem+var(--tabs-h,0px))] pt-6">
       <div className="mx-auto flex w-full max-w-[34rem] flex-1 flex-col">
-        <AppleAssetSlot label={TTP} detail="Apple-supplied lockup or product animation" />
+        <div className="overflow-hidden rounded-sheet border border-border bg-surface p-1 elev-1">
+          <img
+            src={tapToPayImage.url}
+            alt="Contactless card held near an iPhone for Tap to Pay on iPhone"
+            className="aspect-[16/11] w-full rounded-card object-cover"
+            loading="eager"
+          />
+        </div>
 
-        <h1 className="mt-6 text-fs-2xl font-extrabold leading-tight text-foreground">
-          {ttpCopy.awarenessTitle}
-        </h1>
+        <div className="mt-6 flex items-start gap-3">
+          <span className="grid size-11 shrink-0 place-items-center rounded-row bg-muted text-foreground">
+            <CreditCard className="size-5" aria-hidden />
+          </span>
+          <h1 className="min-w-0 flex-1 text-fs-2xl font-extrabold leading-tight text-foreground">
+            {ttpCopy.awarenessTitle}
+          </h1>
+        </div>
         <p className="mt-2 text-fs-sm leading-relaxed text-muted-foreground">
           {ttpCopy.awarenessBody}
         </p>
