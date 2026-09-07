@@ -120,11 +120,11 @@ function TapToPayEducation() {
           ))}
         </div>
 
-        <div className="mt-5 overflow-hidden rounded-card border border-border bg-muted">
+        <div className="mt-5 overflow-hidden rounded-card border border-border bg-muted" style={{ height: 320 }}>
           <video
             key={current.video}
             src={current.video}
-            className="mx-auto h-auto w-full max-w-[18rem] object-contain"
+            className="mx-auto h-full w-full max-w-[18rem] object-contain"
             autoPlay
             loop
             muted
