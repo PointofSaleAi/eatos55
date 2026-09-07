@@ -384,61 +384,15 @@ function TapToPaySetup() {
         ) : null}
 
 
-        {step === "appleTerms" ? (
-          <>
-            <h1 className="text-left text-fs-2xl font-extrabold leading-tight text-foreground">
-              {TTP}
-              <br />
-              Terms and Conditions
-            </h1>
-            <div className="mt-5 flex-1 space-y-3">
-              {termsBody.map((b, i) =>
-                b.tag === "h1" || b.tag === "h2" || b.tag === "h3" ? (
-                  <h2
-                    key={i}
-                    className="pt-3 text-fs-lg font-extrabold leading-snug text-foreground"
-                  >
-                    {b.text}
-                  </h2>
-                ) : b.tag === "h4" ? (
-                  <h3 key={i} className="pt-2 text-fs-base font-bold text-foreground">
-                    {b.text}
-                  </h3>
-                ) : b.tag === "li" ? (
-                  <p
-                    key={i}
-                    className="pl-4 text-fs-sm leading-relaxed text-muted-foreground before:mr-2 before:content-['•']"
-                  >
-                    {b.text}
-                  </p>
-                ) : (
-                  <p key={i} className="text-fs-sm leading-relaxed text-muted-foreground">
-                    {b.text}
-                  </p>
-                ),
-              )}
-            </div>
-            <div className="mt-auto flex items-center gap-3 border-t border-border bg-background pt-3">
-              <button
-                type="button"
-                onClick={() => setStep("appleId")}
-                className="h-ctl-md flex-1 rounded-row bg-muted text-fs-base font-semibold text-foreground"
-              >
-                Disagree
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  updateSettings({ tapToPayTermsAcceptedAt: new Date().toISOString() });
-                  setStep("linked");
-                }}
-                className="h-ctl-md flex-1 rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
-              >
-                Agree
-              </button>
-            </div>
-          </>
-        ) : null}
+        <TapToPayTermsSheet
+          open={termsSheet}
+          onOpenChange={setTermsSheet}
+          onAgree={() => {
+            updateSettings({ tapToPayTermsAcceptedAt: new Date().toISOString() });
+            setTermsSheet(false);
+            if (step === "appleId") setStep("linked");
+          }}
+        />
 
         {step === "linked" ? (
           <LinkedSuccess onContinue={() => setStep("ready")} />
