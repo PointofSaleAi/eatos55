@@ -61,23 +61,23 @@ function LinkedSuccess({ onContinue }: { onContinue: () => void }) {
   }, [onContinue]);
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center text-center">
-      <div className="flex flex-col items-center justify-center">
-        <CheckCircle2 className="size-16 text-success" aria-hidden />
-        <h1 className="mt-4 text-fs-2xl font-extrabold leading-tight text-foreground">
-          Your account is linked
+    <div className="-mx-[var(--pad-screen)] -mt-5 flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="relative flex h-[13rem] shrink-0 items-center justify-center bg-black">
+        <span className="absolute left-4 top-4 text-fs-sm font-semibold text-white/50">Cancel</span>
+        <span className="grid size-24 place-items-center rounded-full border-[3px] border-[#0a84ff]">
+          <Check className="size-12 text-[#0a84ff]" strokeWidth={2.5} aria-hidden />
+        </span>
+      </div>
+      <div className="flex flex-1 flex-col items-center rounded-t-[1.75rem] bg-white px-6 pt-8">
+        <h1 className="flex items-center gap-2 text-fs-2xl font-extrabold text-black">
+          Account Linked
+          <Check className="size-6 text-[#0a84ff]" strokeWidth={3} aria-hidden />
         </h1>
-        <p className="mt-2 max-w-[22rem] text-fs-base leading-relaxed text-muted-foreground">
-          This Apple ID is now linked to {brand.appName}. You can start taking contactless cards
-          and digital wallets on this iPhone.
-        </p>
-        <p className="mt-4 text-fs-sm text-muted-foreground" aria-live="polite">
-          Continuing…
-        </p>
       </div>
     </div>
   );
 }
+
 
 function TapToPaySetup() {
   const { from } = useParams({ from: "/tap-to-pay/setup/$from" });
