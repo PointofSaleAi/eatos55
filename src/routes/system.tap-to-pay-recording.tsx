@@ -53,7 +53,7 @@ const clips: Clip[] = [
     id: "3",
     title: "Clip 3 · Education straight after setup",
     detail: "Contactless card, then wallets. Requirements 4.1, 4.4, 4.5",
-    to: { path: "education", step: "cards" },
+    to: { path: "education", step: "1" },
   },
   {
     id: "4",
@@ -84,7 +84,7 @@ function RecordingGuide() {
     else if (to.path === "setup")
       navigate({ to: "/tap-to-pay/setup/$from", params: { from: to.from ?? "awareness" } });
     else if (to.path === "education")
-      navigate({ to: "/tap-to-pay/education/$step", params: { step: to.step ?? "cards" } });
+      navigate({ to: "/tap-to-pay/education/$step", params: { step: to.step ?? "1" } });
     else if (to.path === "settings") navigate({ to: "/settings/tap-to-pay" });
     else navigate({ to: "/payment/method" });
   };

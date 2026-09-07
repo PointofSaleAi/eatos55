@@ -58,14 +58,14 @@ function HelpCenter() {
             title="Taking a contactless card"
             detail="How it works · Apple guide"
             onClick={() =>
-              navigate({ to: "/tap-to-pay/education/$step", params: { step: "cards" } })
+              navigate({ to: "/tap-to-pay/education/$step", params: { step: "1" } })
             }
           />
           <ActionRow
             title="Taking Apple Pay and digital wallets"
             detail="How it works · Apple guide"
             onClick={() =>
-              navigate({ to: "/tap-to-pay/education/$step", params: { step: "wallets" } })
+              navigate({ to: "/tap-to-pay/education/$step", params: { step: "2" } })
             }
           />
           <ActionRow
