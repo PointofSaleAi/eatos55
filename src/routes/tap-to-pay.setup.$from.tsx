@@ -153,6 +153,120 @@ function TapToPaySetup() {
           </>
         ) : null}
 
+        {step === "payments" ? (
+          <>
+            <h1 className="text-fs-2xl font-extrabold text-foreground">Payments</h1>
+
+            <p className="mt-6 text-fs-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
+              Taking payment
+            </p>
+            <div className="mt-2 divide-y divide-border rounded-card border border-border bg-surface">
+              <div className="flex min-h-ctl-lg items-center gap-3 px-3 py-2">
+                <span className="min-w-0 flex-1">
+                  <span className="block text-fs-base font-bold text-foreground">{TTP}</span>
+                  <span className="block text-fs-sm text-muted-foreground">
+                    Use this iPhone as your card reader
+                  </span>
+                </span>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={ttpEnabled}
+                  aria-label={`Enable ${TTP}`}
+                  onClick={() => setTtpEnabled((v) => !v)}
+                  className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
+                    ttpEnabled ? "bg-accent" : "bg-muted"
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 size-6 rounded-full bg-white transition-all ${
+                      ttpEnabled ? "left-[1.375rem]" : "left-0.5"
+                    }`}
+                  />
+                </button>
+              </div>
+              <label className="flex min-h-ctl-lg items-center gap-3 px-3 py-2">
+                <span className="min-w-0 flex-1">
+                  <span className="block text-fs-base font-bold text-foreground">Card reader</span>
+                  <span className="block text-fs-sm text-muted-foreground">
+                    Select your card reader
+                  </span>
+                </span>
+                <select
+                  value={reader}
+                  onChange={(e) => setReader(e.target.value)}
+                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-accent"
+                >
+                  {READERS.map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <p className="mt-6 text-fs-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
+              Payouts
+            </p>
+            <div className="mt-2 divide-y divide-border rounded-card border border-border bg-surface">
+              <label className="flex min-h-ctl-lg items-center gap-3 px-3 py-2">
+                <span className="min-w-0 flex-1">
+                  <span className="block text-fs-base font-bold text-foreground">Bank account</span>
+                  <span className="block text-fs-sm text-muted-foreground">Select bank account</span>
+                </span>
+                <select
+                  value={bankAccount}
+                  onChange={(e) => setBankAccount(e.target.value)}
+                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-accent"
+                >
+                  {BANK_ACCOUNTS.map((b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex min-h-ctl-lg items-center gap-3 px-3 py-2">
+                <span className="min-w-0 flex-1">
+                  <span className="block text-fs-base font-bold text-foreground">
+                    Payout schedule
+                  </span>
+                  <span className="block text-fs-sm text-muted-foreground">How often you are paid</span>
+                </span>
+                <select
+                  value={payoutSchedule}
+                  onChange={(e) => setPayoutSchedule(e.target.value)}
+                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-accent"
+                >
+                  {PAYOUT_SCHEDULES.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="mt-auto pt-8">
+              <button
+                type="button"
+                onClick={confirmPayments}
+                className="h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
+              >
+                Continue
+              </button>
+              <button
+                type="button"
+                onClick={backToSource}
+                className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-semibold text-accent"
+              >
+                Back
+              </button>
+            </div>
+          </>
+        ) : null}
+
         {step === "ready" ? (
           <>
             <div className="overflow-hidden rounded-sheet border border-border bg-surface p-1 elev-1">
