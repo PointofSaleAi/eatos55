@@ -1,16 +1,10 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { CreditCard, FileText, Smartphone, Wallet } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { FileText, Smartphone } from "lucide-react";
 import { brand } from "@/lib/brand";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
-import { Caption, GroupCard, GroupLabel, IconNavRow, IconValueRow } from "@/components/pos/settings-rows";
-import {
-  AppleAssetSlot,
-  TTP,
-  TTP_SET_UP,
-  ttpCopy,
-  ttpStatusLabel,
-} from "@/components/pos/tap-to-pay";
+import { Caption, GroupCard, IconValueRow } from "@/components/pos/settings-rows";
+import { TTP, TTP_SET_UP, ttpCopy, ttpStatusLabel } from "@/components/pos/tap-to-pay";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/settings/tap-to-pay")({
@@ -33,12 +27,10 @@ export const Route = createFileRoute("/settings/tap-to-pay")({
 });
 
 /**
- * Screens 05, 06 and 07 in one place. This row is a permanent entry point
- * outside every communication and the checkout flow (requirement 3.6) and one
- * of the two permanent homes for the education screens (requirement 4.2).
+ * Permanent Tap to Pay on iPhone settings entry point outside every
+ * communication and the checkout flow (requirement 3.6).
  */
 function TapToPaySettings() {
-  const navigate = useNavigate();
   const { settings, updateSettings, canManageSettings } = usePos();
   const state = settings.tapToPayState;
   const ready = state === "ready";
@@ -55,8 +47,6 @@ function TapToPaySettings() {
             loading="lazy"
           />
         </div>
-
-        <AppleAssetSlot label={TTP} detail="Apple-supplied lockup from the Marketing Toolkit" />
 
         <GroupCard className="mt-4">
           <IconValueRow
@@ -99,29 +89,6 @@ function TapToPaySettings() {
             </Link>
           </div>
         )}
-
-        <GroupLabel>How it works</GroupLabel>
-        <GroupCard>
-          <IconNavRow
-            title="Taking a contactless card"
-            icon={CreditCard}
-            color="blue"
-            onClick={() =>
-              navigate({ to: "/tap-to-pay/education/$step", params: { step: "cards" } })
-            }
-          />
-          <IconNavRow
-            title="Taking Apple Pay and digital wallets"
-            icon={Wallet}
-            color="black"
-            onClick={() =>
-              navigate({ to: "/tap-to-pay/education/$step", params: { step: "wallets" } })
-            }
-          />
-        </GroupCard>
-        <Caption>
-          Apple draws these screens, so they stay available whether or not {TTP} is switched on yet.
-        </Caption>
 
         {ready && canManageSettings ? (
           <button
