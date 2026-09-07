@@ -199,55 +199,59 @@ function TapToPayActivate() {
 
         {step === "ready" ? (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <CheckCircle2 className="size-16 text-success" aria-hidden />
-            <h1 className="mt-4 text-fs-2xl font-extrabold leading-tight text-foreground">
-              {TTP} is ready
-            </h1>
-            <p className="mt-2 max-w-[22rem] text-fs-base leading-relaxed text-muted-foreground">
-              This iPhone can now take contactless cards and digital wallets.
-            </p>
-            <div className="mt-auto w-full pt-8">
-              <button
-                type="button"
-                onClick={() =>
-                  navigate({ to: "/tap-to-pay/education/$step", params: { step: "1" } })
-                }
-                className={primary}
-              >
-                See how to take a payment
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate({ to: "/payment/method" })}
-                className={secondary}
-              >
-                Back to the ticket
-              </button>
+            <div className="flex flex-col items-center justify-center">
+              <CheckCircle2 className="size-16 text-success" aria-hidden />
+              <h1 className="mt-4 text-fs-2xl font-extrabold leading-tight text-foreground">
+                {TTP} is ready
+              </h1>
+              <p className="mt-2 max-w-[22rem] text-fs-base leading-relaxed text-muted-foreground">
+                This iPhone can now take contactless cards and digital wallets.
+              </p>
+              <div className="mt-8 w-full">
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate({ to: "/tap-to-pay/education/$step", params: { step: "1" } })
+                  }
+                  className={primary}
+                >
+                  See how to take a payment
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate({ to: "/payment/method" })}
+                  className={secondary}
+                >
+                  Back to the ticket
+                </button>
+              </div>
             </div>
           </div>
         ) : null}
 
         {step === "failed" ? (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <AlertTriangle className="size-16 text-warning" aria-hidden />
-            <h1 className="mt-4 text-fs-2xl font-extrabold text-foreground">
-              Setup didn&apos;t finish
-            </h1>
-            <p className="mt-2 max-w-[22rem] text-fs-base leading-relaxed text-muted-foreground">
-              We couldn&apos;t reach the payments service. Check your connection and try again,
-              nothing has been charged.
-            </p>
-            <div className="mt-auto w-full pt-8">
-              <button type="button" onClick={() => setStep("configuring")} className={primary}>
-                Try again
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate({ to: "/payment/method" })}
-                className={secondary}
-              >
-                Take payment another way
-              </button>
+            <div className="flex flex-col items-center justify-center">
+              <AlertTriangle className="size-16 text-warning" aria-hidden />
+              <h1 className="mt-4 text-fs-2xl font-extrabold text-foreground">
+                Setup didn&apos;t finish
+              </h1>
+              <p className="mt-2 max-w-[22rem] text-fs-base leading-relaxed text-muted-foreground">
+                We couldn&apos;t reach the payments service. Check your connection and try again,
+                nothing has been charged.
+              </p>
+              <div className="mt-8 w-full">
+                <button type="button" onClick={() => setStep("configuring")} className={primary}>
+                  Try again
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate({ to: "/payment/method" })}
+                  className={secondary}
+                >
+                  Take payment another way
+                </button>
+              </div>
             </div>
           </div>
         ) : null}
