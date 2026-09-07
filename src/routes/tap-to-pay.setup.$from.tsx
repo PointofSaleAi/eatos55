@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useState } from "react";
-import { AlertTriangle, ChevronRight, Lock } from "lucide-react";
+import { AlertTriangle, ChevronRight, Loader2, Lock, X } from "lucide-react";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import { brand } from "@/lib/brand";
 import { TTP, TTP_SET_UP, TtpBenefits, TtpStatusPill, ttpCopy } from "@/components/pos/tap-to-pay";
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/tap-to-pay/setup/$from")({
   component: TapToPaySetup,
 });
 
-type Step = "passcode" | "terms" | "payments" | "ready" | "failed";
+type Step = "passcode" | "terms" | "payments" | "appleId" | "ready" | "failed";
 
 const READERS = [
   "Adyen Terminal",
@@ -56,6 +56,9 @@ function TapToPaySetup() {
   const [reader, setReader] = useState(settings.cardReaderModel || DEFAULT_READER);
   const [bankAccount, setBankAccount] = useState(BANK_ACCOUNTS[0]);
   const [payoutSchedule, setPayoutSchedule] = useState(PAYOUT_SCHEDULES[0]);
+  const [readerSheet, setReaderSheet] = useState(false);
+  const [detecting, setDetecting] = useState(false);
+  const [detected, setDetected] = useState(false);
 
   const backToSource = () => {
     if (fromCheckout) navigate({ to: "/payment/method" });
