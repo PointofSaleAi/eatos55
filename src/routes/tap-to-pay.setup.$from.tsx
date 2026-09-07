@@ -104,6 +104,9 @@ function TapToPaySetup() {
     return footerIndex >= 0 ? tapToPayTerms.slice(0, footerIndex) : tapToPayTerms;
   }, []);
 
+  const acceptedOn = settings.tapToPayTermsAcceptedAt
+    ? new Date(settings.tapToPayTermsAcceptedAt).toLocaleDateString()
+    : "";
 
   const backToSource = () => {
     if (fromCheckout) navigate({ to: "/payment/method" });
@@ -480,8 +483,22 @@ function TapToPaySetup() {
                   <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                 </Link>
               ))}
+              <button
+                type="button"
+                onClick={() => setStep("appleTerms")}
+                className="flex min-h-ctl-lg w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-muted"
+              >
+                <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
+                  Terms and Conditions
+                </span>
+                {acceptedOn ? (
+                  <span className="shrink-0 text-fs-sm text-muted-foreground">
+                    Accepted {acceptedOn}
+                  </span>
+                ) : null}
+                <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+              </button>
             </div>
-
 
             <div className="mt-auto pt-8">
               <button
