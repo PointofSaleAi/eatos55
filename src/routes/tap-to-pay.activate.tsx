@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, CheckCircle2, Lock } from "lucide-react";
 import { brand } from "@/lib/brand";
 import { TTP } from "@/components/pos/tap-to-pay";
@@ -42,6 +42,13 @@ function TapToPayActivate() {
   const [done, setDone] = useState(0);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
+  const bodyTerms = useMemo(() => {
+    const footerIndex = tapToPayTerms.findIndex(
+      (b) => b.tag === "h2" && b.text === "Apple Footer",
+    );
+    return footerIndex >= 0 ? tapToPayTerms.slice(0, footerIndex) : tapToPayTerms;
+  }, []);
+
   useEffect(() => {
     const clear = () => {
       timers.current.forEach(clearTimeout);
@@ -76,13 +83,13 @@ function TapToPayActivate() {
       <div className="mx-auto flex w-full max-w-[34rem] flex-1 flex-col">
         {step === "terms" ? (
           <>
-            <h1 className="text-center text-fs-2xl font-extrabold leading-tight text-foreground">
+            <h1 className="text-left text-fs-2xl font-extrabold leading-tight text-foreground">
               {TTP}
               <br />
               Terms and Conditions
             </h1>
             <div className="mt-5 flex-1 space-y-3">
-              {tapToPayTerms.map((b, i) =>
+              {bodyTerms.map((b, i) =>
                 b.tag === "h2" || b.tag === "h3" || b.tag === "h1" ? (
                   <h2
                     key={i}
@@ -112,7 +119,7 @@ function TapToPayActivate() {
               <button
                 type="button"
                 onClick={() => navigate({ to: "/settings/tap-to-pay" })}
-                className="h-ctl-md rounded-row px-2 text-fs-base font-semibold text-accent"
+                className="h-ctl-md rounded-row px-2 text-fs-base font-semibold text-foreground"
               >
                 Disagree
               </button>
