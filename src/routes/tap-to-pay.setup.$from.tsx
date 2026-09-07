@@ -43,6 +43,10 @@ function TapToPaySetup() {
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
 
   const [step, setStep] = useState<Step>("terms");
+  const [ttpEnabled, setTtpEnabled] = useState(true);
+  const [reader, setReader] = useState(settings.cardReaderModel || READERS[0]);
+  const [bankAccount, setBankAccount] = useState(BANK_ACCOUNTS[0]);
+  const [payoutSchedule, setPayoutSchedule] = useState(PAYOUT_SCHEDULES[0]);
 
   const backToSource = () => {
     if (fromCheckout) navigate({ to: "/payment/method" });
