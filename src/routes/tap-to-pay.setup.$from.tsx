@@ -633,6 +633,55 @@ function TapToPaySetup() {
           </div>
         </div>
       ) : null}
+
+      {appleIdSheet ? (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <button
+            type="button"
+            aria-label="Close Apple ID sign in"
+            onClick={() => setAppleIdSheet(false)}
+            className="absolute inset-0 bg-black/50"
+          />
+          <div className="relative mx-auto w-full max-w-[34rem] rounded-t-[1.75rem] bg-[#1c1c1e] px-6 pb-[calc(1.5rem+var(--tabs-h,0px))] pt-6">
+            <h2 className="text-center text-fs-xl font-extrabold text-white">
+              Sign in with your Apple ID
+            </h2>
+            <p className="mx-auto mt-2 max-w-[20rem] text-center text-fs-sm leading-relaxed text-white/70">
+              This lets you use {TTP} with a different Apple account.
+            </p>
+            <input
+              type="email"
+              inputMode="email"
+              autoComplete="username"
+              value={altAppleId}
+              onChange={(e) => setAltAppleId(e.target.value)}
+              placeholder="Email or phone number"
+              className="mt-5 h-ctl-lg w-full rounded-row border border-white/20 bg-transparent px-4 text-fs-base text-white placeholder:text-white/45"
+            />
+            <input
+              type="password"
+              autoComplete="current-password"
+              value={altPassword}
+              onChange={(e) => setAltPassword(e.target.value)}
+              placeholder="Password"
+              className="mt-3 h-ctl-lg w-full rounded-row border border-white/20 bg-transparent px-4 text-fs-base text-white placeholder:text-white/45"
+            />
+            <p className="mt-3 text-right text-fs-sm font-semibold text-[#0a84ff]">
+              Forgot Apple ID or password?
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setAppleIdSheet(false);
+                setStep("appleTerms");
+              }}
+              className="mt-5 h-ctl-lg w-full rounded-row bg-white text-fs-base font-extrabold text-black"
+            >
+              Sign in
+            </button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
