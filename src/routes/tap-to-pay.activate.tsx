@@ -228,8 +228,8 @@ function TapToPayActivate() {
         ) : null}
 
         {step === "failed" ? (
-          <div className="flex flex-1 flex-col items-center text-center">
-            <AlertTriangle className="mt-6 size-9 text-warning" aria-hidden />
+          <div className="flex flex-1 flex-col items-center justify-center text-center">
+            <AlertTriangle className="size-16 text-warning" aria-hidden />
             <h1 className="mt-4 text-fs-2xl font-extrabold text-foreground">
               Setup didn&apos;t finish
             </h1>
