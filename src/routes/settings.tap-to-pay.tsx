@@ -4,7 +4,7 @@ import { brand } from "@/lib/brand";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, IconValueRow } from "@/components/pos/settings-rows";
-import { TTP, TTP_SET_UP, ttpCopy, ttpStatusLabel } from "@/components/pos/tap-to-pay";
+import { TTP, ttpCopy, ttpStatusLabel } from "@/components/pos/tap-to-pay";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/settings/tap-to-pay")({
@@ -85,7 +85,7 @@ function TapToPaySettings() {
               params={{ from: "settings" }}
               className="flex h-ctl-lg w-full items-center justify-center rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
             >
-              {TTP_SET_UP}
+              Set Up {TTP}
             </Link>
           </div>
         )}
