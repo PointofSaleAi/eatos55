@@ -1,7 +1,11 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, CreditCard, Lock, Smartphone, Wallet, Watch } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
+import contactlessVideo from "@/assets/tap-to-pay-contactless_1.mp4.asset.json";
+import applePayPhoneVideo from "@/assets/tap-to-pay-apple-pay-iphone.mp4.asset.json";
+import applePayWatchVideo from "@/assets/tap-to-pay-apple-pay-watch.mp4.asset.json";
+import walletsVideo from "@/assets/tap-to-pay-digital-wallets.mp4.asset.json";
+import pinEntryVideo from "@/assets/tap-to-pay-pin-entry.mp4.asset.json";
 import { brand } from "@/lib/brand";
 import { TTP } from "@/components/pos/tap-to-pay";
 
