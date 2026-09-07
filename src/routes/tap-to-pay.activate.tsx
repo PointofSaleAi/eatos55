@@ -115,11 +115,11 @@ function TapToPayActivate() {
                 ),
               )}
             </div>
-            <div className="sticky bottom-0 mt-6 flex items-center justify-between gap-3 border-t border-border bg-background py-3">
+            <div className="mt-auto flex items-center gap-3 border-t border-border bg-background pt-3">
               <button
                 type="button"
                 onClick={() => navigate({ to: "/settings/tap-to-pay" })}
-                className="h-ctl-md rounded-row px-2 text-fs-base font-semibold text-foreground"
+                className="h-ctl-md flex-1 rounded-row bg-muted text-fs-base font-semibold text-foreground"
               >
                 Disagree
               </button>
@@ -129,7 +129,7 @@ function TapToPayActivate() {
                   updateSettings({ tapToPayTermsAcceptedAt: new Date().toISOString() });
                   setStep("passcode");
                 }}
-                className="h-ctl-md rounded-row px-2 text-fs-base font-extrabold text-accent"
+                className="h-ctl-md flex-1 rounded-row bg-primary text-fs-base font-extrabold text-primary-foreground"
               >
                 Agree
               </button>
@@ -198,8 +198,8 @@ function TapToPayActivate() {
         ) : null}
 
         {step === "ready" ? (
-          <div className="flex flex-1 flex-col items-center text-center">
-            <CheckCircle2 className="mt-6 size-9 text-success" aria-hidden />
+          <div className="flex flex-1 flex-col items-center justify-center text-center">
+            <CheckCircle2 className="size-16 text-success" aria-hidden />
             <h1 className="mt-4 text-fs-2xl font-extrabold leading-tight text-foreground">
               {TTP} is ready
             </h1>
@@ -228,8 +228,8 @@ function TapToPayActivate() {
         ) : null}
 
         {step === "failed" ? (
-          <div className="flex flex-1 flex-col items-center text-center">
-            <AlertTriangle className="mt-6 size-9 text-warning" aria-hidden />
+          <div className="flex flex-1 flex-col items-center justify-center text-center">
+            <AlertTriangle className="size-16 text-warning" aria-hidden />
             <h1 className="mt-4 text-fs-2xl font-extrabold text-foreground">
               Setup didn&apos;t finish
             </h1>
