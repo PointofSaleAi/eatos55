@@ -45,6 +45,7 @@ const steps: Step[] = [
       "When the checkmark appears, the card has been read and the payment is being processed securely.",
     ],
     tip: "For best results, align the chip of the card near the top edge of the iPhone and hold it steady.",
+    video: contactlessVideo.url,
   },
   {
     icon: Smartphone,
@@ -53,6 +54,7 @@ const steps: Step[] = [
       "Customers can pay using Apple Pay on their iPhone.",
       "Ask them to hold their iPhone near the top of your device until the payment is confirmed.",
     ],
+    video: applePayPhoneVideo.url,
   },
   {
     icon: Watch,
@@ -61,6 +63,7 @@ const steps: Step[] = [
       "Customers can also pay using Apple Pay on Apple Watch.",
       "Hold the watch near the top of your iPhone until the payment completes.",
     ],
+    video: applePayWatchVideo.url,
   },
   {
     icon: Wallet,
@@ -69,6 +72,7 @@ const steps: Step[] = [
       "Tap to Pay on iPhone supports other contactless wallets and wearable devices.",
       "Customers can hold their compatible phone or wearable near the top of your device to complete the payment.",
     ],
+    video: walletsVideo.url,
   },
   {
     icon: Lock,
@@ -78,6 +82,7 @@ const steps: Step[] = [
       "When required, a secure PIN entry screen will automatically appear on the device. Customers can enter their PIN directly on the screen.",
       "Accessibility options are available for customers who need assistance.",
     ],
+    video: pinEntryVideo.url,
   },
 ];
 
