@@ -104,7 +104,7 @@ function TapToPayEducation() {
         <div className="flex items-center justify-between">
           <button
             type="button"
-            onClick={() => navigate({ to: "/tap-to-pay/setup/settings" })}
+            onClick={() => navigate({ to: "/tap-to-pay/setup/$from", params: { from: "settings" } })}
             className="flex items-center gap-1 text-fs-sm font-semibold text-muted-foreground"
           >
             <ChevronLeft className="size-5" aria-hidden />
