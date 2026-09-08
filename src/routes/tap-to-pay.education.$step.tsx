@@ -101,7 +101,15 @@ function TapToPayEducation() {
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-background px-[var(--pad-screen)] pb-[calc(1rem+var(--tabs-h,0px))] pt-4">
       <div className="mx-auto flex w-full max-w-[34rem] flex-1 flex-col">
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => window.history.back()}
+            className="flex items-center gap-1 text-fs-sm font-semibold text-muted-foreground"
+          >
+            <ChevronLeft className="size-5" aria-hidden />
+            Back
+          </button>
           <span className="text-fs-sm font-semibold text-muted-foreground">
             {index + 1} of {steps.length}
           </span>

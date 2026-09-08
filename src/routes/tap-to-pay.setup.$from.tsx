@@ -68,7 +68,6 @@ function LinkedSuccess({ onContinue }: { onContinue: () => void }) {
   return (
     <div className="-mx-[var(--pad-screen)] -mt-5 flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="relative flex h-[13rem] shrink-0 items-center justify-center bg-black">
-        <span className="absolute left-4 top-4 text-fs-sm font-semibold text-white/50">Cancel</span>
         <span className="grid size-24 place-items-center rounded-full border-[3px] border-[#0a84ff]">
           <Check className="size-12 text-[#0a84ff]" strokeWidth={2.5} aria-hidden />
         </span>
@@ -94,7 +93,7 @@ function TapToPaySetup() {
   const [step, setStep] = useState<Step>("terms");
   const [ttpEnabled, setTtpEnabled] = useState(true);
   const [reader, setReader] = useState(settings.cardReaderModel || DEFAULT_READER);
-  const [bankAccount, setBankAccount] = useState(BANK_ACCOUNTS[0]);
+  const bankAccount = BANK_ACCOUNTS[0];
   const [payoutSchedule, setPayoutSchedule] = useState(PAYOUT_SCHEDULES[0]);
   const [readerSheet, setReaderSheet] = useState(false);
   const [appleIdSheet, setAppleIdSheet] = useState(false);
@@ -267,23 +266,15 @@ function TapToPaySetup() {
               Payouts
             </p>
             <div className="mt-2 divide-y divide-border rounded-card border border-border bg-surface">
-              <label className="flex min-h-ctl-lg items-center gap-3 px-3 py-2">
+              <div className="flex min-h-ctl-lg items-center gap-3 px-3 py-2">
                 <span className="min-w-0 flex-1">
                   <span className="block text-fs-base font-bold text-foreground">Bank account</span>
                   <span className="block text-fs-sm text-muted-foreground">Select bank account</span>
                 </span>
-                <select
-                  value={bankAccount}
-                  onChange={(e) => setBankAccount(e.target.value)}
-                  className="max-w-[9rem] shrink-0 truncate bg-transparent text-fs-sm font-semibold text-muted-foreground"
-                >
-                  {BANK_ACCOUNTS.map((b) => (
-                    <option key={b} value={b}>
-                      {b}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                <span className="max-w-[9rem] shrink-0 truncate text-fs-sm font-semibold text-muted-foreground">
+                  {bankAccount}
+                </span>
+              </div>
               <label className="flex min-h-ctl-lg items-center gap-3 px-3 py-2">
                 <span className="min-w-0 flex-1">
                   <span className="block text-fs-base font-bold text-foreground">
