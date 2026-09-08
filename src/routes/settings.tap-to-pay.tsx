@@ -31,7 +31,7 @@ export const Route = createFileRoute("/settings/tap-to-pay")({
  * communication and the checkout flow (requirement 3.6).
  */
 function TapToPaySettings() {
-  const { settings, updateSettings, canManageSettings } = usePos();
+  const { settings, canManageSettings } = usePos();
   const state = settings.tapToPayState;
   const ready = state === "ready";
 
@@ -81,13 +81,12 @@ function TapToPaySettings() {
         )}
 
         {ready && canManageSettings ? (
-          <button
-            type="button"
-            onClick={() => updateSettings({ tapToPayState: "notSetUp" })}
-            className="mt-4 h-ctl-md w-full rounded-row border border-border text-fs-sm font-bold text-destructive"
+          <Link
+            to="/tap-to-pay/turn-off"
+            className="mt-4 flex h-ctl-md w-full items-center justify-center rounded-row border border-border text-fs-sm font-bold text-destructive"
           >
             Turn off on this iPhone
-          </button>
+          </Link>
         ) : null}
       </ScreenBody>
     </>
