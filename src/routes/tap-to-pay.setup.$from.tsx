@@ -17,6 +17,9 @@ import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/tap-to-pay/setup/$from")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    view: search.view === "ready" ? ("ready" as const) : undefined,
+  }),
   head: () => ({
     meta: [
       { title: `Set up ${TTP} - ${brand.appName} Point of Sale` },
@@ -85,12 +88,13 @@ function LinkedSuccess({ onContinue }: { onContinue: () => void }) {
 
 function TapToPaySetup() {
   const { from } = useParams({ from: "/tap-to-pay/setup/$from" });
+  const { view } = Route.useSearch();
   const navigate = useNavigate();
   const { settings, updateSettings, totals, paidSoFar, tickets } = usePos();
   const fromCheckout = from === "checkout";
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
 
-  const [step, setStep] = useState<Step>("terms");
+  const [step, setStep] = useState<Step>(() => (view === "ready" ? "ready" : "terms"));
   const [ttpEnabled, setTtpEnabled] = useState(true);
   const [reader, setReader] = useState(settings.cardReaderModel || DEFAULT_READER);
   const bankAccount = BANK_ACCOUNTS[0];
