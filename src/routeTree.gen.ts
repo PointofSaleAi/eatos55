@@ -54,6 +54,7 @@ import { Route as SystemIntegrationsRouteImport } from './routes/system.integrat
 import { Route as SystemNetworkRouteImport } from './routes/system.network'
 import { Route as SystemTapToPayRecordingRouteImport } from './routes/system.tap-to-pay-recording'
 import { Route as TapToPayActivateRouteImport } from './routes/tap-to-pay.activate'
+import { Route as TapToPayTurnOffRouteImport } from './routes/tap-to-pay.turn-off'
 import { Route as TapToPayWelcomeRouteImport } from './routes/tap-to-pay.welcome'
 import { Route as TicketsIndexRouteImport } from './routes/tickets.index'
 import { Route as TicketsTicketIdRouteImport } from './routes/tickets.$ticketId'
@@ -295,6 +296,11 @@ const TapToPayActivateRoute = TapToPayActivateRouteImport.update({
   path: '/tap-to-pay/activate',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TapToPayTurnOffRoute = TapToPayTurnOffRouteImport.update({
+  id: '/tap-to-pay/turn-off',
+  path: '/tap-to-pay/turn-off',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TapToPayWelcomeRoute = TapToPayWelcomeRouteImport.update({
   id: '/tap-to-pay/welcome',
   path: '/tap-to-pay/welcome',
@@ -413,6 +419,7 @@ export interface FileRoutesByFullPath {
   '/system/network': typeof SystemNetworkRoute
   '/system/tap-to-pay-recording': typeof SystemTapToPayRecordingRoute
   '/tap-to-pay/activate': typeof TapToPayActivateRoute
+  '/tap-to-pay/turn-off': typeof TapToPayTurnOffRoute
   '/tap-to-pay/welcome': typeof TapToPayWelcomeRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
@@ -475,6 +482,7 @@ export interface FileRoutesByTo {
   '/system/network': typeof SystemNetworkRoute
   '/system/tap-to-pay-recording': typeof SystemTapToPayRecordingRoute
   '/tap-to-pay/activate': typeof TapToPayActivateRoute
+  '/tap-to-pay/turn-off': typeof TapToPayTurnOffRoute
   '/tap-to-pay/welcome': typeof TapToPayWelcomeRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
@@ -538,6 +546,7 @@ export interface FileRoutesById {
   '/system/network': typeof SystemNetworkRoute
   '/system/tap-to-pay-recording': typeof SystemTapToPayRecordingRoute
   '/tap-to-pay/activate': typeof TapToPayActivateRoute
+  '/tap-to-pay/turn-off': typeof TapToPayTurnOffRoute
   '/tap-to-pay/welcome': typeof TapToPayWelcomeRoute
   '/tickets/$ticketId': typeof TicketsTicketIdRoute
   '/tickets/filter': typeof TicketsFilterRoute
@@ -602,6 +611,7 @@ export interface FileRouteTypes {
     | '/system/network'
     | '/system/tap-to-pay-recording'
     | '/tap-to-pay/activate'
+    | '/tap-to-pay/turn-off'
     | '/tap-to-pay/welcome'
     | '/tickets/$ticketId'
     | '/tickets/filter'
@@ -664,6 +674,7 @@ export interface FileRouteTypes {
     | '/system/network'
     | '/system/tap-to-pay-recording'
     | '/tap-to-pay/activate'
+    | '/tap-to-pay/turn-off'
     | '/tap-to-pay/welcome'
     | '/tickets/$ticketId'
     | '/tickets/filter'
@@ -726,6 +737,7 @@ export interface FileRouteTypes {
     | '/system/network'
     | '/system/tap-to-pay-recording'
     | '/tap-to-pay/activate'
+    | '/tap-to-pay/turn-off'
     | '/tap-to-pay/welcome'
     | '/tickets/$ticketId'
     | '/tickets/filter'
@@ -789,6 +801,7 @@ export interface RootRouteChildren {
   SystemNetworkRoute: typeof SystemNetworkRoute
   SystemTapToPayRecordingRoute: typeof SystemTapToPayRecordingRoute
   TapToPayActivateRoute: typeof TapToPayActivateRoute
+  TapToPayTurnOffRoute: typeof TapToPayTurnOffRoute
   TapToPayWelcomeRoute: typeof TapToPayWelcomeRoute
   TicketsTicketIdRoute: typeof TicketsTicketIdRoute
   TicketsFilterRoute: typeof TicketsFilterRoute
@@ -1128,6 +1141,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TapToPayActivateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tap-to-pay/turn-off': {
+      id: '/tap-to-pay/turn-off'
+      path: '/tap-to-pay/turn-off'
+      fullPath: '/tap-to-pay/turn-off'
+      preLoaderRoute: typeof TapToPayTurnOffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tap-to-pay/welcome': {
       id: '/tap-to-pay/welcome'
       path: '/tap-to-pay/welcome'
@@ -1287,6 +1307,7 @@ const rootRouteChildren: RootRouteChildren = {
   SystemNetworkRoute: SystemNetworkRoute,
   SystemTapToPayRecordingRoute: SystemTapToPayRecordingRoute,
   TapToPayActivateRoute: TapToPayActivateRoute,
+  TapToPayTurnOffRoute: TapToPayTurnOffRoute,
   TapToPayWelcomeRoute: TapToPayWelcomeRoute,
   TicketsTicketIdRoute: TicketsTicketIdRoute,
   TicketsFilterRoute: TicketsFilterRoute,

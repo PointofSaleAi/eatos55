@@ -461,10 +461,7 @@ function TapToPaySetup() {
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  updateSettings({ tapToPayState: "notSetUp" });
-                  setStep("terms");
-                }}
+                onClick={() => navigate({ to: "/tap-to-pay/turn-off" })}
                 className="mt-2 h-ctl-md w-full rounded-row text-fs-sm font-bold text-destructive"
               >
                 Turn off on this iPhone
