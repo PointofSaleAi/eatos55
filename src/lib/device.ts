@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { usePos } from "@/lib/pos-store";
 
@@ -48,4 +49,19 @@ export function useTapToPayAvailable(): TapToPayAvailability {
     reason: TTP_DEVICE_NOTE,
     override,
   };
+}
+
+/**
+ * Route guard for the Tap to Pay screens. The check is client side, so it runs
+ * in an effect after hydration rather than in a loader.
+ */
+export function useRequireTapToPayDevice(): TapToPayAvailability {
+  const state = useTapToPayAvailable();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (state.resolved && !state.available) {
+      void navigate({ to: "/settings/payments", replace: true });
+    }
+  }, [state.resolved, state.available, navigate]);
+  return state;
 }
