@@ -112,6 +112,7 @@ function PaymentMethod() {
     commitPayment,
   } = usePos();
   const announce = useAnnounce();
+  const ttpDevice = useTapToPayAvailable();
   const orderNumber = tickets.length + 1;
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
   const nothingToPay = cart.length === 0;
