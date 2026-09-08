@@ -284,6 +284,11 @@ export type AppSettings = {
   tapToPayAwarenessShownAt: string;
   tapToPayDismissedAt: string;
   tapToPayTermsAcceptedAt: string;
+  /**
+   * Hidden developer switch: allows the Tap to Pay screens on a non iPhone so
+   * the flow can be reviewed and recorded. Never on by default.
+   */
+  tapToPayDevOverride: boolean;
 
 
 
@@ -394,6 +399,7 @@ const defaultSettings: AppSettings = {
   tapToPayAwarenessShownAt: "",
   tapToPayDismissedAt: "",
   tapToPayTermsAcceptedAt: "",
+  tapToPayDevOverride: false,
 
 
 

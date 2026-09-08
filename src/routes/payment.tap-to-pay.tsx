@@ -5,6 +5,7 @@ import { brand } from "@/lib/brand";
 import { TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
 import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
+import { useRequireTapToPayDevice } from "@/lib/device";
 
 export const Route = createFileRoute("/payment/tap-to-pay")({
   head: () => ({
@@ -28,6 +29,7 @@ export const Route = createFileRoute("/payment/tap-to-pay")({
 });
 
 function PaymentTapToPay() {
+  useRequireTapToPayDevice();
   const navigate = useNavigate();
   const { settings, totals, paidSoFar, commitPayment } = usePos();
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);

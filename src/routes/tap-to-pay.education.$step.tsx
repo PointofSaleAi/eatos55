@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import { useRequireTapToPayDevice } from "@/lib/device";
 import { ChevronLeft, ChevronRight, CreditCard, Lock, Smartphone, Wallet, Watch } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import contactlessVideo from "@/assets/tap-to-pay-contactless_1.mp4.asset.json";
@@ -87,6 +88,7 @@ const steps: Step[] = [
 ];
 
 function TapToPayEducation() {
+  useRequireTapToPayDevice();
   const { step } = useParams({ from: "/tap-to-pay/education/$step" });
   const navigate = useNavigate();
 

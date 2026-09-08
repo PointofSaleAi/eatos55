@@ -9,6 +9,7 @@ import {
   ttpCopy,
 } from "@/components/pos/tap-to-pay";
 import { usePos } from "@/lib/pos-store";
+import { useRequireTapToPayDevice } from "@/lib/device";
 
 export const Route = createFileRoute("/tap-to-pay/welcome")({
   head: () => ({
@@ -36,6 +37,7 @@ export const Route = createFileRoute("/tap-to-pay/welcome")({
  * venue (requirements 3.1, 3.3, 3.5). Not a banner: it owns the screen.
  */
 function TapToPayWelcome() {
+  useRequireTapToPayDevice();
   const navigate = useNavigate();
   const { settings, updateSettings } = usePos();
 

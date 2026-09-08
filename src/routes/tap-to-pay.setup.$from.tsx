@@ -15,6 +15,7 @@ import {
 
 import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
+import { useRequireTapToPayDevice } from "@/lib/device";
 
 export const Route = createFileRoute("/tap-to-pay/setup/$from")({
   validateSearch: (search: Record<string, unknown>): SetupSearch =>
@@ -90,6 +91,7 @@ function LinkedSuccess({ onContinue }: { onContinue: () => void }) {
 
 
 function TapToPaySetup() {
+  useRequireTapToPayDevice();
   const { from } = useParams({ from: "/tap-to-pay/setup/$from" });
   const { view } = Route.useSearch();
   const navigate = useNavigate();

@@ -23,7 +23,7 @@ export const Route = createFileRoute("/settings/more")({
 });
 
 function MoreSettings() {
-  const { settings, updateSettings } = usePos();
+  const { settings, updateSettings, canManageSettings } = usePos();
   const confirm = useConfirm();
   const { appearance, setAppearance } = useAppearance();
 
@@ -92,6 +92,18 @@ function MoreSettings() {
 
         <SectionLabel>Advanced</SectionLabel>
         <Card className="overflow-hidden">
+          <ToggleRow
+            title="Allow Tap to Pay on this device"
+            detail="Developer only: shows the iPhone-only flow here for review"
+            checked={settings.tapToPayDevOverride}
+            onChange={(v) => {
+              if (!canManageSettings) {
+                toast.error("Only managers can change this");
+                return;
+              }
+              updateSettings({ tapToPayDevOverride: v });
+            }}
+          />
           <ActionRow
             title="Clear local cache"
             detail="Removes cached menu images"
