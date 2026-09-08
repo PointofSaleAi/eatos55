@@ -131,8 +131,16 @@ export function IconNavRow({
   to,
   topic,
   onClick,
+  disabled,
   ...rest
-}: RowShellProps & { to?: string; topic?: string; onClick?: () => void }) {
+}: RowShellProps & { to?: string; topic?: string; onClick?: () => void; disabled?: boolean }) {
+  if (disabled) {
+    return (
+      <div aria-disabled="true" className={cn(rowBase, "pointer-events-none opacity-60")}>
+        <RowInner {...rest} />
+      </div>
+    );
+  }
   if (topic) {
     return (
       <Link
