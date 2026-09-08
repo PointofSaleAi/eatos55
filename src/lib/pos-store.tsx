@@ -399,6 +399,7 @@ const defaultSettings: AppSettings = {
   tapToPayAwarenessShownAt: "",
   tapToPayDismissedAt: "",
   tapToPayTermsAcceptedAt: "",
+  tapToPayDevOverride: false,
 
 
 
