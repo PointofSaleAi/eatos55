@@ -46,6 +46,7 @@ const POINTS = [
 ];
 
 function TapToPayTurnOff() {
+  useRequireTapToPayDevice();
   const navigate = useNavigate();
   const { updateSettings, canManageSettings } = usePos();
   const [step, setStep] = useState<Step>("confirm");

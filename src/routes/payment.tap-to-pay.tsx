@@ -29,6 +29,7 @@ export const Route = createFileRoute("/payment/tap-to-pay")({
 });
 
 function PaymentTapToPay() {
+  useRequireTapToPayDevice();
   const navigate = useNavigate();
   const { settings, totals, paidSoFar, commitPayment } = usePos();
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
