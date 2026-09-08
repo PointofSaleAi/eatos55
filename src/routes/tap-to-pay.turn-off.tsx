@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { brand } from "@/lib/brand";
 import { TTP } from "@/components/pos/tap-to-pay";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/tap-to-pay/turn-off")({
@@ -29,18 +28,31 @@ export const Route = createFileRoute("/tap-to-pay/turn-off")({
 
 type Step = "confirm" | "turningOff" | "done" | "failed";
 
+/**
+ * Merchant-owned turn off screens. These are deliberately our own UI, not a
+ * copy of any Apple system sheet, and they never state what Apple does with
+ * the Apple ID or the device link.
+ *
+ * iOS team: the turn off step must call the real Apple deactivate/unlink API
+ * and the resulting state belongs server side per merchant, the same as the
+ * setup proof, so a reinstall cannot erase it.
+ */
 const POINTS = [
-  "This iPhone stops accepting contactless cards and digital wallets.",
-  "Your linked Apple ID and merchant account stay linked.",
+  "This iPhone stops taking contactless cards and digital wallets.",
   "Payments you have already taken are not affected.",
   "You can set up Tap to Pay on iPhone again at any time.",
+  "Anything to do with your Apple ID is managed in the iPhone Settings app.",
 ];
 
 function TapToPayTurnOff() {
   const navigate = useNavigate();
-  const { updateSettings } = usePos();
+  const { updateSettings, canManageSettings } = usePos();
   const [step, setStep] = useState<Step>("confirm");
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  useEffect(() => {
+    if (!canManageSettings) navigate({ to: "/settings/tap-to-pay", replace: true });
+  }, [canManageSettings, navigate]);
 
   useEffect(() => {
     const clear = () => {
@@ -68,6 +80,36 @@ function TapToPayTurnOff() {
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-background px-[var(--pad-screen)] pb-[calc(1rem+var(--tabs-h,0px))] pt-5">
       <div className="mx-auto flex w-full max-w-[34rem] flex-1 flex-col">
+        {step === "confirm" ? (
+          <>
+            <h1 className="text-fs-2xl font-extrabold leading-tight text-foreground">
+              Turn off {TTP}
+            </h1>
+            <div className="mt-5 space-y-3 rounded-card border border-border bg-surface p-4">
+              {POINTS.map((point) => (
+                <p
+                  key={point}
+                  className="pl-4 text-fs-sm leading-relaxed text-muted-foreground before:mr-2 before:content-['•']"
+                >
+                  {point}
+                </p>
+              ))}
+            </div>
+            <div className="mt-auto pt-8">
+              <button
+                type="button"
+                onClick={() => setStep("turningOff")}
+                className="h-ctl-lg w-full rounded-row bg-destructive text-fs-base font-extrabold text-destructive-foreground"
+              >
+                Turn Off
+              </button>
+              <button type="button" onClick={backToSettings} className={secondary}>
+                Cancel
+              </button>
+            </div>
+          </>
+        ) : null}
+
         {step === "turningOff" ? (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <h1 className="text-fs-2xl font-extrabold leading-tight text-foreground">
@@ -91,7 +133,7 @@ function TapToPayTurnOff() {
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <CheckCircle2 className="size-16 text-success" aria-hidden />
             <h1 className="mt-4 text-fs-2xl font-extrabold leading-tight text-foreground">
-              {TTP} is turned off
+              {TTP} is off on this iPhone
             </h1>
             <p className="mt-2 max-w-[22rem] text-fs-base leading-relaxed text-muted-foreground">
               This iPhone no longer takes contactless cards or digital wallets. You can set it up
@@ -121,7 +163,7 @@ function TapToPayTurnOff() {
               We could not turn it off
             </h1>
             <p className="mt-2 max-w-[22rem] text-fs-base leading-relaxed text-muted-foreground">
-              Check your connection and try again. Tap to Pay on iPhone is still on for this device.
+              Check your connection and try again. {TTP} is still on for this device.
             </p>
             <div className="mt-8 w-full max-w-[22rem]">
               <button type="button" onClick={() => setStep("turningOff")} className={primary}>
@@ -134,49 +176,6 @@ function TapToPayTurnOff() {
           </div>
         ) : null}
       </div>
-
-      <Sheet
-        open={step === "confirm"}
-        onOpenChange={(open) => {
-          if (!open) backToSettings();
-        }}
-      >
-        <SheetContent
-          hideClose
-          side="bottom"
-          className="flex h-[100dvh] flex-col overflow-hidden rounded-t-[1.75rem] border-t border-border bg-white px-5 pb-[calc(1rem+var(--safe-bottom,0px))] pt-7"
-        >
-          <SheetTitle className="text-left text-fs-2xl font-extrabold leading-tight text-black">
-            Turn off {TTP}?
-          </SheetTitle>
-          <div className="mt-5 min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain pr-1">
-            {POINTS.map((point) => (
-              <p
-                key={point}
-                className="pl-4 text-fs-sm leading-relaxed text-neutral-600 before:mr-2 before:content-['•']"
-              >
-                {point}
-              </p>
-            ))}
-          </div>
-          <div className="flex shrink-0 items-center gap-3 pt-4">
-            <button
-              type="button"
-              onClick={backToSettings}
-              className="h-ctl-md flex-1 rounded-full border border-neutral-300 bg-white text-fs-base font-bold text-[#0a84ff]"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={() => setStep("turningOff")}
-              className="h-ctl-md flex-1 rounded-full border border-neutral-300 bg-white text-fs-base font-bold text-[#ff3b30]"
-            >
-              Turn Off
-            </button>
-          </div>
-        </SheetContent>
-      </Sheet>
     </div>
   );
 }
