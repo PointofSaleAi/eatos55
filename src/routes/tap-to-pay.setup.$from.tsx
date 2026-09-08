@@ -15,6 +15,7 @@ import {
 
 import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
+import { useRequireTapToPayDevice } from "@/lib/device";
 
 export const Route = createFileRoute("/tap-to-pay/setup/$from")({
   validateSearch: (search: Record<string, unknown>): SetupSearch =>

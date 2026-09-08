@@ -5,6 +5,7 @@ import { brand } from "@/lib/brand";
 import { TTP } from "@/components/pos/tap-to-pay";
 import { tapToPayTerms } from "@/lib/tap-to-pay-terms";
 import { usePos } from "@/lib/pos-store";
+import { useRequireTapToPayDevice } from "@/lib/device";
 
 export const Route = createFileRoute("/tap-to-pay/activate")({
   head: () => ({

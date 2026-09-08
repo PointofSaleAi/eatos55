@@ -9,6 +9,7 @@ import {
   ttpCopy,
 } from "@/components/pos/tap-to-pay";
 import { usePos } from "@/lib/pos-store";
+import { useRequireTapToPayDevice } from "@/lib/device";
 
 export const Route = createFileRoute("/tap-to-pay/welcome")({
   head: () => ({
