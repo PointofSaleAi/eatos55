@@ -88,6 +88,7 @@ const steps: Step[] = [
 ];
 
 function TapToPayEducation() {
+  useRequireTapToPayDevice();
   const { step } = useParams({ from: "/tap-to-pay/education/$step" });
   const navigate = useNavigate();
 

@@ -91,6 +91,7 @@ function LinkedSuccess({ onContinue }: { onContinue: () => void }) {
 
 
 function TapToPaySetup() {
+  useRequireTapToPayDevice();
   const { from } = useParams({ from: "/tap-to-pay/setup/$from" });
   const { view } = Route.useSearch();
   const navigate = useNavigate();
