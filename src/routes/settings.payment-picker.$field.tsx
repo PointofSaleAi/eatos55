@@ -80,8 +80,19 @@ function PaymentPicker() {
 
   const choose = (option: string) => {
     if (canManageSettings) config.apply(option);
+    if (
+      canManageSettings &&
+      field === "reader" &&
+      option === TTP &&
+      ttp.available &&
+      settings.tapToPayState !== "ready"
+    ) {
+      navigate({ to: "/tap-to-pay/setup/$from", params: { from: "reader" } });
+      return;
+    }
     navigate({ to: "/settings/payment-methods" });
   };
+
 
   return (
     <>

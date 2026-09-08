@@ -119,8 +119,10 @@ function TapToPaySetup() {
   const backToSource = () => {
     if (fromCheckout) navigate({ to: "/payment/method" });
     else if (from === "settings") navigate({ to: "/settings/tap-to-pay" });
+    else if (from === "reader") navigate({ to: "/settings/payment-methods" });
     else navigate({ to: "/tickets" });
   };
+
 
   const acceptTerms = () => {
     updateSettings({
