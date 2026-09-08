@@ -69,7 +69,14 @@ const variants: Record<BrandId, BrandConfig> = {
     hideUsOnlyPayments: false,
     tenderAliases: {},
     providerCatalog: ["Adyen", "Stripe", "CardConnect", "Bolt", "Poynt"],
-    readerCatalog: ["BBPOS WisePOS E", "Adyen S1F2", "Castles S1F2", "MagTek eDynamo", "Poynt Smart Terminal"],
+    readerCatalog: [
+      "Adyen S1F2",
+      "BBPOS WisePOS E",
+      "Castles S1F2",
+      "MagTek eDynamo",
+      "Poynt Smart Terminal",
+      "Tap to Pay on iPhone",
+    ],
     venue: {
       address: "418 W 25th St",
       city: "New York, NY 10001",
@@ -89,7 +96,7 @@ const variants: Record<BrandId, BrandConfig> = {
     hideUsOnlyPayments: true,
     tenderAliases: { grubhub: "Just Eat", "in-kind": "Deliveroo" },
     providerCatalog: ["Adyen"],
-    readerCatalog: ["Adyen S1F2", "Castles S1F2"],
+    readerCatalog: ["Adyen S1F2", "Castles S1F2", "Tap to Pay on iPhone"],
     venue: {
       address: "25 Great Chapel St",
       city: "London W1F 4AH",
@@ -111,7 +118,7 @@ const variants: Record<BrandId, BrandConfig> = {
     tenderAliases: {},
     // No dedicated UAE provider or reader matrix exists; the full catalog shows.
     providerCatalog: ["Adyen", "Stripe"],
-    readerCatalog: ["Adyen S1F2", "Castles S1F2", "BBPOS WisePOS E"],
+    readerCatalog: ["Adyen S1F2", "BBPOS WisePOS E", "Castles S1F2", "Tap to Pay on iPhone"],
     venue: {
       address: "Sheikh Zayed Rd, Trade Centre 1",
       city: "Dubai",
