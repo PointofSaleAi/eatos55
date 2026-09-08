@@ -17,9 +17,8 @@ import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/tap-to-pay/setup/$from")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    view: search.view === "ready" ? ("ready" as const) : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): SetupSearch =>
+    search["view"] === "ready" ? { view: "ready" } : {},
   head: () => ({
     meta: [
       { title: `Set up ${TTP} - ${brand.appName} Point of Sale` },
@@ -48,6 +47,10 @@ type Step =
   | "linked"
   | "ready"
   | "failed";
+
+type SetupSearch = {
+  view?: "ready";
+};
 
 const READERS = [
   "Adyen Terminal",
