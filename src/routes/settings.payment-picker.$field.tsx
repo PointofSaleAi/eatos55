@@ -5,6 +5,8 @@ import { Caption, GroupCard, settingsRowClass } from "@/components/pos/settings-
 import { brand } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
+import { TTP_DEVICE_NOTE, useTapToPayAvailable } from "@/lib/device";
+import { TTP } from "@/components/pos/tap-to-pay";
 
 export const Route = createFileRoute("/settings/payment-picker/$field")({
   head: () => ({
@@ -33,6 +35,7 @@ function PaymentPicker() {
   const { field } = Route.useParams();
   const navigate = useNavigate();
   const { settings, updateSettings, canManageSettings } = usePos();
+  const ttp = useTapToPayAvailable();
 
   const config = {
     provider: {
@@ -87,6 +90,20 @@ function PaymentPicker() {
         <GroupCard>
           {config.options.map((option) => {
             const active = option === config.value;
+            const blocked = option === TTP && !ttp.available;
+            if (blocked) {
+              return (
+                <div
+                  key={option}
+                  aria-disabled="true"
+                  className={cn(settingsRowClass, "pointer-events-none opacity-60")}
+                >
+                  <span className="min-w-0 flex-1 truncate t-row text-foreground">{option}</span>
+                  <span className="shrink-0 t-value text-muted-foreground">{TTP_DEVICE_NOTE}</span>
+                  {active ? <Check className="size-5 shrink-0 text-accent" /> : null}
+                </div>
+              );
+            }
             return (
               <button
                 key={option}

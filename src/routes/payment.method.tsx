@@ -35,6 +35,7 @@ import { ReceiptCard, ReceiptRow } from "@/components/pos/receipt";
 import { ReferenceTenderDialog } from "@/components/pos/reference-tender-dialog";
 import { RoomChargeDialog } from "@/components/pos/room-charge-dialog";
 import { TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
+import { TTP_DEVICE_NOTE, useTapToPayAvailable } from "@/lib/device";
 import { BackButton } from "@/components/pos/shell";
 import { SplitPayments } from "@/components/pos/split-payments";
 import { X } from "lucide-react";
@@ -726,7 +727,10 @@ function PaymentMethod() {
          */}
         <button
           type="button"
+          disabled={!ttpDevice.available}
+          aria-disabled={!ttpDevice.available}
           onClick={() => {
+            if (!ttpDevice.available) return;
             if (settings.tapToPayState === "ready") {
               setSelected("tap-to-pay");
               navigate({ to: "/payment/tap-to-pay" });
@@ -734,11 +738,17 @@ function PaymentMethod() {
             }
             navigate({ to: "/tap-to-pay/setup/$from", params: { from: "checkout" } });
           }}
-          className="mt-3 flex h-ctl-lg w-full items-center justify-center gap-2 rounded-row bg-primary px-3 text-fs-base font-extrabold text-primary-foreground transition-colors"
+          className={cn(
+            "mt-3 flex h-ctl-lg w-full items-center justify-center gap-2 rounded-row bg-primary px-3 text-fs-base font-extrabold text-primary-foreground transition-colors",
+            !ttpDevice.available && "opacity-60",
+          )}
         >
           <TapToPayMark className="size-5 shrink-0" />
           <span className="truncate">{TTP}</span>
         </button>
+        {!ttpDevice.available ? (
+          <p className="mt-1 text-fs-xs text-muted-foreground">{TTP_DEVICE_NOTE}</p>
+        ) : null}
 
         <p className="mt-1 hidden text-fs-xs text-muted-foreground lg:block">
           Cash, manual card entry and Pay by Link are supported online. Connect a card reader for
