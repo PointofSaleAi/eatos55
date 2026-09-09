@@ -726,30 +726,32 @@ function PaymentMethod() {
          * not this iPhone has been set up yet. If it has not, it starts setup
          * and the ticket is kept.
          */}
-        <button
-          type="button"
-          disabled={!ttpDevice.available}
-          aria-disabled={!ttpDevice.available}
-          onClick={() => {
-            if (!ttpDevice.available) return;
-            if (settings.tapToPayState === "ready") {
-              setSelected("tap-to-pay");
-              navigate({ to: "/payment/tap-to-pay" });
-              return;
-            }
-            navigate({ to: "/tap-to-pay/setup/$from", params: { from: "checkout" } });
-          }}
-          className={cn(
-            "mt-3 flex h-ctl-lg w-full items-center justify-center gap-2 rounded-row bg-primary px-3 text-fs-base font-extrabold text-primary-foreground transition-colors",
-            !ttpDevice.available && "opacity-60",
-          )}
-        >
-          <TapToPayMark className="size-5 shrink-0" />
-          <span className="truncate">{TTP}</span>
-        </button>
-        {!ttpDevice.available ? (
-          <p className="mt-1 text-fs-xs text-muted-foreground">{TTP_DEVICE_NOTE}</p>
-        ) : null}
+        {ttpDevice.available ? (
+          <button
+            type="button"
+            onClick={() => {
+              if (settings.tapToPayState === "ready") {
+                setSelected("tap-to-pay");
+                navigate({ to: "/payment/tap-to-pay" });
+                return;
+              }
+              navigate({ to: "/tap-to-pay/setup/$from", params: { from: "checkout" } });
+            }}
+            className="mt-3 flex h-ctl-lg w-full items-center justify-center gap-2 rounded-row bg-primary px-3 text-fs-base font-extrabold text-primary-foreground transition-colors"
+          >
+            <TapToPayMark className="size-5 shrink-0" />
+            <span className="truncate">{TTP}</span>
+          </button>
+        ) : (
+          <div
+            aria-disabled
+            className="mt-2 flex h-ctl-md w-full items-center gap-2 rounded-row border border-border bg-muted/40 px-3 text-muted-foreground"
+          >
+            <TapToPayMark className="size-4 shrink-0" />
+            <span className="truncate text-fs-sm font-bold">{TTP}</span>
+            <span className="ml-auto shrink-0 text-fs-xs">{TTP_DEVICE_NOTE}</span>
+          </div>
+        )}
 
         <p className="mt-1 hidden text-fs-xs text-muted-foreground lg:block">
           Cash, manual card entry and Pay by Link are supported online. Connect a card reader for
@@ -856,7 +858,7 @@ function PaymentMethod() {
 
       {/* Two-pane on tablet and desktop; stacked on phones. */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
-        <div className="flex min-h-0 shrink-0 flex-col overflow-hidden border-border md:w-[20rem] md:border-r lg:w-[24rem] xl:w-[26rem] 2xl:w-[30rem]">
+        <div className="flex min-h-0 max-h-[38dvh] flex-col overflow-hidden border-border md:max-h-none md:w-[20rem] md:shrink-0 md:border-r lg:w-[24rem] xl:w-[26rem] 2xl:w-[30rem]">
           {receipt}
         </div>
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">{grid}</div>
