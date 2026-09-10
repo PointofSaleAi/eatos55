@@ -204,10 +204,10 @@ function PaymentMethod() {
         },
         {
           id: "card-present",
-          label: "Chip and PIN",
+          label: "Card",
           icon: CreditCard,
           kind: "dialog",
-          run: () => openAmount("Chip and PIN", "card"),
+          run: () => openAmount("Card", "card"),
         },
         {
           id: "contactless",
@@ -215,13 +215,6 @@ function PaymentMethod() {
           icon: Nfc,
           kind: "dialog",
           run: () => openAmount("Tap to Pay", "card"),
-        },
-        {
-          id: "amex",
-          label: "Amex",
-          icon: CreditCard,
-          kind: "dialog",
-          run: () => openAmount("Amex", "card"),
         },
         {
           id: "manual-card",
@@ -392,13 +385,6 @@ function PaymentMethod() {
           run: () => openAmount("Account", "house"),
         },
         {
-          id: "house",
-          label: "House",
-          icon: Landmark,
-          kind: "dialog",
-          run: () => openAmount("House Account", "house"),
-        },
-        {
           id: "gift",
           label: "Gift Card",
           icon: Gift,
@@ -506,6 +492,7 @@ function PaymentMethod() {
 
   // Only enabled tenders are offered; Room Charge also needs the room module.
   const enabled = (id: string) => {
+    if (id === "cash" || id === "card-present") return true;
     const on = settings.tenders?.[id as TenderId] ?? true;
     if (id === "room") return on && settings.roomService;
     // Region visibility comes from the build variant, enablement from Settings.
@@ -663,7 +650,7 @@ function PaymentMethod() {
         )}
       >
         {groups.map((group) => (
-          <section key={group.title} className="flex shrink-0 flex-col">
+          <section key={group.title} className="flex shrink-0 flex-col gap-1 md:gap-0">
             <h3
               className="text-fs-xs font-bold uppercase tracking-[0.08em] text-muted-foreground"
               style={{ height: HEAD, lineHeight: `${HEAD}px` }}
@@ -671,12 +658,13 @@ function PaymentMethod() {
               {group.title}
             </h3>
             <div
-              className="grid gap-[var(--gap-sec)]"
+              className="grid overflow-hidden rounded-row border border-border md:overflow-visible md:rounded-none md:border-0 md:gap-[var(--gap-sec)]"
               style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
             >
-              {group.items.map((t) => {
+              {group.items.map((t, index) => {
                 const Icon = t.icon;
                 const active = selected === t.id;
+                const fillsPhoneRow = !wide && group.items.length % 2 === 1 && index === group.items.length - 1;
                 return (
                   <button
                     key={t.id}
@@ -688,18 +676,32 @@ function PaymentMethod() {
                       t.run();
                     }}
                     aria-pressed={active}
-                    style={{ height: fit.tileH }}
+                    style={{ height: wide ? fit.tileH : t.id === "cash" || t.id === "card-present" ? 64 : 54 }}
                     className={cn(
-                      "flex items-center gap-2.5 rounded-row border px-3 py-2 text-left transition-colors disabled:opacity-40",
+                      "flex items-center gap-3 border-b border-r border-border px-3 py-2 text-left transition-colors last:border-b-0 even:border-r-0 md:gap-2.5 md:rounded-row md:border md:px-3",
+                      fillsPhoneRow && "col-span-2 border-r-0",
                       active
                         ? "border-success bg-success/10"
                         : "border-border bg-surface hover:bg-muted",
                     )}
                   >
-                    <Icon className="size-5 shrink-0 text-foreground" aria-hidden />
+                    <Icon
+                      className={cn(
+                        "shrink-0 text-foreground",
+                        !wide && (t.id === "cash" || t.id === "card-present") ? "size-6" : "size-5",
+                      )}
+                      aria-hidden
+                    />
 
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-fs-sm font-bold text-foreground">
+                      <span
+                        className={cn(
+                          "block truncate font-bold text-foreground",
+                          !wide && (t.id === "cash" || t.id === "card-present")
+                            ? "text-fs-base"
+                            : "text-fs-sm",
+                        )}
+                      >
                         {t.label}
                       </span>
                       {t.note ? (

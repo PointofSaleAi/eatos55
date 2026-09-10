@@ -69,12 +69,11 @@ const sections: { title: string; rows: Row[] }[] = [
     rows: [
       { id: "cash", icon: Wallet, color: "green", locked: true },
       { id: "tap-to-pay", icon: Nfc, color: "black" },
-      { id: "card-present", icon: CreditCard, color: "blue" },
+      { id: "card-present", icon: CreditCard, color: "blue", locked: true },
       { id: "contactless", icon: Nfc, color: "sky" },
       { id: "manual-card", icon: CreditCard, color: "indigo" },
       { id: "manual-cc", icon: BadgeDollarSign, color: "violet" },
       { id: "external", icon: UploadCloud, color: "slate" },
-      { id: "amex", icon: CreditCard, color: "black" },
       { id: "split", icon: Split, color: "purple" },
     ],
   },
@@ -100,7 +99,6 @@ const sections: { title: string; rows: Row[] }[] = [
     title: "Accounts and rewards",
     rows: [
       { id: "account", icon: SquareUser, color: "slate" },
-      { id: "house", icon: Landmark, color: "grey" },
       { id: "gift", icon: Gift, color: "magenta" },
       { id: "loyalty", icon: Heart, color: "pink" },
       { id: "in-kind", icon: HandHeart, color: "orange" },
@@ -267,8 +265,8 @@ function PaymentMethodsSettings() {
           );
         })}
         <Caption>
-          Only the methods switched on here appear on the payment screen. Cash always stays available
-          so a check can be tendered.
+          Only the optional methods switched on here appear on the payment screen. Cash and Card
+          always stay available so a check can be tendered.
         </Caption>
         <Caption>
           If Auto close is switched on for a method, the order closes itself once a payment with that
