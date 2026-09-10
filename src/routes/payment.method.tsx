@@ -632,7 +632,7 @@ function PaymentMethod() {
          * not this iPhone has been set up yet. If it has not, it starts setup
          * and the ticket is kept.
          */}
-        {ttpDevice.available ? (
+        {ttpEnabled ? (
           <button
             type="button"
             onClick={() => {
