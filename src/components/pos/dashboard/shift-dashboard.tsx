@@ -144,19 +144,6 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="flex min-w-0 flex-col gap-3">
-      {/* Who is on shift, and since when */}
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-1">
-        <div className="min-w-0">
-          <p className="truncate text-fs-lg font-extrabold text-foreground">{session.name}</p>
-          <p className="truncate text-fs-2xs text-muted-foreground">
-            {session.role} · clocked in at {settings.clockedInAt}
-          </p>
-        </div>
-        <p className="shrink-0 text-fs-2xs font-bold uppercase tracking-wide text-muted-foreground">
-          My shift
-        </p>
-      </div>
-
       <div className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_14rem]">
         <div className="flex min-w-0 flex-col gap-3">
           {/* Suggested next actions come first: this is what to do now */}
