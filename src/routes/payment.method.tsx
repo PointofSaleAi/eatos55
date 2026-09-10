@@ -12,7 +12,6 @@ import {
   Nfc,
   QrCode,
   Receipt,
-  Smartphone,
   Ticket,
   UserCog,
   Gift,
@@ -148,6 +147,7 @@ function PaymentMethod() {
     denominations?: boolean;
   } | null>(null);
   const [chosenTip, setChosenTip] = useState(0);
+  const selectedRef = useRef<TenderId | null>(null);
 
   const [room, setRoom] = useState<Room | null>(null);
   const [refConfig, setRefConfig] = useState<RefConfig | null>(null);
@@ -186,25 +186,26 @@ function PaymentMethod() {
     const cfg = amountFor;
     if (!cfg) return;
     setAmountFor(null);
-    if (amount < due) {
+    const targetDue = Math.round((due + chosenTip) * 100) / 100;
+    if (amount < targetDue) {
       haptic("medium");
       addPartialPayment(amount, cfg.method, cfg.label);
       announce("Partial payment applied");
-      toast.success(`${cfg.label} ${money(amount)} applied · ${money(due - amount)} remaining`);
+      toast.success(`${cfg.label} ${money(amount)} applied · ${money(targetDue - amount)} remaining`);
       return;
     }
-    const tenderId = (selected ?? "card-present") as TenderId;
+    const tenderId = selectedRef.current ?? (selected ?? "card-present") as TenderId;
     if (settings.tipTiming === "After approval" && shouldAskTip(tenderId)) {
       setPendingPayment({ amount, method: cfg.method, label: cfg.label, tenderId, ...(notes ? { notes } : {}) });
       setTipOpen(true);
       return;
     }
-    completePayment(amount, cfg.method, cfg.label, tenderId, chosenTip, notes);
+    completePayment(Math.max(0, amount - chosenTip), cfg.method, cfg.label, tenderId, chosenTip, notes);
     setChosenTip(0);
   };
 
   const openAmount = (label: string, method: TenderMethod, denominations = false) => {
-    const tenderId = (selected ?? (method === "cash" ? "cash" : "card-present")) as TenderId;
+    const tenderId = selectedRef.current ?? (selected ?? (method === "cash" ? "cash" : "card-present")) as TenderId;
     if (settings.tipTiming === "Before payment" && shouldAskTip(tenderId)) {
       setPendingAmountStart({ label, method, tenderId, denominations });
       setTipOpen(true);
@@ -697,6 +698,7 @@ function PaymentMethod() {
                     type="button"
                     disabled={nothingToPay}
                     onClick={() => {
+                      selectedRef.current = t.id as TenderId;
                       setSelected(t.id);
                       if (t.kind !== "room") setRoom(null);
                       t.run();
@@ -794,7 +796,7 @@ function PaymentMethod() {
       <AmountEntry
         open={amountFor !== null}
         title={amountFor?.label ?? "Amount"}
-        due={due}
+        due={Math.round((due + chosenTip) * 100) / 100}
         denominations={amountFor?.denominations ?? false}
         onClose={() => setAmountFor(null)}
         onCommit={takeAmount}
@@ -832,7 +834,9 @@ function PaymentMethod() {
             setAmountFor({
               label: pendingAmountStart.label,
               method: pendingAmountStart.method,
-              denominations: pendingAmountStart.denominations,
+              ...(pendingAmountStart.denominations !== undefined
+                ? { denominations: pendingAmountStart.denominations }
+                : {}),
             });
             setPendingAmountStart(null);
           }

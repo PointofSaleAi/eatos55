@@ -842,6 +842,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
             ...defaultTenderAutoClose,
             ...(saved.tenderAutoClose ?? {}),
           },
+          tipTenders: {
+            ...defaultSettings.tipTenders,
+            ...(saved.tipTenders ?? {}),
+          },
         }));
       }
 

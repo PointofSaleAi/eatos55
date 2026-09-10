@@ -16,7 +16,6 @@ import {
   QrCode,
   Radio,
   Receipt,
-  Smartphone,
   Split,
   SquareUser,
   Ticket,
