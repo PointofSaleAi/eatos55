@@ -1,5 +1,6 @@
-import { ArrowRight, Sun, X } from "lucide-react";
+import { ArrowRight, MessageSquarePlus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import mayaLogo from "@/assets/maya-ai-logo.png.asset.json";
 import { formatMoney } from "@/lib/brand";
 import { floorTables, tableStateMeta } from "@/lib/floor-data";
 import { usePos } from "@/lib/pos-store";
@@ -10,17 +11,20 @@ type Msg = { id: string; from: "ai" | "me"; text: string };
 
 const quickAsks = ["Summarise this shift", "Which tables are free?", "Flag slow orders"];
 
-/** The small pink tile used as the assistant mark, no third party logo needed. */
+/** The conversation is kept here so closing the overlay does not lose it. */
+let keptMsgs: Msg[] | null = null;
+
+/** The Maya AI mark. */
 export function AiMark({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "grid size-9 shrink-0 place-items-center rounded-card bg-accent text-accent-foreground",
+        "grid size-9 shrink-0 place-items-center overflow-hidden rounded-card bg-muted/60",
         className,
       )}
       aria-hidden
     >
-      <Sun className="size-5" />
+      <img src={mayaLogo.url} alt="" className="size-full object-contain p-0.5" />
     </span>
   );
 }
@@ -96,22 +100,27 @@ function useAnswer() {
   };
 }
 
-/** Full width overlay chat, opened from the Suggested next card. */
+/** Maya AI chat, shown as an overlay above the dashboard. */
 export function EatosAiChat({ onClose }: { onClose: () => void }) {
   const { suggestions } = useShiftSummary();
   const answer = useAnswer();
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const [draft, setDraft] = useState("");
-  const [msgs, setMsgs] = useState<Msg[]>(() => [
-    {
-      id: "open",
-      from: "ai",
-      text: suggestions[0]
-        ? `${suggestions[0].text}. Want me to help with it?`
-        : "Nothing needs chasing right now. Ask me anything about your shift.",
-    },
-  ]);
+
+  const opener = (): Msg => ({
+    id: `open-${Date.now()}`,
+    from: "ai",
+    text: suggestions[0]
+      ? `${suggestions[0].text}. Want me to help with it?`
+      : "Nothing needs chasing right now. Ask me anything about your shift.",
+  });
+
+  const [msgs, setMsgs] = useState<Msg[]>(() => keptMsgs ?? [opener()]);
+
+  useEffect(() => {
+    keptMsgs = msgs;
+  }, [msgs]);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -121,101 +130,137 @@ export function EatosAiChat({ onClose }: { onClose: () => void }) {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight });
   }, [msgs]);
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
   const send = (text: string) => {
     const value = text.trim();
     if (!value) return;
     setDraft("");
     setMsgs((prev) => [
       ...prev,
-      { id: `me-${prev.length}`, from: "me", text: value },
-      { id: `ai-${prev.length}`, from: "ai", text: answer(value) },
+      { id: `me-${prev.length}-${Date.now()}`, from: "me", text: value },
+      { id: `ai-${prev.length}-${Date.now()}`, from: "ai", text: answer(value) },
     ]);
   };
 
-  return (
-    <div className="rounded-card border border-border bg-surface shadow-lg">
-      <div className="flex items-start gap-2 border-b border-border p-3">
-        <AiMark />
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-fs-sm font-extrabold text-foreground">eatOS AI</p>
-          <p className="flex items-center gap-1.5 text-fs-2xs font-semibold text-success">
-            <span className="size-1.5 rounded-full bg-success" aria-hidden />
-            Live on this shift
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close eatOS AI"
-          className="grid size-8 shrink-0 place-items-center rounded-row text-muted-foreground transition-colors hover:bg-muted"
-        >
-          <X className="size-4" aria-hidden />
-        </button>
-      </div>
+  const startNew = () => {
+    keptMsgs = null;
+    setMsgs([opener()]);
+    setDraft("");
+    inputRef.current?.focus();
+  };
 
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-3 sm:items-center"
+      role="presentation"
+      onClick={onClose}
+    >
       <div
-        ref={listRef}
-        className="no-scrollbar max-h-[14rem] space-y-2 overflow-y-auto p-3"
-        aria-live="polite"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Maya AI"
+        onClick={(e) => e.stopPropagation()}
+        className="flex max-h-[85dvh] w-full max-w-lg flex-col overflow-hidden rounded-card border border-border bg-surface shadow-lg"
       >
-        {msgs.map((m) => (
-          <div
-            key={m.id}
-            className={cn("flex gap-2", m.from === "me" ? "justify-end" : "items-start")}
-          >
-            {m.from === "ai" ? <AiMark className="size-7 rounded-row bg-accent/15 text-accent" /> : null}
-            <p
-              className={cn(
-                "max-w-[85%] rounded-card px-3 py-2 text-fs-sm",
-                m.from === "me"
-                  ? "bg-accent text-accent-foreground font-semibold"
-                  : "bg-muted text-foreground",
-              )}
-            >
-              {m.text}
+        <div className="flex items-start gap-2 border-b border-border p-3">
+          <AiMark />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-fs-sm font-extrabold text-foreground">Maya AI</p>
+            <p className="flex items-center gap-1.5 text-fs-2xs font-semibold text-success">
+              <span className="size-1.5 rounded-full bg-success" aria-hidden />
+              Live on this shift
             </p>
           </div>
-        ))}
+          <button
+            type="button"
+            onClick={startNew}
+            aria-label="Start new chat"
+            title="Start new chat"
+            className="grid size-8 shrink-0 place-items-center rounded-row text-muted-foreground transition-colors hover:bg-muted"
+          >
+            <MessageSquarePlus className="size-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close Maya AI"
+            className="grid size-8 shrink-0 place-items-center rounded-row text-muted-foreground transition-colors hover:bg-muted"
+          >
+            <X className="size-4" aria-hidden />
+          </button>
+        </div>
 
-        <ul className="flex flex-wrap gap-1.5 pt-1">
-          {quickAsks.map((a) => (
-            <li key={a}>
-              <button
-                type="button"
-                onClick={() => send(a)}
-                className="rounded-pill border border-border px-3 py-1.5 text-fs-xs font-semibold text-foreground transition-colors hover:bg-muted"
-              >
-                {a}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          send(draft);
-        }}
-        className="flex items-center gap-2 border-t border-border p-3"
-      >
-        <input
-          ref={inputRef}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          placeholder="Ask eatOS AI anything..."
-          aria-label="Ask eatOS AI anything"
-          className="min-w-0 flex-1 rounded-card bg-muted px-3 py-2.5 text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
-        />
-        <button
-          type="submit"
-          aria-label="Send"
-          className="grid size-10 shrink-0 place-items-center rounded-card bg-accent text-accent-foreground transition-opacity disabled:opacity-40"
-          disabled={!draft.trim()}
+        <div
+          ref={listRef}
+          className="no-scrollbar min-h-0 flex-1 space-y-2 overflow-y-auto p-3"
+          aria-live="polite"
         >
-          <ArrowRight className="size-4" aria-hidden />
-        </button>
-      </form>
+          {msgs.map((m) => (
+            <div
+              key={m.id}
+              className={cn("flex gap-2", m.from === "me" ? "justify-end" : "items-start")}
+            >
+              {m.from === "ai" ? <AiMark className="size-7 rounded-row" /> : null}
+              <p
+                className={cn(
+                  "max-w-[85%] rounded-card px-3 py-2 text-fs-sm",
+                  m.from === "me"
+                    ? "bg-accent text-accent-foreground font-semibold"
+                    : "bg-muted text-foreground",
+                )}
+              >
+                {m.text}
+              </p>
+            </div>
+          ))}
+
+          <ul className="flex flex-wrap gap-1.5 pt-1">
+            {quickAsks.map((a) => (
+              <li key={a}>
+                <button
+                  type="button"
+                  onClick={() => send(a)}
+                  className="rounded-pill border border-border px-3 py-1.5 text-fs-xs font-semibold text-foreground transition-colors hover:bg-muted"
+                >
+                  {a}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            send(draft);
+          }}
+          className="flex items-center gap-2 border-t border-border p-3"
+        >
+          <input
+            ref={inputRef}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder="Ask Maya AI anything..."
+            aria-label="Ask Maya AI anything"
+            className="min-w-0 flex-1 rounded-card bg-muted px-3 py-2.5 text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
+          />
+          <button
+            type="submit"
+            aria-label="Send"
+            className="grid size-10 shrink-0 place-items-center rounded-card bg-accent text-accent-foreground transition-opacity disabled:opacity-40"
+            disabled={!draft.trim()}
+          >
+            <ArrowRight className="size-4" aria-hidden />
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
