@@ -148,7 +148,7 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <div className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_14rem]">
-        <div className="flex min-w-0 flex-col gap-3">
+        <div className="relative flex min-w-0 flex-col gap-3">
           {/* Maya AI: the next best action, tap to chat about the shift */}
           <button
             type="button"

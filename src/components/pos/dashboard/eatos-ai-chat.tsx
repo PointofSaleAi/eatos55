@@ -158,7 +158,7 @@ export function EatosAiChat({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-center bg-black/45 p-3 pt-6 lg:justify-start lg:pl-24 lg:pr-[17rem]"
+      className="absolute inset-0 z-50 flex bg-black/45 p-3 pt-4"
       role="presentation"
       onClick={onClose}
     >
@@ -167,7 +167,7 @@ export function EatosAiChat({ onClose }: { onClose: () => void }) {
         aria-modal="true"
         aria-label="Maya AI"
         onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[82dvh] w-full max-w-3xl flex-col self-start overflow-hidden rounded-card border border-border bg-surface shadow-xl"
+        className="flex max-h-[82dvh] w-full flex-col self-start overflow-hidden rounded-card border border-border bg-surface shadow-xl"
       >
         <div className="flex items-start gap-2 border-b border-border p-3">
           <AiMark />
