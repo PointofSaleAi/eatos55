@@ -6,6 +6,7 @@ import { TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
 import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 import { useRequireTapToPayDevice } from "@/lib/device";
+import { TipSheet } from "@/components/pos/tip-sheet";
 
 export const Route = createFileRoute("/payment/tap-to-pay")({
   head: () => ({
@@ -36,6 +37,9 @@ function PaymentTapToPay() {
 
   const [phase, setPhase] = useState<"setup" | "reader">("setup");
   const [progress, setProgress] = useState(20);
+  const asksTip = settings.askForTip && Boolean(settings.tipTenders?.["tap-to-pay"]);
+  const [tipOpen, setTipOpen] = useState(asksTip && settings.tipTiming === "Before payment");
+  const [tip, setTip] = useState(0);
 
   useEffect(() => {
     if (phase !== "setup") return;
@@ -47,9 +51,21 @@ function PaymentTapToPay() {
     };
   }, [phase]);
 
-  const complete = () => {
-    commitPayment("card", due, { tenderId: "contactless", label: TTP });
+  const finish = (gratuity: number) => {
+    commitPayment("card", due, {
+      tenderId: "tap-to-pay",
+      label: TTP,
+      ...(gratuity > 0 ? { tip: gratuity } : {}),
+    });
     navigate({ to: "/payment/success" });
+  };
+
+  const complete = () => {
+    if (asksTip && settings.tipTiming === "After approval") {
+      setTipOpen(true);
+      return;
+    }
+    finish(tip);
   };
 
   if (phase === "setup") {
@@ -99,6 +115,7 @@ function PaymentTapToPay() {
    * fixed by Apple and not themed by the app.
    */
   return (
+    <>
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[#0b0b0f] text-white">
       <div className="mx-auto flex w-full max-w-[26rem] flex-1 flex-col px-6 pb-6 pt-10">
         <div className="flex flex-col items-center">
@@ -136,5 +153,18 @@ function PaymentTapToPay() {
         </div>
       </div>
     </div>
+    <TipSheet
+      open={tipOpen}
+      onOpenChange={setTipOpen}
+      base={due}
+      onConfirm={(amount) => {
+        if (settings.tipTiming === "After approval") {
+          finish(amount);
+          return;
+        }
+        setTip(amount);
+      }}
+    />
+    </>
   );
 }

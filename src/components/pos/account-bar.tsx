@@ -73,7 +73,7 @@ export function AccountInfo({ onSwitchUser }: { onSwitchUser?: () => void }) {
         aria-label="Switch user"
         title="Switch user"
         onClick={onSwitchUser}
-        className="size-11 shrink-0 rounded-full bg-primary p-0 text-[0.75rem] font-extrabold text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+        className="size-11 shrink-0 rounded-full bg-topbar-foreground p-0 text-[0.75rem] font-extrabold text-topbar hover:bg-topbar-foreground/90 hover:text-topbar"
       >
         {initials}
       </Button>
