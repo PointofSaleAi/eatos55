@@ -50,8 +50,8 @@ export function ClockPullDown() {
 
   return (
     <>
-      <div className="relative z-40 h-14 shrink-0 bg-shell">
-        <div className="grid h-12 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-2">
+      <div className="relative z-40 h-14 shrink-0 border-b border-topbar-border bg-topbar shadow-sm">
+        <div className="grid h-full grid-cols-[minmax(0,1fr)_auto] items-center gap-1 px-3 pb-1">
           <AccountInfo
             onSwitchUser={() => {
               setMenuOpen(false);
@@ -69,7 +69,7 @@ export function ClockPullDown() {
               close();
               setMenuOpen((v) => !v);
             }}
-            className="pointer-events-auto grid h-3 w-14 place-items-center rounded-t-md bg-shell-foreground/10 text-shell-foreground/80 transition-colors hover:bg-shell-foreground/20 hover:text-shell-foreground"
+            className="pointer-events-auto grid h-3 w-12 place-items-center rounded-t-md border border-b-0 border-topbar-border bg-muted text-topbar-muted transition-colors hover:bg-secondary hover:text-topbar-foreground"
           >
             {menuOpen ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
           </button>

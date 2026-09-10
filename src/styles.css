@@ -37,6 +37,10 @@
   --color-foreground: var(--foreground);
   --color-shell: var(--shell);
   --color-shell-foreground: var(--shell-foreground);
+  --color-topbar: var(--topbar);
+  --color-topbar-foreground: var(--topbar-foreground);
+  --color-topbar-muted: var(--topbar-muted);
+  --color-topbar-border: var(--topbar-border);
   --color-surface: var(--surface);
   --color-tile-green: var(--tile-green);
   --color-tile-violet: var(--tile-violet);
@@ -136,6 +140,10 @@
 
   --shell: oklch(0.13 0 0);
   --shell-foreground: oklch(0.99 0 0);
+  --topbar: oklch(1 0 0);
+  --topbar-foreground: oklch(0.2 0 0);
+  --topbar-muted: oklch(0.57 0 0);
+  --topbar-border: oklch(0.91 0 0);
 
   --background: oklch(0.975 0.002 90);
   --foreground: oklch(0.16 0.01 275);
@@ -212,6 +220,10 @@
 }
 
 .dark {
+  --topbar: oklch(0.2 0.005 260);
+  --topbar-foreground: oklch(0.98 0 0);
+  --topbar-muted: oklch(0.72 0.01 260);
+  --topbar-border: oklch(1 0 0 / 12%);
   --background: oklch(0.16 0.005 260);
   --foreground: oklch(0.98 0 0);
   --surface: oklch(0.2 0.005 260);
