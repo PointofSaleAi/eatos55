@@ -6,6 +6,7 @@ import { AccountActions, AccountInfo } from "@/components/pos/account-bar";
 import { ClockPanel } from "@/components/pos/clock-panel";
 import { PinPad } from "@/components/pos/pin-pad";
 import { SettingsPullDown } from "@/components/pos/settings-pulldown";
+import { Button } from "@/components/ui/button";
 import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { usePos } from "@/lib/pos-store";
 
@@ -60,19 +61,23 @@ export function ClockPullDown() {
           />
           <AccountActions />
         </div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-3 items-end justify-center">
-          <button
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-11 items-end justify-center">
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             aria-label={menuOpen ? "Close settings menu" : "Open settings menu"}
             aria-expanded={menuOpen}
             onClick={() => {
               close();
               setMenuOpen((v) => !v);
             }}
-            className="pointer-events-auto grid h-3 w-12 place-items-center rounded-t-md border border-b-0 border-topbar-border bg-muted text-topbar-muted transition-colors hover:bg-secondary hover:text-topbar-foreground"
+            className="pointer-events-auto h-11 w-14 items-end rounded-none bg-transparent p-0 text-topbar-muted hover:bg-transparent hover:text-topbar-foreground"
           >
-            {menuOpen ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
-          </button>
+            <span className="grid h-3 w-12 place-items-center rounded-t-md border border-b-0 border-topbar-border bg-muted">
+              {menuOpen ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
+            </span>
+          </Button>
         </div>
       </div>
 
