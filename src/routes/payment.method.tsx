@@ -1,4 +1,4 @@
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { brand, isTenderVisible, tenderLabel } from "@/lib/brand";
 import {
   BadgeDollarSign,
@@ -31,17 +31,17 @@ import { AmountEntry } from "@/components/pos/amount-entry";
 import { PaymentCompleteDialog } from "@/components/pos/payment-complete-dialog";
 import { useAnnounce } from "@/components/pos/live-region";
 import { PinSheet } from "@/components/pos/pin-sheet";
-import { ReceiptCard, ReceiptRow } from "@/components/pos/receipt";
+import { PaymentBill } from "@/components/pos/payment-bill";
 import { ReferenceTenderDialog } from "@/components/pos/reference-tender-dialog";
 import { RoomChargeDialog } from "@/components/pos/room-charge-dialog";
 import { TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
-import { TTP_DEVICE_NOTE, useTapToPayAvailable } from "@/lib/device";
-import { BackButton } from "@/components/pos/shell";
+import { useTapToPayAvailable } from "@/lib/device";
+import { BackButton, useWideLayout } from "@/components/pos/shell";
 import { SplitPayments } from "@/components/pos/split-payments";
 import { X } from "lucide-react";
 
 import { haptic } from "@/lib/haptics";
-import { TAX_RATE, money } from "@/lib/demo-data";
+import { money } from "@/lib/demo-data";
 import type { Room } from "@/lib/floor-data";
 import { usePos, type TenderId, type TenderMethod } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
@@ -65,6 +65,9 @@ export const Route = createFileRoute("/payment/method")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  // On a phone the bill is step 1; ?methods=1 means the guest pressed Continue.
+  validateSearch: (search: Record<string, unknown>): { methods?: 1 } =>
+    search["methods"] === 1 || search["methods"] === "1" ? { methods: 1 } : {},
   component: PaymentMethod,
 });
 
@@ -113,6 +116,14 @@ function PaymentMethod() {
   } = usePos();
   const announce = useAnnounce();
   const ttpDevice = useTapToPayAvailable();
+  const wide = useWideLayout();
+  const { methods } = Route.useSearch();
+  // Phones split this into two steps: the bill, then the payment options.
+  const showBill = wide;
+  useEffect(() => {
+    if (!wide && methods !== 1) void navigate({ to: "/payment/bill", replace: true });
+  }, [wide, methods, navigate]);
+  const ttpEnabled = (settings.tenders?.["tap-to-pay"] ?? true) && ttpDevice.available;
   const orderNumber = tickets.length + 1;
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
   const nothingToPay = cart.length === 0;
@@ -240,7 +251,6 @@ function PaymentMethod() {
           kind: "split",
           run: () => setSplitOpen(true),
         },
-
       ],
     },
     {
@@ -591,8 +601,6 @@ function PaymentMethod() {
 
   const cols = fit.cols;
 
-
-
   const allTenders = groups.flatMap((g) => g.items);
   const activeTender = allTenders.find((t) => t.id === selected) ?? null;
   const actionLabel = room
@@ -605,113 +613,7 @@ function PaymentMethod() {
 
   const receipt = (
     <div className="min-h-0 flex-1 overflow-y-auto px-[var(--pad-screen)] py-3">
-      {nothingToPay ? (
-        <ReceiptCard className="mx-auto w-full max-w-md xl:max-w-none">
-          <p className="text-fs-base font-extrabold text-foreground">Nothing to tender yet</p>
-          <p className="mt-1 text-fs-sm text-muted-foreground">
-            This check has no items, so there is no balance to take payment for. Add products to the
-            order and come back to choose a payment method.
-          </p>
-          <Link
-            to="/order/new"
-            className="mt-3 inline-flex h-ctl-lg items-center justify-center rounded-row bg-primary px-4 text-fs-sm font-extrabold uppercase tracking-[0.06em] text-primary-foreground"
-          >
-            Back to order
-          </Link>
-        </ReceiptCard>
-      ) : (
-        <ReceiptCard className="mx-auto w-full max-w-md xl:max-w-none">
-          <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
-            <p className="truncate text-fs-sm font-extrabold text-foreground">
-              Order #{orderNumber}
-            </p>
-            <p className="shrink-0 text-fs-sm font-extrabold uppercase text-foreground">
-              {orderType}
-            </p>
-            <p className="truncate text-fs-xs text-muted-foreground">
-              {guest.name || tableGroupLabel(activeTable) || "Guest Name"}
-            </p>
-            <p className="shrink-0 text-fs-xs text-muted-foreground">
-              Ticket No. {orderNumber} · Amount Due {money(due)}
-            </p>
-          </div>
-
-          <div className="mt-3 border-t border-dashed border-border pt-3">
-            <div className="flex items-center justify-between text-fs-base font-extrabold text-foreground">
-              <span>Total Due</span>
-              <span className="tabular-nums">{money(due)}</span>
-            </div>
-            <div className="mt-2 space-y-1">
-              <ReceiptRow label="TOTAL" value={money(totals.total)} strong />
-              <ReceiptRow label="Sub Total" value={money(totals.subtotal)} />
-              <ReceiptRow
-                label={`TAX (${Math.round(TAX_RATE * 100)}%)`}
-                value={money(totals.tax)}
-              />
-              {totals.serviceCharge ? (
-                <ReceiptRow label="Service Charge" value={money(totals.serviceCharge)} />
-              ) : null}
-              {totals.discount ? (
-                <ReceiptRow label="Discount" value={`-${money(totals.discount)}`} tone="accent" />
-              ) : null}
-              {paidSoFar > 0 ? <ReceiptRow label="Paid so far" value={money(paidSoFar)} /> : null}
-            </div>
-          </div>
-
-          {partialPayments.length ? (
-            <ul className="mt-3 space-y-1.5 border-t border-dashed border-border pt-3">
-              {partialPayments.map((p) => (
-                <li key={p.id} className="flex items-center gap-2">
-                  <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
-                    {p.label}
-                  </span>
-                  <span className="shrink-0 text-fs-sm font-extrabold tabular-nums text-success">
-                    {money(p.amount)}
-                  </span>
-                  <button
-                    type="button"
-                    aria-label={`Remove ${p.label} payment`}
-                    onClick={() => removePartialPayment(p.id)}
-                    className="grid size-8 shrink-0 place-items-center rounded-pill text-muted-foreground transition-colors hover:bg-muted"
-                  >
-                    <X className="size-4" />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-
-          <ul className="mt-3 space-y-1.5 border-t border-dashed border-border pt-3">
-            {cart.map((line) => (
-              <li key={line.id} className="flex items-start gap-2">
-                <span className="shrink-0 text-fs-xs font-bold text-muted-foreground">
-                  {line.qty} ea
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-fs-sm font-bold text-foreground">{line.name}</span>
-                  {line.modifiers?.map((m) => (
-                    <span key={m} className="block text-fs-xs text-muted-foreground">
-                      - {m}
-                    </span>
-                  ))}
-                </span>
-                <span className="shrink-0 text-fs-sm font-extrabold tabular-nums text-foreground">
-                  {money(line.price * line.qty)}
-                </span>
-              </li>
-            ))}
-          </ul>
-
-          {room?.stay ? (
-            <div className="mt-3 border-t border-dashed border-border pt-3">
-              <p className="text-fs-sm font-extrabold text-foreground">
-                {room.name} · {room.number}
-              </p>
-              <p className="text-fs-xs text-muted-foreground">Booking: {room.stay.bookingNumber}</p>
-            </div>
-          ) : null}
-        </ReceiptCard>
-      )}
+      <PaymentBill room={room} />
     </div>
   );
 
@@ -726,7 +628,7 @@ function PaymentMethod() {
          * not this iPhone has been set up yet. If it has not, it starts setup
          * and the ticket is kept.
          */}
-        {ttpDevice.available ? (
+        {ttpEnabled ? (
           <button
             type="button"
             onClick={() => {
@@ -742,23 +644,13 @@ function PaymentMethod() {
             <TapToPayMark className="size-5 shrink-0" />
             <span className="truncate">{TTP}</span>
           </button>
-        ) : (
-          <div
-            aria-disabled
-            className="mt-2 flex h-ctl-md w-full items-center gap-2 rounded-row border border-border bg-muted/40 px-3 text-muted-foreground"
-          >
-            <TapToPayMark className="size-4 shrink-0" />
-            <span className="truncate text-fs-sm font-bold">{TTP}</span>
-            <span className="ml-auto shrink-0 text-fs-xs">{TTP_DEVICE_NOTE}</span>
-          </div>
-        )}
+        ) : null}
 
         <p className="mt-1 hidden text-fs-xs text-muted-foreground lg:block">
           Cash, manual card entry and Pay by Link are supported online. Connect a card reader for
           other card payments.
         </p>
       </div>
-
 
       <div
         ref={paneRef}
@@ -821,8 +713,6 @@ function PaymentMethod() {
         ))}
       </div>
 
-
-
       <div className="shrink-0 border-t border-border bg-surface px-[var(--pad-screen)] pb-[calc(0.75rem+var(--kb-inset,0px)+var(--tabs-h,0px))] pt-3">
         <button
           type="button"
@@ -845,22 +735,28 @@ function PaymentMethod() {
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <div className="grid shrink-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 border-b border-border bg-surface px-2 py-3 md:grid-cols-[auto_minmax(0,1fr)_auto]">
-        <BackButton fallbackTo="/order/new" label="Back to order" />
+        <BackButton
+          fallbackTo={wide ? "/order/new" : "/payment/bill"}
+          label={wide ? "Back to order" : "Back to the bill"}
+        />
         <div className="min-w-0">
           <h1 className="truncate text-fs-xl font-extrabold text-foreground">
             Total Due <span className="text-accent">{money(due)}</span>
           </h1>
           <p className="truncate text-fs-xs text-muted-foreground">
-            Order {orderNumber} · {guest.name || tableGroupLabel(activeTable) || "Guest"} · {orderType}
+            Order {orderNumber} · {guest.name || tableGroupLabel(activeTable) || "Guest"} ·{" "}
+            {orderType}
           </p>
         </div>
       </div>
 
-      {/* Two-pane on tablet and desktop; stacked on phones. */}
+      {/* Two-pane on tablet and desktop; phones already saw the bill in step 1. */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
-        <div className="flex min-h-0 max-h-[38dvh] flex-col overflow-hidden border-border md:max-h-none md:w-[20rem] md:shrink-0 md:border-r lg:w-[24rem] xl:w-[26rem] 2xl:w-[30rem]">
-          {receipt}
-        </div>
+        {showBill ? (
+          <div className="flex min-h-0 flex-col overflow-hidden border-border md:w-[20rem] md:shrink-0 md:border-r lg:w-[24rem] xl:w-[26rem] 2xl:w-[30rem]">
+            {receipt}
+          </div>
+        ) : null}
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">{grid}</div>
       </div>
 
@@ -953,6 +849,5 @@ function PaymentMethod() {
         />
       ) : null}
     </div>
-
   );
 }

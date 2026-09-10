@@ -67,6 +67,7 @@ const sections: { title: string; rows: Row[] }[] = [
     title: "Standard",
     rows: [
       { id: "cash", icon: Wallet, color: "green", locked: true },
+      { id: "tap-to-pay", icon: Nfc, color: "black" },
       { id: "card-present", icon: CreditCard, color: "blue" },
       { id: "contactless", icon: Nfc, color: "sky" },
       { id: "manual-card", icon: CreditCard, color: "indigo" },

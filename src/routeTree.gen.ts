@@ -22,6 +22,7 @@ import { Route as OrderMenuRouteImport } from './routes/order.menu'
 import { Route as OrderNewRouteImport } from './routes/order.new'
 import { Route as OrderReviewRouteImport } from './routes/order.review'
 import { Route as OrdersIndexRouteImport } from './routes/orders.index'
+import { Route as PaymentBillRouteImport } from './routes/payment.bill'
 import { Route as PaymentCardRouteImport } from './routes/payment.card'
 import { Route as PaymentCashRouteImport } from './routes/payment.cash'
 import { Route as PaymentMethodRouteImport } from './routes/payment.method'
@@ -134,6 +135,11 @@ const OrderReviewRoute = OrderReviewRouteImport.update({
 const OrdersIndexRoute = OrdersIndexRouteImport.update({
   id: '/orders/',
   path: '/orders/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentBillRoute = PaymentBillRouteImport.update({
+  id: '/payment/bill',
+  path: '/payment/bill',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaymentCardRoute = PaymentCardRouteImport.update({
@@ -390,6 +396,7 @@ export interface FileRoutesByFullPath {
   '/order/menu': typeof OrderMenuRoute
   '/order/new': typeof OrderNewRoute
   '/order/review': typeof OrderReviewRoute
+  '/payment/bill': typeof PaymentBillRoute
   '/payment/card': typeof PaymentCardRoute
   '/payment/cash': typeof PaymentCashRoute
   '/payment/method': typeof PaymentMethodRoute
@@ -453,6 +460,7 @@ export interface FileRoutesByTo {
   '/order/menu': typeof OrderMenuRoute
   '/order/new': typeof OrderNewRoute
   '/order/review': typeof OrderReviewRoute
+  '/payment/bill': typeof PaymentBillRoute
   '/payment/card': typeof PaymentCardRoute
   '/payment/cash': typeof PaymentCashRoute
   '/payment/method': typeof PaymentMethodRoute
@@ -517,6 +525,7 @@ export interface FileRoutesById {
   '/order/menu': typeof OrderMenuRoute
   '/order/new': typeof OrderNewRoute
   '/order/review': typeof OrderReviewRoute
+  '/payment/bill': typeof PaymentBillRoute
   '/payment/card': typeof PaymentCardRoute
   '/payment/cash': typeof PaymentCashRoute
   '/payment/method': typeof PaymentMethodRoute
@@ -582,6 +591,7 @@ export interface FileRouteTypes {
     | '/order/menu'
     | '/order/new'
     | '/order/review'
+    | '/payment/bill'
     | '/payment/card'
     | '/payment/cash'
     | '/payment/method'
@@ -645,6 +655,7 @@ export interface FileRouteTypes {
     | '/order/menu'
     | '/order/new'
     | '/order/review'
+    | '/payment/bill'
     | '/payment/card'
     | '/payment/cash'
     | '/payment/method'
@@ -708,6 +719,7 @@ export interface FileRouteTypes {
     | '/order/menu'
     | '/order/new'
     | '/order/review'
+    | '/payment/bill'
     | '/payment/card'
     | '/payment/cash'
     | '/payment/method'
@@ -772,6 +784,7 @@ export interface RootRouteChildren {
   OrderMenuRoute: typeof OrderMenuRoute
   OrderNewRoute: typeof OrderNewRoute
   OrderReviewRoute: typeof OrderReviewRoute
+  PaymentBillRoute: typeof PaymentBillRoute
   PaymentCardRoute: typeof PaymentCardRoute
   PaymentCashRoute: typeof PaymentCashRoute
   PaymentMethodRoute: typeof PaymentMethodRoute
@@ -915,6 +928,13 @@ declare module '@tanstack/react-router' {
       path: '/orders'
       fullPath: '/orders/'
       preLoaderRoute: typeof OrdersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/bill': {
+      id: '/payment/bill'
+      path: '/payment/bill'
+      fullPath: '/payment/bill'
+      preLoaderRoute: typeof PaymentBillRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/payment/card': {
@@ -1278,6 +1298,7 @@ const rootRouteChildren: RootRouteChildren = {
   OrderMenuRoute: OrderMenuRoute,
   OrderNewRoute: OrderNewRoute,
   OrderReviewRoute: OrderReviewRoute,
+  PaymentBillRoute: PaymentBillRoute,
   PaymentCardRoute: PaymentCardRoute,
   PaymentCashRoute: PaymentCashRoute,
   PaymentMethodRoute: PaymentMethodRoute,
