@@ -756,11 +756,13 @@ function PaymentMethod() {
         </div>
       </div>
 
-      {/* Two-pane on tablet and desktop; stacked on phones. */}
+      {/* Two-pane on tablet and desktop; phones already saw the bill in step 1. */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
-        <div className="flex min-h-0 max-h-[38dvh] flex-col overflow-hidden border-border md:max-h-none md:w-[20rem] md:shrink-0 md:border-r lg:w-[24rem] xl:w-[26rem] 2xl:w-[30rem]">
-          {receipt}
-        </div>
+        {showBill ? (
+          <div className="flex min-h-0 flex-col overflow-hidden border-border md:w-[20rem] md:shrink-0 md:border-r lg:w-[24rem] xl:w-[26rem] 2xl:w-[30rem]">
+            {receipt}
+          </div>
+        ) : null}
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">{grid}</div>
       </div>
 
