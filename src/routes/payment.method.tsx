@@ -31,7 +31,7 @@ import { AmountEntry } from "@/components/pos/amount-entry";
 import { PaymentCompleteDialog } from "@/components/pos/payment-complete-dialog";
 import { useAnnounce } from "@/components/pos/live-region";
 import { PinSheet } from "@/components/pos/pin-sheet";
-import { ReceiptCard, ReceiptRow } from "@/components/pos/receipt";
+import { PaymentBill } from "@/components/pos/payment-bill";
 import { ReferenceTenderDialog } from "@/components/pos/reference-tender-dialog";
 import { RoomChargeDialog } from "@/components/pos/room-charge-dialog";
 import { TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
