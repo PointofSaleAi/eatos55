@@ -140,10 +140,10 @@
 
   --shell: oklch(0.13 0 0);
   --shell-foreground: oklch(0.99 0 0);
-  --topbar: oklch(1 0 0);
-  --topbar-foreground: oklch(0.2 0 0);
-  --topbar-muted: oklch(0.57 0 0);
-  --topbar-border: oklch(0.91 0 0);
+  --topbar: oklch(0.08 0 0);
+  --topbar-foreground: oklch(0.98 0 0);
+  --topbar-muted: oklch(0.72 0 0);
+  --topbar-border: oklch(1 0 0 / 16%);
 
   --background: oklch(0.975 0.002 90);
   --foreground: oklch(0.16 0.01 275);
@@ -220,7 +220,7 @@
 }
 
 .dark {
-  --topbar: oklch(0.2 0.005 260);
+  --topbar: oklch(0.08 0 0);
   --topbar-foreground: oklch(0.98 0 0);
   --topbar-muted: oklch(0.72 0.01 260);
   --topbar-border: oklch(1 0 0 / 12%);

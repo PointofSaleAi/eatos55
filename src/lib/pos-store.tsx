@@ -247,6 +247,10 @@ export type AppSettings = {
   currency: string;
   autoPrintReceipts: boolean;
   askForTip: boolean;
+  /** Whether gratuity is chosen before tender or after an approval. */
+  tipTiming: "Before payment" | "After approval";
+  /** Direct tenders that may prompt for gratuity. Delivery and split are excluded. */
+  tipTenders: Record<TenderId, boolean>;
   tipPresets: string;
   tipBasis: string;
   customTip: string;
@@ -372,6 +376,41 @@ const defaultSettings: AppSettings = {
   currency: brand.currency,
   autoPrintReceipts: true,
   askForTip: true,
+  tipTiming: "After approval",
+  tipTenders: {
+    cash: false,
+    "card-present": true,
+    contactless: false,
+    "tap-to-pay": false,
+    "manual-card": false,
+    "manual-cc": false,
+    external: false,
+    "pay-by-link": false,
+    qr: false,
+    "open-banking": false,
+    "bank-transfer": false,
+    paypal: false,
+    klarna: false,
+    cheque: false,
+    voucher: false,
+    staff: false,
+    "round-up": false,
+    account: false,
+    house: false,
+    gift: false,
+    loyalty: false,
+    "in-kind": false,
+    room: false,
+    "apple-pay": false,
+    "google-pay": false,
+    amex: false,
+    split: false,
+    deliveroo: false,
+    "just-eat": false,
+    uber: false,
+    doordash: false,
+    grubhub: false,
+  },
   tipPresets: "18% · 20% · 25%",
   tipBasis: "Pre-tax",
   customTip: "Allowed",
@@ -1323,11 +1362,17 @@ export function PosProvider({ children }: { children: ReactNode }) {
       },
 
       commitPayment: (method, tendered, opts) => {
-        const change = Math.max(0, Math.round((tendered - (total - paidSoFar)) * 100) / 100);
+        const tip = Math.max(0, opts?.tip ?? 0);
+        const grandTotal = Math.round((total + tip) * 100) / 100;
+        const effectiveTendered = Math.round((tendered + tip) * 100) / 100;
+        const change = Math.max(
+          0,
+          Math.round((effectiveTendered - (grandTotal - paidSoFar)) * 100) / 100,
+        );
         const paymentLabel =
           opts?.label ?? (method === "cash" ? "Cash" : method === "qr" ? "QR Code" : "Card");
         const at = formatTime();
-        const finalAmount = Math.max(0, Math.round((total - paidSoFar) * 100) / 100);
+        const finalAmount = Math.max(0, Math.round((grandTotal - paidSoFar) * 100) / 100);
         // Every tender taken on this order, earlier partials first.
         const rows = [
           ...partialPayments.map((p) => ({ method: p.label, amount: p.amount, at })),
@@ -1352,7 +1397,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
               return {
                 ...t,
                 status: "paid",
-                total,
+                total: grandTotal,
+                tips: Math.round(((t.tips ?? 0) + tip) * 100) / 100,
                 lines: cart.map((l) => ({ ...l })),
                 paymentType: paymentLabel,
                 checkNumber: t.checkNumber ?? Number(t.id.replace("t-", "")),
@@ -1382,7 +1428,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
             number: tickets.length + 1,
             label: guest.name || "Guest",
             seats: guest.partySize || 1,
-            total,
+            total: grandTotal,
             date: ticketDate,
             arrivedAt: formatTime(),
             arrivedMinutesAgo: 0,
@@ -1391,7 +1437,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
             lines: cart.map((l) => ({ ...l })),
             server: session.name,
             checkNumber: 1047 + tickets.length,
-            tips: 0,
+            tips: tip,
             revenueCenter: session.station ?? "Main dining",
             paymentType: paymentLabel,
             orderType,
@@ -1407,8 +1453,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
           ticketId: id,
           method,
           ...(opts?.tenderId ? { tenderId: opts.tenderId } : {}),
-          total,
-          tendered,
+          total: grandTotal,
+          tendered: effectiveTendered,
           change,
           orderNumber,
           guestName,

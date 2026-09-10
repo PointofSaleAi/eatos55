@@ -78,13 +78,6 @@ const sections: { title: string; rows: Row[] }[] = [
     ],
   },
   {
-    title: "Wallets",
-    rows: [
-      { id: "apple-pay", icon: Smartphone, color: "black" },
-      { id: "google-pay", icon: Smartphone, color: "grey" },
-    ],
-  },
-  {
     title: "Remote and alternative",
     rows: [
       { id: "pay-by-link", icon: Link2, color: "blue" },

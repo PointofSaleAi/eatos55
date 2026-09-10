@@ -32,6 +32,7 @@ import { PaymentCompleteDialog } from "@/components/pos/payment-complete-dialog"
 import { useAnnounce } from "@/components/pos/live-region";
 import { PinSheet } from "@/components/pos/pin-sheet";
 import { PaymentBill } from "@/components/pos/payment-bill";
+import { TipSheet } from "@/components/pos/tip-sheet";
 import { ReferenceTenderDialog } from "@/components/pos/reference-tender-dialog";
 import { RoomChargeDialog } from "@/components/pos/room-charge-dialog";
 import { TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
@@ -132,6 +133,21 @@ function PaymentMethod() {
   const [roomOpen, setRoomOpen] = useState(false);
   const [splitOpen, setSplitOpen] = useState(false);
   const [doneOpen, setDoneOpen] = useState(false);
+  const [tipOpen, setTipOpen] = useState(false);
+  const [pendingPayment, setPendingPayment] = useState<{
+    amount: number;
+    method: TenderMethod;
+    label: string;
+    tenderId: TenderId;
+    notes?: Record<number, number>;
+  } | null>(null);
+  const [pendingAmountStart, setPendingAmountStart] = useState<{
+    label: string;
+    method: TenderMethod;
+    tenderId: TenderId;
+    denominations?: boolean;
+  } | null>(null);
+  const [chosenTip, setChosenTip] = useState(0);
 
   const [room, setRoom] = useState<Room | null>(null);
   const [refConfig, setRefConfig] = useState<RefConfig | null>(null);
@@ -143,6 +159,29 @@ function PaymentMethod() {
   } | null>(null);
 
   /** Same screen for every tender: part payments stack up until the check clears. */
+  const shouldAskTip = (tenderId: TenderId) =>
+    settings.askForTip && (settings.tipTenders?.[tenderId] ?? tenderId === "card-present");
+
+  const completePayment = (
+    amount: number,
+    method: TenderMethod,
+    label: string,
+    tenderId: TenderId,
+    tip: number,
+    notes?: Record<number, number>,
+  ) => {
+    haptic("success");
+    commitPayment(method, amount, {
+      label,
+      tenderId,
+      ...(tip > 0 ? { tip } : {}),
+      ...(notes ? { notes } : {}),
+    });
+    announce("Payment complete");
+    toast.success(`Paid in full with ${label}`);
+    setDoneOpen(true);
+  };
+
   const takeAmount = (amount: number, notes?: Record<number, number>) => {
     const cfg = amountFor;
     if (!cfg) return;
@@ -154,19 +193,25 @@ function PaymentMethod() {
       toast.success(`${cfg.label} ${money(amount)} applied · ${money(due - amount)} remaining`);
       return;
     }
-    haptic("success");
-    commitPayment(cfg.method, amount, {
-      label: cfg.label,
-      ...(selected ? { tenderId: selected as TenderId } : {}),
-      ...(notes ? { notes } : {}),
-    });
-    announce("Payment complete");
-    toast.success(`Paid in full with ${cfg.label}`);
-    setDoneOpen(true);
+    const tenderId = (selected ?? "card-present") as TenderId;
+    if (settings.tipTiming === "After approval" && shouldAskTip(tenderId)) {
+      setPendingPayment({ amount, method: cfg.method, label: cfg.label, tenderId, ...(notes ? { notes } : {}) });
+      setTipOpen(true);
+      return;
+    }
+    completePayment(amount, cfg.method, cfg.label, tenderId, chosenTip, notes);
+    setChosenTip(0);
   };
 
-  const openAmount = (label: string, method: TenderMethod, denominations = false) =>
+  const openAmount = (label: string, method: TenderMethod, denominations = false) => {
+    const tenderId = (selected ?? (method === "cash" ? "cash" : "card-present")) as TenderId;
+    if (settings.tipTiming === "Before payment" && shouldAskTip(tenderId)) {
+      setPendingAmountStart({ label, method, tenderId, denominations });
+      setTipOpen(true);
+      return;
+    }
     setAmountFor({ label, method, denominations });
+  };
 
   const finish = (cfg: RefConfig, value: string) => {
     haptic("success");
@@ -243,25 +288,6 @@ function PaymentMethod() {
           icon: Split,
           kind: "split",
           run: () => setSplitOpen(true),
-        },
-      ],
-    },
-    {
-      title: "Wallets",
-      items: [
-        {
-          id: "apple-pay",
-          label: "Apple Pay",
-          icon: Smartphone,
-          kind: "dialog",
-          run: () => openAmount("Apple Pay", "card"),
-        },
-        {
-          id: "google-pay",
-          label: "Google Pay",
-          icon: Smartphone,
-          kind: "dialog",
-          run: () => openAmount("Google Pay", "card"),
         },
       ],
     },
@@ -780,6 +806,36 @@ function PaymentMethod() {
           setDoneOpen(false);
           setSelected(null);
           navigate({ to: "/order/new" });
+        }}
+      />
+
+      <TipSheet
+        open={tipOpen}
+        onOpenChange={setTipOpen}
+        base={due}
+        onConfirm={(tip) => {
+          if (pendingPayment) {
+            completePayment(
+              pendingPayment.amount,
+              pendingPayment.method,
+              pendingPayment.label,
+              pendingPayment.tenderId,
+              tip,
+              pendingPayment.notes,
+            );
+            setPendingPayment(null);
+            return;
+          }
+          if (pendingAmountStart) {
+            setChosenTip(tip);
+            setSelected(pendingAmountStart.tenderId);
+            setAmountFor({
+              label: pendingAmountStart.label,
+              method: pendingAmountStart.method,
+              denominations: pendingAmountStart.denominations,
+            });
+            setPendingAmountStart(null);
+          }
         }}
       />
 

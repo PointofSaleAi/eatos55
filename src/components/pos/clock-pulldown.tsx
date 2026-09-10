@@ -74,7 +74,7 @@ export function ClockPullDown() {
             }}
             className="pointer-events-auto h-11 w-14 items-end rounded-none bg-transparent p-0 text-topbar-muted hover:bg-transparent hover:text-topbar-foreground"
           >
-            <span className="grid h-3 w-12 place-items-center rounded-t-md border border-b-0 border-topbar-border bg-muted">
+            <span className="grid h-3 w-12 place-items-center rounded-t-md border border-b-0 border-topbar-border bg-topbar text-topbar-foreground">
               {menuOpen ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
             </span>
           </Button>
