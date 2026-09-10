@@ -50,7 +50,7 @@ export function ClockPullDown() {
 
   return (
     <>
-      <div className="relative z-40 shrink-0 bg-shell">
+      <div className="relative z-40 h-14 shrink-0 bg-shell">
         <div className="grid h-12 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-2">
           <AccountInfo
             onSwitchUser={() => {
@@ -60,7 +60,7 @@ export function ClockPullDown() {
           />
           <AccountActions />
         </div>
-        <div className="pointer-events-none absolute inset-y-0 left-1/2 flex -translate-x-1/2 items-center justify-center">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-3 items-end justify-center">
           <button
             type="button"
             aria-label={menuOpen ? "Close settings menu" : "Open settings menu"}
@@ -69,9 +69,9 @@ export function ClockPullDown() {
               close();
               setMenuOpen((v) => !v);
             }}
-            className="pointer-events-auto grid size-11 tap-safe place-items-center rounded-pill text-shell-foreground/75 transition-colors hover:bg-shell-foreground/10 hover:text-shell-foreground"
+            className="pointer-events-auto grid h-3 w-14 place-items-center rounded-t-md bg-shell-foreground/10 text-shell-foreground/80 transition-colors hover:bg-shell-foreground/20 hover:text-shell-foreground"
           >
-            {menuOpen ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+            {menuOpen ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
           </button>
         </div>
       </div>
