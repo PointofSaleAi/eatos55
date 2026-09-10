@@ -1,5 +1,6 @@
 import { ArrowRight, MessageSquarePlus, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import mayaLogo from "@/assets/maya-ai-logo.png.asset.json";
 import { formatMoney } from "@/lib/brand";
 import { floorTables, tableStateMeta } from "@/lib/floor-data";
@@ -106,6 +107,8 @@ export function EatosAiChat({ onClose }: { onClose: () => void }) {
   const answer = useAnswer();
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const anchorRef = useRef<HTMLSpanElement>(null);
+  const [panelRect, setPanelRect] = useState({ top: 0, left: 0, width: 0, bottom: 0 });
   const [draft, setDraft] = useState("");
 
   const opener = (): Msg => ({
@@ -138,6 +141,25 @@ export function EatosAiChat({ onClose }: { onClose: () => void }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
+  useLayoutEffect(() => {
+    const anchor = anchorRef.current;
+    if (!anchor) return;
+
+    const updatePanelRect = () => {
+      const rect = anchor.getBoundingClientRect();
+      setPanelRect({ top: rect.top, left: rect.left, width: rect.width, bottom: rect.bottom });
+    };
+
+    updatePanelRect();
+    const observer = new ResizeObserver(updatePanelRect);
+    observer.observe(anchor);
+    window.addEventListener("resize", updatePanelRect);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updatePanelRect);
+    };
+  }, []);
+
   const send = (text: string) => {
     const value = text.trim();
     if (!value) return;
@@ -156,18 +178,20 @@ export function EatosAiChat({ onClose }: { onClose: () => void }) {
     inputRef.current?.focus();
   };
 
-  return (
-    <div
-      className="absolute inset-0 z-50 flex bg-black/45 p-3 pt-4"
-      role="presentation"
-      onClick={onClose}
-    >
+  const overlay = (
+    <div className="fixed inset-0 z-[70] bg-black/45" role="presentation" onClick={onClose}>
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Maya AI"
         onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[82dvh] w-full flex-col self-start overflow-hidden rounded-card border border-border bg-surface shadow-xl"
+        className="fixed flex flex-col overflow-hidden rounded-card border border-border bg-surface shadow-xl"
+        style={{
+          top: panelRect.top,
+          left: panelRect.left,
+          width: panelRect.width,
+          maxHeight: Math.max(280, panelRect.bottom - panelRect.top),
+        }}
       >
         <div className="flex items-start gap-2 border-b border-border p-3">
           <AiMark />
@@ -262,5 +286,14 @@ export function EatosAiChat({ onClose }: { onClose: () => void }) {
         </form>
       </div>
     </div>
+  );
+
+  return (
+    <>
+      <span ref={anchorRef} className="pointer-events-none absolute inset-0" aria-hidden />
+      {typeof document === "undefined" || panelRect.width === 0
+        ? null
+        : createPortal(overlay, document.body)}
+    </>
   );
 }
