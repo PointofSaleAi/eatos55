@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { AlertTriangle, Check, ChevronRight, Loader2, Lock, X } from "lucide-react";
+import { AlertTriangle, Check, ChevronRight, Lock, X } from "lucide-react";
 import tapToPayImage from "@/assets/tap-to-pay-iphone-card.png.asset.json";
 import appleIdImage from "@/assets/tap-to-pay-apple-id-bg.png.asset.json";
 import { brand } from "@/lib/brand";
@@ -53,16 +53,6 @@ type SetupSearch = {
   view?: "ready";
 };
 
-const READERS = [
-  "Adyen Terminal",
-  "Adyen NYC1 Bluetooth",
-  "Adyen Tap to Pay NFC",
-  "CardConnect",
-  "Stripe Tap to Pay NFC",
-  "Stripe",
-  "IdTech",
-];
-const DEFAULT_READER = "Adyen Tap to Pay NFC";
 const BANK_ACCOUNTS = ["Barclays ····4471", "HSBC ····8820", "Lloyds ····1093"];
 const PAYOUT_SCHEDULES = ["Daily", "Weekly", "Monthly"];
 
@@ -101,15 +91,11 @@ function TapToPaySetup() {
 
   const [step, setStep] = useState<Step>(() => (view === "ready" ? "ready" : "terms"));
   const [ttpEnabled, setTtpEnabled] = useState(true);
-  const [reader, setReader] = useState(settings.cardReaderModel || DEFAULT_READER);
   const bankAccount = BANK_ACCOUNTS[0];
   const [payoutSchedule, setPayoutSchedule] = useState(PAYOUT_SCHEDULES[0]);
-  const [readerSheet, setReaderSheet] = useState(false);
   const [appleIdSheet, setAppleIdSheet] = useState(false);
   const [altAppleId, setAltAppleId] = useState("");
   const [altPassword, setAltPassword] = useState("");
-  const [detecting, setDetecting] = useState(false);
-  const [detected, setDetected] = useState(false);
   const [termsSheet, setTermsSheet] = useState(false);
 
   const acceptedOn = settings.tapToPayTermsAcceptedAt
@@ -134,7 +120,6 @@ function TapToPaySetup() {
 
   const confirmPayments = () => {
     updateSettings({
-      cardReaderModel: reader || "",
       tapToPayState: ttpEnabled ? "ready" : "notSetUp",
     });
     setStep("appleId");
@@ -255,22 +240,6 @@ function TapToPaySetup() {
                   />
                 </button>
               </div>
-              <button
-                type="button"
-                onClick={() => setReaderSheet(true)}
-                className="flex min-h-ctl-lg w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-muted"
-              >
-                <span className="min-w-0 flex-1">
-                  <span className="block text-fs-base font-bold text-foreground">Card reader</span>
-                  <span className="block text-fs-sm text-muted-foreground">
-                    {detected ? "Reader detected" : "Select your card reader"}
-                  </span>
-                </span>
-                <span className="max-w-[9rem] shrink-0 truncate text-fs-sm font-semibold text-muted-foreground">
-                  {reader}
-                </span>
-                <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-              </button>
             </div>
 
             <p className="mt-6 text-fs-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
@@ -504,84 +473,6 @@ function TapToPaySetup() {
           </div>
         ) : null}
       </div>
-
-      {readerSheet ? (
-        <div className="fixed inset-0 z-50 flex items-end justify-center">
-          <button
-            type="button"
-            aria-label="Close card reader list"
-            onClick={() => setReaderSheet(false)}
-            className="absolute inset-0 bg-black/40"
-          />
-          <div className="relative mx-auto w-full max-w-[34rem] rounded-t-sheet bg-surface pb-[calc(1rem+var(--tabs-h,0px))] pt-2 elev-1">
-            <div className="mx-auto h-1.5 w-10 rounded-pill bg-border" aria-hidden />
-            <div className="flex items-center justify-between px-4 py-3">
-              <h2 className="text-fs-base font-extrabold text-foreground">
-                Select Card Reader Type
-              </h2>
-              <button
-                type="button"
-                aria-label="Close"
-                onClick={() => setReaderSheet(false)}
-                className="grid size-8 place-items-center rounded-pill text-muted-foreground transition-colors hover:bg-muted"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-            <div className="max-h-[50vh] divide-y divide-border overflow-y-auto">
-              {READERS.map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => {
-                    setReader(r);
-                    setDetected(false);
-                  }}
-                  className="flex min-h-ctl-lg w-full items-center gap-3 px-4 py-2 text-left transition-colors hover:bg-muted"
-                >
-                  <span
-                    className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${
-                      reader === r ? "border-accent" : "border-border"
-                    }`}
-                  >
-                    {reader === r ? (
-                      <span className="size-2.5 rounded-full bg-accent" aria-hidden />
-                    ) : null}
-                  </span>
-                  <span className="min-w-0 flex-1 truncate text-fs-sm font-bold text-foreground">
-                    {r}
-                  </span>
-                </button>
-              ))}
-            </div>
-            <div className="px-4 pt-3">
-              <button
-                type="button"
-                disabled={detecting}
-                onClick={() => {
-                  setDetecting(true);
-                  setDetected(false);
-                  window.setTimeout(() => {
-                    setDetecting(false);
-                    setDetected(true);
-                    setReaderSheet(false);
-                  }, 1800);
-                }}
-                className="flex h-ctl-lg w-full items-center justify-center gap-2 rounded-row bg-primary text-fs-base font-extrabold uppercase tracking-[0.08em] text-primary-foreground disabled:opacity-70"
-              >
-                {detecting ? (
-                  <>
-                    <Loader2 className="size-5 animate-spin" aria-hidden />
-                    Detecting
-                  </>
-                ) : (
-                  "Detect"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
 
       {appleIdSheet ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center">
