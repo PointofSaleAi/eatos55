@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useConfirm } from "@/components/pos/confirm-sheet";
+import { AiMark, EatosAiChat } from "@/components/pos/dashboard/eatos-ai-chat";
+
 import { formatMoney } from "@/lib/brand";
 import type { Ticket, TicketStatus } from "@/lib/demo-data";
 import { floorTables, floors, formatDwell, tableStateMeta } from "@/lib/floor-data";
@@ -101,6 +103,8 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
   const { canManageSettings, signOut, floor, setFloor, tableStates, tableSince, settings } = usePos();
   const { kpis, suggestions, tickets } = useShiftSummary();
   const [tab, setTab] = useState<TicketStatus | "all">("all");
+  const [aiOpen, setAiOpen] = useState(false);
+
 
   const showTotals = settings.serverShiftTotals || canManageSettings;
   const visibleKpis = showTotals ? kpis : kpis.filter((k) => !privateKpis.has(k.id));
