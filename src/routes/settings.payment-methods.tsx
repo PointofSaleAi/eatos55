@@ -38,6 +38,7 @@ import {
   type TileColor,
 } from "@/components/pos/settings-rows";
 import { brand, isTenderVisible, tenderLabel } from "@/lib/brand";
+import { useIsIPhone } from "@/lib/device";
 import { usePos, TENDER_LABELS, type TenderId } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/settings/payment-methods")({
@@ -134,6 +135,7 @@ const sections: { title: string; rows: Row[] }[] = [
 const NOT_SET = "Not set";
 
 function PaymentMethodsSettings() {
+  const isIPhone = useIsIPhone();
   const { settings, updateSettings, canManageSettings } = usePos();
   const tenders = settings.tenders;
 
@@ -216,7 +218,12 @@ function PaymentMethodsSettings() {
         </GroupCard>
 
         {sections.map((section) => {
-          const rows = section.rows.filter((row) => isTenderVisible(row.id));
+          const rows = section.rows.filter(
+            (row) =>
+              isTenderVisible(row.id) &&
+              (row.id !== "tap-to-pay" || isIPhone === true) &&
+              (row.id !== "contactless" || isIPhone !== true),
+          );
           if (rows.length === 0) return null;
           return (
             <div key={section.title}>
@@ -227,7 +234,11 @@ function PaymentMethodsSettings() {
                   return (
                     <IconToggleChipRow
                       key={row.id}
-                      title={tenderLabel(row.id, TENDER_LABELS[row.id])}
+                      title={
+                        row.id === "contactless"
+                          ? "Tap to Pay"
+                          : tenderLabel(row.id, TENDER_LABELS[row.id])
+                      }
                       icon={row.icon}
                       color={row.color}
                       checked={enabled}

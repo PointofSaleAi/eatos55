@@ -179,7 +179,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
                     className="relative flex min-h-0 min-w-0 flex-1 flex-col pt-[var(--sat,0px)]"
                     style={{
                       ["--tabs-h" as string]:
-                        appChrome && !landscape && !clockGate ? "6rem" : "0px",
+                        appChrome && !landscape && !clockGate ? "4rem" : "0px",
                     }}
                   >
                     <OfflineBanner />
