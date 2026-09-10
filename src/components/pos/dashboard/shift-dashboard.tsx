@@ -92,7 +92,7 @@ function SectionLabel({ children, icon: Icon }: { children: string; icon?: typeo
 
 /**
  * Server dashboard shown when the top bar is pulled down. Suggestions first,
- * then the shift figures a manager chooses to share, then the server's tickets,
+ * then the server's tickets, then the shift figures a manager chooses to share,
  * with the settings destinations as one slim column on the right.
  */
 export function ShiftDashboard({ onClose }: { onClose: () => void }) {
@@ -144,6 +144,19 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="flex min-w-0 flex-col gap-3">
+      {/* Who is on shift, and since when */}
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-1">
+        <div className="min-w-0">
+          <p className="truncate text-fs-lg font-extrabold text-foreground">{session.name}</p>
+          <p className="truncate text-fs-2xs text-muted-foreground">
+            {session.role} · clocked in at {settings.clockedInAt}
+          </p>
+        </div>
+        <p className="shrink-0 text-fs-2xs font-bold uppercase tracking-wide text-muted-foreground">
+          My shift
+        </p>
+      </div>
+
       <div className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_14rem]">
         <div className="flex min-w-0 flex-col gap-3">
           {/* Suggested next actions come first: this is what to do now */}
@@ -167,28 +180,6 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
             ) : (
               <p className="px-1 pb-1 text-fs-xs text-muted-foreground">
                 Nothing needs chasing right now.
-              </p>
-            )}
-          </div>
-
-          {/* Shift figures, only the ones this venue shares with servers */}
-          <div className={cn(card, "p-2")}>
-            <SectionLabel>Shift figures</SectionLabel>
-            <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
-              {visibleKpis.map((k) => (
-                <li key={k.id} className="rounded-card bg-muted/50 px-3 py-2">
-                  <p className="truncate text-fs-2xs font-bold uppercase tracking-wide text-muted-foreground">
-                    {k.label}
-                  </p>
-                  <p className="truncate text-fs-lg font-extrabold text-foreground">{k.value}</p>
-                  {k.delta === undefined ? null : <Delta value={k.delta} />}
-                </li>
-              ))}
-            </ul>
-            {showTotals ? null : (
-              <p className="mt-2 flex items-center gap-1.5 px-1 text-fs-2xs text-muted-foreground">
-                <Lock className="size-3.5 shrink-0" aria-hidden />
-                Sale, tip and hour totals are turned off for servers in Workforce settings.
               </p>
             )}
           </div>
@@ -257,6 +248,28 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
                 ))
               )}
             </ul>
+          </div>
+
+          {/* Shift figures, only the ones this venue shares with servers */}
+          <div className={cn(card, "p-2")}>
+            <SectionLabel>Shift figures</SectionLabel>
+            <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
+              {visibleKpis.map((k) => (
+                <li key={k.id} className="rounded-card bg-muted/50 px-3 py-2">
+                  <p className="truncate text-fs-2xs font-bold uppercase tracking-wide text-muted-foreground">
+                    {k.label}
+                  </p>
+                  <p className="truncate text-fs-lg font-extrabold text-foreground">{k.value}</p>
+                  {k.delta === undefined ? null : <Delta value={k.delta} />}
+                </li>
+              ))}
+            </ul>
+            {showTotals ? null : (
+              <p className="mt-2 flex items-center gap-1.5 px-1 text-fs-2xs text-muted-foreground">
+                <Lock className="size-3.5 shrink-0" aria-hidden />
+                Sale, tip and hour totals are turned off for servers in Workforce settings.
+              </p>
+            )}
           </div>
 
           {/* Live floor */}
