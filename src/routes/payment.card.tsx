@@ -46,6 +46,7 @@ function PayByCard() {
   };
 
   return (
+    <>
     <TenderScreen
       title="Pay by Card"
       due={due + tip}
@@ -60,7 +61,7 @@ function PayByCard() {
         }
         finish(baseAmount, tip);
       }}
-    >
+    />
       <TipSheet
         open={tipOpen}
         onOpenChange={setTipOpen}
@@ -73,6 +74,6 @@ function PayByCard() {
           setTip(amount);
         }}
       />
-    </TenderScreen>
+    </>
   );
 }

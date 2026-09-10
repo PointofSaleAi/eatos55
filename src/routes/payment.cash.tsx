@@ -47,6 +47,7 @@ function PayByCash() {
   };
 
   return (
+    <>
     <TenderScreen
       title="Pay by Cash"
       due={due + tip}
@@ -64,7 +65,7 @@ function PayByCash() {
         }
         finish(amount, tip, notes);
       }}
-    >
+    />
       <TipSheet
         open={tipOpen}
         onOpenChange={setTipOpen}
@@ -77,6 +78,6 @@ function PayByCash() {
           setTip(amount);
         }}
       />
-    </TenderScreen>
+    </>
   );
 }
