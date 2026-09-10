@@ -35,8 +35,8 @@ import { PaymentBill } from "@/components/pos/payment-bill";
 import { ReferenceTenderDialog } from "@/components/pos/reference-tender-dialog";
 import { RoomChargeDialog } from "@/components/pos/room-charge-dialog";
 import { TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
-import { TTP_DEVICE_NOTE, useTapToPayAvailable } from "@/lib/device";
-import { BackButton } from "@/components/pos/shell";
+import { useTapToPayAvailable } from "@/lib/device";
+import { BackButton, useWideLayout } from "@/components/pos/shell";
 import { SplitPayments } from "@/components/pos/split-payments";
 import { X } from "lucide-react";
 
