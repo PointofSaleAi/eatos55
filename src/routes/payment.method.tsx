@@ -211,10 +211,10 @@ function PaymentMethod() {
         },
         {
           id: "contactless",
-          label: "Contactless",
+          label: "Tap to Pay",
           icon: Nfc,
           kind: "dialog",
-          run: () => openAmount("Contactless", "card"),
+          run: () => openAmount("Tap to Pay", "card"),
         },
         {
           id: "amex",
