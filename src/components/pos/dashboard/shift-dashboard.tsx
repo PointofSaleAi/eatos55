@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useConfirm } from "@/components/pos/confirm-sheet";
+import { AiMark, EatosAiChat } from "@/components/pos/dashboard/eatos-ai-chat";
+
 import { formatMoney } from "@/lib/brand";
 import type { Ticket, TicketStatus } from "@/lib/demo-data";
 import { floorTables, floors, formatDwell, tableStateMeta } from "@/lib/floor-data";
@@ -101,6 +103,8 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
   const { canManageSettings, signOut, floor, setFloor, tableStates, tableSince, settings } = usePos();
   const { kpis, suggestions, tickets } = useShiftSummary();
   const [tab, setTab] = useState<TicketStatus | "all">("all");
+  const [aiOpen, setAiOpen] = useState(false);
+
 
   const showTotals = settings.serverShiftTotals || canManageSettings;
   const visibleKpis = showTotals ? kpis : kpis.filter((k) => !privateKpis.has(k.id));
@@ -145,30 +149,34 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
     <div className="flex min-w-0 flex-col gap-3">
       <div className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_14rem]">
         <div className="flex min-w-0 flex-col gap-3">
-          {/* Suggested next actions come first: this is what to do now */}
-          <div className={cn(card, "p-2")}>
-            <SectionLabel icon={Sparkles}>Suggested next</SectionLabel>
-            {suggestions.length ? (
-              <ul className="flex flex-wrap gap-1.5">
-                {suggestions.map((s) => (
-                  <li key={s.id}>
-                    <button
-                      type="button"
-                      onClick={() => go(s.to)}
-                      className="flex items-center gap-1 rounded-pill border border-border px-3 py-1.5 text-left text-fs-xs font-semibold text-foreground transition-colors hover:bg-muted"
-                    >
-                      {s.text}
-                      <ChevronRight className="size-3.5 shrink-0 opacity-60" aria-hidden />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="px-1 pb-1 text-fs-xs text-muted-foreground">
-                Nothing needs chasing right now.
-              </p>
-            )}
-          </div>
+          {/* eatOS AI: the next best action, tap to chat about the shift */}
+          {aiOpen ? (
+            <EatosAiChat onClose={() => setAiOpen(false)} />
+          ) : (
+            <button
+              type="button"
+              onClick={() => setAiOpen(true)}
+              className={cn(
+                card,
+                "flex w-full items-center gap-3 p-3 text-left transition-colors hover:bg-muted/50",
+              )}
+            >
+              <AiMark />
+              <span className="min-w-0 flex-1">
+                <span className="flex flex-wrap items-center gap-2">
+                  <span className="text-fs-sm font-extrabold text-foreground">eatOS AI</span>
+                  <span className="rounded-pill bg-accent/15 px-2 py-0.5 text-fs-2xs font-bold text-accent">
+                    Suggested next
+                  </span>
+                </span>
+                <span className="mt-0.5 block truncate text-fs-sm text-muted-foreground">
+                  {suggestions[0]?.text ?? "Nothing needs chasing right now"}
+                </span>
+              </span>
+              <ChevronRight className="size-5 shrink-0 text-muted-foreground" aria-hidden />
+            </button>
+          )}
+
 
           {/* Shift figures, only the ones this venue shares with servers */}
           <div className={cn(card, "p-2")}>
