@@ -236,28 +236,6 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
             </ul>
           </div>
 
-          {/* Shift figures, only the ones this venue shares with servers */}
-          <div className={cn(card, "p-2")}>
-            <SectionLabel>Shift figures</SectionLabel>
-            <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
-              {visibleKpis.map((k) => (
-                <li key={k.id} className="rounded-card bg-muted/50 px-3 py-2">
-                  <p className="truncate text-fs-2xs font-bold uppercase tracking-wide text-muted-foreground">
-                    {k.label}
-                  </p>
-                  <p className="truncate text-fs-lg font-extrabold text-foreground">{k.value}</p>
-                  {k.delta === undefined ? null : <Delta value={k.delta} />}
-                </li>
-              ))}
-            </ul>
-            {showTotals ? null : (
-              <p className="mt-2 flex items-center gap-1.5 px-1 text-fs-2xs text-muted-foreground">
-                <Lock className="size-3.5 shrink-0" aria-hidden />
-                Sale, tip and hour totals are turned off for servers in Workforce settings.
-              </p>
-            )}
-          </div>
-
           {/* Live floor */}
           <div className={cn(card, "p-2")}>
             <div className="mb-2 flex flex-wrap items-center gap-1.5">
