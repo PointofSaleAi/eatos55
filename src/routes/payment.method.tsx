@@ -211,10 +211,10 @@ function PaymentMethod() {
         },
         {
           id: "contactless",
-          label: "Contactless",
+          label: "Tap to Pay",
           icon: Nfc,
           kind: "dialog",
-          run: () => openAmount("Contactless", "card"),
+          run: () => openAmount("Tap to Pay", "card"),
         },
         {
           id: "amex",
@@ -515,9 +515,12 @@ function PaymentMethod() {
     .map((g) => ({
       title: g.title,
       items: g.items
-        .filter((t) => enabled(t.id))
+        .filter((t) => enabled(t.id) && !(t.id === "contactless" && ttpDevice.available))
         // Shared tenders carry a regional display name, e.g. Grubhub as Just Eat.
-        .map((t) => ({ ...t, label: tenderLabel(t.id, t.label) })),
+        .map((t) => ({
+          ...t,
+          label: t.id === "contactless" ? "Tap to Pay" : tenderLabel(t.id, t.label),
+        })),
     }))
     .filter((g) => g.items.length > 0);
 
