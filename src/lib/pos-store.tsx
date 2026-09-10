@@ -120,7 +120,7 @@ export type TenderId =
 export const TENDER_LABELS: Record<TenderId, string> = {
   cash: "Cash",
   "tap-to-pay": "Tap to Pay on iPhone",
-  "card-present": "Chip and PIN",
+  "card-present": "Card",
   contactless: "Tap to Pay",
   "apple-pay": "Apple Pay",
   "google-pay": "Google Pay",
