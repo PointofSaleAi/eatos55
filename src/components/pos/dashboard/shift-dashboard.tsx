@@ -98,8 +98,7 @@ function SectionLabel({ children, icon: Icon }: { children: string; icon?: typeo
 export function ShiftDashboard({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
   const confirm = useConfirm();
-  const { canManageSettings, signOut, floor, setFloor, tableStates, tableSince, settings, session } =
-    usePos();
+  const { canManageSettings, signOut, floor, setFloor, tableStates, tableSince, settings } = usePos();
   const { kpis, suggestions, tickets } = useShiftSummary();
   const [tab, setTab] = useState<TicketStatus | "all">("all");
 
