@@ -251,7 +251,6 @@ function PaymentMethod() {
           kind: "split",
           run: () => setSplitOpen(true),
         },
-
       ],
     },
     {
@@ -602,8 +601,6 @@ function PaymentMethod() {
 
   const cols = fit.cols;
 
-
-
   const allTenders = groups.flatMap((g) => g.items);
   const activeTender = allTenders.find((t) => t.id === selected) ?? null;
   const actionLabel = room
@@ -619,7 +616,6 @@ function PaymentMethod() {
       <PaymentBill room={room} />
     </div>
   );
-
 
   const grid = (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
@@ -655,7 +651,6 @@ function PaymentMethod() {
           other card payments.
         </p>
       </div>
-
 
       <div
         ref={paneRef}
@@ -718,8 +713,6 @@ function PaymentMethod() {
         ))}
       </div>
 
-
-
       <div className="shrink-0 border-t border-border bg-surface px-[var(--pad-screen)] pb-[calc(0.75rem+var(--kb-inset,0px)+var(--tabs-h,0px))] pt-3">
         <button
           type="button"
@@ -751,7 +744,8 @@ function PaymentMethod() {
             Total Due <span className="text-accent">{money(due)}</span>
           </h1>
           <p className="truncate text-fs-xs text-muted-foreground">
-            Order {orderNumber} · {guest.name || tableGroupLabel(activeTable) || "Guest"} · {orderType}
+            Order {orderNumber} · {guest.name || tableGroupLabel(activeTable) || "Guest"} ·{" "}
+            {orderType}
           </p>
         </div>
       </div>
@@ -855,6 +849,5 @@ function PaymentMethod() {
         />
       ) : null}
     </div>
-
   );
 }
