@@ -6,6 +6,7 @@ import { AccountActions, AccountInfo } from "@/components/pos/account-bar";
 import { ClockPanel } from "@/components/pos/clock-panel";
 import { PinPad } from "@/components/pos/pin-pad";
 import { SettingsPullDown } from "@/components/pos/settings-pulldown";
+import { Button } from "@/components/ui/button";
 import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { usePos } from "@/lib/pos-store";
 
@@ -50,8 +51,8 @@ export function ClockPullDown() {
 
   return (
     <>
-      <div className="relative z-40 h-14 shrink-0 bg-shell">
-        <div className="grid h-12 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-2">
+      <div className="relative z-40 h-14 shrink-0 border-b border-topbar-border bg-topbar shadow-sm">
+        <div className="grid h-full grid-cols-[minmax(0,1fr)_auto] items-center gap-1 px-3 pb-1">
           <AccountInfo
             onSwitchUser={() => {
               setMenuOpen(false);
@@ -60,19 +61,23 @@ export function ClockPullDown() {
           />
           <AccountActions />
         </div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-3 items-end justify-center">
-          <button
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-11 items-end justify-center">
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             aria-label={menuOpen ? "Close settings menu" : "Open settings menu"}
             aria-expanded={menuOpen}
             onClick={() => {
               close();
               setMenuOpen((v) => !v);
             }}
-            className="pointer-events-auto grid h-3 w-14 place-items-center rounded-t-md bg-shell-foreground/10 text-shell-foreground/80 transition-colors hover:bg-shell-foreground/20 hover:text-shell-foreground"
+            className="pointer-events-auto h-11 w-14 items-end rounded-none bg-transparent p-0 text-topbar-muted hover:bg-transparent hover:text-topbar-foreground"
           >
-            {menuOpen ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
-          </button>
+            <span className="grid h-3 w-12 place-items-center rounded-t-md border border-b-0 border-topbar-border bg-muted">
+              {menuOpen ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
+            </span>
+          </Button>
         </div>
       </div>
 
