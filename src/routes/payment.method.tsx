@@ -648,16 +648,7 @@ function PaymentMethod() {
             <TapToPayMark className="size-5 shrink-0" />
             <span className="truncate">{TTP}</span>
           </button>
-        ) : (
-          <div
-            aria-disabled
-            className="mt-2 flex h-ctl-md w-full items-center gap-2 rounded-row border border-border bg-muted/40 px-3 text-muted-foreground"
-          >
-            <TapToPayMark className="size-4 shrink-0" />
-            <span className="truncate text-fs-sm font-bold">{TTP}</span>
-            <span className="ml-auto shrink-0 text-fs-xs">{TTP_DEVICE_NOTE}</span>
-          </div>
-        )}
+        ) : null}
 
         <p className="mt-1 hidden text-fs-xs text-muted-foreground lg:block">
           Cash, manual card entry and Pay by Link are supported online. Connect a card reader for
