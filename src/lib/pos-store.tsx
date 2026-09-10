@@ -114,10 +114,12 @@ export type TenderId =
   | "room"
   | "uber"
   | "doordash"
-  | "grubhub";
+  | "grubhub"
+  | "tap-to-pay";
 
 export const TENDER_LABELS: Record<TenderId, string> = {
   cash: "Cash",
+  "tap-to-pay": "Tap to Pay on iPhone",
   "card-present": "Chip and PIN",
   contactless: "Contactless",
   "apple-pay": "Apple Pay",
@@ -152,6 +154,7 @@ export const TENDER_LABELS: Record<TenderId, string> = {
 
 const defaultTenders: Record<TenderId, boolean> = {
   cash: true,
+  "tap-to-pay": true,
   "card-present": true,
   contactless: true,
   "apple-pay": true,
@@ -190,6 +193,7 @@ const defaultTenders: Record<TenderId, boolean> = {
  */
 const defaultTenderAutoClose: Record<TenderId, boolean> = {
   cash: true,
+  "tap-to-pay": false,
   "card-present": false,
   contactless: false,
   "apple-pay": false,
