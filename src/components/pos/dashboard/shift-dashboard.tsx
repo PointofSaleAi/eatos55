@@ -149,33 +149,31 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
     <div className="flex min-w-0 flex-col gap-3">
       <div className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_14rem]">
         <div className="flex min-w-0 flex-col gap-3">
-          {/* eatOS AI: the next best action, tap to chat about the shift */}
-          {aiOpen ? (
-            <EatosAiChat onClose={() => setAiOpen(false)} />
-          ) : (
-            <button
-              type="button"
-              onClick={() => setAiOpen(true)}
-              className={cn(
-                card,
-                "flex w-full items-center gap-3 p-3 text-left transition-colors hover:bg-muted/50",
-              )}
-            >
-              <AiMark />
-              <span className="min-w-0 flex-1">
-                <span className="flex flex-wrap items-center gap-2">
-                  <span className="text-fs-sm font-extrabold text-foreground">eatOS AI</span>
-                  <span className="rounded-pill bg-accent/15 px-2 py-0.5 text-fs-2xs font-bold text-accent">
-                    Suggested next
-                  </span>
-                </span>
-                <span className="mt-0.5 block truncate text-fs-sm text-muted-foreground">
-                  {suggestions[0]?.text ?? "Nothing needs chasing right now"}
+          {/* Maya AI: the next best action, tap to chat about the shift */}
+          <button
+            type="button"
+            onClick={() => setAiOpen(true)}
+            className={cn(
+              card,
+              "flex w-full items-center gap-3 p-3 text-left transition-colors hover:bg-muted/50",
+            )}
+          >
+            <AiMark />
+            <span className="min-w-0 flex-1">
+              <span className="flex flex-wrap items-center gap-2">
+                <span className="text-fs-sm font-extrabold text-foreground">Maya AI</span>
+                <span className="rounded-pill bg-accent/15 px-2 py-0.5 text-fs-2xs font-bold text-accent">
+                  Suggested next
                 </span>
               </span>
-              <ChevronRight className="size-5 shrink-0 text-muted-foreground" aria-hidden />
-            </button>
-          )}
+              <span className="mt-0.5 block truncate text-fs-sm text-muted-foreground">
+                {suggestions[0]?.text ?? "Nothing needs chasing right now"}
+              </span>
+            </span>
+            <ChevronRight className="size-5 shrink-0 text-muted-foreground" aria-hidden />
+          </button>
+          {aiOpen ? <EatosAiChat onClose={() => setAiOpen(false)} /> : null}
+
 
 
           {/* Shift figures, only the ones this venue shares with servers */}
