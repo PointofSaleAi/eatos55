@@ -116,6 +116,14 @@ function PaymentMethod() {
   } = usePos();
   const announce = useAnnounce();
   const ttpDevice = useTapToPayAvailable();
+  const wide = useWideLayout();
+  const { methods } = Route.useSearch();
+  // Phones split this into two steps: the bill, then the payment options.
+  const showBill = wide;
+  useEffect(() => {
+    if (!wide && methods !== 1) void navigate({ to: "/payment/bill", replace: true });
+  }, [wide, methods, navigate]);
+  const ttpEnabled = (settings.tenders?.["tap-to-pay"] ?? true) && ttpDevice.available;
   const orderNumber = tickets.length + 1;
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
   const nothingToPay = cart.length === 0;
