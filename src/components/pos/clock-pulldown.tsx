@@ -51,17 +51,16 @@ export function ClockPullDown() {
   return (
     <>
       <div className="relative z-40 shrink-0 bg-shell">
-        <div className="flex h-12 items-center gap-2 px-2">
+        <div className="grid h-12 grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-2">
           <AccountInfo
             onSwitchUser={() => {
               setMenuOpen(false);
               setOpen(true);
             }}
           />
-          <div className="min-w-0 flex-1" />
           <AccountActions />
         </div>
-        <div className="pointer-events-none absolute inset-x-0 top-full flex justify-center">
+        <div className="pointer-events-none absolute inset-y-0 left-1/2 flex -translate-x-1/2 items-center justify-center">
           <button
             type="button"
             aria-label={menuOpen ? "Close settings menu" : "Open settings menu"}
@@ -70,7 +69,7 @@ export function ClockPullDown() {
               close();
               setMenuOpen((v) => !v);
             }}
-            className="pointer-events-auto flex h-6 tap-safe w-32 items-center justify-center rounded-b-2xl bg-shell text-shell-foreground/80 transition-colors hover:text-shell-foreground"
+            className="pointer-events-auto grid size-11 tap-safe place-items-center rounded-pill text-shell-foreground/75 transition-colors hover:bg-shell-foreground/10 hover:text-shell-foreground"
           >
             {menuOpen ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
           </button>
