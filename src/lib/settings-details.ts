@@ -41,6 +41,7 @@ export type DetailRow =
   | { kind: "toggle"; label: string; field: keyof AppSettings }
   | { kind: "choice"; label: string; field: keyof AppSettings; options: string[] }
   | { kind: "text"; label: string; field: keyof AppSettings }
+  | { kind: "tender-tips"; label: string }
   /** Editable collection (discounts, modifier groups, …). */
   | { kind: "list"; label: string; field: keyof AppSettings; addLabel?: string };
 
@@ -247,6 +248,13 @@ export const settingsDetails: Record<string, DetailScreen> = {
     icon: HandCoins,
     rows: [
       { kind: "toggle", label: "Ask For Tip", field: "askForTip" },
+      {
+        kind: "choice",
+        label: "When to ask",
+        field: "tipTiming",
+        options: ["After approval", "Before payment"],
+      },
+      { kind: "tender-tips", label: "Ask by payment type" },
       { kind: "text", label: "Presets", field: "tipPresets" },
       { kind: "choice", label: "Tip Basis", field: "tipBasis", options: ["Pre-tax", "Post-tax"] },
       {

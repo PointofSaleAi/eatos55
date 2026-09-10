@@ -79,21 +79,21 @@ export function TipSheet({
           ))}
         </div>
 
-        <div className="mt-3 flex min-h-ctl-lg items-center justify-between rounded-card border border-border bg-surface px-4">
+        {settings.customTip === "Allowed" ? <div className="mt-3 flex min-h-ctl-lg items-center justify-between rounded-card border border-border bg-surface px-4">
           <span className="text-fs-sm font-bold text-muted-foreground">Custom tip</span>
           <span className="text-fs-xl font-extrabold text-foreground">
             {custom ? `$${custom}` : money(amount)}
           </span>
-        </div>
+        </div> : null}
 
-        <NumPad
+        {settings.customTip === "Allowed" ? <NumPad
           className="mt-3"
           onDigit={(d) => {
             setPreset(null);
             setCustom((v) => (v + d).replace(/^0+(?=\d)/, "").slice(0, 7));
           }}
           onBackspace={() => setCustom((v) => v.slice(0, -1))}
-        />
+        /> : null}
 
         <div className="mt-3 flex gap-2">
           <button

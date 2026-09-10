@@ -11,7 +11,13 @@ import {
   IconValueRow,
   settingsRowClass,
 } from "@/components/pos/settings-rows";
-import { usePos, type AppSettings, type SettingsListItem } from "@/lib/pos-store";
+import {
+  usePos,
+  TENDER_LABELS,
+  type AppSettings,
+  type SettingsListItem,
+  type TenderId,
+} from "@/lib/pos-store";
 import { settingsDetails, type DetailRow } from "@/lib/settings-details";
 import { cn } from "@/lib/utils";
 
@@ -71,6 +77,29 @@ function SettingsDetail() {
   const str = (field: keyof AppSettings) => String(settings[field] ?? "");
   const bool = (field: keyof AppSettings) => Boolean(settings[field]);
   const list = (field: keyof AppSettings) => (settings[field] as SettingsListItem[]) ?? [];
+  const tipTenderIds: TenderId[] = [
+    "card-present",
+    "cash",
+    "contactless",
+    "tap-to-pay",
+    "manual-card",
+    "manual-cc",
+    "external",
+    "pay-by-link",
+    "qr",
+    "open-banking",
+    "bank-transfer",
+    "paypal",
+    "klarna",
+    "cheque",
+    "voucher",
+    "account",
+    "gift",
+    "loyalty",
+    "in-kind",
+    "staff",
+    "room",
+  ];
 
   const saveItem = (field: keyof AppSettings, item: SettingsListItem, id: string | null) => {
     const current = list(field);
@@ -96,6 +125,27 @@ function SettingsDetail() {
         {fieldRows.length ? (
           <GroupCard>
             {fieldRows.map((row) => {
+              if (row.kind === "tender-tips") {
+                return (
+                  <div key={row.label}>
+                    <div className="border-b border-border bg-muted/40 px-4 py-2 text-fs-xs font-bold uppercase text-muted-foreground">
+                      {row.label}
+                    </div>
+                    {tipTenderIds.map((id) => (
+                      <IconToggleRow
+                        key={id}
+                        title={TENDER_LABELS[id]}
+                        checked={settings.tipTenders?.[id] ?? id === "card-present"}
+                        onChange={(checked) =>
+                          updateSettings({
+                            tipTenders: { ...settings.tipTenders, [id]: checked },
+                          })
+                        }
+                      />
+                    ))}
+                  </div>
+                );
+              }
               if (row.kind === "readonly") {
                 return (
                   <IconValueRow

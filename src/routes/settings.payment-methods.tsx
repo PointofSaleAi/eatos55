@@ -16,7 +16,6 @@ import {
   QrCode,
   Radio,
   Receipt,
-  Smartphone,
   Split,
   SquareUser,
   Ticket,
@@ -75,13 +74,6 @@ const sections: { title: string; rows: Row[] }[] = [
       { id: "manual-cc", icon: BadgeDollarSign, color: "violet" },
       { id: "external", icon: UploadCloud, color: "slate" },
       { id: "split", icon: Split, color: "purple" },
-    ],
-  },
-  {
-    title: "Wallets",
-    rows: [
-      { id: "apple-pay", icon: Smartphone, color: "black" },
-      { id: "google-pay", icon: Smartphone, color: "grey" },
     ],
   },
   {
