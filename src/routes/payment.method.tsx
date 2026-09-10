@@ -661,9 +661,10 @@ function PaymentMethod() {
               className="grid overflow-hidden rounded-row border border-border md:overflow-visible md:rounded-none md:border-0 md:gap-[var(--gap-sec)]"
               style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
             >
-              {group.items.map((t) => {
+              {group.items.map((t, index) => {
                 const Icon = t.icon;
                 const active = selected === t.id;
+                const fillsPhoneRow = !wide && group.items.length % 2 === 1 && index === group.items.length - 1;
                 return (
                   <button
                     key={t.id}
@@ -678,6 +679,7 @@ function PaymentMethod() {
                     style={{ height: wide ? fit.tileH : t.id === "cash" || t.id === "card-present" ? 64 : 54 }}
                     className={cn(
                       "flex items-center gap-3 border-b border-r border-border px-3 py-2 text-left transition-colors last:border-b-0 even:border-r-0 md:gap-2.5 md:rounded-row md:border md:px-3",
+                      fillsPhoneRow && "col-span-2 border-r-0",
                       active
                         ? "border-success bg-success/10"
                         : "border-border bg-surface hover:bg-muted",
