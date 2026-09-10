@@ -65,6 +65,9 @@ export const Route = createFileRoute("/payment/method")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  // On a phone the bill is step 1; ?methods=1 means the guest pressed Continue.
+  validateSearch: (search: Record<string, unknown>): { methods?: 1 } =>
+    search["methods"] === 1 || search["methods"] === "1" ? { methods: 1 } : {},
   component: PaymentMethod,
 });
 
