@@ -1,4 +1,4 @@
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { brand, isTenderVisible, tenderLabel } from "@/lib/brand";
 import {
   BadgeDollarSign,
@@ -41,7 +41,7 @@ import { SplitPayments } from "@/components/pos/split-payments";
 import { X } from "lucide-react";
 
 import { haptic } from "@/lib/haptics";
-import { TAX_RATE, money } from "@/lib/demo-data";
+import { money } from "@/lib/demo-data";
 import type { Room } from "@/lib/floor-data";
 import { usePos, type TenderId, type TenderMethod } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
