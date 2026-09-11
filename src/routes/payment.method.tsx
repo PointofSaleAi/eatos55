@@ -676,6 +676,38 @@ function PaymentMethod() {
       <div className="shrink-0 px-[var(--pad-screen)] pt-3">
         <h2 className="truncate text-fs-lg font-extrabold text-foreground">Payment Method</h2>
 
+        {/* Split checks are taken one at a time; tap a check to make it the one being paid. */}
+        {splitChecks.length ? (
+          <div className="no-scrollbar mt-2 flex gap-1.5 overflow-x-auto">
+            {splitChecks.map((c) => {
+              const isActive = activeCheck?.id === c.id;
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  disabled={c.paid}
+                  onClick={() => setActiveSplitCheck(c.id)}
+                  className={cn(
+                    "flex min-h-ctl-md shrink-0 flex-col items-start justify-center rounded-row border px-3 py-1 text-left transition-colors",
+                    c.paid
+                      ? "border-border bg-muted text-muted-foreground"
+                      : isActive
+                        ? "border-accent bg-accent/10 text-foreground"
+                        : "border-border bg-surface text-foreground hover:bg-muted",
+                  )}
+                >
+                  <span className="text-fs-xs font-extrabold uppercase">
+                    {c.label}
+                    {c.paid ? " · paid" : ""}
+                  </span>
+                  <span className="text-fs-xs font-bold tabular-nums">{money(c.total)}</span>
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
+
+
         {/*
          * Requirements 2.1 to 2.5: this button is always here, always first,
          * always above the fold, always with the exact same label, whether or
