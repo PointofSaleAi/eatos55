@@ -125,12 +125,11 @@ export function PaymentBill({ room }: { room?: Room | null }) {
             <ReceiptRow label="Service Charge" value={money(totals.serviceCharge)} />
           ) : null}
           {totals.discount ? (
-            <div className="flex items-center gap-2">
-              <ReceiptRow
-                label={`Discount${discountName ? ` · ${discountName}` : ""}`}
-                value={`-${money(totals.discount)}`}
-                tone="accent"
-              />
+            <div className="flex items-center gap-2 text-fs-sm text-accent">
+              <span className="min-w-0 flex-1 truncate">
+                Discount{discountName ? ` · ${discountName}` : ""}
+              </span>
+              <span className="shrink-0 tabular-nums">-{money(totals.discount)}</span>
               {editable ? (
                 <button
                   type="button"
