@@ -21,7 +21,11 @@ export function PaymentBill({ room }: { room?: Room | null }) {
     paidSoFar,
     partialPayments,
     removePartialPayment,
+    setOrderType,
+    settings,
   } = usePos();
+  const placement = settings.orderTypePlacement;
+  const showTypeStrip = placement === "Charge screen" || placement === "Both";
   const orderNumber = tickets.length + 1;
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
 

@@ -51,11 +51,14 @@ export function OrderPanel({ wide }: { wide: boolean }) {
     session,
     activeTicketId,
     tickets,
+    settings,
   } = usePos();
+
+  const placement = settings.orderTypePlacement;
+  const showTypeStrip = placement === "Order screen" || placement === "Both";
 
   const [guestOpen, setGuestOpen] = useState(false);
   const [typeForSheet, setTypeForSheet] = useState<ServiceOrderType | undefined>(undefined);
-  const stripRef = useRef<HTMLDivElement>(null);
   const [discountOpen, setDiscountOpen] = useState(false);
   const [discountName, setDiscountName] = useState<string | null>(null);
   const [pinOpen, setPinOpen] = useState(false);
