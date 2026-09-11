@@ -79,7 +79,6 @@ function NewOrder() {
         <div className={cn("flex items-center", showMenu ? "gap-2" : "gap-1")}>
 
 
-        <div className="flex items-center gap-2">
 
 
           {showMenu ? (
