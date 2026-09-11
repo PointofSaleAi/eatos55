@@ -243,6 +243,16 @@ function PaymentMethod() {
 
   const finish = (cfg: RefConfig, value: string) => {
     haptic("success");
+    if (activeCheck && !lastCheck) {
+      paySplitCheck(activeCheck.id, due, cfg.method, {
+        label: cfg.title,
+        ...(selected ? { tenderId: selected as TenderId } : {}),
+      });
+      announce(`${activeCheck.label} paid`);
+      toast.success(cfg.success(value));
+      setDoneOpen(true);
+      return;
+    }
     commitPayment(cfg.method, due, {
       label: cfg.title,
       ...(selected ? { tenderId: selected as TenderId } : {}),
