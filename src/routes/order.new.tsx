@@ -7,7 +7,7 @@ import { MenuButton, useWideLayout } from "@/components/pos/shell";
 import { GuestSheet } from "@/components/pos/guest-sheet";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { MoreSheet } from "@/components/pos/more-sheet";
-import { OrderPanel } from "@/components/pos/order-panel";
+import { OrderActionButtons, OrderPanel } from "@/components/pos/order-panel";
 import { itemNeedsSheet, liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
 import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
