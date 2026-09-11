@@ -2,7 +2,6 @@ import { Link, useCanGoBack, useRouter, useRouterState } from "@tanstack/react-r
 import {
   Check,
   ChevronLeft,
-  Menu as MenuIcon,
   ClipboardList,
   Columns3,
   LayoutGrid,
@@ -10,6 +9,7 @@ import {
   Settings,
   type LucideIcon,
 } from "lucide-react";
+
 
 import {
   createContext,
@@ -34,35 +34,11 @@ import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
-const NavDrawerContext = createContext<{ open: () => void } | null>(null);
+import { NavDrawerContext } from "@/lib/nav-drawer-context";
 
-/** Opens the global navigation drawer from any header. */
-export function useNavDrawer() {
-  return useContext(NavDrawerContext);
-}
+export { useNavDrawer } from "@/lib/nav-drawer-context";
 
-/** Burger button that opens the full app navigation drawer. */
-export function MenuButton({ className }: { className?: string }) {
-  const drawer = useNavDrawer();
-  const appChrome = useAppChrome();
-  const wide = useWideLayout();
-  // Landscape has the persistent nav rail, so the burger is phone-only.
-  if (!drawer || !appChrome || wide) return null;
-  return (
-    <button
-      type="button"
-      aria-label="Open navigation"
-      title="Navigation"
-      onClick={drawer.open}
-      className={cn(
-        "grid size-11 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted",
-        className,
-      )}
-    >
-      <MenuIcon className="size-6" />
-    </button>
-  );
-}
+
 
 /** Pre-login screens: no app chrome (drawer, tabs, clock pulldown). */
 const publicPaths = ["/", "/access/create-account", "/access/forgot-password"];
@@ -264,7 +240,7 @@ export function ScreenHeader({
     <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <div className="flex min-w-0 items-center gap-2">
-          {back ? <BackButton fallbackTo={backTo} /> : <MenuButton className="-ml-1" />}
+          {back ? <BackButton fallbackTo={backTo} /> : null}
           <div className="min-w-0">
             <h1 className="truncate t-title text-foreground">{title}</h1>
           </div>
@@ -304,9 +280,8 @@ export function SubHeader({
               fallbackTo={backTo}
               label={backLabel ? `Back to ${backLabel}` : "Go back"}
             />
-          ) : wide ? null : (
-            <MenuButton className="-ml-1" />
-          )}
+          ) : null}
+
           <div className="min-w-0">
             <h1 className="truncate t-title text-foreground">{title}</h1>
           </div>

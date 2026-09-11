@@ -1,5 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { ChevronRight, Clock, LogOut, ShieldCheck, X } from "lucide-react";
+import { ChevronRight, Clock, LogOut, ShieldCheck, UserRound, X } from "lucide-react";
 import { navGroups as groups } from "@/lib/nav-destinations";
 import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
@@ -89,6 +89,17 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
             type="button"
             onClick={() => {
               onClose();
+              window.dispatchEvent(new Event("pos:switch-user"));
+            }}
+            className="flex min-h-ctl-sm tap-safe w-full items-center gap-2 rounded-row border border-border px-3 t-row text-foreground transition-colors hover:bg-muted"
+          >
+            <UserRound className="size-4" />
+            Switch User
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              onClose();
               clockOut();
             }}
             className="flex min-h-ctl-sm tap-safe w-full items-center gap-2 rounded-row border border-border px-3 t-row text-foreground transition-colors hover:bg-muted"
@@ -96,6 +107,7 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
             <Clock className="size-4" />
             Clock Out
           </button>
+
           <button
             type="button"
             onClick={async () => {
