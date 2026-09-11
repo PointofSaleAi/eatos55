@@ -106,6 +106,12 @@ export const settingsDetails: Record<string, DetailScreen> = {
         field: "deviceService",
         options: ["Table Service", "Quick Service"],
       },
+      {
+        kind: "choice",
+        label: "Order Type",
+        field: "orderTypePlacement",
+        options: ["Order screen", "Charge screen", "Both", "Off"],
+      },
       { kind: "toggle", label: "Auto-print Receipts", field: "autoPrintReceipts" },
       { kind: "toggle", label: "Ask For Tip", field: "askForTip" },
       {

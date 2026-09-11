@@ -1,29 +1,26 @@
 import {
   ArrowLeftRight,
   BadgePercent,
-  ChevronRight,
   CircleDollarSign,
   Flame,
+  Footprints,
+  Grid2x2,
   NotebookPen,
   ReceiptText,
   Save,
   Utensils,
 } from "lucide-react";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
-import {
-  money,
-  serviceOrderTypeLabels,
-  serviceOrderTypes,
-  type ServiceOrderType,
-} from "@/lib/demo-data";
+import { money, type ServiceOrderType } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
-import { GuestSheet, orderTypeIcons } from "@/components/pos/guest-sheet";
+import { GuestSheet } from "@/components/pos/guest-sheet";
+import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { PinSheet } from "@/components/pos/pin-sheet";
 
 /**
@@ -54,11 +51,14 @@ export function OrderPanel({ wide }: { wide: boolean }) {
     session,
     activeTicketId,
     tickets,
+    settings,
   } = usePos();
+
+  const placement = settings.orderTypePlacement;
+  const showTypeStrip = placement === "Order screen" || placement === "Both";
 
   const [guestOpen, setGuestOpen] = useState(false);
   const [typeForSheet, setTypeForSheet] = useState<ServiceOrderType | undefined>(undefined);
-  const stripRef = useRef<HTMLDivElement>(null);
   const [discountOpen, setDiscountOpen] = useState(false);
   const [discountName, setDiscountName] = useState<string | null>(null);
   const [pinOpen, setPinOpen] = useState(false);
@@ -154,48 +154,33 @@ export function OrderPanel({ wide }: { wide: boolean }) {
         </div>
 
         {/* Service type strip: full set, scrolls sideways, opens guest info */}
-        <div className="relative mt-2.5">
-          <div
-            ref={stripRef}
-            className="no-scrollbar flex gap-2 overflow-x-auto scroll-smooth"
-          >
-            {serviceOrderTypes.map((t) => {
-              const Icon = orderTypeIcons[t];
-              const active = orderType === t;
-              return (
-                <button
-                  key={t}
-                  type="button"
-                  aria-pressed={active}
-                  onClick={() => {
-                    setOrderType(t);
-                    setTypeForSheet(t);
-                    setGuestOpen(true);
-                  }}
-                  className={cn(
-                    "flex min-h-tap shrink-0 items-center justify-center gap-1.5 rounded-row px-3 text-fs-xs font-extrabold uppercase tracking-[-0.02em] transition-colors",
-                    active
-                      ? "border-2 border-foreground bg-surface text-foreground shadow-sm"
-                      : "border border-transparent bg-muted text-muted-foreground hover:bg-secondary",
-                  )}
-                >
-                  <Icon className="size-4 shrink-0" aria-hidden />
-                  <span>{serviceOrderTypeLabels[t]}</span>
-                </button>
-              );
-            })}
+        {showTypeStrip ? (
+          <OrderTypeStrip
+            className="mt-2.5"
+            value={orderType}
+            onSelect={(t) => {
+              setOrderType(t);
+              setTypeForSheet(t);
+              setGuestOpen(true);
+            }}
+          />
+        ) : null}
+
+        {/* Table and arrival time, as on the phone order summary */}
+        {orderType === "Dine In" && activeTable ? (
+          <div className="mt-2 flex items-center justify-between gap-2 rounded-row bg-muted px-3 py-1.5">
+            <span className="flex min-w-0 items-center gap-2">
+              <Grid2x2 className="size-4 shrink-0 text-foreground" aria-hidden />
+              <span className="truncate text-fs-sm font-extrabold text-foreground">
+                {tableGroupLabel(activeTable) ?? activeTable}
+              </span>
+            </span>
+            <span className="flex shrink-0 items-center gap-1.5 rounded-pill bg-foreground px-2.5 py-1 text-fs-xs font-extrabold text-background">
+              <Footprints className="size-3.5" aria-hidden />
+              {arrivedAt || "--"}
+            </span>
           </div>
-          <button
-            type="button"
-            aria-label="More order types"
-            onClick={() =>
-              stripRef.current?.scrollBy({ left: stripRef.current.clientWidth * 0.7, behavior: "smooth" })
-            }
-            className="absolute right-0 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-pill border border-border bg-surface text-foreground shadow-sm"
-          >
-            <ChevronRight className="size-4" aria-hidden />
-          </button>
-        </div>
+        ) : null}
 
         {/* Order number and server */}
         <div className="mt-2 flex items-center justify-between text-fs-xs font-bold uppercase text-muted-foreground">
