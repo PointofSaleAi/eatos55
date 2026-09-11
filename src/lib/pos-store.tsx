@@ -269,6 +269,8 @@ export type AppSettings = {
   hapticFeedback: boolean;
   deviceName: string;
   deviceService: "Table Service" | "Quick Service";
+  /** Where the service type row appears: order screen, charge screen, both, off. */
+  orderTypePlacement: "Order screen" | "Charge screen" | "Both" | "Off";
   /** Rooms / room-service module: hides the Rooms screen when off. */
   roomService: boolean;
   /** Which tenders appear on the payment method screen. */
@@ -429,6 +431,7 @@ const defaultSettings: AppSettings = {
   hapticFeedback: true,
   deviceName: "aurora 22",
   deviceService: "Table Service",
+  orderTypePlacement: "Order screen",
   roomService: false,
   tenders: defaultTenders,
   tenderAutoClose: defaultTenderAutoClose,
