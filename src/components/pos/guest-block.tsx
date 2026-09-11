@@ -17,12 +17,13 @@ export function GuestBlock({ onEdit }: { onEdit: () => void }) {
       className="flex min-h-tap min-w-0 flex-1 items-center gap-1.5 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted"
     >
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-fs-sm font-bold text-foreground">
+        <span className="block truncate text-fs-base font-extrabold leading-tight text-foreground">
           {guest.name || tableName || "Guest Name"}
         </span>
-        <span className="block truncate text-fs-xs text-muted-foreground">
+        <span className="block truncate text-fs-xs font-semibold text-muted-foreground">
           {guest.phone || "(XXX) XXX-XXXX"} · {orderType}
         </span>
+
       </span>
       <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
     </button>

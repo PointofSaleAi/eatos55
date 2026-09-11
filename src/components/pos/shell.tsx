@@ -240,7 +240,7 @@ export function ScreenHeader({
     <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <div className="flex min-w-0 items-center gap-2">
-          {back ? <BackButton fallbackTo={backTo} /> : <MenuButton className="-ml-1" />}
+          {back ? <BackButton fallbackTo={backTo} /> : null}
           <div className="min-w-0">
             <h1 className="truncate t-title text-foreground">{title}</h1>
           </div>
@@ -280,9 +280,8 @@ export function SubHeader({
               fallbackTo={backTo}
               label={backLabel ? `Back to ${backLabel}` : "Go back"}
             />
-          ) : wide ? null : (
-            <MenuButton className="-ml-1" />
-          )}
+          ) : null}
+
           <div className="min-w-0">
             <h1 className="truncate t-title text-foreground">{title}</h1>
           </div>
