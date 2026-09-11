@@ -20,13 +20,13 @@ export function ReceiptCard({
 }) {
   return (
     <div className={cn("relative", className)}>
-      {topAction ? <div className="absolute -right-2 -top-3 z-10">{topAction}</div> : null}
+      {topAction ? <div className="absolute right-1.5 top-1.5 z-10">{topAction}</div> : null}
       <div className="receipt-edge text-surface" aria-hidden />
       <div className="relative overflow-hidden bg-surface px-3 py-3">
         {watermark ? (
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 left-1/2 -translate-x-1/2 select-none text-[6rem] font-black leading-none text-muted-foreground/20"
+            className="pointer-events-none absolute bottom-0 right-2 select-none text-[3.25rem] font-black leading-none text-muted-foreground/10"
           >
             {watermark}
           </span>
