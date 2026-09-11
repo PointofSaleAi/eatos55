@@ -186,6 +186,18 @@ function PaymentMethod() {
     notes?: Record<number, number>,
   ) => {
     haptic("success");
+    if (activeCheck && !lastCheck) {
+      paySplitCheck(activeCheck.id, amount, method, {
+        label,
+        tenderId,
+        ...(tip > 0 ? { tip } : {}),
+        ...(notes ? { notes } : {}),
+      });
+      announce(`${activeCheck.label} paid`);
+      toast.success(`${activeCheck.label} paid with ${label}`);
+      setDoneOpen(true);
+      return;
+    }
     commitPayment(method, amount, {
       label,
       tenderId,
@@ -193,7 +205,7 @@ function PaymentMethod() {
       ...(notes ? { notes } : {}),
     });
     announce("Payment complete");
-    toast.success(`Paid in full with ${label}`);
+    toast.success(activeCheck ? `${activeCheck.label} paid, check closed` : `Paid in full with ${label}`);
     setDoneOpen(true);
   };
 
