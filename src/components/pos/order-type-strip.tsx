@@ -38,7 +38,7 @@ export function OrderTypeStrip({
               aria-pressed={active}
               onClick={() => onSelect(t)}
               className={cn(
-                "flex min-h-tap shrink-0 items-center justify-center gap-1.5 rounded-row px-3 text-fs-xs font-extrabold uppercase tracking-[-0.02em] transition-colors",
+                "flex min-h-ctl-md shrink-0 items-center justify-center gap-1.5 rounded-row px-2.5 text-fs-xs font-extrabold uppercase tracking-[-0.02em] transition-colors md:min-h-tap md:px-3",
                 active
                   ? "border-2 border-foreground bg-surface text-foreground shadow-sm"
                   : "border border-transparent bg-muted text-muted-foreground hover:bg-secondary",

@@ -76,7 +76,7 @@ function NewOrder() {
       >
       <div className="shrink-0 border-b border-border bg-surface px-3 pb-2 pt-2.5">
 
-        <div className="flex items-start gap-2">
+        <div className="flex items-center gap-2">
           <MenuButton className="-ml-1 size-9 shrink-0 rounded-card border border-border" />
 
           {showMenu ? (
@@ -107,7 +107,10 @@ function NewOrder() {
               ))}
             </div>
           ) : (
-            <GuestBlock onEdit={() => setGuestOpen(true)} />
+            <>
+              <GuestBlock onEdit={() => setGuestOpen(true)} />
+              {!wide ? <OrderActionButtons compact /> : null}
+            </>
           )}
 
           <div className="flex shrink-0 items-center gap-0.5">
@@ -136,14 +139,14 @@ function NewOrder() {
         </div>
 
         {!wide ? (
-          <div className="mt-2 grid grid-cols-2 gap-2">
+          <div className="mt-1.5 grid grid-cols-2 gap-2">
             {(["menu", "order"] as const).map((t) => (
               <button
                 key={t}
                 type="button"
                 onClick={() => setTab(t)}
                 className={cn(
-                  "min-h-ctl-lg rounded-pill text-fs-sm font-extrabold uppercase transition-colors",
+                  "h-9 rounded-pill text-fs-xs font-extrabold uppercase transition-colors",
                   t === tab
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-secondary",
