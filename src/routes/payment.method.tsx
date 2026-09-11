@@ -113,6 +113,11 @@ function PaymentMethod() {
     removePartialPayment,
     settings,
     commitPayment,
+    splitChecks,
+    activeSplitCheckId,
+    setActiveSplitCheck,
+    paySplitCheck,
+    clearSplitChecks,
   } = usePos();
   const announce = useAnnounce();
   const ttpDevice = useTapToPayAvailable();
@@ -125,7 +130,17 @@ function PaymentMethod() {
   }, [wide, methods, navigate]);
   const ttpEnabled = (settings.tenders?.["tap-to-pay"] ?? true) && ttpDevice.available;
   const orderNumber = tickets.length + 1;
-  const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
+  // A split check is paid one child at a time; the last one clears the order.
+  const unpaidChecks = splitChecks.filter((c) => !c.paid);
+  const activeCheck =
+    splitChecks.find((c) => c.id === activeSplitCheckId && !c.paid) ?? unpaidChecks[0] ?? null;
+  const orderDue = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
+  const lastCheck = activeCheck ? unpaidChecks.length <= 1 : false;
+  const due = activeCheck
+    ? lastCheck
+      ? orderDue
+      : Math.min(activeCheck.total, orderDue)
+    : orderDue;
   const nothingToPay = cart.length === 0;
 
   const [selected, setSelected] = useState<string | null>(null);
@@ -171,6 +186,18 @@ function PaymentMethod() {
     notes?: Record<number, number>,
   ) => {
     haptic("success");
+    if (activeCheck && !lastCheck) {
+      paySplitCheck(activeCheck.id, amount, method, {
+        label,
+        tenderId,
+        ...(tip > 0 ? { tip } : {}),
+        ...(notes ? { notes } : {}),
+      });
+      announce(`${activeCheck.label} paid`);
+      toast.success(`${activeCheck.label} paid with ${label}`);
+      setDoneOpen(true);
+      return;
+    }
     commitPayment(method, amount, {
       label,
       tenderId,
@@ -178,7 +205,7 @@ function PaymentMethod() {
       ...(notes ? { notes } : {}),
     });
     announce("Payment complete");
-    toast.success(`Paid in full with ${label}`);
+    toast.success(activeCheck ? `${activeCheck.label} paid, check closed` : `Paid in full with ${label}`);
     setDoneOpen(true);
   };
 
@@ -216,6 +243,16 @@ function PaymentMethod() {
 
   const finish = (cfg: RefConfig, value: string) => {
     haptic("success");
+    if (activeCheck && !lastCheck) {
+      paySplitCheck(activeCheck.id, due, cfg.method, {
+        label: cfg.title,
+        ...(selected ? { tenderId: selected as TenderId } : {}),
+      });
+      announce(`${activeCheck.label} paid`);
+      toast.success(cfg.success(value));
+      setDoneOpen(true);
+      return;
+    }
     commitPayment(cfg.method, due, {
       label: cfg.title,
       ...(selected ? { tenderId: selected as TenderId } : {}),
@@ -639,6 +676,38 @@ function PaymentMethod() {
       <div className="shrink-0 px-[var(--pad-screen)] pt-3">
         <h2 className="truncate text-fs-lg font-extrabold text-foreground">Payment Method</h2>
 
+        {/* Split checks are taken one at a time; tap a check to make it the one being paid. */}
+        {splitChecks.length ? (
+          <div className="no-scrollbar mt-2 flex gap-1.5 overflow-x-auto">
+            {splitChecks.map((c) => {
+              const isActive = activeCheck?.id === c.id;
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  disabled={c.paid}
+                  onClick={() => setActiveSplitCheck(c.id)}
+                  className={cn(
+                    "flex min-h-ctl-md shrink-0 flex-col items-start justify-center rounded-row border px-3 py-1 text-left transition-colors",
+                    c.paid
+                      ? "border-border bg-muted text-muted-foreground"
+                      : isActive
+                        ? "border-accent bg-accent/10 text-foreground"
+                        : "border-border bg-surface text-foreground hover:bg-muted",
+                  )}
+                >
+                  <span className="text-fs-xs font-extrabold uppercase">
+                    {c.label}
+                    {c.paid ? " · paid" : ""}
+                  </span>
+                  <span className="text-fs-xs font-bold tabular-nums">{money(c.total)}</span>
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
+
+
         {/*
          * Requirements 2.1 to 2.5: this button is always here, always first,
          * always above the fold, always with the exact same label, whether or
@@ -804,9 +873,16 @@ function PaymentMethod() {
 
       <PaymentCompleteDialog
         open={doneOpen}
+        {...(unpaidChecks.length
+          ? { doneLabel: `Next check · ${unpaidChecks[0]!.label} ${money(unpaidChecks[0]!.total)}` }
+          : {})}
         onDone={() => {
           setDoneOpen(false);
           setSelected(null);
+          setChosenTip(0);
+          // Split checks stay on this screen until every child check is paid.
+          if (unpaidChecks.length) return;
+          clearSplitChecks();
           navigate({ to: "/order/new" });
         }}
       />
@@ -904,7 +980,7 @@ function PaymentMethod() {
           onClose={() => setSplitOpen(false)}
           onProceed={(result) => {
             setSplitOpen(false);
-            setSelected("split");
+            setSelected(null);
             if (result.mode !== "standard") {
               toast.info(
                 `${result.checks} checks · first check ${money(result.firstTotal)} · choose a tender`,

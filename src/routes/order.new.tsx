@@ -77,18 +77,27 @@ function NewOrder() {
       <div className="shrink-0 border-b border-border bg-surface px-3 pb-2 pt-2.5">
 
         <div className={cn("flex items-center", showMenu ? "gap-2" : "gap-1")}>
-
-
-
-
-          {showMenu ? (
-            <div
-              className={cn(
-                "no-scrollbar flex min-w-0 flex-1 items-stretch gap-1.5",
-                wide ? "flex-wrap" : "flex-nowrap overflow-x-auto",
-              )}
-            >
-
+          {/* Phone: the Menu / Order switch owns the top row. */}
+          {!wide ? (
+            <div className="grid min-w-0 flex-1 grid-cols-2 gap-1.5">
+              {(["menu", "order"] as const).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setTab(t)}
+                  className={cn(
+                    "h-9 rounded-pill text-fs-xs font-extrabold uppercase transition-colors",
+                    t === tab
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:bg-secondary",
+                  )}
+                >
+                  {t === "menu" ? "Menu" : `Order${totals.count ? ` · ${totals.count}` : ""}`}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="no-scrollbar flex min-w-0 flex-1 flex-wrap items-stretch gap-1.5">
               {menus.map((m) => (
                 <button
                   key={m.id}
@@ -108,11 +117,6 @@ function NewOrder() {
                 </button>
               ))}
             </div>
-          ) : (
-            <>
-              <GuestBlock onEdit={() => setGuestOpen(true)} />
-              {!wide ? <OrderActionButtons compact /> : null}
-            </>
           )}
 
           <div className="flex shrink-0 items-center gap-0.5">
@@ -140,24 +144,35 @@ function NewOrder() {
           </div>
         </div>
 
+        {/* Phone: the menu pills sit with their categories, right above the items. */}
         {!wide ? (
-          <div className="mt-1.5 grid grid-cols-2 gap-2">
-            {(["menu", "order"] as const).map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setTab(t)}
-                className={cn(
-                  "h-9 rounded-pill text-fs-xs font-extrabold uppercase transition-colors",
-                  t === tab
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-secondary",
-                )}
-              >
-                {t === "menu" ? "Menu" : `Order${totals.count ? ` · ${totals.count}` : ""}`}
-              </button>
-            ))}
-          </div>
+          showMenu ? (
+            <div className="no-scrollbar mt-1.5 flex flex-nowrap items-stretch gap-1.5 overflow-x-auto">
+              {menus.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveMenu(m.id);
+                    setCategory(m.categories[0]!);
+                  }}
+                  className={cn(
+                    "flex h-9 shrink-0 items-center justify-center rounded-pill px-3 text-center text-[0.6875rem] font-extrabold uppercase leading-[1.05] tracking-tight transition-colors",
+                    m.id === activeMenu
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:bg-secondary",
+                  )}
+                >
+                  {m.name}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-1.5 flex items-center gap-1">
+              <GuestBlock onEdit={() => setGuestOpen(true)} />
+              <OrderActionButtons compact />
+            </div>
+          )
         ) : null}
 
         {showMenu ? (

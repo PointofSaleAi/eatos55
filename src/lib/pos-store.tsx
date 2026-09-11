@@ -544,6 +544,14 @@ export type PartialPayment = {
   amount: number;
 };
 
+/** One child check of a split, paid in sequence. */
+export type SplitCheck = {
+  id: string;
+  label: string;
+  total: number;
+  paid: boolean;
+};
+
 export type LastPayment = {
   ticketId: string;
   method: TenderMethod;
@@ -707,6 +715,25 @@ type Store = {
   removePartialPayment: (id: string) => void;
   resetPayments: () => void;
 
+  /** Child checks of a split, paid one after the other. Empty when not split. */
+  splitChecks: SplitCheck[];
+  activeSplitCheckId: string | null;
+  setSplitChecks: (checks: { label: string; total: number }[]) => void;
+  setActiveSplitCheck: (id: string) => void;
+  clearSplitChecks: () => void;
+  /** Take one child check as a part payment and move to the next unpaid one. */
+  paySplitCheck: (
+    id: string,
+    amount: number,
+    method: TenderMethod,
+    opts?: {
+      label?: string;
+      tenderId?: TenderId;
+      tip?: number;
+      notes?: Record<number, number>;
+    },
+  ) => void;
+
   settings: AppSettings;
   updateSettings: (patch: Partial<AppSettings>) => void;
   /** True when the signed-in role is allowed to change settings. */
@@ -828,6 +855,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [managerUnlocked, setManagerUnlocked] = useState(false);
   const [lastPayment, setLastPayment] = useState<LastPayment>(null);
   const [partialPayments, setPartialPayments] = useState<PartialPayment[]>([]);
+  const [splitChecks, setSplitChecksState] = useState<SplitCheck[]>([]);
+  const [activeSplitCheckId, setActiveSplitCheckId] = useState<string | null>(null);
   const paidSoFar =
     Math.round(partialPayments.reduce((n, p) => n + p.amount, 0) * 100) / 100;
 
@@ -992,6 +1021,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
             serviceCharge,
             orderDiscountPercent,
             partialPayments,
+            splitChecks,
+            activeSplitCheckId,
             mode,
           },
           savedAt: Date.now(),
@@ -1015,6 +1046,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
           setServiceCharge(o.serviceCharge ?? 0);
           setOrderDiscountPercent(o.orderDiscountPercent ?? 0);
           setPartialPayments((o.partialPayments as PartialPayment[]) ?? []);
+          setSplitChecksState((o.splitChecks as SplitCheck[]) ?? []);
+          setActiveSplitCheckId(o.activeSplitCheckId ?? null);
           if (o.mode) setMode(o.mode as MenuMode);
         }
         return entry.path;
@@ -1305,6 +1338,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setCart([]);
         setActiveTicketId(null);
         setPartialPayments([]);
+        setSplitChecksState([]);
+        setActiveSplitCheckId(null);
         setOrderNotes("");
         setComped(false);
         setNoTax(false);
@@ -1470,6 +1505,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
         });
 
         setPartialPayments([]);
+        setSplitChecksState([]);
+        setActiveSplitCheckId(null);
         setCart([]);
         setActiveTicketId(null);
         return id;
@@ -1485,6 +1522,53 @@ export function PosProvider({ children }: { children: ReactNode }) {
       removePartialPayment: (id) =>
         setPartialPayments((list) => list.filter((p) => p.id !== id)),
       resetPayments: () => setPartialPayments([]),
+
+      splitChecks,
+      activeSplitCheckId,
+      setSplitChecks: (checks) => {
+        const rows = checks.map((c, i) => ({
+          id: `sc-${i}`,
+          label: c.label,
+          total: c.total,
+          paid: false,
+        }));
+        setSplitChecksState(rows);
+        setActiveSplitCheckId(rows[0]?.id ?? null);
+      },
+      setActiveSplitCheck: (id) => setActiveSplitCheckId(id),
+      clearSplitChecks: () => {
+        setSplitChecksState([]);
+        setActiveSplitCheckId(null);
+      },
+      paySplitCheck: (id, amount, method, opts) => {
+        const tip = Math.max(0, opts?.tip ?? 0);
+        const label = opts?.label ?? (method === "cash" ? "Cash" : "Card");
+        const check = splitChecks.find((c) => c.id === id);
+        setPartialPayments((list) => [
+          ...list,
+          {
+            id: `pp-${Date.now()}-${list.length}`,
+            method,
+            label: check ? `${label} · ${check.label}` : label,
+            amount: Math.round((amount + tip) * 100) / 100,
+          },
+        ]);
+        const next = splitChecks.map((c) => (c.id === id ? { ...c, paid: true } : c));
+        setSplitChecksState(next);
+        setActiveSplitCheckId(next.find((c) => !c.paid)?.id ?? null);
+        setLastPayment({
+          ticketId: activeTicketId ?? "",
+          method,
+          ...(opts?.tenderId ? { tenderId: opts.tenderId } : {}),
+          total: Math.round((amount + tip) * 100) / 100,
+          tendered: Math.round((amount + tip) * 100) / 100,
+          change: 0,
+          orderNumber: tickets.length + 1,
+          guestName: guest.name,
+          ...(tip ? { tip } : {}),
+          ...(opts?.notes && Object.keys(opts.notes).length ? { notes: opts.notes } : {}),
+        });
+      },
 
       settings,
       updateSettings: (patch) => setSettings((s) => ({ ...s, ...patch })),
@@ -1538,6 +1622,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
     lastPayment,
     paidSoFar,
     partialPayments,
+    splitChecks,
+    activeSplitCheckId,
   ]);
 
   return <PosContext.Provider value={value}>{children}</PosContext.Provider>;

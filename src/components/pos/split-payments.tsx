@@ -41,8 +41,18 @@ export function SplitPayments({
   onClose: () => void;
   onProceed?: (result: SplitResult) => void;
 }) {
-  const { cart, totals, tickets, guest, activeTable, tableGroupLabel, orderDiscountPercent, setOrderDiscountPercent } =
-    usePos();
+  const {
+    cart,
+    totals,
+    tickets,
+    guest,
+    activeTable,
+    tableGroupLabel,
+    orderDiscountPercent,
+    setOrderDiscountPercent,
+    setSplitChecks,
+    clearSplitChecks,
+  } = usePos();
   const checkNumber = tickets.length + 1;
 
   const [arrivedAt] = useState(() =>
@@ -277,7 +287,7 @@ export function SplitPayments({
                         ) : null
                       }
                     >
-                      <p className="text-center text-fs-sm font-extrabold text-foreground">
+                      <p className="truncate pr-9 text-fs-sm font-extrabold text-foreground">
                         Check {checkNumber} {c.letter}
                       </p>
                       <div className="mt-2 space-y-1 border-t border-dashed border-border pt-2">
@@ -295,7 +305,7 @@ export function SplitPayments({
                                 {l.shareLabel}
                               </span>
                               <span className="min-w-0 flex-1">
-                                <span className="block text-fs-sm font-bold text-foreground">
+                                <span className="block truncate text-fs-sm font-bold text-foreground">
                                   {l.name}
                                 </span>
                                 {l.modifiers.map((m) => (
@@ -450,6 +460,14 @@ export function SplitPayments({
               type="button"
               onClick={() => {
                 setDisclaimer(false);
+                if (mode === "standard" || breakdown.length === 0) clearSplitChecks();
+                else
+                  setSplitChecks(
+                    breakdown.map((c) => ({
+                      label: `Check ${checkNumber}${c.letter}`,
+                      total: c.total,
+                    })),
+                  );
                 onProceed?.({
                   mode,
                   checks: count,

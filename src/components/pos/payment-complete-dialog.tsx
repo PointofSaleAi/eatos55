@@ -22,9 +22,12 @@ const tiles: { id: Receipt; label: string; icon: typeof Mail }[] = [
 export function PaymentCompleteCard({
   onDone,
   className,
+  doneLabel = "New Order",
 }: {
   onDone: () => void;
   className?: string;
+  /** Label of the closing action, e.g. the next check of a split. */
+  doneLabel?: string;
 }) {
   const { lastPayment, guest, settings } = usePos();
   const [choice, setChoice] = useState<Receipt | null>(null);
@@ -197,7 +200,7 @@ export function PaymentCompleteCard({
               : "bg-shell text-shell-foreground",
           )}
         >
-          New Order
+          {doneLabel}
         </button>
       </div>
     </div>
@@ -207,9 +210,11 @@ export function PaymentCompleteCard({
 export function PaymentCompleteDialog({
   open,
   onDone,
+  doneLabel,
 }: {
   open: boolean;
   onDone: () => void;
+  doneLabel?: string;
 }) {
   return (
     <Dialog open={open} onOpenChange={(next) => (next ? null : onDone())}>
@@ -217,7 +222,7 @@ export function PaymentCompleteDialog({
         hideClose
         className="max-h-[92dvh] w-[min(40rem,94vw)] max-w-none gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0"
       >
-        <PaymentCompleteCard onDone={onDone} />
+        <PaymentCompleteCard onDone={onDone} {...(doneLabel ? { doneLabel } : {})} />
       </DialogContent>
     </Dialog>
   );
