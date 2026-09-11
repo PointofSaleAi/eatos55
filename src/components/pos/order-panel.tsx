@@ -24,9 +24,106 @@ import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { PinSheet } from "@/components/pos/pin-sheet";
 
 /**
- * Right-hand order area: guest identity, order level actions, service type,
- * order number / server, order notes, the running items and the totals footer.
- * Used both as the landscape sidebar and as the phone "Order" tab.
+ * The five order level actions (discount, transfer, tax exempt, comp, no
+ * charge) plus their sheets. Rendered in the wide side panel and, on phones,
+ * in the screen header so they never wrap or steal height from the item list.
+ */
+export function OrderActionButtons({
+  compact,
+  onDiscount,
+}: {
+  compact?: boolean;
+  onDiscount?: (name: string) => void;
+}) {
+  const { totals, noTax, setNoTax, comped, setComped, cart, cancelOrder, setOrderDiscountPercent } =
+    usePos();
+  const [guestOpen, setGuestOpen] = useState(false);
+  const [discountOpen, setDiscountOpen] = useState(false);
+  const [pinOpen, setPinOpen] = useState(false);
+
+  return (
+    <>
+      <div className={cn("flex shrink-0 items-center", compact ? "gap-0.5" : "gap-1")}>
+        <OrderAction
+          label="Discount"
+          compact={compact}
+          active={totals.discount > 0}
+          onPress={() => setDiscountOpen(true)}
+        >
+          <BadgePercent className={compact ? "size-4" : "size-5"} />
+        </OrderAction>
+        <OrderAction label="Transfer check" compact={compact} onPress={() => setGuestOpen(true)}>
+          <ArrowLeftRight className={compact ? "size-4" : "size-5"} />
+        </OrderAction>
+        <OrderAction
+          label={noTax ? "Tax exempt on" : "Tax exempt"}
+          compact={compact}
+          active={noTax}
+          onPress={() => {
+            setNoTax(!noTax);
+            toast.success(noTax ? "Tax applied" : "Order marked tax exempt");
+          }}
+        >
+          <ReceiptText className={compact ? "size-4" : "size-5"} />
+        </OrderAction>
+        <OrderAction
+          label={comped ? "Comp on" : "Comp order"}
+          compact={compact}
+          active={comped}
+          onPress={() => {
+            if (comped) {
+              setComped(false);
+              toast.success("Comp removed");
+              return;
+            }
+            setPinOpen(true);
+          }}
+        >
+          <span className={cn("font-extrabold leading-none", compact ? "text-fs-sm" : "text-fs-base")}>
+            C
+          </span>
+        </OrderAction>
+        <OrderAction
+          label="No charge"
+          compact={compact}
+          onPress={() => {
+            if (!cart.length) return;
+            cancelOrder();
+            toast.success("Order voided");
+          }}
+        >
+          <CircleDollarSign className={compact ? "size-4" : "size-5"} />
+        </OrderAction>
+      </div>
+
+      <GuestSheet open={guestOpen} onClose={() => setGuestOpen(false)} />
+      <DiscountSheet
+        open={discountOpen}
+        selected={null}
+        onClose={() => setDiscountOpen(false)}
+        onPick={(d) => {
+          onDiscount?.(d.name);
+          setOrderDiscountPercent(d.percent);
+          setDiscountOpen(false);
+        }}
+      />
+      <PinSheet
+        open={pinOpen}
+        onOpenChange={setPinOpen}
+        onSubmit={() => {
+          setPinOpen(false);
+          setComped(true);
+          toast.success("Order comped");
+        }}
+      />
+    </>
+  );
+}
+
+/**
+ * Right-hand order area: service type, order number / server / notes, the
+ * running items and the totals footer. On phones the guest identity and the
+ * action icons live in the screen header; the wide side panel keeps them here.
  */
 export function OrderPanel({ wide }: { wide: boolean }) {
   const navigate = useNavigate();
@@ -40,14 +137,10 @@ export function OrderPanel({ wide }: { wide: boolean }) {
     cart,
     changeQty,
     totals,
-    cancelOrder,
     noTax,
-    setNoTax,
     comped,
-    setComped,
     orderNotes,
     setOrderNotes,
-    setOrderDiscountPercent,
     session,
     activeTicketId,
     tickets,
@@ -59,136 +152,84 @@ export function OrderPanel({ wide }: { wide: boolean }) {
 
   const [guestOpen, setGuestOpen] = useState(false);
   const [typeForSheet, setTypeForSheet] = useState<ServiceOrderType | undefined>(undefined);
-  const [discountOpen, setDiscountOpen] = useState(false);
   const [discountName, setDiscountName] = useState<string | null>(null);
-  const [pinOpen, setPinOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
 
   const orderNumber = activeTicketId
     ? (tickets.find((t) => t.id === activeTicketId)?.number ?? null)
     : null;
 
-  // Once the order has lines the identity block and notes collapse so the item
-  // list gets the height back. Nothing is removed, only condensed.
-  const dense = cart.length > 0;
-  const showNotesField = !dense || notesOpen;
+  const showTableChip = orderType === "Dine In" && activeTable;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-      {/* Guest identity and order level actions */}
+      {/* Header block. On phones the guest identity and action icons live in
+          the screen header, so only the wide panel renders them here. */}
       <div className="shrink-0 border-b border-border px-4 pb-2 pt-2">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setGuestOpen(true)}
-            aria-label="Edit guest details"
-            className="min-w-0 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted"
-          >
-            <span className="block truncate text-fs-lg font-extrabold leading-tight text-foreground">
-              {guest.name || tableGroupLabel(activeTable) || "Guest Name"}
-            </span>
-            {dense ? (
+        {wide ? (
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setGuestOpen(true)}
+              aria-label="Edit guest details"
+              className="min-w-0 rounded-row px-1 py-0.5 text-left transition-colors hover:bg-muted"
+            >
+              <span className="block truncate text-fs-lg font-extrabold leading-tight text-foreground">
+                {guest.name || tableGroupLabel(activeTable) || "Guest Name"}
+              </span>
               <span className="block truncate text-fs-xs font-bold leading-tight text-muted-foreground">
                 {guest.phone || "(XXX) XXX-XXXX"}
                 {" · "}
                 {arrivedAt ? `Arrived ${arrivedAt}` : "Not started"}
               </span>
-            ) : (
-              <>
-                <span className="block truncate text-fs-sm leading-tight text-muted-foreground">
-                  {guest.phone || "(XXX) XXX-XXXX"}
-                </span>
-                <span className="block truncate text-fs-xs font-bold uppercase leading-tight text-muted-foreground">
-                  {arrivedAt ? `Arrived at ${arrivedAt}` : "Not started"}
-                </span>
-              </>
-            )}
-          </button>
-
-          <div className="grid shrink-0 grid-cols-3 gap-1">
-            <OrderAction
-              label="Discount"
-              active={totals.discount > 0}
-              onPress={() => setDiscountOpen(true)}
-            >
-              <BadgePercent className="size-5" />
-            </OrderAction>
-            <OrderAction label="Transfer check" onPress={() => setGuestOpen(true)}>
-              <ArrowLeftRight className="size-5" />
-            </OrderAction>
-            <OrderAction
-              label={noTax ? "Tax exempt on" : "Tax exempt"}
-              active={noTax}
-              onPress={() => {
-                setNoTax(!noTax);
-                toast.success(noTax ? "Tax applied" : "Order marked tax exempt");
-              }}
-            >
-              <ReceiptText className="size-5" />
-            </OrderAction>
-            <OrderAction
-              label={comped ? "Comp on" : "Comp order"}
-              active={comped}
-              onPress={() => {
-                if (comped) {
-                  setComped(false);
-                  toast.success("Comp removed");
-                  return;
-                }
-                setPinOpen(true);
-              }}
-            >
-              <span className="text-fs-base font-extrabold leading-none">C</span>
-            </OrderAction>
-            <OrderAction
-              label="No charge"
-              onPress={() => {
-                if (!cart.length) return;
-                cancelOrder();
-                toast.success("Order voided");
-              }}
-            >
-              <CircleDollarSign className="size-5" />
-            </OrderAction>
+            </button>
+            <OrderActionButtons onDiscount={setDiscountName} />
           </div>
-        </div>
-
-        {/* Service type strip: full set, scrolls sideways, opens guest info */}
-        {showTypeStrip ? (
-          <OrderTypeStrip
-            className="mt-2.5"
-            value={orderType}
-            onSelect={(t) => {
-              setOrderType(t);
-              setTypeForSheet(t);
-              setGuestOpen(true);
-            }}
-          />
         ) : null}
 
-        {/* Table and arrival time, as on the phone order summary */}
-        {orderType === "Dine In" && activeTable ? (
-          <div className="mt-2 flex items-center justify-between gap-2 rounded-row bg-muted px-3 py-1.5">
-            <span className="flex min-w-0 items-center gap-2">
-              <Grid2x2 className="size-4 shrink-0 text-foreground" aria-hidden />
-              <span className="truncate text-fs-sm font-extrabold text-foreground">
-                {tableGroupLabel(activeTable) ?? activeTable}
+        {/* Service type and the table / arrival chip share one scrolling row */}
+        {showTypeStrip || showTableChip ? (
+          <div className="mt-2 flex items-center gap-2">
+            {showTypeStrip ? (
+              <OrderTypeStrip
+                className="min-w-0 flex-1"
+                value={orderType}
+                onSelect={(t) => {
+                  setOrderType(t);
+                  setTypeForSheet(t);
+                  setGuestOpen(true);
+                }}
+              />
+            ) : null}
+            {showTableChip ? (
+              <span className="flex shrink-0 items-center gap-1.5 rounded-pill bg-foreground px-2.5 py-1 text-fs-xs font-extrabold text-background">
+                <Grid2x2 className="size-3.5" aria-hidden />
+                <span className="max-w-16 truncate">{tableGroupLabel(activeTable) ?? activeTable}</span>
+                <Footprints className="size-3.5" aria-hidden />
+                {arrivedAt || "--"}
               </span>
-            </span>
-            <span className="flex shrink-0 items-center gap-1.5 rounded-pill bg-foreground px-2.5 py-1 text-fs-xs font-extrabold text-background">
-              <Footprints className="size-3.5" aria-hidden />
-              {arrivedAt || "--"}
-            </span>
+            ) : null}
           </div>
         ) : null}
 
-        {/* Order number and server */}
-        <div className="mt-2 flex items-center justify-between text-fs-xs font-bold uppercase text-muted-foreground">
-          <span>Order# {orderNumber ?? "--"}</span>
-          <span className="truncate">{session.name}</span>
+        {/* Order number, notes shortcut and server share one row */}
+        <div className="mt-1.5 flex items-center justify-between gap-2 text-fs-xs font-bold uppercase text-muted-foreground">
+          <span className="shrink-0">Order# {orderNumber ?? "--"}</span>
+          <span className="flex min-w-0 items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setNotesOpen(true)}
+              aria-label="Order notes"
+              title="Order notes"
+              className="grid size-7 shrink-0 place-items-center rounded-pill bg-muted text-muted-foreground transition-colors hover:bg-secondary"
+            >
+              <NotebookPen className="size-3.5" />
+            </button>
+            <span className="truncate">{session.name}</span>
+          </span>
         </div>
 
-        {showNotesField ? (
+        {notesOpen ? (
           <label className="mt-1.5 flex items-center gap-2 rounded-row bg-muted px-3">
             <NotebookPen className="size-4 shrink-0 text-muted-foreground" />
             <input
@@ -196,24 +237,24 @@ export function OrderPanel({ wide }: { wide: boolean }) {
               onChange={(e) => setOrderNotes(e.target.value)}
               placeholder="Order Notes"
               aria-label="Order notes"
-              autoFocus={notesOpen}
+              autoFocus
               onBlur={() => setNotesOpen(false)}
-              className="min-h-tap w-full bg-transparent text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
+              className="min-h-ctl-md w-full bg-transparent text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
           </label>
-        ) : (
+        ) : orderNotes ? (
           <button
             type="button"
             onClick={() => setNotesOpen(true)}
-            aria-label="Order notes"
+            aria-label="Edit order notes"
             className="mt-1.5 flex min-h-ctl-md w-full items-center gap-2 rounded-row bg-muted px-3 text-left"
           >
             <NotebookPen className="size-4 shrink-0 text-muted-foreground" />
             <span className="min-w-0 flex-1 truncate text-fs-xs font-bold text-muted-foreground">
-              {orderNotes || "Order Notes"}
+              {orderNotes}
             </span>
           </button>
-        )}
+        ) : null}
       </div>
 
 
@@ -349,25 +390,6 @@ export function OrderPanel({ wide }: { wide: boolean }) {
           setTypeForSheet(undefined);
         }}
       />
-      <DiscountSheet
-        open={discountOpen}
-        selected={discountName}
-        onClose={() => setDiscountOpen(false)}
-        onPick={(d) => {
-          setDiscountName(d.name);
-          setOrderDiscountPercent(d.percent);
-          setDiscountOpen(false);
-        }}
-      />
-      <PinSheet
-        open={pinOpen}
-        onOpenChange={setPinOpen}
-        onSubmit={() => {
-          setPinOpen(false);
-          setComped(true);
-          toast.success("Order comped");
-        }}
-      />
     </div>
   );
 }
@@ -375,11 +397,13 @@ export function OrderPanel({ wide }: { wide: boolean }) {
 function OrderAction({
   label,
   active,
+  compact,
   onPress,
   children,
 }: {
   label: string;
-  active?: boolean;
+  active?: boolean | undefined;
+  compact?: boolean | undefined;
   onPress: () => void;
   children: React.ReactNode;
 }) {
@@ -390,7 +414,8 @@ function OrderAction({
       title={label}
       onClick={onPress}
       className={cn(
-        "grid size-9 shrink-0 place-items-center rounded-pill transition-colors",
+        "grid shrink-0 place-items-center rounded-pill transition-colors",
+        compact ? "size-7" : "size-9",
         active ? "bg-accent text-accent-foreground" : "bg-muted text-foreground hover:bg-secondary",
       )}
 
