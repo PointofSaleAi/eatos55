@@ -76,6 +76,9 @@ function NewOrder() {
       >
       <div className="shrink-0 border-b border-border bg-surface px-3 pb-2 pt-2.5">
 
+        <div className={cn("flex items-center", showMenu ? "gap-2" : "gap-1")}>
+
+
         <div className="flex items-center gap-2">
 
 
