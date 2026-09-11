@@ -113,6 +113,11 @@ function PaymentMethod() {
     removePartialPayment,
     settings,
     commitPayment,
+    splitChecks,
+    activeSplitCheckId,
+    setActiveSplitCheck,
+    paySplitCheck,
+    clearSplitChecks,
   } = usePos();
   const announce = useAnnounce();
   const ttpDevice = useTapToPayAvailable();
@@ -125,7 +130,17 @@ function PaymentMethod() {
   }, [wide, methods, navigate]);
   const ttpEnabled = (settings.tenders?.["tap-to-pay"] ?? true) && ttpDevice.available;
   const orderNumber = tickets.length + 1;
-  const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
+  // A split check is paid one child at a time; the last one clears the order.
+  const unpaidChecks = splitChecks.filter((c) => !c.paid);
+  const activeCheck =
+    splitChecks.find((c) => c.id === activeSplitCheckId && !c.paid) ?? unpaidChecks[0] ?? null;
+  const orderDue = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
+  const lastCheck = activeCheck ? unpaidChecks.length <= 1 : false;
+  const due = activeCheck
+    ? lastCheck
+      ? orderDue
+      : Math.min(activeCheck.total, orderDue)
+    : orderDue;
   const nothingToPay = cart.length === 0;
 
   const [selected, setSelected] = useState<string | null>(null);
