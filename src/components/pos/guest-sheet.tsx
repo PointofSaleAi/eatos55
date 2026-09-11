@@ -20,7 +20,7 @@ import {
   Warehouse,
   X,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
