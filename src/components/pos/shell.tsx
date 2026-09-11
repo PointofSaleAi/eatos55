@@ -2,7 +2,6 @@ import { Link, useCanGoBack, useRouter, useRouterState } from "@tanstack/react-r
 import {
   Check,
   ChevronLeft,
-  Menu as MenuIcon,
   ClipboardList,
   Columns3,
   LayoutGrid,
@@ -10,6 +9,7 @@ import {
   Settings,
   type LucideIcon,
 } from "lucide-react";
+
 
 import {
   createContext,
@@ -34,35 +34,8 @@ import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
-const NavDrawerContext = createContext<{ open: () => void } | null>(null);
+export { useNavDrawer } from "@/lib/nav-drawer-context";
 
-/** Opens the global navigation drawer from any header. */
-export function useNavDrawer() {
-  return useContext(NavDrawerContext);
-}
-
-/** Burger button that opens the full app navigation drawer. */
-export function MenuButton({ className }: { className?: string }) {
-  const drawer = useNavDrawer();
-  const appChrome = useAppChrome();
-  const wide = useWideLayout();
-  // Landscape has the persistent nav rail, so the burger is phone-only.
-  if (!drawer || !appChrome || wide) return null;
-  return (
-    <button
-      type="button"
-      aria-label="Open navigation"
-      title="Navigation"
-      onClick={drawer.open}
-      className={cn(
-        "grid size-11 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted",
-        className,
-      )}
-    >
-      <MenuIcon className="size-6" />
-    </button>
-  );
-}
 
 /** Pre-login screens: no app chrome (drawer, tabs, clock pulldown). */
 const publicPaths = ["/", "/access/create-account", "/access/forgot-password"];
