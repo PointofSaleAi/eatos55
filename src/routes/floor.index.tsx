@@ -25,7 +25,7 @@ import { StaffPanel } from "@/components/pos/staff-panel";
 import { StatusSheet, type StatusOption } from "@/components/pos/status-sheet";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 
-import { MenuButton, ScreenBody } from "@/components/pos/shell";
+import { ScreenBody } from "@/components/pos/shell";
 
 import {
   DropdownMenu,
@@ -295,7 +295,7 @@ function FloorPlan() {
         <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
             <div className="flex min-w-0 items-center gap-1">
-              <MenuButton className="-ml-2" />
+
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex min-h-tap min-w-0 items-center gap-1 text-fs-xl font-extrabold uppercase text-foreground">
                   <span className="truncate">{floor}</span>

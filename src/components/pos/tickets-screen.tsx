@@ -19,7 +19,7 @@ import {
 
 } from "lucide-react";
 import { useState } from "react";
-import { MenuButton } from "@/components/pos/shell";
+
 
 import { EmptyState, TicketCard } from "@/components/pos/primitives";
 import { SwipeRow } from "@/components/pos/swipe-row";
@@ -225,7 +225,7 @@ export function TicketsScreen({
       {/* Title + controls */}
       <div className="shrink-0 bg-surface px-2 pt-1.5">
         <div className="flex items-center gap-1">
-          {pane ? null : <MenuButton />}
+
           <h1 className="min-w-0 flex-1 truncate text-fs-lg font-extrabold text-foreground">
             Tickets
           </h1>

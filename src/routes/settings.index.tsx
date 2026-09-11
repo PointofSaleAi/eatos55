@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { MenuButton, ScreenBody, useWideLayout } from "@/components/pos/shell";
+import { ScreenBody, useWideLayout } from "@/components/pos/shell";
 import { GroupCard, IconNavRow, type TileColor } from "@/components/pos/settings-rows";
 import { EmptyState } from "@/components/pos/primitives";
 import { PinSheet } from "@/components/pos/pin-sheet";
@@ -149,8 +149,8 @@ function SettingsHub() {
     <>
       <ScreenBody className="pt-5">
         <div className="flex min-w-0 items-center gap-1">
-          <MenuButton className="-ml-2" />
           <h1 className="truncate text-fs-xl font-extrabold text-foreground">Settings</h1>
+
         </div>
 
         <button

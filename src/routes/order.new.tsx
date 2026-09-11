@@ -3,7 +3,7 @@ import { brand } from "@/lib/brand";
 import { Ban, MoreVertical, Plus, Search, Tag } from "lucide-react";
 import { useRef, useState } from "react";
 import { GuestBlock } from "@/components/pos/guest-block";
-import { MenuButton, useWideLayout } from "@/components/pos/shell";
+import { useWideLayout } from "@/components/pos/shell";
 import { GuestSheet } from "@/components/pos/guest-sheet";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { MoreSheet } from "@/components/pos/more-sheet";
@@ -77,7 +77,7 @@ function NewOrder() {
       <div className="shrink-0 border-b border-border bg-surface px-3 pb-2 pt-2.5">
 
         <div className="flex items-center gap-2">
-          <MenuButton className="-ml-1 size-9 shrink-0 rounded-card border border-border" />
+
 
           {showMenu ? (
             <div
