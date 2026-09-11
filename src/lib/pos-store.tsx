@@ -544,6 +544,14 @@ export type PartialPayment = {
   amount: number;
 };
 
+/** One child check of a split, paid in sequence. */
+export type SplitCheck = {
+  id: string;
+  label: string;
+  total: number;
+  paid: boolean;
+};
+
 export type LastPayment = {
   ticketId: string;
   method: TenderMethod;
@@ -706,6 +714,25 @@ type Store = {
   addPartialPayment: (amount: number, method?: TenderMethod, label?: string) => void;
   removePartialPayment: (id: string) => void;
   resetPayments: () => void;
+
+  /** Child checks of a split, paid one after the other. Empty when not split. */
+  splitChecks: SplitCheck[];
+  activeSplitCheckId: string | null;
+  setSplitChecks: (checks: { label: string; total: number }[]) => void;
+  setActiveSplitCheck: (id: string) => void;
+  clearSplitChecks: () => void;
+  /** Take one child check as a part payment and move to the next unpaid one. */
+  paySplitCheck: (
+    id: string,
+    amount: number,
+    method: TenderMethod,
+    opts?: {
+      label?: string;
+      tenderId?: TenderId;
+      tip?: number;
+      notes?: Record<number, number>;
+    },
+  ) => void;
 
   settings: AppSettings;
   updateSettings: (patch: Partial<AppSettings>) => void;
