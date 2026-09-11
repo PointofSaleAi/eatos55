@@ -873,9 +873,16 @@ function PaymentMethod() {
 
       <PaymentCompleteDialog
         open={doneOpen}
+        {...(unpaidChecks.length
+          ? { doneLabel: `Next check · ${unpaidChecks[0]!.label} ${money(unpaidChecks[0]!.total)}` }
+          : {})}
         onDone={() => {
           setDoneOpen(false);
           setSelected(null);
+          setChosenTip(0);
+          // Split checks stay on this screen until every child check is paid.
+          if (unpaidChecks.length) return;
+          clearSplitChecks();
           navigate({ to: "/order/new" });
         }}
       />
@@ -973,7 +980,7 @@ function PaymentMethod() {
           onClose={() => setSplitOpen(false)}
           onProceed={(result) => {
             setSplitOpen(false);
-            setSelected("split");
+            setSelected(null);
             if (result.mode !== "standard") {
               toast.info(
                 `${result.checks} checks · first check ${money(result.firstTotal)} · choose a tender`,
