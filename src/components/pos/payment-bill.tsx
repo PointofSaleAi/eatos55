@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { X } from "lucide-react";
+import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { ReceiptCard, ReceiptRow } from "@/components/pos/receipt";
 import { TAX_RATE, money } from "@/lib/demo-data";
 import type { Room } from "@/lib/floor-data";
@@ -59,6 +60,10 @@ export function PaymentBill({ room }: { room?: Room | null }) {
           Ticket No. {orderNumber} · Amount Due {money(due)}
         </p>
       </div>
+
+      {showTypeStrip ? (
+        <OrderTypeStrip className="mt-3" value={orderType} onSelect={setOrderType} />
+      ) : null}
 
       <div className="mt-3 border-t border-dashed border-border pt-3">
         <div className="flex items-center justify-between text-fs-base font-extrabold text-foreground">
