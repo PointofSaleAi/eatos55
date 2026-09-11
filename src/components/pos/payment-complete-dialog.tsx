@@ -222,7 +222,7 @@ export function PaymentCompleteDialog({
         hideClose
         className="max-h-[92dvh] w-[min(40rem,94vw)] max-w-none gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0"
       >
-        <PaymentCompleteCard onDone={onDone} />
+        <PaymentCompleteCard onDone={onDone} {...(doneLabel ? { doneLabel } : {})} />
       </DialogContent>
     </Dialog>
   );
