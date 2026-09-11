@@ -1,5 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { X } from "lucide-react";
+import { useState } from "react";
+import { BadgePercent, ChevronRight, NotebookPen, X } from "lucide-react";
+import { DiscountSheet } from "@/components/pos/discount-sheet";
+import { GuestSheet } from "@/components/pos/guest-sheet";
 import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { ReceiptCard, ReceiptRow } from "@/components/pos/receipt";
 import { TAX_RATE, money } from "@/lib/demo-data";
