@@ -23,6 +23,8 @@ export type ResumeOrder = {
   serviceCharge: number;
   orderDiscountPercent: number;
   partialPayments: unknown[];
+  splitChecks?: unknown[];
+  activeSplitCheckId?: string | null;
   mode: string;
 };
 

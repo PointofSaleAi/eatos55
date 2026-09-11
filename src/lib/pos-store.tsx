@@ -1021,6 +1021,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
             serviceCharge,
             orderDiscountPercent,
             partialPayments,
+            splitChecks,
+            activeSplitCheckId,
             mode,
           },
           savedAt: Date.now(),
@@ -1044,6 +1046,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
           setServiceCharge(o.serviceCharge ?? 0);
           setOrderDiscountPercent(o.orderDiscountPercent ?? 0);
           setPartialPayments((o.partialPayments as PartialPayment[]) ?? []);
+          setSplitChecksState((o.splitChecks as SplitCheck[]) ?? []);
+          setActiveSplitCheckId(o.activeSplitCheckId ?? null);
           if (o.mode) setMode(o.mode as MenuMode);
         }
         return entry.path;
