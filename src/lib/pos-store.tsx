@@ -1334,6 +1334,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setCart([]);
         setActiveTicketId(null);
         setPartialPayments([]);
+        setSplitChecksState([]);
+        setActiveSplitCheckId(null);
         setOrderNotes("");
         setComped(false);
         setNoTax(false);
@@ -1499,6 +1501,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
         });
 
         setPartialPayments([]);
+        setSplitChecksState([]);
+        setActiveSplitCheckId(null);
         setCart([]);
         setActiveTicketId(null);
         return id;
@@ -1614,6 +1618,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
     lastPayment,
     paidSoFar,
     partialPayments,
+    splitChecks,
+    activeSplitCheckId,
   ]);
 
   return <PosContext.Provider value={value}>{children}</PosContext.Provider>;
