@@ -855,6 +855,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [managerUnlocked, setManagerUnlocked] = useState(false);
   const [lastPayment, setLastPayment] = useState<LastPayment>(null);
   const [partialPayments, setPartialPayments] = useState<PartialPayment[]>([]);
+  const [splitChecks, setSplitChecksState] = useState<SplitCheck[]>([]);
+  const [activeSplitCheckId, setActiveSplitCheckId] = useState<string | null>(null);
   const paidSoFar =
     Math.round(partialPayments.reduce((n, p) => n + p.amount, 0) * 100) / 100;
 
@@ -1512,6 +1514,53 @@ export function PosProvider({ children }: { children: ReactNode }) {
       removePartialPayment: (id) =>
         setPartialPayments((list) => list.filter((p) => p.id !== id)),
       resetPayments: () => setPartialPayments([]),
+
+      splitChecks,
+      activeSplitCheckId,
+      setSplitChecks: (checks) => {
+        const rows = checks.map((c, i) => ({
+          id: `sc-${i}`,
+          label: c.label,
+          total: c.total,
+          paid: false,
+        }));
+        setSplitChecksState(rows);
+        setActiveSplitCheckId(rows[0]?.id ?? null);
+      },
+      setActiveSplitCheck: (id) => setActiveSplitCheckId(id),
+      clearSplitChecks: () => {
+        setSplitChecksState([]);
+        setActiveSplitCheckId(null);
+      },
+      paySplitCheck: (id, amount, method, opts) => {
+        const tip = Math.max(0, opts?.tip ?? 0);
+        const label = opts?.label ?? (method === "cash" ? "Cash" : "Card");
+        const check = splitChecks.find((c) => c.id === id);
+        setPartialPayments((list) => [
+          ...list,
+          {
+            id: `pp-${Date.now()}-${list.length}`,
+            method,
+            label: check ? `${label} · ${check.label}` : label,
+            amount: Math.round((amount + tip) * 100) / 100,
+          },
+        ]);
+        const next = splitChecks.map((c) => (c.id === id ? { ...c, paid: true } : c));
+        setSplitChecksState(next);
+        setActiveSplitCheckId(next.find((c) => !c.paid)?.id ?? null);
+        setLastPayment({
+          ticketId: activeTicketId ?? "",
+          method,
+          ...(opts?.tenderId ? { tenderId: opts.tenderId } : {}),
+          total: Math.round((amount + tip) * 100) / 100,
+          tendered: Math.round((amount + tip) * 100) / 100,
+          change: 0,
+          orderNumber: tickets.length + 1,
+          guestName: guest.name,
+          ...(tip ? { tip } : {}),
+          ...(opts?.notes && Object.keys(opts.notes).length ? { notes: opts.notes } : {}),
+        });
+      },
 
       settings,
       updateSettings: (patch) => setSettings((s) => ({ ...s, ...patch })),
