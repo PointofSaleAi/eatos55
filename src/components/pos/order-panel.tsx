@@ -341,7 +341,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
             </div>
           ) : null}
           <div className="flex items-center justify-between pt-0.5 text-fs-lg font-extrabold text-foreground">
-            <dt>Total</dt>
+            <dt>Total{comped ? " (comped)" : ""}</dt>
             <dd className="tabular-nums">{money(totals.total)}</dd>
           </div>
         </dl>
@@ -392,10 +392,6 @@ export function OrderPanel({ wide }: { wide: boolean }) {
       />
     </div>
   );
-
-  function settingsNoTaxLabel() {
-    return "";
-  }
 }
 
 function OrderAction({
