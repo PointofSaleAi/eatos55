@@ -1,29 +1,26 @@
 import {
   ArrowLeftRight,
   BadgePercent,
-  ChevronRight,
   CircleDollarSign,
   Flame,
+  Footprints,
+  Grid2x2,
   NotebookPen,
   ReceiptText,
   Save,
   Utensils,
 } from "lucide-react";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
-import {
-  money,
-  serviceOrderTypeLabels,
-  serviceOrderTypes,
-  type ServiceOrderType,
-} from "@/lib/demo-data";
+import { money, type ServiceOrderType } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
-import { GuestSheet, orderTypeIcons } from "@/components/pos/guest-sheet";
+import { GuestSheet } from "@/components/pos/guest-sheet";
+import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { PinSheet } from "@/components/pos/pin-sheet";
 
 /**
