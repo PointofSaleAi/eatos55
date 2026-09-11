@@ -28,7 +28,6 @@ import {
   eventTypes,
   serviceOrderRequirements,
   serviceOrderTypeLabels,
-  serviceOrderTypes,
   vehicleColors,
   vehicleTypes,
   type ServiceOrderType,
@@ -120,13 +119,6 @@ export function GuestSheet({
     }
   }, [open, guest, orderType, initialType]);
 
-  // Keep the chosen order type pill in sight when the sheet opens or type changes.
-  const stripRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    if (!open) return;
-    const active = stripRef.current?.querySelector<HTMLElement>('[aria-pressed="true"]');
-    active?.scrollIntoView({ block: "nearest", inline: "center" });
-  }, [open, type]);
 
   const isDriveThru = type === "Drive Thru";
   const isBanquet = type === "Banquet";
@@ -151,38 +143,18 @@ export function GuestSheet({
       >
         <SheetGrabber handleProps={handleProps} />
 
-        {/* Order type strip, pinned so the type can change in place */}
-        <div
-          ref={stripRef}
-          className="no-scrollbar mx-3 mt-1 flex shrink-0 gap-2 overflow-x-auto rounded-row bg-surface p-1.5"
-        >
-          {serviceOrderTypes.map((t) => {
-            const Icon = orderTypeIcons[t];
-            const active = t === type;
-            return (
-              <button
-                key={t}
-                type="button"
-                aria-pressed={active}
-                onClick={() => setType(t)}
-                className={cn(
-                  "min-h-tap flex shrink-0 items-center gap-1.5 rounded-row px-3 text-fs-xs font-extrabold uppercase tracking-[0.04em] transition-colors",
-                  active
-                    ? "border-2 border-foreground bg-secondary text-foreground shadow-sm"
-                    : "border border-transparent bg-muted text-muted-foreground hover:bg-secondary",
-                )}
-              >
-                <Icon className="size-4" aria-hidden />
-                {serviceOrderTypeLabels[t]}
-              </button>
-            );
-          })}
-        </div>
-
+        {/* The type is picked in the order area; show it once here for context. */}
         <SheetHeader className="flex-row shrink-0 items-center gap-2 px-4 pb-1.5 pt-3 text-left">
           <SheetTitle className="min-w-0 flex-1 text-fs-base font-extrabold text-foreground">
             Guest Information
           </SheetTitle>
+          <span className="flex min-h-tap shrink-0 items-center gap-1.5 rounded-row border-2 border-foreground bg-secondary px-3 text-fs-xs font-extrabold uppercase tracking-[0.04em] text-foreground">
+            {(() => {
+              const Icon = orderTypeIcons[type];
+              return <Icon className="size-4" aria-hidden />;
+            })()}
+            {serviceOrderTypeLabels[type]}
+          </span>
           <button
             type="button"
             onClick={onClose}
