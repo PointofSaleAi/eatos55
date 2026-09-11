@@ -137,6 +137,8 @@ export function OrderPanel({ wide }: { wide: boolean }) {
     cart,
     changeQty,
     totals,
+    noTax,
+    comped,
     orderNotes,
     setOrderNotes,
     session,
@@ -329,7 +331,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
             <dd className="tabular-nums">{money(totals.subtotal)}</dd>
           </div>
           <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
-            <dt>{brand.taxLabel}{settingsNoTaxLabel()}</dt>
+            <dt>{brand.taxLabel}{noTax ? " (exempt)" : ""}</dt>
             <dd className="tabular-nums">{money(totals.tax)}</dd>
           </div>
           {totals.discount ? (
