@@ -11,7 +11,9 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { useNavDrawer } from "@/lib/nav-drawer-context";
 import { usePos } from "@/lib/pos-store";
+
 import { cn } from "@/lib/utils";
 
 const whatsNew = [
@@ -56,9 +58,10 @@ function useOnline() {
   return online;
 }
 
-/** Initials are the single identity control; role and shift time form the status. */
-export function AccountInfo({ onSwitchUser }: { onSwitchUser?: () => void }) {
+/** Initials open the app navigation; role and shift time form the status. */
+export function AccountInfo() {
   const { session, settings } = usePos();
+  const drawer = useNavDrawer();
   const initials = session.name
     .split(" ")
     .map((p) => p[0])
@@ -70,13 +73,14 @@ export function AccountInfo({ onSwitchUser }: { onSwitchUser?: () => void }) {
         type="button"
         variant="ghost"
         size="icon"
-        aria-label="Switch user"
-        title="Switch user"
-        onClick={onSwitchUser}
+        aria-label="Open navigation"
+        title="Navigation"
+        onClick={() => drawer?.open()}
         className="size-11 shrink-0 rounded-full bg-topbar-foreground p-0 text-[0.75rem] font-extrabold text-topbar hover:bg-topbar-foreground/90 hover:text-topbar"
       >
         {initials}
       </Button>
+
       <div className="min-w-0 leading-none">
         <p className="truncate text-[0.6875rem] font-extrabold uppercase text-topbar-muted">
           {session.role}

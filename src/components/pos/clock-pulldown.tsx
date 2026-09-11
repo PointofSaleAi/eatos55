@@ -30,9 +30,19 @@ export function ClockPullDown() {
       setOpen(false);
       setMenuOpen(true);
     };
+    // Switch user now lives in the navigation drawer.
+    const onSwitchUser = () => {
+      setMenuOpen(false);
+      setOpen(true);
+    };
     window.addEventListener("pos:open-dashboard", onOpen);
-    return () => window.removeEventListener("pos:open-dashboard", onOpen);
+    window.addEventListener("pos:switch-user", onSwitchUser);
+    return () => {
+      window.removeEventListener("pos:open-dashboard", onOpen);
+      window.removeEventListener("pos:switch-user", onSwitchUser);
+    };
   }, []);
+
 
   const close = () => {
     setOpen(false);
@@ -53,12 +63,8 @@ export function ClockPullDown() {
     <>
       <div className="relative z-40 h-14 shrink-0 border-b border-topbar-border bg-topbar shadow-sm">
         <div className="grid h-full grid-cols-[minmax(0,1fr)_auto] items-center gap-1 px-3 pb-1">
-          <AccountInfo
-            onSwitchUser={() => {
-              setMenuOpen(false);
-              setOpen(true);
-            }}
-          />
+          <AccountInfo />
+
           <AccountActions />
         </div>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-11 items-end justify-center">

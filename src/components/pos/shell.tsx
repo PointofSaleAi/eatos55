@@ -34,7 +34,10 @@ import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
+import { NavDrawerContext } from "@/lib/nav-drawer-context";
+
 export { useNavDrawer } from "@/lib/nav-drawer-context";
+
 
 
 /** Pre-login screens: no app chrome (drawer, tabs, clock pulldown). */
