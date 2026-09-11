@@ -402,8 +402,8 @@ function OrderAction({
   children,
 }: {
   label: string;
-  active?: boolean;
-  compact?: boolean;
+  active?: boolean | undefined;
+  compact?: boolean | undefined;
   onPress: () => void;
   children: React.ReactNode;
 }) {
