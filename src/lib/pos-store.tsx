@@ -13,8 +13,10 @@ import {
   liveMenu,
   menu,
   modeOrderType,
+  defaultProductModifierRules,
   type CartLine,
   type MenuMode,
+  type ProductModifierRules,
   type ServiceOrderType,
   type Ticket,
   type TicketStatus,
@@ -354,6 +356,8 @@ export type AppSettings = {
   defaultModifiers: SettingsListItem[];
   addOns: SettingsListItem[];
   productGroups: SettingsListItem[];
+  /** Per-product visibility and requiredness for modifier and add-on groups. */
+  productModifierRules: ProductModifierRules;
 };
 
 const defaultLoginSlides: LoginSlide[] = [
@@ -523,6 +527,7 @@ const defaultSettings: AppSettings = {
     { id: "g2", name: "Cold Drinks", detail: "11 products" },
     { id: "g3", name: "Kitchen", detail: "27 products" },
   ],
+  productModifierRules: defaultProductModifierRules,
 };
 
 
@@ -877,6 +882,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
           tipTenders: {
             ...defaultSettings.tipTenders,
             ...(saved.tipTenders ?? {}),
+          },
+          productModifierRules: {
+            ...defaultProductModifierRules,
+            ...(saved.productModifierRules ?? {}),
           },
         }));
       }

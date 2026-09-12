@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
  */
 export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: () => void }) {
   useBackDismiss(!!item, onClose);
-  const { addItem } = usePos();
+  const { addItem, settings } = usePos();
   const announce = useAnnounce();
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState(item?.price ?? 0);
@@ -41,8 +41,14 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
     setEditingPrice(Boolean(item.openPrice));
   }, [item]);
 
-  const itemGroups = useMemo(() => (item ? itemModifierGroups(item) : []), [item]);
-  const addOns = useMemo(() => (item ? itemAddOnGroups(item) : []), [item]);
+  const itemGroups = useMemo(
+    () => (item ? itemModifierGroups(item, settings.productModifierRules) : []),
+    [item, settings.productModifierRules],
+  );
+  const addOns = useMemo(
+    () => (item ? itemAddOnGroups(item, settings.productModifierRules) : []),
+    [item, settings.productModifierRules],
+  );
   const groups = tab === "item" ? itemGroups : addOns;
   const activeGroup = groups.find((g) => g.name === group) ?? groups[0];
 

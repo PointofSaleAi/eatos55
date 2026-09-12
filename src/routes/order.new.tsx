@@ -32,7 +32,7 @@ export const Route = createFileRoute("/order/new")({
 
 function NewOrder() {
   const navigate = useNavigate();
-  const { totals, addItem } = usePos();
+  const { totals, addItem, settings } = usePos();
   const [activeMenu, setActiveMenu] = useState(menus[1]!.id);
   const [category, setCategory] = useState<string>(menus[1]!.categories[0]!);
   const [sheetItem, setSheetItem] = useState<MenuItem | null>(null);
@@ -232,7 +232,7 @@ function NewOrder() {
                 aria-label={
                   item.outOfStock
                     ? `${item.name}, out of stock`
-                    : itemNeedsSheet(item)
+                    : itemNeedsSheet(item, settings.productModifierRules)
                       ? `${item.name}, choose options`
                       : `Add ${item.name} to the order`
                 }
@@ -258,7 +258,7 @@ function NewOrder() {
                     });
                     return;
                   }
-                  if (itemNeedsSheet(item)) {
+                  if (itemNeedsSheet(item, settings.productModifierRules)) {
                     setSheetItem(item);
                     return;
                   }
