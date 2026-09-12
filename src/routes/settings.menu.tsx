@@ -37,11 +37,17 @@ function MenuSettings() {
       <SubHeader title="Menu" />
       <ScreenBody className="py-2">
         <GroupCard>
-          <IconNavRow title="Menu" icon={ScrollText} color="magenta" to="/order/menu" />
+          <IconNavRow title="Menus" icon={ScrollText} color="magenta" topic="menus" />
           <IconNavRow title="Categories" icon={LayoutList} color="violet" topic="categories" />
           <IconNavRow title="Modifiers" icon={CircleDot} color="yellow" topic="modifiers" />
           <IconNavRow title="Add-Ons" icon={Grid2x2} color="pink" topic="add-ons" />
-          <IconNavRow title="Products" icon={UtensilsCrossed} color="magenta" topic="products" />
+          <IconNavRow
+            title="Products"
+            icon={UtensilsCrossed}
+            color="magenta"
+            topic="products"
+            value="Course, sides, add-ons"
+          />
           <IconNavRow title="Inventory" icon={PencilRuler} color="sky" topic="inventory" />
           <IconNavRow
             title="Default Modifiers"

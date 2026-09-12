@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 
 import type { AppSettings } from "@/lib/pos-store";
+import { menus } from "@/lib/demo-data";
 
 /**
  * Settings rows are descriptors, not strings: the detail screen renders the
@@ -192,6 +193,15 @@ export const settingsDetails: Record<string, DetailScreen> = {
   },
 
   // Menu
+  menus: {
+    title: "Menus",
+    backLabel: "Menu",
+    icon: ScrollText,
+    intro: "Menus and their categories sync from Back Office.",
+    rows: menus.map((m) =>
+      ro(m.name, `${m.categories.length} categor${m.categories.length === 1 ? "y" : "ies"}`),
+    ),
+  },
   categories: {
     title: "Categories",
     backLabel: "Menu",
@@ -212,7 +222,8 @@ export const settingsDetails: Record<string, DetailScreen> = {
     title: "Products",
     backLabel: "Menu",
     icon: Store,
-    intro: "Choose which modifier groups appear for each product and whether a choice is required.",
+    intro:
+      "Open a product to turn Course, Temperature, Preparation, Allergy, Sides and Add-Ons off, optional or required.",
     rows: [{ kind: "product-modifiers", label: "Product Modifiers" }],
   },
   "add-ons": {

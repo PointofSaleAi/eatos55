@@ -349,9 +349,18 @@ function SettingsDetail() {
             <GroupLabel>Products</GroupLabel>
             <GroupCard>
               {liveMenu.map((product) => {
-                const rules = settings.productModifierRules?.[product.id] ??
-                  defaultModifierRulesForItem(product);
-                const enabled = Object.values(rules).filter((mode) => mode !== "off").length;
+                 const rules = {
+                   ...defaultModifierRulesForItem(product),
+                   ...(settings.productModifierRules?.[product.id] ?? {}),
+                 };
+                 const entries = Object.entries(rules);
+                 const required = entries.filter(([, mode]) => mode === "required").map(([n]) => n);
+                 const optional = entries.filter(([, mode]) => mode === "optional").length;
+                 const summary = required.length
+                   ? `${required.join(", ")} required`
+                   : optional
+                     ? `${optional} optional`
+                     : "None";
                 return (
                   <button
                     key={product.id}
@@ -366,9 +375,9 @@ function SettingsDetail() {
                         {product.category}
                       </span>
                     </span>
-                    <span className="shrink-0 t-value text-muted-foreground">
-                      {enabled ? `${enabled} enabled` : "None"}
-                    </span>
+                     <span className="max-w-[45%] shrink-0 truncate t-value text-muted-foreground">
+                       {summary}
+                     </span>
                     <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
                   </button>
                 );
