@@ -222,7 +222,8 @@ export const settingsDetails: Record<string, DetailScreen> = {
     title: "Products",
     backLabel: "Menu",
     icon: Store,
-    intro: "Choose which modifier groups appear for each product and whether a choice is required.",
+    intro:
+      "Open a product to turn Course, Temperature, Preparation, Allergy, Sides and Add-Ons off, optional or required.",
     rows: [{ kind: "product-modifiers", label: "Product Modifiers" }],
   },
   "add-ons": {
