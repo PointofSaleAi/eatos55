@@ -469,10 +469,15 @@ function ProductModifierSheet({
                       key={mode.value}
                       type="button"
                       size="sm"
-                      variant={selected === mode.value ? "default" : "ghost"}
+                      variant="ghost"
                       aria-pressed={selected === mode.value}
                       onClick={() => onChange(group.name, mode.value)}
-                      className="min-w-0 px-2 text-fs-xs"
+                      className={cn(
+                        "min-w-0 px-2 text-fs-xs",
+                        selected === mode.value
+                          ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+                          : "text-foreground",
+                      )}
                     >
                       {mode.label}
                     </Button>
