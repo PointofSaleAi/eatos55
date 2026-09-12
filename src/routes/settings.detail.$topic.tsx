@@ -446,7 +446,7 @@ function ProductModifierSheet({
 
   return (
     <div role="dialog" aria-modal="true" aria-label={`${product.name} modifiers`} className="fixed inset-0 z-[70] flex items-end justify-center md:items-center">
-      <button type="button" aria-label="Close product modifiers" onClick={onClose} className="absolute inset-0 bg-black/50" />
+      <button type="button" aria-label="Close product modifiers" onClick={onClose} className="absolute inset-0 bg-gate-overlay" />
       <div className="relative flex max-h-[88dvh] w-full max-w-[34rem] flex-col rounded-t-sheet border border-border bg-surface md:m-3 md:rounded-sheet">
         <div className="shrink-0 border-b border-border px-4 py-4">
           <p className="text-fs-base font-extrabold text-foreground">{product.name}</p>
