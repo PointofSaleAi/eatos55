@@ -42,6 +42,7 @@ export type DetailRow =
   | { kind: "choice"; label: string; field: keyof AppSettings; options: string[] }
   | { kind: "text"; label: string; field: keyof AppSettings }
   | { kind: "tender-tips"; label: string }
+  | { kind: "product-modifiers"; label: string }
   /** Editable collection (discounts, modifier groups, …). */
   | { kind: "list"; label: string; field: keyof AppSettings; addLabel?: string };
 
@@ -206,6 +207,13 @@ export const settingsDetails: Record<string, DetailScreen> = {
       { kind: "list", label: "Modifier Groups", field: "modifierGroups", addLabel: "Add Group" },
     ],
     empty: "No modifier groups on this device.",
+  },
+  products: {
+    title: "Products",
+    backLabel: "Menu",
+    icon: Store,
+    intro: "Choose which modifier groups appear for each product and whether a choice is required.",
+    rows: [{ kind: "product-modifiers", label: "Product Modifiers" }],
   },
   "add-ons": {
     title: "Add-Ons",

@@ -1,6 +1,6 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
-import { Check, ChevronDown, Plus, Trash2 } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import {
@@ -20,6 +20,15 @@ import {
 } from "@/lib/pos-store";
 import { settingsDetails, type DetailRow } from "@/lib/settings-details";
 import { cn } from "@/lib/utils";
+import {
+  addOnGroups,
+  defaultModifierRulesForItem,
+  liveMenu,
+  modifierGroups,
+  type MenuItem,
+  type ModifierRuleMode,
+} from "@/lib/demo-data";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/settings/detail/$topic")({
   head: () => ({
@@ -57,6 +66,7 @@ function SettingsDetail() {
   const { settings, updateSettings, canManageSettings } = usePos();
   const [openPicker, setOpenPicker] = useState<string | null>(null);
   const [edit, setEdit] = useState<EditTarget | null>(null);
+  const [modifierProduct, setModifierProduct] = useState<MenuItem | null>(null);
   const screen = settingsDetails[topic];
 
   if (!screen) {
@@ -73,7 +83,8 @@ function SettingsDetail() {
   const Icon = screen.icon;
   const rows = screen.rows ?? [];
   const listRows = rows.filter((r): r is Extract<DetailRow, { kind: "list" }> => r.kind === "list");
-  const fieldRows = rows.filter((r) => r.kind !== "list");
+  const fieldRows = rows.filter((r) => r.kind !== "list" && r.kind !== "product-modifiers");
+  const productModifierRows = rows.filter((r) => r.kind === "product-modifiers");
   const str = (field: keyof AppSettings) => String(settings[field] ?? "");
   const bool = (field: keyof AppSettings) => Boolean(settings[field]);
   const list = (field: keyof AppSettings) => (settings[field] as SettingsListItem[]) ?? [];
@@ -333,6 +344,39 @@ function SettingsDetail() {
           );
         })}
 
+        {productModifierRows.length ? (
+          <div>
+            <GroupLabel>Products</GroupLabel>
+            <GroupCard>
+              {liveMenu.map((product) => {
+                const rules = settings.productModifierRules?.[product.id] ??
+                  defaultModifierRulesForItem(product);
+                const enabled = Object.values(rules).filter((mode) => mode !== "off").length;
+                return (
+                  <button
+                    key={product.id}
+                    type="button"
+                    disabled={!canManageSettings}
+                    onClick={() => setModifierProduct(product)}
+                    className={cn(settingsRowClass, "transition-colors hover:bg-muted")}
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate t-row text-foreground">{product.name}</span>
+                      <span className="block truncate t-value text-muted-foreground">
+                        {product.category}
+                      </span>
+                    </span>
+                    <span className="shrink-0 t-value text-muted-foreground">
+                      {enabled ? `${enabled} enabled` : "None"}
+                    </span>
+                    <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+                  </button>
+                );
+              })}
+            </GroupCard>
+          </div>
+        ) : null}
+
         {screen.note ? <Caption>{screen.note}</Caption> : null}
         {!canManageSettings ? <Caption>Only managers can change these settings.</Caption> : null}
         <div className="h-6" />
@@ -356,7 +400,93 @@ function SettingsDetail() {
           }}
         />
       ) : null}
+      {modifierProduct ? (
+        <ProductModifierSheet
+          product={modifierProduct}
+          rules={{
+            ...defaultModifierRulesForItem(modifierProduct),
+            ...(settings.productModifierRules?.[modifierProduct.id] ?? {}),
+          }}
+          onClose={() => setModifierProduct(null)}
+          onChange={(name, mode) =>
+            updateSettings({
+              productModifierRules: {
+                ...settings.productModifierRules,
+                [modifierProduct.id]: {
+                  ...defaultModifierRulesForItem(modifierProduct),
+                  ...(settings.productModifierRules?.[modifierProduct.id] ?? {}),
+                  [name]: mode,
+                },
+              },
+            })
+          }
+        />
+      ) : null}
     </>
+  );
+}
+
+function ProductModifierSheet({
+  product,
+  rules,
+  onClose,
+  onChange,
+}: {
+  product: MenuItem;
+  rules: Record<string, ModifierRuleMode>;
+  onClose: () => void;
+  onChange: (name: string, mode: ModifierRuleMode) => void;
+}) {
+  const groups = [...modifierGroups, ...addOnGroups];
+  const modes: { value: ModifierRuleMode; label: string }[] = [
+    { value: "off", label: "Off" },
+    { value: "optional", label: "Optional" },
+    { value: "required", label: "Required" },
+  ];
+
+  return (
+    <div role="dialog" aria-modal="true" aria-label={`${product.name} modifiers`} className="fixed inset-0 z-[70] flex items-end justify-center md:items-center">
+      <button type="button" aria-label="Close product modifiers" onClick={onClose} className="absolute inset-0 bg-black/50" />
+      <div className="relative flex max-h-[88dvh] w-full max-w-[34rem] flex-col rounded-t-sheet border border-border bg-surface md:m-3 md:rounded-sheet">
+        <div className="shrink-0 border-b border-border px-4 py-4">
+          <p className="text-fs-base font-extrabold text-foreground">{product.name}</p>
+          <p className="pt-0.5 text-fs-xs text-muted-foreground">Modifier groups</p>
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          {groups.map((group) => {
+            const selected = rules[group.name] ?? "off";
+            return (
+              <div key={group.name} className="border-b border-border px-4 py-3 last:border-b-0 sm:flex sm:items-center sm:gap-4">
+                <div className="mb-2 min-w-0 flex-1 sm:mb-0">
+                  <p className="t-row font-bold text-foreground">{group.name}</p>
+                  <p className="t-value text-muted-foreground">
+                    {group.select === "single" ? "Choose one" : "Choose multiple"}
+                  </p>
+                </div>
+                <div className="grid grid-cols-3 gap-1 rounded-card bg-muted p-1">
+                  {modes.map((mode) => (
+                    <Button
+                      key={mode.value}
+                      type="button"
+                      size="sm"
+                      variant={selected === mode.value ? "default" : "ghost"}
+                      aria-pressed={selected === mode.value}
+                      onClick={() => onChange(group.name, mode.value)}
+                      className="min-w-0 px-2 text-fs-xs"
+                    >
+                      {mode.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="shrink-0 border-t border-border p-3 pb-[calc(0.75rem+var(--sab,0px))]">
+          <Button type="button" onClick={onClose} className="min-h-ctl-md w-full">Done</Button>
+        </div>
+      </div>
+    </div>
   );
 }
 
