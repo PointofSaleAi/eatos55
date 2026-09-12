@@ -499,6 +499,9 @@ export type ModifierGroup = {
   required?: boolean;
 };
 
+export type ModifierRuleMode = "off" | "optional" | "required";
+export type ProductModifierRules = Record<string, Record<string, ModifierRuleMode>>;
+
 /** Modifier groups shown on the item sheet (Item tab). */
 export const modifierGroups: ModifierGroup[] = [
   {
@@ -629,23 +632,50 @@ const addOnsByCategory: Record<string, string[]> = {
   STARTERS: ["Add-Ons"],
 };
 
+/** Starting rules for each product. Merchants can override these in Menu settings. */
+export function defaultModifierRulesForItem(item: MenuItem): Record<string, ModifierRuleMode> {
+  const itemNames = item.modifierGroupNames ?? foodModifiersByCategory[item.category] ?? [];
+  const addOnNames = item.addOnGroupNames ?? addOnsByCategory[item.category] ?? [];
+  return Object.fromEntries([...itemNames, ...addOnNames].map((name) => [name, "optional"]));
+}
+
+export const defaultProductModifierRules: ProductModifierRules = Object.fromEntries(
+  liveMenu.map((item) => [item.id, defaultModifierRulesForItem(item)]),
+);
+
+function ruleFor(
+  item: MenuItem,
+  name: string,
+  rules?: ProductModifierRules,
+): ModifierRuleMode {
+  return rules?.[item.id]?.[name] ?? defaultModifierRulesForItem(item)[name] ?? "off";
+}
+
 /** Modifier groups (Item tab) for a given menu item. */
-export function itemModifierGroups(item: MenuItem): ModifierGroup[] {
-  const names = item.modifierGroupNames ?? foodModifiersByCategory[item.category] ?? [];
-  return modifierGroups.filter((g) => names.includes(g.name));
+export function itemModifierGroups(
+  item: MenuItem,
+  rules?: ProductModifierRules,
+): ModifierGroup[] {
+  return modifierGroups
+    .map((group) => ({ ...group, required: ruleFor(item, group.name, rules) === "required" }))
+    .filter((group) => ruleFor(item, group.name, rules) !== "off");
 }
 
 /** Add-on groups for a given menu item. */
-export function itemAddOnGroups(item: MenuItem): ModifierGroup[] {
-  const names = item.addOnGroupNames ?? addOnsByCategory[item.category] ?? [];
-  return addOnGroups.filter((g) => names.includes(g.name));
+export function itemAddOnGroups(
+  item: MenuItem,
+  rules?: ProductModifierRules,
+): ModifierGroup[] {
+  return addOnGroups
+    .map((group) => ({ ...group, required: ruleFor(item, group.name, rules) === "required" }))
+    .filter((group) => ruleFor(item, group.name, rules) !== "off");
 }
 
 /**
  * True when tapping the item must open the sheet: there is a choice to make,
  * a required group, or a price to enter.
  */
-export function itemNeedsSheet(item: MenuItem): boolean {
+export function itemNeedsSheet(item: MenuItem, rules?: ProductModifierRules): boolean {
   if (item.openPrice) return true;
-  return itemModifierGroups(item).length > 0 || itemAddOnGroups(item).length > 0;
+  return itemModifierGroups(item, rules).length > 0 || itemAddOnGroups(item, rules).length > 0;
 }
