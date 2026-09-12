@@ -192,6 +192,15 @@ export const settingsDetails: Record<string, DetailScreen> = {
   },
 
   // Menu
+  menus: {
+    title: "Menus",
+    backLabel: "Menu",
+    icon: ScrollText,
+    intro: "Menus and their categories sync from Back Office.",
+    rows: menus.map((m) =>
+      ro(m.name, `${m.categories.length} categor${m.categories.length === 1 ? "y" : "ies"}`),
+    ),
+  },
   categories: {
     title: "Categories",
     backLabel: "Menu",
