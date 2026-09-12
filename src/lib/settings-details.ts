@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 
 import type { AppSettings } from "@/lib/pos-store";
+import { menus } from "@/lib/demo-data";
 
 /**
  * Settings rows are descriptors, not strings: the detail screen renders the
