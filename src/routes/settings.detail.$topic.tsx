@@ -375,9 +375,9 @@ function SettingsDetail() {
                         {product.category}
                       </span>
                     </span>
-                    <span className="shrink-0 t-value text-muted-foreground">
-                      {enabled ? `${enabled} enabled` : "None"}
-                    </span>
+                     <span className="max-w-[45%] shrink-0 truncate t-value text-muted-foreground">
+                       {summary}
+                     </span>
                     <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
                   </button>
                 );
