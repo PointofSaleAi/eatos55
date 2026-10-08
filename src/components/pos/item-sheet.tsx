@@ -1,4 +1,12 @@
-import { ChevronLeft, ChevronRight, NotebookPen, Pencil, Percent, UtensilsCrossed } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  NotebookPen,
+  Pencil,
+  Percent,
+  UtensilsCrossed,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
@@ -148,19 +156,25 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                         <Pencil className="size-3.5 text-muted-foreground" />
                       </button>
                     )}
-                    <select
-                      aria-label="Quantity"
-                      value={qty}
-                      onChange={(e) => setQty(Number(e.target.value))}
-                      onPointerDown={(e) => e.stopPropagation()}
-                      className="h-ctl-sm shrink-0 rounded-pill border border-border bg-surface px-2 text-fs-sm font-bold text-foreground outline-none sm:px-2.5"
-                    >
-                      {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                        <option key={n} value={n}>
-                          {n}
-                        </option>
-                      ))}
-                    </select>
+                    <span className="relative w-[3.25rem] shrink-0">
+                      <select
+                        aria-label="Quantity"
+                        value={qty}
+                        onChange={(e) => setQty(Number(e.target.value))}
+                        onPointerDown={(e) => e.stopPropagation()}
+                        className="h-ctl-sm w-full appearance-none rounded-pill border border-border bg-surface pl-2.5 pr-5 text-left text-fs-sm font-bold text-foreground outline-none"
+                      >
+                        {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                          <option key={n} value={n}>
+                            {n}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown
+                        aria-hidden
+                        className="pointer-events-none absolute right-1.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground"
+                      />
+                    </span>
                   </div>
                 </div>
               </SheetHeader>

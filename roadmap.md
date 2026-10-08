@@ -8,4 +8,5 @@
 - [x] Add New Order menu dropdown with category and subcategory layout controls
 - [x] Show product image before the name and move cost and quantity to the right end of the name row in the product modal
 - [x] Stop truncating modifier names in the product modal
+- [x] Fix the quantity chip's dropdown arrow spacing so it sits clear of the chip's right edge
 - [ ] Add real product photos to the menu data (placeholder tile shows until then)
