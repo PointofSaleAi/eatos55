@@ -1,5 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
+import openPriceIcon from "@/assets/open-price.svg";
+import outOfStockIcon from "@/assets/out-of-stock.svg";
 import {
   ArrowLeftRight,
   ArrowUpDown,
@@ -10,7 +12,6 @@ import {
   PanelLeftOpen,
   Plus,
   Search,
-  Tag,
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -384,29 +385,13 @@ function NewOrder() {
                 )}
               >
 
-                <span className="flex items-start gap-1.5">
-                  <span className="min-w-0 flex-1 text-fs-sm font-extrabold leading-tight text-foreground">
-                    {item.name}
-                  </span>
-                  {item.outOfStock ? (
-                    <span
-                      title="Out of stock"
-                      className="grid size-5 shrink-0 place-items-center rounded-pill bg-destructive/10 text-destructive tap-safe"
-                    >
-                      <Ban className="size-3.5" />
-                    </span>
-                  ) : item.openPrice ? (
-                    <span
-                      title="Open price"
-                      className="grid size-5 shrink-0 place-items-center rounded-pill bg-muted text-muted-foreground tap-safe"
-                    >
-                      <Tag className="size-3.5" />
-                    </span>
-                  ) : typeof item.stock === "number" ? (
+                <span className="text-fs-sm font-extrabold leading-tight text-foreground">
+                  {item.name}
+                  {typeof item.stock === "number" && !item.outOfStock ? (
                     <span
                       title={`${item.stock} in stock`}
                       className={cn(
-                        "shrink-0 rounded-pill px-1.5 text-fs-xs font-extrabold leading-5",
+                        "ml-1 inline-block rounded-pill px-1 align-middle text-fs-xs font-extrabold leading-4",
                         low
                           ? "bg-destructive/10 text-destructive"
                           : "bg-muted text-muted-foreground",
@@ -417,13 +402,19 @@ function NewOrder() {
                   ) : null}
                 </span>
                 <span className="mt-2 flex items-center justify-between">
-                  <span className="text-fs-sm font-bold text-muted-foreground">
-                    {item.outOfStock
-                      ? "Out of stock"
-                      : item.openPrice
-                        ? "Open price"
-                        : money(item.price)}
-                  </span>
+                  {item.outOfStock || item.openPrice ? (
+                    <img
+                      src={item.outOfStock ? outOfStockIcon : openPriceIcon}
+                      alt={item.outOfStock ? "Out of stock" : "Open price"}
+                      title={item.outOfStock ? "Out of stock" : "Open price"}
+                      className="size-9 shrink-0 md:size-11 lg:size-12"
+                      draggable={false}
+                    />
+                  ) : (
+                    <span className="text-fs-sm font-bold text-muted-foreground">
+                      {money(item.price)}
+                    </span>
+                  )}
                   <span
                     role="button"
                     tabIndex={item.outOfStock ? -1 : 0}
