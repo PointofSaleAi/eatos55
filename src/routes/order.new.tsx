@@ -385,15 +385,20 @@ function NewOrder() {
                 )}
               >
 
-                <span className="flex flex-wrap items-start gap-x-1.5 gap-y-1">
-                  <span className="min-w-min max-w-full flex-1 text-fs-sm font-extrabold leading-tight text-foreground">
+                <span className="flex items-start">
+                  <span
+                    className={cn(
+                      "min-w-min max-w-full flex-1 text-fs-sm font-extrabold leading-tight text-foreground",
+                      typeof item.stock === "number" && !item.outOfStock && "pr-8",
+                    )}
+                  >
                     {item.name}
                   </span>
                   {typeof item.stock === "number" && !item.outOfStock ? (
                     <span
                       title={`${item.stock} in stock`}
                       className={cn(
-                        "shrink-0 rounded-pill px-1 text-fs-xs font-extrabold leading-4",
+                        "absolute right-3 top-3 rounded-pill px-1 text-fs-xs font-extrabold leading-4",
                         low
                           ? "bg-destructive/10 text-destructive"
                           : "bg-muted text-muted-foreground",
