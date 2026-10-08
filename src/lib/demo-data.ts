@@ -459,21 +459,16 @@ const dinnerCategory: MenuCategory = {
   subcategories: ["STARTERS", "MAINS", "SIDES", "DESSERTS"],
 };
 
+/**
+ * Menu names are supplied by the merchant's menu configuration. The current
+ * imported data does not name a menu, so keep one neutral configurable entry
+ * rather than presenting fabricated restaurant menus.
+ */
 export const menus: MenuDef[] = [
   {
-    id: "main-menu",
-    name: "MAIN MENU",
+    id: "configured-menu",
+    name: "MENU",
     categories: [barCategory, brunchCategory, dinnerCategory],
-  },
-  {
-    id: "happy-hour",
-    name: "HAPPY HOUR",
-    categories: [barCategory, dinnerCategory],
-  },
-  {
-    id: "weekend-specials",
-    name: "WEEKEND SPECIALS",
-    categories: [brunchCategory, dinnerCategory],
   },
 ];
 

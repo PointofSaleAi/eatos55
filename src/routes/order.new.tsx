@@ -58,7 +58,7 @@ function NewOrder() {
   const [activeCategory, setActiveCategory] = useState(initialCategory?.id ?? "");
   const [subcategory, setSubcategory] = useState(initialCategory?.subcategories[0] ?? "");
   const [menuToolsOpen, setMenuToolsOpen] = useState(false);
-  const [categoryLayout, setCategoryLayout] = useState<"horizontal" | "vertical">("vertical");
+  const [categoryLayout, setCategoryLayout] = useState<"horizontal" | "vertical">("horizontal");
   const [sheetItem, setSheetItem] = useState<MenuItem | null>(null);
   const [moreOpen, setMoreOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
@@ -79,7 +79,8 @@ function NewOrder() {
   const showMenu = wide || tab === "menu";
   const showCart = wide || tab === "order";
 
-  const currentMenu = menus.find((m) => m.id === activeMenu) ?? menus[0]!;
+  const currentMenu = menus.find((m) => m.id === activeMenu) ?? initialMenu;
+  if (!currentMenu) return null;
   const currentCategory =
     currentMenu.categories.find((entry) => entry.id === activeCategory) ??
     currentMenu.categories[0];
