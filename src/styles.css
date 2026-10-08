@@ -675,7 +675,8 @@ html[data-layout="wide"] [role="dialog"].inset-x-0.bottom-0 {
 
 /* Compact sheets (Discount picker): stay at the shared sheet width instead of
    the full 42rem wide-layout dialog width. */
-html[data-layout="wide"] [role="dialog"].sheet-compact {
+html[data-layout="wide"] [role="dialog"].sheet-compact.bottom-0.inset-x-0,
+html[data-layout="wide"] [role="dialog"].sheet-compact.inset-x-0.bottom-0 {
   width: min(var(--sheet-w), calc(100vw - 6rem)) !important;
   max-width: min(var(--sheet-w), calc(100vw - 6rem)) !important;
 }
