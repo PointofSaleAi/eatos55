@@ -456,6 +456,11 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                           </button>
                         );
                       })}
+                      {visibleOptions.length === 0 ? (
+                        <p className="col-span-full grid place-items-center py-6 text-fs-sm font-bold text-muted-foreground">
+                          No add-ons match “{search.trim()}”
+                        </p>
+                      ) : null}
                     </div>
                   </>
                 ) : null}
