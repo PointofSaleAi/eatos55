@@ -992,7 +992,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
 
     return {
       session,
-      sessionReady,
+      // Ready only once every saved slice (session, settings, floor) is applied,
+      // so no screen renders defaults and then redraws.
+      sessionReady: sessionReady && settingsReady && floorReady,
       signIn: () => setSession((s) => ({ ...s, signedIn: true })),
       signOut: () =>
         setSession({
@@ -1592,6 +1594,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
   }, [
     session,
     sessionReady,
+    settingsReady,
+    floorReady,
 
     tickets,
     sortKey,
