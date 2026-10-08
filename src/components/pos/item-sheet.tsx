@@ -173,7 +173,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
           {item ? (
             <>
               <SheetGrabber handleProps={handleProps} />
-              <SheetHeader className="shrink-0 px-4 pb-2 pt-1 text-left" {...handleProps}>
+              <SheetHeader className="shrink-0 px-4 pb-1.5 pt-0.5 text-left" {...handleProps}>
                 <div className="flex items-center gap-2">
                   {item.image ? (
                     <img
