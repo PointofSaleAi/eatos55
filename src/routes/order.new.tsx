@@ -189,20 +189,19 @@ function NewOrder() {
   );
 
   const categoryButtons = currentMenu.categories.map((entry) => (
-    <Button
+    <button
       key={entry.id}
       type="button"
-      variant="outline"
       onClick={() => chooseCategory(entry.id)}
       className={cn(
-        "min-h-tap shrink-0 rounded-card px-4 text-fs-xs font-extrabold uppercase",
+        "flex h-9 shrink-0 items-center justify-center rounded-pill px-3 text-center text-[0.6875rem] font-extrabold uppercase leading-[1.05] tracking-tight transition-colors",
         entry.id === activeCategory
-          ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
-          : "bg-surface text-foreground hover:bg-muted hover:text-foreground",
+          ? "bg-primary text-primary-foreground hover:bg-primary/90"
+          : "bg-muted text-muted-foreground hover:bg-secondary",
       )}
     >
       {entry.name}
-    </Button>
+    </button>
   ));
 
   return (
@@ -298,21 +297,20 @@ function NewOrder() {
             )}
           >
             {subcategories.map((entry) => (
-              <Button
+              <button
                 key={entry}
                 type="button"
-                variant="outline"
                 onClick={() => setSubcategory(entry)}
                 className={cn(
-                  "min-h-tap rounded-card px-2 text-center text-fs-xs font-extrabold uppercase leading-[1.1]",
+                  "flex h-10 items-center justify-center rounded-card px-2 text-center text-[0.625rem] font-extrabold uppercase leading-[1.1] tracking-tight transition-colors",
                   categoryLayout === "horizontal" && "min-w-[7.25rem] shrink-0",
                   entry === subcategory
-                    ? "border-accent bg-accent text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground"
-                    : "bg-surface text-muted-foreground hover:bg-muted hover:text-foreground",
+                    ? "bg-accent text-accent-foreground hover:bg-accent/90"
+                    : "bg-muted text-muted-foreground hover:bg-secondary",
                 )}
               >
                 <span className="line-clamp-2 whitespace-normal">{entry}</span>
-              </Button>
+              </button>
             ))}
           </div>
         ) : null}
