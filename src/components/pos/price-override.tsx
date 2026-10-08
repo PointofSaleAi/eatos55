@@ -6,7 +6,8 @@ import { haptic } from "@/lib/haptics";
 import { money, type MenuItem } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 
-const REASONS = ["Manager Discount", "Customer Complaint", "Price Match"];
+const REASONS = ["Manager Discount", "Price Match", "Damaged Item", "Promotional Offer", "Loyalty Discount", "Other"];
+const OTHER_NOTE_MAX = 100;
 
 const keyCls =
   "grid h-12 place-items-center rounded-card border border-border bg-muted text-fs-lg font-extrabold text-foreground transition active:scale-[0.97] hover:bg-secondary sm:h-14";
@@ -33,6 +34,7 @@ export function PriceOverrideFlow({
   const [error, setError] = useState(false);
   const [reason, setReason] = useState("");
   const [reasonOpen, setReasonOpen] = useState(false);
+  const [otherNote, setOtherNote] = useState("");
   const [entry, setEntry] = useState("");
 
   useEffect(() => {
