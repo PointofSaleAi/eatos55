@@ -1,6 +1,7 @@
-import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from "react";
+import { useCallback, useContext, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { haptic } from "@/lib/haptics";
+import { pinnedContext } from "@/lib/pinned-context";
 import { cn } from "@/lib/utils";
 
 export type ConfirmRequest = {
@@ -14,7 +15,10 @@ export type ConfirmRequest = {
 
 type Resolver = (ok: boolean) => void;
 
-const ConfirmContext = createContext<((req: ConfirmRequest) => Promise<boolean>) | null>(null);
+const ConfirmContext = pinnedContext<((req: ConfirmRequest) => Promise<boolean>) | null>(
+  "confirm",
+  null,
+);
 
 /**
  * Thumb-reachable action sheet for confirming (and especially destructive)

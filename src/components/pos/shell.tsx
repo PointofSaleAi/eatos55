@@ -12,7 +12,6 @@ import {
 
 
 import {
-  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -35,6 +34,8 @@ import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
 import { NavDrawerContext } from "@/lib/nav-drawer-context";
+import { pinnedContext } from "@/lib/pinned-context";
+import { RouteProgress } from "@/components/pos/route-progress";
 
 export { useNavDrawer } from "@/lib/nav-drawer-context";
 
@@ -96,7 +97,7 @@ function LandscapeContent({ children }: { children: ReactNode }) {
   );
 }
 
-const WideContext = createContext(false);
+const WideContext = pinnedContext("wideLayout", false);
 
 /** True when the landscape tablet/web layout is active. */
 export function useWideLayout() {
