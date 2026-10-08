@@ -107,8 +107,41 @@ export function PinPad({
     .filter(Boolean)
     .join(" ");
 
+  const centerPickerPanel = centerPickerOpen && canPickCenter ? (
+    <div className="absolute inset-x-0 bottom-0 z-10 rounded-md border border-gate-separator bg-surface shadow-xl">
+      <div className="border-b border-gate-separator px-3 py-1.5 text-[clamp(0.6rem,1.1vw,0.78rem)] font-extrabold uppercase tracking-wide text-gate-key-foreground">
+        Select Revenue Center
+      </div>
+      <div className="grid grid-cols-3 gap-1.5 p-1.5">
+        {revenueCenterOptions!.map((center) => {
+          const active = center === revenueCenter;
+          return (
+            <button
+              key={center}
+              type="button"
+              onClick={() => {
+                onRevenueCenterSelect!(center);
+                setCenterPickerOpen(false);
+              }}
+              className={cn(
+                "flex h-[clamp(2.6rem,5.5vw,3.8rem)] flex-col items-center justify-center gap-0.5 rounded-sm border bg-gradient-to-b from-gate-key-top to-gate-key-bottom px-2 py-1 text-center transition-[filter,transform] hover:brightness-95 active:scale-[0.985]",
+                active ? "border-gate-key-foreground ring-1 ring-gate-key-foreground" : "border-gate-separator",
+              )}
+            >
+              <Store className="size-[clamp(0.7rem,1.2vw,0.9rem)] text-gate-action-foreground/70" aria-hidden />
+              <span className="text-[clamp(0.6rem,1.1vw,0.78rem)] font-extrabold leading-tight text-gate-key-foreground">
+                {center}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  ) : null;
+
   return (
     <div className={cn("relative grid min-h-0", className)} style={{ gridTemplateRows: rows }}>
+
       <div className="mb-1 grid min-h-0 grid-cols-4 overflow-hidden rounded-sm border border-gate-separator bg-surface">
         {[0, 1, 2, 3].map((i) => (
           <span
@@ -141,52 +174,14 @@ export function PinPad({
           </GateKey>
         )}
 
-        {centerPickerOpen && canPickCenter ? (
-          <div className="absolute inset-x-0 bottom-0 z-10 rounded-md border border-gate-separator bg-surface shadow-xl">
-            <div className="flex items-center justify-between border-b border-gate-separator px-3 py-1.5">
-              <span className="text-[clamp(0.6rem,1.1vw,0.78rem)] font-extrabold uppercase tracking-wide text-gate-key-foreground">
-                Select Revenue Center
-              </span>
-              <button
-                type="button"
-                aria-label="Close revenue center picker"
-                onClick={() => setCenterPickerOpen(false)}
-                className="text-[clamp(0.6rem,1.1vw,0.78rem)] font-bold uppercase text-gate-action-foreground/70 transition-colors hover:text-gate-action-foreground"
-              >
-                Back
-              </button>
-            </div>
-            <div className="grid grid-cols-3 gap-1.5 p-1.5">
-              {revenueCenterOptions!.map((center) => {
-                const active = center === revenueCenter;
-                return (
-                  <button
-                    key={center}
-                    type="button"
-                    onClick={() => {
-                      onRevenueCenterSelect!(center);
-                      setCenterPickerOpen(false);
-                    }}
-                    className={cn(
-                      "flex h-[clamp(2.6rem,5.5vw,3.8rem)] flex-col items-center justify-center gap-0.5 rounded-sm border bg-gradient-to-b from-gate-key-top to-gate-key-bottom px-2 py-1 text-center transition-[filter,transform] hover:brightness-95 active:scale-[0.985]",
-                      active ? "border-gate-key-foreground ring-1 ring-gate-key-foreground" : "border-gate-separator",
-                    )}
-                  >
-                    <Store className="size-[clamp(0.7rem,1.2vw,0.9rem)] text-gate-action-foreground/70" aria-hidden />
-                    <span className="text-[clamp(0.6rem,1.1vw,0.78rem)] font-extrabold leading-tight text-gate-key-foreground">
-                      {center}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ) : null}
+        {!showClockRow ? centerPickerPanel : null}
       </div>
 
       {showClockRow ? (
-        <div className="grid min-h-0 grid-cols-3">
+        <div className="relative grid min-h-0 grid-cols-3">
+          {centerPickerPanel}
           <GateKey onPress={() => onClockOut?.()} tone="danger">
+
             <span className="text-[clamp(0.78rem,1.55vw,1.12rem)]">Clock Out</span>
           </GateKey>
           <GateKey onPress={() => onBreak?.()}>
