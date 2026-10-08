@@ -425,6 +425,27 @@ function NewOrder() {
                         : money(item.price)}
                   </span>
                   <span
+                    role="button"
+                    tabIndex={item.outOfStock ? -1 : 0}
+                    aria-label={`Quick add ${item.name} to the order`}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      clearLongPress();
+                      if (item.outOfStock) return;
+                      addItem(item.id, { qty: 1 });
+                      haptic("success");
+                      toast.success(`${item.name} added`);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key !== "Enter" && e.key !== " ") return;
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (item.outOfStock) return;
+                      addItem(item.id, { qty: 1 });
+                      haptic("success");
+                      toast.success(`${item.name} added`);
+                    }}
                     className={cn(
                       "grid size-7 place-items-center rounded-pill tap-safe",
                       item.outOfStock
