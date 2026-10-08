@@ -153,7 +153,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                       value={qty}
                       onChange={(e) => setQty(Number(e.target.value))}
                       onPointerDown={(e) => e.stopPropagation()}
-                      className="h-ctl-sm shrink-0 rounded-pill border border-border bg-surface px-2.5 text-fs-sm font-bold text-foreground outline-none"
+                      className="h-ctl-sm shrink-0 rounded-pill border border-border bg-surface px-2 text-fs-sm font-bold text-foreground outline-none sm:px-2.5"
                     >
                       {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
                         <option key={n} value={n}>
