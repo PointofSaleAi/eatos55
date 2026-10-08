@@ -32,7 +32,6 @@ function ClockIn() {
   const landscape = useLandscapeWide();
   const wide = wideLayout && landscape;
   const [pin, setPin] = useState("");
-  const [centerPickerOpen, setCenterPickerOpen] = useState(false);
   const activeCenter = session.station ?? "Main";
 
   /**
@@ -91,7 +90,11 @@ function ClockIn() {
               unlock();
             }}
             revenueCenter={activeCenter}
-            onRevenueCenterPress={() => setCenterPickerOpen(true)}
+            revenueCenterOptions={revenueCenters}
+            onRevenueCenterSelect={(center) => {
+              setStation(center);
+              toast.success(`Revenue center set to ${center}`);
+            }}
             onLogOut={() => {
               signOut();
               navigate({ to: "/" });
