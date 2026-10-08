@@ -84,14 +84,9 @@ export function PinPad({
           <span
             key={i}
             aria-hidden
-            className={cn(
-              "grid place-items-center text-[clamp(2rem,4vw,3.25rem)] font-normal leading-none",
-              i < pin.length
-                ? "text-gate-key-foreground"
-                : "text-transparent [-webkit-text-stroke:0.045em_var(--color-gate-key-foreground)]",
-            )}
+            className="grid place-items-center text-[clamp(2rem,4vw,3.25rem)] font-normal leading-none"
           >
-            ✳
+            <AsteriskMark filled={i < pin.length} />
           </span>
         ))}
       </div>
