@@ -410,7 +410,8 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
 
                     <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-2 gap-2 px-4 py-2.5 sm:grid-cols-3 lg:grid-cols-4">
                       {visibleOptions.map((o) => {
-                        const key = `${activeGroup.name} · ${o.name}`;
+                        const optGroup = groups.find((g) => g.name === o.group) ?? activeGroup;
+                        const key = `${o.group} · ${o.name}`;
                         const on = key in selected;
                         return (
                           <button
@@ -424,9 +425,9 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                                   delete next[key];
                                   return next;
                                 }
-                                if ((activeGroup.select ?? "multi") === "single") {
+                                if ((optGroup?.select ?? "multi") === "single") {
                                   for (const existing of Object.keys(next)) {
-                                    if (existing.startsWith(`${activeGroup.name} · `))
+                                    if (existing.startsWith(`${o.group} · `))
                                       delete next[existing];
                                   }
                                 }
