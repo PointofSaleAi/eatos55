@@ -120,7 +120,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                       <UtensilsCrossed className="size-5" />
                     </span>
                   )}
-                  <SheetTitle className="min-w-0 flex-1 truncate text-fs-base font-extrabold uppercase tracking-[0.02em] text-foreground">
+                  <SheetTitle className="line-clamp-2 min-w-0 flex-1 leading-tight text-fs-base font-extrabold uppercase tracking-[0.02em] text-foreground">
                     {item.name}
                   </SheetTitle>
                   {/* Cost and quantity sit at the right end of the name row. */}
@@ -142,7 +142,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                         type="button"
                         onClick={() => setEditingPrice(true)}
                         onPointerDown={(e) => e.stopPropagation()}
-                        className="flex h-ctl-sm items-center gap-1.5 rounded-pill border border-border px-3 text-fs-sm font-bold text-foreground"
+                        className="flex h-ctl-sm items-center gap-1 rounded-pill border border-border px-2.5 text-fs-sm font-bold text-foreground sm:gap-1.5 sm:px-3"
                       >
                         {money(price)}
                         <Pencil className="size-3.5 text-muted-foreground" />
