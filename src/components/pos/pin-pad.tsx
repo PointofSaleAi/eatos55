@@ -72,6 +72,7 @@ export function PinPad({
   onClockIn,
   onBiometric,
   revenueCenter,
+  onRevenueCenterPress,
   onLogOut,
   className,
 }: {
@@ -85,6 +86,7 @@ export function PinPad({
   onClockIn?: () => void;
   onBiometric?: () => void;
   revenueCenter?: string;
+  onRevenueCenterPress?: () => void;
   onLogOut?: () => void;
   className?: string;
 }) {
