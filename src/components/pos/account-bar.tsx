@@ -1,6 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import {
+  ArrowLeftRight,
+  Banknote,
+  ChevronDown,
+  Monitor,
+  Sparkles,
+  Timer,
   Bell,
   EllipsisVertical,
   Headphones,
@@ -67,30 +73,47 @@ export function AccountInfo() {
     .map((p) => p[0])
     .join("");
 
+  const hour = new Date().getHours();
+  const service = hour < 11 ? "Breakfast Service" : hour < 16 ? "Lunch Service" : "Dinner Service";
+
   return (
-    <div className="flex min-w-0 items-center gap-2.5">
+    <div className="flex min-w-0 items-center gap-2">
       <Button
         type="button"
         variant="ghost"
         size="icon"
-        aria-label="Open navigation"
-        title="Navigation"
-        onClick={() => drawer?.open()}
-        className="size-11 shrink-0 rounded-full bg-topbar-foreground p-0 text-[0.75rem] font-extrabold text-topbar hover:bg-topbar-foreground/90 hover:text-topbar"
+        aria-label="Switch user"
+        title="Switch user"
+        onClick={() => window.dispatchEvent(new CustomEvent("pos:switch-user"))}
+        className="hidden size-9 shrink-0 text-topbar-foreground hover:bg-muted sm:inline-flex"
       >
-        {initials}
+        <ArrowLeftRight className="size-4" />
       </Button>
-
-      <div className="min-w-0 leading-none">
-        <p className="truncate text-[0.6875rem] font-extrabold uppercase text-topbar-muted">
+      <div className="flex min-w-0 items-center gap-2 rounded-pill bg-topbar-foreground/10 py-1 pl-1 pr-3">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label="Open navigation"
+          title="Navigation"
+          onClick={() => drawer?.open()}
+          className="size-9 shrink-0 rounded-full bg-topbar-foreground/15 p-0 text-[0.75rem] font-extrabold text-topbar-foreground hover:bg-topbar-foreground/25 hover:text-topbar-foreground"
+        >
+          {initials}
+        </Button>
+        <span className="hidden truncate text-[0.875rem] font-bold text-topbar-foreground lg:inline">
+          {session.name.split(" ")[0]}
+        </span>
+        <span className="whitespace-nowrap text-[0.6875rem] font-extrabold uppercase text-topbar-muted">
           {session.role}
-        </p>
+        </span>
+        <span aria-hidden className="hidden h-5 w-px bg-topbar-border md:block" />
         <span
           title={`Clocked in at ${settings.clockedInAt}`}
-          className="mt-1 flex items-center gap-1.5 whitespace-nowrap text-[0.75rem] font-semibold text-topbar-foreground"
+          className="hidden items-center gap-1.5 whitespace-nowrap text-[0.8125rem] font-semibold text-topbar-foreground md:flex"
         >
-          {settings.clockedInAt}
-          <span aria-hidden className="size-1.5 rounded-full bg-success" />
+          <Timer className="size-4" />
+          {service} ({settings.clockedInAt})
         </span>
       </div>
     </div>
@@ -127,6 +150,37 @@ export function AccountActions() {
 
   return (
     <div className="relative flex shrink-0 items-center justify-end gap-0.5">
+      <span
+        title="Device connected"
+        className="mr-1 hidden items-center gap-1.5 rounded-pill bg-topbar-foreground/10 px-2.5 py-1.5 text-topbar-foreground lg:flex"
+      >
+        <span aria-hidden className="size-1.5 rounded-full bg-success" />
+        <Monitor className="size-4" />
+        <ChevronDown className="size-3.5 text-topbar-muted" />
+      </span>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        aria-label="Maya AI"
+        title="Maya AI"
+        onClick={() => window.dispatchEvent(new CustomEvent("pos:open-dashboard"))}
+        className={cn(iconBtn, "hidden md:inline-flex")}
+      >
+        <Sparkles className="size-4" />
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        aria-label="Cash drawer"
+        title="Cash drawer"
+        onClick={() => toast.success("Cash drawer opened")}
+        className={cn(iconBtn, "relative hidden lg:inline-flex")}
+      >
+        <Banknote className="size-4" />
+        <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-warning" />
+      </Button>
       <Button
         type="button"
         variant="ghost"
