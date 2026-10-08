@@ -72,7 +72,7 @@ export function PriceOverrideFlow({
   const pushPrice = (k: string) => {
     setEntry((e) => {
       if (k === "." && e.includes(".")) return e;
-      if (e.includes(".") && e.split(".")[1].length >= 2) return e;
+      if (e.includes(".") && (e.split(".")[1] ?? "").length >= 2) return e;
       if (e.replace(".", "").length >= 6) return e;
       return e === "0" && k !== "." ? k : e + k;
     });
