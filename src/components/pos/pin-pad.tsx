@@ -1,4 +1,5 @@
-import { Delete, Fingerprint, ScanFace } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, Delete, Fingerprint, ScanFace, Store } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const gateDigits = ["7", "8", "9", "4", "5", "6", "1", "2", "3"];
@@ -72,7 +73,8 @@ export function PinPad({
   onClockIn,
   onBiometric,
   revenueCenter,
-  onRevenueCenterPress,
+  revenueCenterOptions,
+  onRevenueCenterSelect,
   onLogOut,
   className,
 }: {
@@ -86,7 +88,8 @@ export function PinPad({
   onClockIn?: () => void;
   onBiometric?: () => void;
   revenueCenter?: string;
-  onRevenueCenterPress?: () => void;
+  revenueCenterOptions?: string[];
+  onRevenueCenterSelect?: (center: string) => void;
   onLogOut?: () => void;
   className?: string;
 }) {
