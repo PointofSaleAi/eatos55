@@ -393,7 +393,7 @@ function NewOrder() {
                     <span
                       title={`${item.stock} in stock`}
                       className={cn(
-                        "shrink-0 rounded-pill px-1.5 text-fs-xs font-extrabold leading-5",
+                        "shrink-0 rounded-pill px-1 text-fs-xs font-extrabold leading-4",
                         low
                           ? "bg-destructive/10 text-destructive"
                           : "bg-muted text-muted-foreground",
