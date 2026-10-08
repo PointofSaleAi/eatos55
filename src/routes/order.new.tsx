@@ -58,7 +58,7 @@ function NewOrder() {
   const [activeCategory, setActiveCategory] = useState(initialCategory?.id ?? "");
   const [subcategory, setSubcategory] = useState(initialCategory?.subcategories[0] ?? "");
   const [menuToolsOpen, setMenuToolsOpen] = useState(false);
-  const [categoryLayout, setCategoryLayout] = useState<"horizontal" | "vertical">("horizontal");
+  const [categoryLayout, setCategoryLayout] = useState<"horizontal" | "vertical">("vertical");
   const [sheetItem, setSheetItem] = useState<MenuItem | null>(null);
   const [moreOpen, setMoreOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
@@ -131,38 +131,34 @@ function NewOrder() {
       </Button>
       {menuToolsOpen ? (
         <>
-          <div className="flex rounded-card border border-border bg-muted p-0.5">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              aria-label="Show subcategories horizontally"
-              aria-pressed={categoryLayout === "horizontal"}
-              onClick={() => setCategoryLayout("horizontal")}
-              className={cn(
-                "min-h-tap min-w-tap rounded-md",
-                categoryLayout === "horizontal" &&
-                  "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-              )}
-            >
-              <ArrowLeftRight className="size-5" />
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              aria-label="Show subcategories vertically"
-              aria-pressed={categoryLayout === "vertical"}
-              onClick={() => setCategoryLayout("vertical")}
-              className={cn(
-                "min-h-tap min-w-tap rounded-md",
-                categoryLayout === "vertical" &&
-                  "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
-              )}
-            >
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label={
+              categoryLayout === "horizontal"
+                ? "Show subcategories vertically"
+                : "Show subcategories horizontally"
+            }
+            title={
+              categoryLayout === "horizontal"
+                ? "Show subcategories vertically"
+                : "Show subcategories horizontally"
+            }
+            onClick={() =>
+              setCategoryLayout((layout) =>
+                layout === "horizontal" ? "vertical" : "horizontal",
+              )
+            }
+            className="min-h-tap min-w-tap rounded-card"
+          >
+            {categoryLayout === "horizontal" ? (
               <ArrowUpDown className="size-5" />
-            </Button>
-          </div>
+            ) : (
+              <ArrowLeftRight className="size-5" />
+            )}
+          </Button>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
