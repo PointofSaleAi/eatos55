@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, NotebookPen, Pencil, Percent } from "lucide-react";
+import { ChevronLeft, ChevronRight, NotebookPen, Pencil, Percent, UtensilsCrossed } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
