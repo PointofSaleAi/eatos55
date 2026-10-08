@@ -4,7 +4,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Mic,
-  NotebookPen,
   Pencil,
   Percent,
   Search,
@@ -13,6 +12,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
+import { ItemNotesField } from "@/components/pos/item-notes-field";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { itemAddOnGroups, itemModifierGroups, money, type MenuItem } from "@/lib/demo-data";
@@ -48,7 +48,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState(item?.price ?? 0);
   const [editingPrice, setEditingPrice] = useState(false);
-  const [notes, setNotes] = useState("");
+  const [notes, setNotes] = useState<string[]>([]);
   const [tab, setTab] = useState<"item" | "addons">("item");
   const [group, setGroup] = useState<string>("");
   const [page, setPage] = useState(0);
@@ -120,7 +120,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
 
   const reset = () => {
     setQty(1);
-    setNotes("");
+    setNotes([]);
     setSelected({});
     setDiscount(null);
     setTab("item");
@@ -242,17 +242,8 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
 
               <div className="flex min-h-0 flex-1 flex-col">
 
-                <div className="px-4 pb-2">
-                  <div className="flex items-center gap-2 rounded-row border border-border bg-surface px-3">
-                    <NotebookPen className="size-4 shrink-0 text-muted-foreground" />
-                    <input
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      placeholder="Item Notes"
-                      aria-label="Item notes"
-                      className="h-ctl-md min-w-0 flex-1 bg-transparent text-fs-sm text-foreground outline-none"
-                    />
-                  </div>
+                <div className="relative z-10 px-4 pb-2">
+                  <ItemNotesField notes={notes} onChange={setNotes} />
                 </div>
 
                 {itemGroups.length && addOns.length ? (
@@ -498,7 +489,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                     addItem(item.id, {
                       qty,
                       price: price + modifierTotal,
-                      ...(notes ? { notes } : {}),
+                      ...(notes.length ? { notes: notes.join(", ") } : {}),
                       modifiers: Object.keys(selected),
                       ...(discount ? { discountPercent: discount.percent } : {}),
                     });
