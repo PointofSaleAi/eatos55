@@ -22,6 +22,20 @@ import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
 
+type SpeechRecognitionLike = {
+  lang: string;
+  onresult: ((e: { results: { transcript: string }[][] }) => void) | null;
+  onerror: (() => void) | null;
+  start: () => void;
+};
+
+const SORT_LABELS = {
+  az: "Name A-Z",
+  za: "Name Z-A",
+  lohi: "Price Low-High",
+  hilo: "Price High-Low",
+} as const;
+
 /**
  * Item detail sheet (live app parity): price edit, quantity picker, item notes,
  * Item / Add-Ons tabs with modifier groups, line discount and the ADD button.
