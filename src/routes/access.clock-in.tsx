@@ -104,40 +104,6 @@ function ClockIn() {
           </div>
         </div>
       </div>
-
-      <Sheet open={centerPickerOpen} onOpenChange={setCenterPickerOpen}>
-        <SheetContent side="bottom" className="z-[110] mx-auto w-full max-w-xl rounded-t-card">
-          <SheetHeader>
-            <SheetTitle>Select Revenue Center</SheetTitle>
-            <SheetDescription>
-              New tickets from this station will be tagged with the center you pick.
-            </SheetDescription>
-          </SheetHeader>
-          <div className="grid grid-cols-2 gap-3 px-4 pb-6 sm:grid-cols-3">
-            {revenueCenters.map((center) => {
-              const active = center === activeCenter;
-              return (
-                <button
-                  key={center}
-                  type="button"
-                  onClick={() => {
-                    setStation(center);
-                    setCenterPickerOpen(false);
-                    toast.success(`Revenue center set to ${center}`);
-                  }}
-                  className={cn(
-                    "flex min-h-[5.5rem] flex-col items-center justify-center gap-2 rounded-card border bg-surface px-3 py-4 text-center transition-colors hover:bg-muted",
-                    active ? "border-foreground ring-1 ring-foreground" : "border-border",
-                  )}
-                >
-                  <Store className="size-6 text-muted-foreground" aria-hidden />
-                  <span className="text-fs-sm font-bold text-foreground">{center}</span>
-                </button>
-              );
-            })}
-          </div>
-        </SheetContent>
-      </Sheet>
     </div>
   );
 }
