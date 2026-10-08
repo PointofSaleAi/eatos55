@@ -113,6 +113,30 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
     setPage(0);
     setGroup("");
     setEditingPrice(false);
+    setSearch("");
+    setSort("az");
+    setSortOpen(false);
+  };
+
+  const startVoiceSearch = () => {
+    const w = window as unknown as {
+      SpeechRecognition?: new () => SpeechRecognitionLike;
+      webkitSpeechRecognition?: new () => SpeechRecognitionLike;
+    };
+    const Ctor = w.SpeechRecognition ?? w.webkitSpeechRecognition;
+    if (!Ctor) {
+      toast.info("Voice search is not available on this device");
+      return;
+    }
+    const rec = new Ctor();
+    rec.lang = navigator.language || "en-US";
+    rec.onresult = (e) => {
+      const text = e.results[0]?.[0]?.transcript ?? "";
+      if (text) setSearch(text);
+    };
+    rec.onerror = () => toast.info("Could not hear anything, try again");
+    rec.start();
+    toast.info("Listening…");
   };
 
   return (
