@@ -13,6 +13,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { ItemNotesField } from "@/components/pos/item-notes-field";
+import { PriceOverrideFlow } from "@/components/pos/price-override";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { itemAddOnGroups, itemModifierGroups, money, type MenuItem } from "@/lib/demo-data";
@@ -87,6 +88,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState(item?.price ?? 0);
   const [editingPrice, setEditingPrice] = useState(false);
+  const [overrideOpen, setOverrideOpen] = useState(false);
   const [notes, setNotes] = useState<string[]>([]);
   const [tab, setTab] = useState<"item" | "addons">("item");
   const [group, setGroup] = useState<string>("");
@@ -248,11 +250,21 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                     ) : (
                       <button
                         type="button"
-                        onClick={() => setEditingPrice(true)}
+                        aria-label="Edit price (manager PIN required)"
+                        onClick={() =>
+                          item.openPrice ? setEditingPrice(true) : setOverrideOpen(true)
+                        }
                         onPointerDown={(e) => e.stopPropagation()}
-                        className="flex h-ctl-sm items-center gap-1 rounded-pill border border-border px-2.5 text-fs-sm font-bold text-foreground sm:gap-1.5 sm:px-3"
+                        className="flex min-h-ctl-sm items-center gap-1 rounded-pill border border-border px-2.5 py-0.5 text-fs-sm font-bold text-foreground sm:gap-1.5 sm:px-3"
                       >
-                        {money(price)}
+                        <span className="flex flex-col items-center leading-tight">
+                          {money(price)}
+                          {!item.openPrice && price !== item.price ? (
+                            <span className="text-[0.65rem] font-semibold text-muted-foreground line-through">
+                              {money(item.price)}
+                            </span>
+                          ) : null}
+                        </span>
                         <Pencil className="size-3.5 text-muted-foreground" />
                       </button>
                     )}
@@ -540,6 +552,19 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
           ) : null}
         </SheetContent>
       </Sheet>
+
+      {item ? (
+        <PriceOverrideFlow
+          open={overrideOpen}
+          item={item}
+          price={item.price}
+          onClose={() => setOverrideOpen(false)}
+          onApply={(p) => {
+            setPrice(p);
+            setOverrideOpen(false);
+          }}
+        />
+      ) : null}
 
       <DiscountSheet
         open={discountOpen}
