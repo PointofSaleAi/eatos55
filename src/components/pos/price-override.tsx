@@ -44,6 +44,7 @@ export function PriceOverrideFlow({
       setError(false);
       setReason("");
       setReasonOpen(false);
+      setOtherNote("");
       setEntry("");
     }
   }, [open]);
@@ -73,8 +74,10 @@ export function PriceOverrideFlow({
     });
   };
 
+  const isOther = reason === "Other";
+  const note = otherNote.trim();
   const newPrice = Number(entry || "0");
-  const canApply = Boolean(reason) && entry !== "" && newPrice !== price;
+  const canApply = Boolean(reason) && (!isOther || note.length > 0) && entry !== "" && newPrice !== price;
 
   const thumb = item.image ? (
     <img src={item.image} alt="" className="size-10 shrink-0 rounded-card border border-border object-cover" />
