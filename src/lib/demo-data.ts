@@ -9,6 +9,8 @@ export type MenuItem = {
   name: string;
   price: number;
   category: string;
+  /** Product photo shown before the name in the item sheet. */
+  image?: string;
   note?: string;
   /** Tracked inventory count, when the item counts stock. */
   stock?: number;
