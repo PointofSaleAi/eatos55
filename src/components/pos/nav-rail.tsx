@@ -9,7 +9,8 @@ import { cn } from "@/lib/utils";
 const cell =
   "flex min-h-ctl-lg items-center gap-3 rounded-card border-2 border-transparent text-fs-sm transition-colors";
 const rest = "text-shell-foreground/60 hover:bg-shell-foreground/10 hover:text-shell-foreground";
-const active = "border-shell-foreground font-extrabold text-shell-foreground";
+const active =
+  "border-shell-foreground/25 bg-shell-foreground/10 font-extrabold text-shell-foreground shadow-[inset_0_1px_0_color-mix(in_oklab,var(--shell-foreground)_12%,transparent)]";
 
 /**
  * Landscape navigation rail, laid out like the reference terminal: grip handle,
@@ -42,7 +43,7 @@ export function NavRail() {
         if (e.target === e.currentTarget) toggle();
       }}
       className={cn(
-        "hidden shrink-0 flex-col bg-shell pt-[calc(0.5rem+var(--sat,0px))] pb-[calc(0.5rem+var(--sab,0px))] transition-[width] duration-200 md:flex",
+        "my-2 ml-2 hidden shrink-0 flex-col rounded-2xl border border-shell-foreground/10 bg-shell-foreground/[0.06] pt-2 pb-[calc(0.5rem+var(--sab,0px))] transition-[width] duration-200 md:flex",
         expanded ? "w-60" : "w-[4.25rem]",
       )}
     >
@@ -81,7 +82,7 @@ export function NavRail() {
           onClick={toggle}
           title={venue}
           aria-label={expanded ? "Collapse navigation" : "Expand navigation"}
-          className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-card bg-shell-foreground/15 text-fs-sm font-extrabold uppercase text-shell-foreground"
+          className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full bg-shell-foreground/15 ring-1 ring-shell-foreground/20 text-fs-sm font-extrabold uppercase text-shell-foreground"
         >
           {venueInitials}
         </button>
