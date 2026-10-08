@@ -1,10 +1,13 @@
 import {
+  ArrowUpDown,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Mic,
   NotebookPen,
   Pencil,
   Percent,
+  Search,
   UtensilsCrossed,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -38,6 +41,9 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [discount, setDiscount] = useState<{ name: string; percent: number } | null>(null);
   const [discountOpen, setDiscountOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<"az" | "za" | "lohi" | "hilo">("az");
+  const [sortOpen, setSortOpen] = useState(false);
   const { dragStyle, handleProps } = useSheetDrag(() => {
     reset();
     onClose();
