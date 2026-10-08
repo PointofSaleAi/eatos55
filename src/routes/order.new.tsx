@@ -1,7 +1,19 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
-import { Ban, MoreVertical, Plus, Search, Tag } from "lucide-react";
-import { useRef, useState } from "react";
+import {
+  ArrowLeftRight,
+  ArrowUpDown,
+  Ban,
+  Check,
+  ChevronDown,
+  MoreVertical,
+  PanelLeftOpen,
+  Plus,
+  Search,
+  Tag,
+  X,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { GuestBlock } from "@/components/pos/guest-block";
 import { useWideLayout } from "@/components/pos/shell";
 import { GuestSheet } from "@/components/pos/guest-sheet";
@@ -14,6 +26,13 @@ import { usePos } from "@/lib/pos-store";
 import { toast } from "sonner";
 import { SearchDock } from "@/components/pos/search-dock";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Route = createFileRoute("/order/new")({
   head: () => ({
@@ -33,8 +52,13 @@ export const Route = createFileRoute("/order/new")({
 function NewOrder() {
   const navigate = useNavigate();
   const { totals, addItem, settings } = usePos();
-  const [activeMenu, setActiveMenu] = useState(menus[1]!.id);
-  const [category, setCategory] = useState<string>(menus[1]!.categories[0]!);
+  const initialMenu = menus[0];
+  const initialCategory = initialMenu?.categories[1] ?? initialMenu?.categories[0];
+  const [activeMenu, setActiveMenu] = useState(initialMenu?.id ?? "");
+  const [activeCategory, setActiveCategory] = useState(initialCategory?.id ?? "");
+  const [subcategory, setSubcategory] = useState(initialCategory?.subcategories[0] ?? "");
+  const [menuToolsOpen, setMenuToolsOpen] = useState(false);
+  const [categoryLayout, setCategoryLayout] = useState<"horizontal" | "vertical">("horizontal");
   const [sheetItem, setSheetItem] = useState<MenuItem | null>(null);
   const [moreOpen, setMoreOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
@@ -46,6 +70,7 @@ function NewOrder() {
   const wide = useWideLayout();
   // Long-press on a tile always opens the item sheet, even for simple items.
   const longPress = useRef<number | null>(null);
+  const menuToolsRef = useRef<HTMLDivElement | null>(null);
   const longFired = useRef(false);
   const clearLongPress = () => {
     if (longPress.current !== null) window.clearTimeout(longPress.current);
@@ -54,11 +79,135 @@ function NewOrder() {
   const showMenu = wide || tab === "menu";
   const showCart = wide || tab === "order";
 
-  const currentMenu = menus.find((m) => m.id === activeMenu) ?? menus[0]!;
-  const chips = currentMenu.categories;
-  const base = liveMenu.filter((m) => m.category === category);
+  const currentMenu = menus.find((m) => m.id === activeMenu) ?? initialMenu;
+  if (!currentMenu) return null;
+  const currentCategory =
+    currentMenu.categories.find((entry) => entry.id === activeCategory) ??
+    currentMenu.categories[0];
+  const subcategories = currentCategory?.subcategories ?? [];
+  const base = liveMenu.filter((m) => m.category === subcategory);
   const q = query.trim().toLowerCase();
   const items = q ? base.filter((i) => i.name.toLowerCase().includes(q)) : base;
+
+  const chooseMenu = (menuId: string) => {
+    const nextMenu = menus.find((entry) => entry.id === menuId);
+    const nextCategory = nextMenu?.categories[0];
+    if (!nextMenu || !nextCategory) return;
+    setActiveMenu(nextMenu.id);
+    setActiveCategory(nextCategory.id);
+    setSubcategory(nextCategory.subcategories[0] ?? "");
+  };
+
+  const chooseCategory = (categoryId: string) => {
+    const nextCategory = currentMenu.categories.find((entry) => entry.id === categoryId);
+    if (!nextCategory) return;
+    setActiveCategory(nextCategory.id);
+    setSubcategory(nextCategory.subcategories[0] ?? "");
+  };
+
+  useEffect(() => {
+    if (!menuToolsOpen) return;
+    const closeOnOutsidePress = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Node) || menuToolsRef.current?.contains(target)) return;
+      setMenuToolsOpen(false);
+    };
+    document.addEventListener("pointerdown", closeOnOutsidePress);
+    return () => document.removeEventListener("pointerdown", closeOnOutsidePress);
+  }, [menuToolsOpen]);
+
+  const menuSelector = (
+    <div ref={menuToolsRef} className="flex shrink-0 items-center gap-1">
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        aria-label={menuToolsOpen ? "Close menu controls" : "Open menu controls"}
+        aria-expanded={menuToolsOpen}
+        onClick={() => setMenuToolsOpen((open) => !open)}
+        className="min-h-tap min-w-tap rounded-card"
+      >
+        {menuToolsOpen ? <X className="size-5" /> : <PanelLeftOpen className="size-5" />}
+      </Button>
+      {menuToolsOpen ? (
+        <>
+          <div className="flex rounded-card border border-border bg-muted p-0.5">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="Show subcategories horizontally"
+              aria-pressed={categoryLayout === "horizontal"}
+              onClick={() => setCategoryLayout("horizontal")}
+              className={cn(
+                "min-h-tap min-w-tap rounded-md",
+                categoryLayout === "horizontal" &&
+                  "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+              )}
+            >
+              <ArrowLeftRight className="size-5" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="Show subcategories vertically"
+              aria-pressed={categoryLayout === "vertical"}
+              onClick={() => setCategoryLayout("vertical")}
+              className={cn(
+                "min-h-tap min-w-tap rounded-md",
+                categoryLayout === "vertical" &&
+                  "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground",
+              )}
+            >
+              <ArrowUpDown className="size-5" />
+            </Button>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className="min-h-tap max-w-[11rem] gap-1 rounded-card px-3 text-fs-xs font-extrabold"
+              >
+                <span className="truncate">{currentMenu.name}</span>
+                <ChevronDown className="size-4 shrink-0" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="min-w-[12rem] rounded-card">
+              {menus.map((entry) => (
+                <DropdownMenuItem
+                  key={entry.id}
+                  onSelect={() => chooseMenu(entry.id)}
+                  className="min-h-tap text-fs-sm font-bold"
+                >
+                  <span className="min-w-0 flex-1 truncate">{entry.name}</span>
+                  {entry.id === activeMenu ? <Check className="size-4 shrink-0" /> : null}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
+      ) : null}
+    </div>
+  );
+
+  const categoryButtons = currentMenu.categories.map((entry) => (
+    <Button
+      key={entry.id}
+      type="button"
+      variant="outline"
+      onClick={() => chooseCategory(entry.id)}
+      className={cn(
+        "min-h-tap shrink-0 rounded-card px-4 text-fs-xs font-extrabold uppercase",
+        entry.id === activeCategory
+          ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+          : "bg-surface text-foreground hover:bg-muted hover:text-foreground",
+      )}
+    >
+      {entry.name}
+    </Button>
+  ));
 
   return (
     <div
@@ -97,25 +246,9 @@ function NewOrder() {
               ))}
             </div>
           ) : (
-            <div className="no-scrollbar flex min-w-0 flex-1 flex-wrap items-stretch gap-1.5">
-              {menus.map((m) => (
-                <button
-                  key={m.id}
-                  type="button"
-                  onClick={() => {
-                    setActiveMenu(m.id);
-                    setCategory(m.categories[0]!);
-                  }}
-                  className={cn(
-                    "flex h-9 shrink-0 items-center justify-center rounded-pill px-3 text-center text-[0.6875rem] font-extrabold uppercase leading-[1.05] tracking-tight transition-colors",
-                    m.id === activeMenu
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground hover:bg-secondary",
-                  )}
-                >
-                  {m.name}
-                </button>
-              ))}
+            <div className="no-scrollbar flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto">
+              {menuSelector}
+              {categoryButtons}
             </div>
           )}
 
@@ -144,28 +277,12 @@ function NewOrder() {
           </div>
         </div>
 
-        {/* Phone: the menu pills sit with their categories, right above the items. */}
+        {/* Phone: menu selector and categories stay directly above subcategories. */}
         {!wide ? (
           showMenu ? (
-            <div className="no-scrollbar mt-1.5 flex flex-nowrap items-stretch gap-1.5 overflow-x-auto">
-              {menus.map((m) => (
-                <button
-                  key={m.id}
-                  type="button"
-                  onClick={() => {
-                    setActiveMenu(m.id);
-                    setCategory(m.categories[0]!);
-                  }}
-                  className={cn(
-                    "flex h-9 shrink-0 items-center justify-center rounded-pill px-3 text-center text-[0.6875rem] font-extrabold uppercase leading-[1.05] tracking-tight transition-colors",
-                    m.id === activeMenu
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground hover:bg-secondary",
-                  )}
-                >
-                  {m.name}
-                </button>
-              ))}
+            <div className="no-scrollbar mt-1.5 flex flex-nowrap items-center gap-1.5 overflow-x-auto">
+              {menuSelector}
+              {categoryButtons}
             </div>
           ) : (
             <div className="mt-1.5 flex items-center gap-1">
@@ -179,26 +296,27 @@ function NewOrder() {
           <div
             className={cn(
               "mt-2 gap-1.5",
-              wide
+              categoryLayout === "vertical"
                 ? "grid grid-cols-[repeat(auto-fill,minmax(6.75rem,1fr))]"
                 : "no-scrollbar flex flex-nowrap overflow-x-auto",
             )}
           >
-            {chips.map((c) => (
-              <button
-                key={c}
+            {subcategories.map((entry) => (
+              <Button
+                key={entry}
                 type="button"
-                onClick={() => setCategory(c)}
+                variant="outline"
+                onClick={() => setSubcategory(entry)}
                 className={cn(
-                  "flex h-10 items-center justify-center rounded-card px-2 text-center text-[0.625rem] font-extrabold uppercase leading-[1.1] tracking-tight transition-colors",
-                  wide ? "" : "min-w-[6.5rem] shrink-0",
-                  c === category
-                    ? "bg-accent text-accent-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-secondary",
+                  "min-h-tap rounded-card px-2 text-center text-fs-xs font-extrabold uppercase leading-[1.1]",
+                  categoryLayout === "horizontal" && "min-w-[7.25rem] shrink-0",
+                  entry === subcategory
+                    ? "border-accent bg-accent text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground"
+                    : "bg-surface text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
               >
-                <span className="line-clamp-2">{c}</span>
-              </button>
+                <span className="line-clamp-2 whitespace-normal">{entry}</span>
+              </Button>
             ))}
           </div>
         ) : null}

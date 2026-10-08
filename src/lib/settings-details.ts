@@ -199,7 +199,10 @@ export const settingsDetails: Record<string, DetailScreen> = {
     icon: ScrollText,
     intro: "Menus and their categories sync from Back Office.",
     rows: menus.map((m) =>
-      ro(m.name, `${m.categories.length} categor${m.categories.length === 1 ? "y" : "ies"}`),
+      ro(
+        m.name,
+        `${m.categories.length} categor${m.categories.length === 1 ? "y" : "ies"}`,
+      ),
     ),
   },
   categories: {

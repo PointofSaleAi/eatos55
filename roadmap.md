@@ -5,3 +5,4 @@
 - [x] Integrate tip selection into checkout and save tips to payments/tickets
 - [x] Verify phone, tablet, and desktop layouts
 - [x] Add merchant-controlled per-product modifier visibility and requiredness
+- [x] Add New Order menu dropdown with category and subcategory layout controls

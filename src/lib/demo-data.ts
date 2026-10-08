@@ -428,23 +428,47 @@ export const cashDenominations = [1, 5, 10, 20, 50, 100];
 /* Live-app menu browsing: menus → categories → items                  */
 /* ------------------------------------------------------------------ */
 
-export type MenuDef = { id: string; name: string; categories: string[] };
+export type MenuCategory = {
+  id: "bar" | "brunch" | "dinner";
+  name: string;
+  subcategories: string[];
+};
 
+export type MenuDef = { id: string; name: string; categories: MenuCategory[] };
+
+const barCategory: MenuCategory = {
+  id: "bar",
+  name: "BAR MENU",
+  subcategories: ["BAR BITES", "COCKTAILS", "BEER", "WINE"],
+};
+
+const brunchCategory: MenuCategory = {
+  id: "brunch",
+  name: "BRUNCH",
+  subcategories: [
+    "BRUNCH SANDWICHES",
+    "BRUNCH BEVERAGES",
+    "BRUNCHY DRINKS",
+    "BRUNCH COFFEE",
+  ],
+};
+
+const dinnerCategory: MenuCategory = {
+  id: "dinner",
+  name: "DINNER",
+  subcategories: ["STARTERS", "MAINS", "SIDES", "DESSERTS"],
+};
+
+/**
+ * Menu names are supplied by the merchant's menu configuration. The current
+ * imported data does not name a menu, so keep one neutral configurable entry
+ * rather than presenting fabricated restaurant menus.
+ */
 export const menus: MenuDef[] = [
   {
-    id: "bar",
-    name: "BAR MENu",
-    categories: ["BAR BITES", "COCKTAILS", "BEER", "WINE"],
-  },
-  {
-    id: "brunch",
-    name: "BRUNCH",
-    categories: ["BRUNCH SANDWICHES", "BRUNCH BEVERAGES", "BRUNCHY DRINKS", "BRUNCH COFFEE"],
-  },
-  {
-    id: "dinner",
-    name: "DINNER",
-    categories: ["STARTERS", "MAINS", "SIDES", "DESSERTS"],
+    id: "configured-menu",
+    name: "MENU",
+    categories: [barCategory, brunchCategory, dinnerCategory],
   },
 ];
 
