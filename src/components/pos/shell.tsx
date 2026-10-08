@@ -86,6 +86,37 @@ function useSessionGate(): boolean {
   );
 }
 
+/** Screens worth having ready the moment someone unlocks the terminal. */
+const MAIN_SCREENS = [
+  "/tickets",
+  "/floor",
+  "/order/new",
+  "/payment/bill",
+  "/payment/method",
+  "/settings/general",
+] as const;
+
+/**
+ * Once signed in and clocked in, quietly load the main screens' code in the
+ * background so the first visit to each opens instantly.
+ */
+function useWarmMainScreens() {
+  const router = useRouter();
+  const { session, sessionReady } = usePos();
+  const ready = sessionReady && session.signedIn;
+  useEffect(() => {
+    if (!ready) return;
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void) => number;
+    };
+    const run = () => {
+      for (const to of MAIN_SCREENS) router.preloadRoute({ to }).catch(() => undefined);
+    };
+    if (w.requestIdleCallback) w.requestIdleCallback(run);
+    else window.setTimeout(run, 300);
+  }, [ready, router]);
+}
+
 /** Landscape body: list pane beside the routed screen when the section has one. */
 function LandscapeContent({ children }: { children: ReactNode }) {
   const pane = useSectionPane();
@@ -125,6 +156,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const gatePending = useSessionGate();
+  useWarmMainScreens();
   useGlobalKeyboardAware();
   // Follows the system light/dark appearance unless overridden in Settings.
   useAppearance();
@@ -158,6 +190,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
             "md:h-[860px] md:max-h-none md:w-[420px] md:rounded-[2.75rem] md:border-[10px] md:border-shell md:shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)] lg:h-[880px] lg:w-[440px]",
         )}
       >
+        <RouteProgress />
         <WideContext.Provider value={landscape}>
           <NavDrawerContext.Provider value={navCtx}>
             <LiveRegionProvider>
