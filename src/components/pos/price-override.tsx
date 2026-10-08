@@ -6,7 +6,6 @@ import { haptic } from "@/lib/haptics";
 import { money, type MenuItem } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 
-const MANAGER_PIN = "1500";
 const REASONS = ["Manager Discount", "Customer Complaint", "Price Match"];
 
 const keyCls =
