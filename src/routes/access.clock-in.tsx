@@ -112,7 +112,7 @@ function ClockIn() {
       </div>
 
       <Sheet open={centerPickerOpen} onOpenChange={setCenterPickerOpen}>
-        <SheetContent side="bottom" className="mx-auto w-full max-w-xl rounded-t-card">
+        <SheetContent side="bottom" className="z-[110] mx-auto w-full max-w-xl rounded-t-card">
           <SheetHeader>
             <SheetTitle>Select Revenue Center</SheetTitle>
             <SheetDescription>
