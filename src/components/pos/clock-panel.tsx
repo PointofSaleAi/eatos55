@@ -43,6 +43,7 @@ export function ClockPanel({
       <div
         className={cn(
           "flex min-h-0 flex-col justify-center text-shell-foreground",
+          !compact && "items-center text-center",
           compact && "grid grid-cols-[1fr_auto] grid-rows-2 content-center gap-x-4 gap-y-1",
           className,
         )}
