@@ -97,9 +97,10 @@ export function PinPad({
   const showBiometricRow = Boolean(onBiometric || revenueCenter);
   const canPickCenter = Boolean(revenueCenterOptions?.length && onRevenueCenterSelect);
   const [centerPickerOpen, setCenterPickerOpen] = useState(false);
+  const centerPickerRow = centerPickerOpen && canPickCenter;
   const rows = [
     "1fr",
-    "4fr",
+    centerPickerRow ? "auto" : "4fr",
     showClockRow ? "1fr" : null,
     showBiometricRow ? "1fr" : null,
     onLogOut ? "0.72fr" : null,
