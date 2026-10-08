@@ -6,7 +6,8 @@ import { haptic } from "@/lib/haptics";
 import { money, type MenuItem } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 
-const REASONS = ["Manager Discount", "Customer Complaint", "Price Match"];
+const REASONS = ["Manager Discount", "Price Match", "Damaged Item", "Promotional Offer", "Loyalty Discount", "Other"];
+const OTHER_NOTE_MAX = 100;
 
 const keyCls =
   "grid h-12 place-items-center rounded-card border border-border bg-muted text-fs-lg font-extrabold text-foreground transition active:scale-[0.97] hover:bg-secondary sm:h-14";
@@ -33,6 +34,7 @@ export function PriceOverrideFlow({
   const [error, setError] = useState(false);
   const [reason, setReason] = useState("");
   const [reasonOpen, setReasonOpen] = useState(false);
+  const [otherNote, setOtherNote] = useState("");
   const [entry, setEntry] = useState("");
 
   useEffect(() => {
@@ -42,6 +44,7 @@ export function PriceOverrideFlow({
       setError(false);
       setReason("");
       setReasonOpen(false);
+      setOtherNote("");
       setEntry("");
     }
   }, [open]);
@@ -71,8 +74,10 @@ export function PriceOverrideFlow({
     });
   };
 
+  const isOther = reason === "Other";
+  const note = otherNote.trim();
   const newPrice = Number(entry || "0");
-  const canApply = Boolean(reason) && entry !== "" && newPrice !== price;
+  const canApply = Boolean(reason) && (!isOther || note.length > 0) && entry !== "" && newPrice !== price;
 
   const thumb = item.image ? (
     <img src={item.image} alt="" className="size-10 shrink-0 rounded-card border border-border object-cover" />
@@ -174,6 +179,22 @@ export function PriceOverrideFlow({
               ) : null}
             </div>
 
+            {isOther ? (
+              <div className="rounded-card bg-muted px-3.5 py-3">
+                <textarea
+                  value={otherNote}
+                  onChange={(e) => setOtherNote(e.target.value.slice(0, OTHER_NOTE_MAX))}
+                  placeholder="Please specify the reason for override"
+                  rows={3}
+                  className="w-full resize-none bg-transparent text-fs-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+                />
+                <div className="text-right text-fs-xs text-muted-foreground">
+                  ({otherNote.length}/{OTHER_NOTE_MAX})
+                </div>
+              </div>
+            ) : null}
+
+
             <div className="space-y-1.5 rounded-card bg-muted px-3.5 py-3">
               <div className="flex justify-between text-fs-sm">
                 <span className="text-muted-foreground">Price</span>
@@ -208,8 +229,9 @@ export function PriceOverrideFlow({
                 type="button"
                 disabled={!canApply}
                 onClick={() => {
-                  onApply(newPrice, reason);
-                  toast.success(`Price changed to ${money(newPrice)} (${reason})`);
+                  const label = isOther && note ? `Other: ${note}` : reason;
+                  onApply(newPrice, label);
+                  toast.success(`Price changed to ${money(newPrice)} (${label})`);
                 }}
                 className="h-12 rounded-pill bg-primary text-fs-sm font-extrabold uppercase text-primary-foreground disabled:opacity-40"
               >
