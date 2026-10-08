@@ -97,10 +97,9 @@ export function PinPad({
   const showBiometricRow = Boolean(onBiometric || revenueCenter);
   const canPickCenter = Boolean(revenueCenterOptions?.length && onRevenueCenterSelect);
   const [centerPickerOpen, setCenterPickerOpen] = useState(false);
-  const centerPickerRow = centerPickerOpen && canPickCenter;
   const rows = [
     "1fr",
-    centerPickerRow ? "auto" : "4fr",
+    "4fr",
     showClockRow ? "1fr" : null,
     showBiometricRow ? "1fr" : null,
     onLogOut ? "0.72fr" : null,
@@ -109,7 +108,7 @@ export function PinPad({
     .join(" ");
 
   return (
-    <div className={cn("grid min-h-0", className)} style={{ gridTemplateRows: rows }}>
+    <div className={cn("relative grid min-h-0", className)} style={{ gridTemplateRows: rows }}>
       <div className="mb-1 grid min-h-0 grid-cols-4 overflow-hidden rounded-sm border border-gate-separator bg-surface">
         {[0, 1, 2, 3].map((i) => (
           <span
