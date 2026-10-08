@@ -126,7 +126,7 @@ function NewOrder() {
         aria-label={menuToolsOpen ? "Close menu controls" : "Open menu controls"}
         aria-expanded={menuToolsOpen}
         onClick={() => setMenuToolsOpen((open) => !open)}
-        className="min-h-tap min-w-tap rounded-card"
+        className="h-9 min-w-tap rounded-card"
       >
         {menuToolsOpen ? <X className="size-5" /> : <PanelLeftOpen className="size-5" />}
       </Button>
@@ -151,7 +151,7 @@ function NewOrder() {
                 layout === "horizontal" ? "vertical" : "horizontal",
               )
             }
-            className="min-h-tap min-w-tap rounded-card"
+            className="h-9 min-w-tap rounded-card"
           >
             {categoryLayout === "horizontal" ? (
               <ArrowUpDown className="size-5" />
@@ -165,7 +165,7 @@ function NewOrder() {
               <Button
                 type="button"
                 variant="outline"
-                className="min-h-tap max-w-[11rem] gap-1 rounded-card px-3 text-fs-xs font-extrabold"
+                className="h-9 max-w-[11rem] gap-1 rounded-card px-3 text-fs-xs font-extrabold"
               >
                 <span className="truncate">{currentMenu.name}</span>
                 <ChevronDown className="size-4 shrink-0" />
