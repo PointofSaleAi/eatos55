@@ -23,11 +23,13 @@ export function PaymentCompleteCard({
   onDone,
   className,
   doneLabel = "New Order",
+  hideHeaderClose = false,
 }: {
   onDone: () => void;
   className?: string;
   /** Label of the closing action, e.g. the next check of a split. */
   doneLabel?: string;
+  hideHeaderClose?: boolean;
 }) {
   const { lastPayment, guest, settings } = usePos();
   const [choice, setChoice] = useState<Receipt | null>(null);
@@ -70,14 +72,16 @@ export function PaymentCompleteCard({
             {money(change)} Change
           </h1>
         </DialogTitle>
-        <button
-          type="button"
-          onClick={onDone}
-          aria-label="Close payment confirmation"
-          className="grid size-10 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
-        >
-          <X className="size-6" />
-        </button>
+        {hideHeaderClose ? null : (
+          <button
+            type="button"
+            onClick={onDone}
+            aria-label="Close payment confirmation"
+            className="grid size-10 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+          >
+            <X className="size-6" />
+          </button>
+        )}
       </div>
 
       <div className="shrink-0 border-t border-border pt-3 text-center">
@@ -219,10 +223,9 @@ export function PaymentCompleteDialog({
   return (
     <Dialog open={open} onOpenChange={(next) => (next ? null : onDone())}>
       <DialogContent
-        hideClose
-        className="max-h-[92dvh] w-[min(40rem,94vw)] max-w-none gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0"
+        className="max-h-[92dvh] w-[min(40rem,94vw)] max-w-none gap-0 rounded-sheet border-border bg-surface p-0"
       >
-        <PaymentCompleteCard onDone={onDone} {...(doneLabel ? { doneLabel } : {})} />
+        <PaymentCompleteCard onDone={onDone} hideHeaderClose {...(doneLabel ? { doneLabel } : {})} />
       </DialogContent>
     </Dialog>
   );

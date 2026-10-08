@@ -166,7 +166,7 @@ export function SplitPayments({
   return (
     <Dialog open={open} onOpenChange={(next) => (next ? null : onClose())}>
       <DialogContent
-        className="flex h-[min(92dvh,54rem)] w-[min(96vw,84rem)] max-w-none flex-col gap-0 overflow-hidden rounded-sheet border-0 bg-surface p-0"
+        className="flex h-[min(92dvh,54rem)] w-[min(96vw,84rem)] max-w-none flex-col gap-0 rounded-sheet border-0 bg-surface p-0"
       >
         <div className="shrink-0 border-b border-border px-4 py-3 pr-14">
           <DialogTitle className="text-center text-fs-xl font-extrabold text-foreground">

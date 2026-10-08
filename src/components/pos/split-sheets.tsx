@@ -1,4 +1,4 @@
-import { Check, Receipt, X } from "lucide-react";
+import { Check, Receipt } from "lucide-react";
 import { useState } from "react";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -31,8 +31,6 @@ export function SplitWithSheet({
   return (
     <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
       <SheetContent
-        hideClose
-
         side="bottom"
         style={dragStyle}
         className="mx-auto w-full max-w-sheet rounded-t-sheet border-0 bg-surface p-0 pb-[calc(1.25rem+var(--kb-inset,0px))]"
@@ -43,14 +41,6 @@ export function SplitWithSheet({
             <SheetTitle className="min-w-0 flex-1 truncate text-left text-fs-base font-extrabold text-foreground">
               {itemName}
             </SheetTitle>
-            <button
-              type="button"
-              aria-label="Close"
-              onClick={onClose}
-              className="grid size-9 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
-            >
-              <X className="size-5" />
-            </button>
           </div>
         </SheetHeader>
         <p className="px-4 pb-2 text-fs-sm text-muted-foreground">Split With</p>

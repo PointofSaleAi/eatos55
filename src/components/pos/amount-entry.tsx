@@ -1,4 +1,4 @@
-import { Minus, X } from "lucide-react";
+import { Minus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { NumPad } from "@/components/pos/numpad";
@@ -257,21 +257,12 @@ export function AmountEntry({
     return (
       <Dialog open={open} onOpenChange={(next) => (next ? null : onClose())}>
         <DialogContent
-          hideClose
-          className="flex h-[min(34rem,88dvh)] w-[min(46rem,94vw)] max-w-none flex-col gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0"
+          className="flex h-[min(34rem,88dvh)] w-[min(46rem,94vw)] max-w-none flex-col gap-0 rounded-sheet border-border bg-surface p-0"
         >
           <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-3">
             <DialogTitle className="min-w-0 flex-1 truncate text-fs-lg font-extrabold text-foreground">
               {title}
             </DialogTitle>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Close amount entry"
-              className="grid size-10 shrink-0 place-items-center rounded-pill text-muted-foreground transition-colors hover:bg-muted"
-            >
-              <X className="size-5" />
-            </button>
           </div>
           {body}
         </DialogContent>

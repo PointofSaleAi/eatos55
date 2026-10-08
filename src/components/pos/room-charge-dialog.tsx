@@ -1,4 +1,4 @@
-import { BedDouble, Check, ChevronLeft, ChevronRight, Printer, Search, X } from "lucide-react";
+import { BedDouble, Check, ChevronLeft, ChevronRight, Printer, Search } from "lucide-react";
 import { toast } from "sonner";
 import { formatTime } from "@/lib/brand";
 import { useEffect, useMemo, useState } from "react";
@@ -426,8 +426,7 @@ export function RoomChargeDialog({
       <>
         <Dialog open={open} onOpenChange={(next) => (next ? null : onClose())}>
           <DialogContent
-            hideClose
-            className="flex h-[min(44rem,90dvh)] max-h-[90dvh] w-[min(60rem,95vw)] max-w-none flex-col gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0"
+            className="flex h-[min(44rem,90dvh)] max-h-[90dvh] w-[min(60rem,95vw)] max-w-none flex-col gap-0 rounded-sheet border-border bg-surface p-0"
           >
             <div className="grid shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border px-4 py-3">
               <div className="flex min-w-0 items-center gap-3">
@@ -436,14 +435,6 @@ export function RoomChargeDialog({
                 </DialogTitle>
                 <div className="min-w-0 overflow-hidden">{floorPills}</div>
               </div>
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Close room charge"
-                className="grid size-10 shrink-0 place-items-center rounded-pill text-muted-foreground transition-colors hover:bg-muted"
-              >
-                <X className="size-5" />
-              </button>
             </div>
 
             <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] overflow-hidden">
