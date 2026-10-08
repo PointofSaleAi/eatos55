@@ -2,20 +2,11 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Store } from "lucide-react";
 import { ClockPanel } from "@/components/pos/clock-panel";
 import { PinPad } from "@/components/pos/pin-pad";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import { revenueCenters } from "@/lib/demo-data";
 import { useLandscapeWide, useLayoutMode } from "@/hooks/use-layout-mode";
 import { usePos } from "@/lib/pos-store";
-import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/access/clock-in")({
   head: () => ({
