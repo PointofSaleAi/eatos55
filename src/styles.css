@@ -477,6 +477,18 @@
 @utility min-h-ctl-lg {
   min-height: var(--ctl-lg);
 }
+@utility size-ctl-sm {
+  width: var(--ctl-sm);
+  height: var(--ctl-sm);
+}
+@utility size-ctl-md {
+  width: var(--ctl-md);
+  height: var(--ctl-md);
+}
+@utility size-ctl-lg {
+  width: var(--ctl-lg);
+  height: var(--ctl-lg);
+}
 @utility min-h-key {
   min-height: var(--key-h);
 }
