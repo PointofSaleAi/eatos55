@@ -125,10 +125,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+const BOOT_SCRIPT = `(function(){try{var d=document.documentElement;d.dataset.layout=matchMedia("(min-width: 768px)").matches?"wide":"phone";var a=localStorage.getItem("pos-appearance");var dark=a==="dark"||(a==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);if(dark)d.classList.add("dark");d.style.colorScheme=dark?"dark":"light";}catch(e){}})();`;
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Sets layout + theme before first paint so nothing flashes on load. */}
+        <script dangerouslySetInnerHTML={{ __html: BOOT_SCRIPT }} />
         <HeadContent />
       </head>
       <body>

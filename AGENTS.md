@@ -11,3 +11,4 @@
 
 - Keep root error boundaries typed with TanStack Router's `ErrorComponentProps` because router upgrades expose boundary errors as `unknown`.
 - Use the shared DialogContent and SheetContent close control for modal X buttons so they remain outside the top-right corner consistently across viewports.
+- DeviceFrame renders only a blank themed surface until mounted and all saved state (session, settings, floor) is loaded, and layout hooks use useSyncExternalStore over matchMedia: prevents the phone-frame flash and protected-screen flashes on load.

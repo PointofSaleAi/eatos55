@@ -54,7 +54,7 @@ export function useAppChrome() {
  * Enforces the session: signing out or clocking out must actually leave the app,
  * and no in-app screen stays reachable (or reloadable) without a session.
  */
-function useSessionGate() {
+function useSessionGate(): boolean {
   const router = useRouter();
   const { session, sessionReady, saveResume } = usePos();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -77,6 +77,12 @@ function useSessionGate() {
       router.navigate({ to: "/access/clock-in", replace: true });
     }
   }, [router, isAccess, sessionReady, session.signedIn, session.clockedIn]);
+
+  // True while a redirect is pending, so the protected screen never flashes.
+  return (
+    !sessionReady ||
+    (!isAccess && (!session.signedIn || !session.clockedIn))
+  );
 }
 
 /** Landscape body: list pane beside the routed screen when the section has one. */
@@ -115,7 +121,9 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
   // Clock In is an opaque gate: top bar only, no rail / tabs / drawer.
   const clockGate = path === "/access/clock-in";
   const { wide } = useLayoutMode();
-  useSessionGate();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const gatePending = useSessionGate();
   useGlobalKeyboardAware();
   // Follows the system light/dark appearance unless overridden in Settings.
   useAppearance();
@@ -126,6 +134,12 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
   const wideAccess = wide && !appChrome;
   const fullBleed = landscape || wideAccess;
 
+  // Hold the first frame until the device width and saved session are known,
+  // so a wide screen never shows the handheld frame first (and no protected
+  // screen flashes before its redirect). Server and hydration output match.
+  if (!mounted || gatePending) {
+    return <div className="h-[100dvh] bg-background" aria-busy="true" />;
+  }
 
   return (
     <div
