@@ -4,7 +4,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Mic,
-  NotebookPen,
   Pencil,
   Percent,
   Search,

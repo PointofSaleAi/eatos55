@@ -102,7 +102,7 @@ export function ItemNotesField({
               e.preventDefault();
               add(draft);
             } else if (e.key === "Backspace" && !draft && notes.length) {
-              remove(notes[notes.length - 1]);
+              remove(notes[notes.length - 1] ?? "");
             } else if (e.key === "Escape") {
               setOpen(false);
             }
