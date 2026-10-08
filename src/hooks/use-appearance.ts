@@ -22,6 +22,7 @@ function apply(appearance: Appearance) {
  */
 export function useAppearance() {
   const [appearance, setAppearance] = useState<Appearance>("light");
+  const [loaded, setLoaded] = useState(false);
 
   // Read the stored preference after hydration to avoid an SSR mismatch.
   useEffect(() => {
@@ -30,9 +31,12 @@ export function useAppearance() {
       stored === "light" || stored === "dark" || stored === "system" ? stored : "light";
     setAppearance(next);
     apply(next);
+    setLoaded(true);
   }, []);
 
   useEffect(() => {
+    // Skip until the stored value is read, or the default would flash first.
+    if (!loaded) return;
     apply(appearance);
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const onChange = () => {
@@ -40,7 +44,7 @@ export function useAppearance() {
     };
     mq.addEventListener("change", onChange);
     return () => mq.removeEventListener("change", onChange);
-  }, [appearance]);
+  }, [appearance, loaded]);
 
   const set = (next: Appearance) => {
     window.localStorage.setItem(KEY, next);
