@@ -1,8 +1,10 @@
-import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from "react";
+import { useCallback, useContext, useRef, useState, type ReactNode } from "react";
+
+import { pinnedContext } from "@/lib/pinned-context";
 
 type Announce = (message: string) => void;
 
-const LiveRegionContext = createContext<Announce>(() => {});
+const LiveRegionContext = pinnedContext<Announce>("liveRegion", () => {});
 
 /** Announces state changes to VoiceOver / TalkBack without visual noise. */
 export function useAnnounce() {

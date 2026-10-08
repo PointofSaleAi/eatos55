@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
 import { brand } from "@/lib/brand";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -32,6 +33,8 @@ function ClockIn() {
   const landscape = useLandscapeWide();
   const wide = wideLayout && landscape;
   const [pin, setPin] = useState("");
+  // True from a correct PIN until the next screen is actually open.
+  const [unlocking, setUnlocking] = useState(false);
   const activeCenter = session.station ?? "Main";
 
   /**
@@ -39,21 +42,36 @@ function ClockIn() {
    * restored). Falls back to Tickets when there is nothing saved or the saved
    * screen no longer exists.
    */
-  const unlock = (enteredPin?: string) => {
+  const unlock = async (enteredPin?: string) => {
+    if (unlocking) return;
+    setUnlocking(true);
     clockIn(enteredPin);
     const target = resumeAfterUnlock(enteredPin);
-    navigate({ to: target ?? "/tickets" }).catch(() => navigate({ to: "/tickets" }));
+    try {
+      await navigate({ to: target ?? "/tickets" });
+    } catch {
+      try {
+        await navigate({ to: "/tickets" });
+      } catch {
+        // Could not open the next screen: let them try again.
+        setUnlocking(false);
+        setPin("");
+        toast.error("Couldn't open the next screen. Please try again.");
+      }
+    }
   };
 
   /** Nothing on this gate acts without a full 4-digit PIN. */
-  const withPin = (action: () => void, message: string) => {
+  const withPin = (action: () => void, message: string, keepPin = false) => {
+    if (unlocking) return;
     if (pin.length < 4) {
       toast.error("Enter your 4-digit PIN");
       return;
     }
     action();
     toast.success(message);
-    setPin("");
+    // Unlocking keeps the stars filled until the next screen opens.
+    if (!keepPin) setPin("");
   };
 
   return (
@@ -74,20 +92,21 @@ function ClockIn() {
       <div className="fixed inset-0 z-[100] flex overflow-hidden bg-gate-overlay px-[clamp(1rem,6vw,6.5rem)] py-[clamp(1rem,4dvh,3rem)] pt-[calc(clamp(1rem,4dvh,3rem)+3rem)]">
         <div className={wide ? "mx-auto grid min-h-0 w-full max-w-[68rem] grid-cols-[1fr_minmax(25rem,30rem)] gap-[clamp(3rem,8vw,9rem)]" : "mx-auto grid min-h-0 w-full max-w-[28rem] grid-rows-[4.5rem_1fr] gap-3"}>
           <ClockPanel gate compact={!wide} className="min-w-0" />
-          <div className="flex min-h-0 flex-col justify-center">
+          <div className="relative flex min-h-0 flex-col justify-center" aria-busy={unlocking}>
           <PinPad
             pin={pin}
-            onDigit={(d) => setPin((p) => (p.length < 4 ? p + d : p))}
-            onClear={() => setPin("")}
-            onEnter={() => withPin(() => unlock(pin), "PIN accepted")}
+            onDigit={(d) => !unlocking && setPin((p) => (p.length < 4 ? p + d : p))}
+            onClear={() => !unlocking && setPin("")}
+            onEnter={() => withPin(() => void unlock(pin), "PIN accepted", true)}
             onClockOut={() => withPin(clockOut, "Clocked out")}
             onBreak={() => withPin(() => undefined, "Break started")}
             onClockIn={() =>
-              withPin(() => unlock(pin), `Clocked in at ${settings.clockedInAt}`)
+              withPin(() => void unlock(pin), `Clocked in at ${settings.clockedInAt}`, true)
             }
             onBiometric={() => {
+              if (unlocking) return;
               toast.success("Clocked in with biometrics");
-              unlock();
+              void unlock();
             }}
             revenueCenter={activeCenter}
             revenueCenterOptions={revenueCenters}
@@ -101,6 +120,17 @@ function ClockIn() {
             }}
               className="h-full max-h-[34rem] w-full"
           />
+          {unlocking ? (
+            <div
+              role="status"
+              className="absolute inset-0 z-20 grid place-items-center rounded-md bg-gate-overlay/70"
+            >
+              <span className="inline-flex items-center gap-2 rounded-pill bg-surface px-4 py-2 text-fs-sm font-bold text-foreground shadow-lg">
+                <Loader2 className="size-4 animate-spin" aria-hidden />
+                Signing in
+              </span>
+            </div>
+          ) : null}
           </div>
         </div>
       </div>

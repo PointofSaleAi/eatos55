@@ -10,6 +10,9 @@ export const getRouter = () => {
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
+    // Load a screen's code on touch/hover so the tap itself opens instantly.
+    defaultPreload: "intent",
+    defaultPreloadDelay: 0,
   });
 
   return router;
