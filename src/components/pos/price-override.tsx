@@ -179,6 +179,22 @@ export function PriceOverrideFlow({
               ) : null}
             </div>
 
+            {isOther ? (
+              <div className="rounded-card bg-muted px-3.5 py-3">
+                <textarea
+                  value={otherNote}
+                  onChange={(e) => setOtherNote(e.target.value.slice(0, OTHER_NOTE_MAX))}
+                  placeholder="Please specify the reason for override"
+                  rows={3}
+                  className="w-full resize-none bg-transparent text-fs-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+                />
+                <div className="text-right text-fs-xs text-muted-foreground">
+                  ({otherNote.length}/{OTHER_NOTE_MAX})
+                </div>
+              </div>
+            ) : null}
+
+
             <div className="space-y-1.5 rounded-card bg-muted px-3.5 py-3">
               <div className="flex justify-between text-fs-sm">
                 <span className="text-muted-foreground">Price</span>
@@ -213,8 +229,9 @@ export function PriceOverrideFlow({
                 type="button"
                 disabled={!canApply}
                 onClick={() => {
-                  onApply(newPrice, reason);
-                  toast.success(`Price changed to ${money(newPrice)} (${reason})`);
+                  const label = isOther && note ? `Other: ${note}` : reason;
+                  onApply(newPrice, label);
+                  toast.success(`Price changed to ${money(newPrice)} (${label})`);
                 }}
                 className="h-12 rounded-pill bg-primary text-fs-sm font-extrabold uppercase text-primary-foreground disabled:opacity-40"
               >
