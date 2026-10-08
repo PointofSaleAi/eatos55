@@ -3,20 +3,25 @@ import { cn } from "@/lib/utils";
 
 const gateDigits = ["7", "8", "9", "4", "5", "6", "1", "2", "3"];
 
-/** Six-armed PIN mask star: solid when filled, transparent outline when empty. */
+/** Uploaded PIN indicator artwork: solid star for filled, hollow star for empty. */
+const pinIndicatorOuter =
+  "M22.8261 0C23.0764 0 23.2422 0.15976 23.2422 0.400391V9.15918L30.8965 4.40137C30.9387 4.36232 31.0216 4.32129 31.1045 4.32129C31.2295 4.32136 31.3546 4.40127 31.4375 4.52148L36.4297 11.8809C36.5548 12.0808 36.5126 12.3201 36.3047 12.4404L27.4023 18L36.3047 23.5605C36.5127 23.6793 36.5548 23.9201 36.4297 24.1201L31.4375 31.4795C31.3546 31.5998 31.2295 31.6796 31.1045 31.6797C31.0622 31.6797 30.9793 31.6402 30.8965 31.5996L23.2422 26.8408V35.5996C23.2422 35.8402 23.0764 36 22.8261 36H13.6738C13.4235 36 13.2578 35.8402 13.2578 35.5996V26.8408L5.60349 31.5986C5.56121 31.6377 5.47831 31.6787 5.39548 31.6787C5.27044 31.6786 5.14532 31.5987 5.06247 31.4785L0.0702858 24.1191C-0.0548358 23.9192 -0.0126825 23.6799 0.195286 23.5596L9.09763 18L0.195286 12.4395C-0.0127264 12.3207 -0.054846 12.0799 0.0702858 11.8799L5.06247 4.52051C5.14532 4.40025 5.27041 4.32039 5.39548 4.32031C5.43773 4.32031 5.52062 4.35977 5.60349 4.40039L13.2578 9.15918V0.400391C13.2578 0.15976 13.4235 0 13.6738 0H22.8261Z";
+const pinIndicatorInner =
+  "M21.5791 1.52051H14.8799V12.1045L12.2851 10.4951L5.6699 6.34961L2.02732 11.7412L9.93943 16.6133L12.1162 17.9805L9.93943 19.3486L2.02732 24.2988L5.6699 29.6904L12.2851 25.5469L14.8799 23.9375V34.5195H21.5791V23.9766L24.1738 25.5859L30.789 29.6904L34.4726 24.3379L26.5605 19.3877L24.3838 18.0195L26.5195 16.6523L34.4316 11.7412L30.789 6.34961L24.1738 10.4932L21.5791 12.1025V1.52051Z";
+
+/** PIN mask slot: transparent outlined indicator when empty, solid when filled. */
 function AsteriskMark({ filled }: { filled: boolean }) {
-  const arms = "M12 3.2V20.8M4.38 7.6L19.62 16.4M19.62 7.6L4.38 16.4";
   return (
-    <svg viewBox="0 0 24 24" className="size-[0.92em]" aria-hidden="true">
+    <svg
+      viewBox="0 0 37 36"
+      className="size-[0.92em] text-gate-key-foreground"
+      aria-hidden="true"
+    >
       <path
-        d={arms}
-        fill="none"
-        stroke="var(--color-gate-key-foreground)"
-        strokeWidth={filled ? 3.4 : 5.8}
+        d={filled ? pinIndicatorOuter : `${pinIndicatorOuter} ${pinIndicatorInner}`}
+        fill="currentColor"
+        fillRule="evenodd"
       />
-      {!filled && (
-        <path d={arms} fill="none" stroke="var(--color-surface)" strokeWidth={3.4} />
-      )}
     </svg>
   );
 }
