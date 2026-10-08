@@ -43,7 +43,7 @@ export function NavRail() {
         if (e.target === e.currentTarget) toggle();
       }}
       className={cn(
-        "my-2 ml-2 hidden shrink-0 flex-col rounded-2xl border border-shell-foreground/10 bg-shell-foreground/[0.06] pt-2 pb-[calc(0.5rem+var(--sab,0px))] transition-[width] duration-200 md:flex",
+        "my-2 ml-2 hidden shrink-0 flex-col rounded-2xl border border-shell-foreground/10 bg-shell pt-2 pb-[calc(0.5rem+var(--sab,0px))] transition-[width] duration-200 md:flex",
         expanded ? "w-60" : "w-[4.25rem]",
       )}
     >
