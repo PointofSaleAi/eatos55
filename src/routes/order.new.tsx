@@ -292,7 +292,7 @@ function NewOrder() {
             className={cn(
               "mt-2 gap-1.5",
               categoryLayout === "vertical"
-                ? "grid grid-cols-[repeat(auto-fill,minmax(6.75rem,1fr))]"
+                ? "flex flex-wrap"
                 : "no-scrollbar flex flex-nowrap overflow-x-auto",
             )}
           >
@@ -303,7 +303,7 @@ function NewOrder() {
                 onClick={() => setSubcategory(entry)}
                 className={cn(
                   "flex h-10 items-center justify-center rounded-card px-2 text-center text-[0.625rem] font-extrabold uppercase leading-[1.1] tracking-tight transition-colors",
-                  categoryLayout === "horizontal" && "min-w-[7.25rem] shrink-0",
+                  "w-[7.25rem] shrink-0",
                   entry === subcategory
                     ? "bg-accent text-accent-foreground hover:bg-accent/90"
                     : "bg-muted text-muted-foreground hover:bg-secondary",
