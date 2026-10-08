@@ -3,6 +3,24 @@ import { cn } from "@/lib/utils";
 
 const gateDigits = ["7", "8", "9", "4", "5", "6", "1", "2", "3"];
 
+/** Six-armed PIN mask star: solid when filled, transparent outline when empty. */
+function AsteriskMark({ filled }: { filled: boolean }) {
+  const arms = "M12 3.2V20.8M4.38 7.6L19.62 16.4M19.62 7.6L4.38 16.4";
+  return (
+    <svg viewBox="0 0 24 24" className="size-[0.92em]" aria-hidden="true">
+      <path
+        d={arms}
+        fill="none"
+        stroke="var(--color-gate-key-foreground)"
+        strokeWidth={filled ? 3.4 : 5.8}
+      />
+      {!filled && (
+        <path d={arms} fill="none" stroke="var(--color-surface)" strokeWidth={3.4} />
+      )}
+    </svg>
+  );
+}
+
 function GateKey({
   children,
   onPress,
