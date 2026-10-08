@@ -1,7 +1,19 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
-import { Ban, MoreVertical, Plus, Search, Tag } from "lucide-react";
-import { useRef, useState } from "react";
+import {
+  ArrowLeftRight,
+  ArrowUpDown,
+  Ban,
+  Check,
+  ChevronDown,
+  MoreVertical,
+  PanelLeftOpen,
+  Plus,
+  Search,
+  Tag,
+  X,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { GuestBlock } from "@/components/pos/guest-block";
 import { useWideLayout } from "@/components/pos/shell";
 import { GuestSheet } from "@/components/pos/guest-sheet";
@@ -14,6 +26,13 @@ import { usePos } from "@/lib/pos-store";
 import { toast } from "sonner";
 import { SearchDock } from "@/components/pos/search-dock";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Route = createFileRoute("/order/new")({
   head: () => ({
@@ -33,8 +52,13 @@ export const Route = createFileRoute("/order/new")({
 function NewOrder() {
   const navigate = useNavigate();
   const { totals, addItem, settings } = usePos();
-  const [activeMenu, setActiveMenu] = useState(menus[1]!.id);
-  const [category, setCategory] = useState<string>(menus[1]!.categories[0]!);
+  const initialMenu = menus[0];
+  const initialCategory = initialMenu?.categories[1] ?? initialMenu?.categories[0];
+  const [activeMenu, setActiveMenu] = useState(initialMenu?.id ?? "");
+  const [activeCategory, setActiveCategory] = useState(initialCategory?.id ?? "");
+  const [subcategory, setSubcategory] = useState(initialCategory?.subcategories[0] ?? "");
+  const [menuToolsOpen, setMenuToolsOpen] = useState(false);
+  const [categoryLayout, setCategoryLayout] = useState<"horizontal" | "vertical">("vertical");
   const [sheetItem, setSheetItem] = useState<MenuItem | null>(null);
   const [moreOpen, setMoreOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
@@ -46,6 +70,7 @@ function NewOrder() {
   const wide = useWideLayout();
   // Long-press on a tile always opens the item sheet, even for simple items.
   const longPress = useRef<number | null>(null);
+  const menuToolsRef = useRef<HTMLDivElement | null>(null);
   const longFired = useRef(false);
   const clearLongPress = () => {
     if (longPress.current !== null) window.clearTimeout(longPress.current);
@@ -55,10 +80,40 @@ function NewOrder() {
   const showCart = wide || tab === "order";
 
   const currentMenu = menus.find((m) => m.id === activeMenu) ?? menus[0]!;
-  const chips = currentMenu.categories;
-  const base = liveMenu.filter((m) => m.category === category);
+  const currentCategory =
+    currentMenu.categories.find((entry) => entry.id === activeCategory) ??
+    currentMenu.categories[0];
+  const subcategories = currentCategory?.subcategories ?? [];
+  const base = liveMenu.filter((m) => m.category === subcategory);
   const q = query.trim().toLowerCase();
   const items = q ? base.filter((i) => i.name.toLowerCase().includes(q)) : base;
+
+  const chooseMenu = (menuId: string) => {
+    const nextMenu = menus.find((entry) => entry.id === menuId);
+    const nextCategory = nextMenu?.categories[0];
+    if (!nextMenu || !nextCategory) return;
+    setActiveMenu(nextMenu.id);
+    setActiveCategory(nextCategory.id);
+    setSubcategory(nextCategory.subcategories[0] ?? "");
+  };
+
+  const chooseCategory = (categoryId: string) => {
+    const nextCategory = currentMenu.categories.find((entry) => entry.id === categoryId);
+    if (!nextCategory) return;
+    setActiveCategory(nextCategory.id);
+    setSubcategory(nextCategory.subcategories[0] ?? "");
+  };
+
+  useEffect(() => {
+    if (!menuToolsOpen) return;
+    const closeOnOutsidePress = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Node) || menuToolsRef.current?.contains(target)) return;
+      setMenuToolsOpen(false);
+    };
+    document.addEventListener("pointerdown", closeOnOutsidePress);
+    return () => document.removeEventListener("pointerdown", closeOnOutsidePress);
+  }, [menuToolsOpen]);
 
   return (
     <div
