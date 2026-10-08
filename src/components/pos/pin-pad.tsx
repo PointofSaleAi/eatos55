@@ -97,9 +97,10 @@ export function PinPad({
   const showBiometricRow = Boolean(onBiometric || revenueCenter);
   const canPickCenter = Boolean(revenueCenterOptions?.length && onRevenueCenterSelect);
   const [centerPickerOpen, setCenterPickerOpen] = useState(false);
+  const centerPickerRow = centerPickerOpen && canPickCenter;
   const rows = [
     "1fr",
-    "4fr",
+    centerPickerRow ? "auto" : "4fr",
     showClockRow ? "1fr" : null,
     showBiometricRow ? "1fr" : null,
     onLogOut ? "0.72fr" : null,
@@ -122,7 +123,7 @@ export function PinPad({
       </div>
 
       {centerPickerOpen && canPickCenter ? (
-        <div className="grid min-h-0 grid-rows-[auto_1fr] border border-gate-separator bg-surface">
+        <div className="border border-gate-separator bg-surface">
           <div className="flex items-center justify-between border-b border-gate-separator px-3 py-1.5">
             <span className="text-[clamp(0.6rem,1.1vw,0.78rem)] font-extrabold uppercase tracking-wide text-gate-key-foreground">
               Select Revenue Center
@@ -136,7 +137,7 @@ export function PinPad({
               Back
             </button>
           </div>
-          <div className="grid min-h-0 grid-cols-2 gap-1.5 overflow-y-auto p-1.5">
+          <div className="grid grid-cols-3 gap-1.5 p-1.5">
             {revenueCenterOptions!.map((center) => {
               const active = center === revenueCenter;
               return (
@@ -148,12 +149,12 @@ export function PinPad({
                     setCenterPickerOpen(false);
                   }}
                   className={cn(
-                    "flex min-h-0 flex-col items-center justify-center gap-1 rounded-sm border bg-gradient-to-b from-gate-key-top to-gate-key-bottom px-2 py-2 text-center transition-[filter,transform] hover:brightness-95 active:scale-[0.985]",
+                    "flex h-[clamp(3.6rem,7.5vw,5.2rem)] flex-col items-center justify-center gap-1 rounded-sm border bg-gradient-to-b from-gate-key-top to-gate-key-bottom px-2 py-1.5 text-center transition-[filter,transform] hover:brightness-95 active:scale-[0.985]",
                     active ? "border-gate-key-foreground ring-1 ring-gate-key-foreground" : "border-gate-separator",
                   )}
                 >
-                  <Store className="size-[clamp(0.95rem,1.8vw,1.3rem)] text-gate-action-foreground/70" aria-hidden />
-                  <span className="text-[clamp(0.66rem,1.25vw,0.9rem)] font-extrabold leading-tight text-gate-key-foreground">
+                  <Store className="size-[clamp(0.8rem,1.4vw,1rem)] text-gate-action-foreground/70" aria-hidden />
+                  <span className="text-[clamp(0.6rem,1.1vw,0.78rem)] font-extrabold leading-tight text-gate-key-foreground">
                     {center}
                   </span>
                 </button>
