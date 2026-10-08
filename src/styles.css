@@ -673,6 +673,13 @@ html[data-layout="wide"] [role="dialog"].inset-x-0.bottom-0 {
   overflow: auto;
 }
 
+/* Compact sheets (Discount picker): stay at the shared sheet width instead of
+   the full 42rem wide-layout dialog width. */
+html[data-layout="wide"] [role="dialog"].sheet-compact {
+  width: min(var(--sheet-w), calc(100vw - 6rem)) !important;
+  max-width: min(var(--sheet-w), calc(100vw - 6rem)) !important;
+}
+
 /* Wide layout has a pointer: give rows and tiles a visible hover affordance. */
 @media (hover: hover) and (pointer: fine) {
   html[data-layout="wide"] a:focus-visible,
