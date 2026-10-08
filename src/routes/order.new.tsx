@@ -385,8 +385,8 @@ function NewOrder() {
                 )}
               >
 
-                <span className="flex items-start gap-1.5">
-                  <span className="min-w-0 flex-1 text-fs-sm font-extrabold leading-tight text-foreground">
+                <span className="flex flex-wrap items-start gap-x-1.5 gap-y-1">
+                  <span className="min-w-max max-w-full flex-1 text-fs-sm font-extrabold leading-tight text-foreground">
                     {item.name}
                   </span>
                   {typeof item.stock === "number" && !item.outOfStock ? (
