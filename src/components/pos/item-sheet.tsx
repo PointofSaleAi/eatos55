@@ -408,6 +408,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                         </button>
                       ))}
                     </div>
+                    )}
 
                     <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-2 gap-2 px-4 py-2.5 sm:grid-cols-3 lg:grid-cols-4">
                       {visibleOptions.map((o) => {
