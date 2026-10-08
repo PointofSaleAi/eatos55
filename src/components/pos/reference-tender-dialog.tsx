@@ -1,4 +1,4 @@
-import { Delete, X } from "lucide-react";
+import { Delete } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -141,19 +141,11 @@ export function ReferenceTenderDialog({
   if (wide) {
     return (
       <Dialog open={open} onOpenChange={(next) => (next ? null : onClose())}>
-        <DialogContent hideClose className="flex max-h-[88vh] w-[min(30rem,92vw)] max-w-none flex-col gap-0 overflow-hidden rounded-sheet border-border bg-surface p-0">
+        <DialogContent className="flex max-h-[88vh] w-[min(30rem,92vw)] max-w-none flex-col gap-0 rounded-sheet border-border bg-surface p-0">
           <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-3">
             <DialogTitle className="min-w-0 flex-1 truncate text-fs-lg font-extrabold text-foreground">
               {title}
             </DialogTitle>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label={`Close ${title}`}
-              className="grid size-10 place-items-center rounded-pill text-muted-foreground transition-colors hover:bg-muted"
-            >
-              <X className="size-5" />
-            </button>
           </div>
           <div className="pt-3">{body}</div>
         </DialogContent>

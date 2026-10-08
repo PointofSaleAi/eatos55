@@ -18,7 +18,6 @@ import {
   Users,
   Utensils,
   Warehouse,
-  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -136,7 +135,6 @@ export function GuestSheet({
   return (
     <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
       <SheetContent
-        hideClose
         side="bottom"
         style={dragStyle}
         className="mx-auto flex max-h-[min(90dvh,48rem)] w-full max-w-[min(48rem,96vw)] flex-col overflow-hidden rounded-t-sheet border-0 bg-background p-0 pb-[calc(1rem+var(--kb-inset,0px))]"
@@ -155,14 +153,6 @@ export function GuestSheet({
             })()}
             {serviceOrderTypeLabels[type]}
           </span>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close guest information"
-            className="grid size-9 shrink-0 place-items-center rounded-pill bg-foreground text-background"
-          >
-            <X className="size-4" aria-hidden />
-          </button>
         </SheetHeader>
 
         <div className="min-h-0 flex-1 overflow-y-auto pb-2">
