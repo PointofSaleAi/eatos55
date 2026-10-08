@@ -104,15 +104,27 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
           {item ? (
             <>
               <SheetGrabber handleProps={handleProps} />
-              <SheetHeader className="shrink-0 px-4 pb-1 pt-1 text-left" {...handleProps}>
-                <SheetTitle className="truncate text-fs-base font-extrabold uppercase tracking-[0.02em] text-foreground">
-                  {item.name}
-                </SheetTitle>
-              </SheetHeader>
-
-              <div className="flex min-h-0 flex-1 flex-col">
-                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 pb-2">
-                  <div className="flex min-w-0 items-center gap-2">
+              <SheetHeader className="shrink-0 px-4 pb-2 pt-1 text-left" {...handleProps}>
+                <div className="flex items-center gap-2">
+                  {item.image ? (
+                    <img
+                      src={item.image}
+                      alt=""
+                      className="size-11 shrink-0 rounded-card border border-border object-cover sm:size-14"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden
+                      className="grid size-11 shrink-0 place-items-center rounded-card border border-border bg-muted text-muted-foreground sm:size-14"
+                    >
+                      <UtensilsCrossed className="size-5" />
+                    </span>
+                  )}
+                  <SheetTitle className="min-w-0 flex-1 truncate text-fs-base font-extrabold uppercase tracking-[0.02em] text-foreground">
+                    {item.name}
+                  </SheetTitle>
+                  {/* Cost and quantity sit at the right end of the name row. */}
+                  <div className="flex shrink-0 items-center gap-1.5">
                     {editingPrice ? (
                       <input
                         autoFocus
@@ -121,6 +133,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                         value={price}
                         onChange={(e) => setPrice(Number(e.target.value) || 0)}
                         onBlur={() => setEditingPrice(false)}
+                        onPointerDown={(e) => e.stopPropagation()}
                         aria-label="Item price"
                         className="h-ctl-sm w-20 rounded-pill border border-border bg-surface px-3 text-fs-sm font-bold text-foreground outline-none"
                       />
@@ -128,26 +141,31 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                       <button
                         type="button"
                         onClick={() => setEditingPrice(true)}
+                        onPointerDown={(e) => e.stopPropagation()}
                         className="flex h-ctl-sm items-center gap-1.5 rounded-pill border border-border px-3 text-fs-sm font-bold text-foreground"
                       >
                         {money(price)}
                         <Pencil className="size-3.5 text-muted-foreground" />
                       </button>
                     )}
+                    <select
+                      aria-label="Quantity"
+                      value={qty}
+                      onChange={(e) => setQty(Number(e.target.value))}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      className="h-ctl-sm shrink-0 rounded-pill border border-border bg-surface px-2.5 text-fs-sm font-bold text-foreground outline-none"
+                    >
+                      {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  <select
-                    aria-label="Quantity"
-                    value={qty}
-                    onChange={(e) => setQty(Number(e.target.value))}
-                    className="h-ctl-sm shrink-0 rounded-pill border border-border bg-surface px-2.5 text-fs-sm font-bold text-foreground outline-none"
-                  >
-                    {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                      <option key={n} value={n}>
-                        {n}
-                      </option>
-                    ))}
-                  </select>
                 </div>
+              </SheetHeader>
+
+              <div className="flex min-h-0 flex-1 flex-col">
 
                 <div className="px-4 pb-2">
                   <div className="flex items-center gap-2 rounded-row border border-border bg-surface px-3">
