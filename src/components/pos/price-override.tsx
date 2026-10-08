@@ -57,14 +57,8 @@ export function PriceOverrideFlow({
     setPin(next);
     setError(false);
     if (next.length === 4) {
-      setTimeout(() => {
-        if (next === MANAGER_PIN) approve();
-        else {
-          haptic("error");
-          setError(true);
-          setPin("");
-        }
-      }, 160);
+      // Demo: any 4-digit PIN is accepted as a manager PIN.
+      setTimeout(approve, 160);
     }
   };
 
