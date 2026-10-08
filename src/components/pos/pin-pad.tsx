@@ -158,9 +158,14 @@ export function PinPad({
           <GateKey onPress={() => onBiometric?.()} label="Fingerprint sign in" tone="dark">
             <Fingerprint className="size-[clamp(1.4rem,3vw,2.3rem)] opacity-60" />
           </GateKey>
-          <GateKey onPress={() => undefined}>
-            <span className="px-2 text-center text-[clamp(0.75rem,1.4vw,1rem)] text-gate-action-foreground">
-              {revenueCenter ?? "Main"}
+          <GateKey onPress={() => onRevenueCenterPress?.()} label="Select revenue center">
+            <span className="flex flex-col items-center justify-center gap-0.5 px-2 text-center">
+              <span className="text-[clamp(0.55rem,1vw,0.7rem)] font-bold uppercase tracking-wide text-gate-action-foreground/70">
+                Revenue Center
+              </span>
+              <span className="text-[clamp(0.75rem,1.4vw,1rem)] font-extrabold text-gate-action-foreground">
+                {revenueCenter ?? "Main"}
+              </span>
             </span>
           </GateKey>
           <GateKey onPress={() => onBiometric?.()} label="Face ID sign in" tone="dark">
