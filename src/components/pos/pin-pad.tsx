@@ -83,9 +83,12 @@ export function PinPad({
         {[0, 1, 2, 3].map((i) => (
           <span
             key={i}
+            aria-hidden
             className={cn(
               "grid place-items-center text-[clamp(2rem,4vw,3.25rem)] font-normal leading-none",
-              i < pin.length ? "text-gate-key-foreground" : "text-gate-key-foreground/25",
+              i < pin.length
+                ? "text-gate-key-foreground"
+                : "text-transparent [-webkit-text-stroke:0.045em_var(--color-gate-key-foreground)]",
             )}
           >
             ✳
