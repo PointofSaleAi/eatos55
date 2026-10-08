@@ -36,11 +36,13 @@ export const Route = createFileRoute("/access/clock-in")({
 
 function ClockIn() {
   const navigate = useNavigate();
-  const { clockIn, clockOut, signOut, session, settings, resumeAfterUnlock } = usePos();
+  const { clockIn, clockOut, signOut, session, settings, resumeAfterUnlock, setStation } = usePos();
   const { wide: wideLayout } = useLayoutMode();
   const landscape = useLandscapeWide();
   const wide = wideLayout && landscape;
   const [pin, setPin] = useState("");
+  const [centerPickerOpen, setCenterPickerOpen] = useState(false);
+  const activeCenter = session.station ?? "Main";
 
   /**
    * Unlock, then land back on the screen this PIN was last using (with its order
