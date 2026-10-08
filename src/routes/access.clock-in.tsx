@@ -90,7 +90,7 @@ function ClockIn() {
       </div>
 
       <div className="fixed inset-0 z-[100] flex overflow-hidden bg-gate-overlay px-[clamp(1rem,6vw,6.5rem)] py-[clamp(1rem,4dvh,3rem)] pt-[calc(clamp(1rem,4dvh,3rem)+3rem)]">
-        <div className={wide ? "mx-auto grid min-h-0 w-full max-w-[68rem] grid-cols-[1fr_minmax(25rem,30rem)] gap-[clamp(3rem,8vw,9rem)]" : "mx-auto grid min-h-0 w-full max-w-[28rem] grid-rows-[4.5rem_1fr] gap-3"}>
+        <div className={wide ? "mx-auto grid min-h-0 w-full max-w-[68rem] grid-cols-[minmax(0,1fr)_minmax(25rem,30rem)] gap-[clamp(3rem,8vw,9rem)]" : "mx-auto grid min-h-0 w-full max-w-[28rem] grid-rows-[4.5rem_1fr] gap-3"}>
           <ClockPanel gate compact={!wide} className="min-w-0" />
           <div className="relative flex min-h-0 flex-col justify-center" aria-busy={unlocking}>
           <PinPad
