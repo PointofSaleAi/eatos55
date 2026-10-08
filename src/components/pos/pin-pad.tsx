@@ -108,8 +108,8 @@ export function PinPad({
     .join(" ");
 
   const centerPickerPanel = centerPickerOpen && canPickCenter ? (
-    <div className="absolute inset-x-0 bottom-0 z-10 rounded-md border border-shell-foreground/20 bg-gradient-to-b from-gate-dark-top to-gate-dark-bottom shadow-2xl">
-      <div className="border-b border-shell-foreground/15 px-3 py-1.5 text-[clamp(0.6rem,1.1vw,0.78rem)] font-extrabold uppercase tracking-wide text-shell-foreground/70">
+    <div className="absolute inset-x-0 bottom-0 z-10 rounded-md border border-gate-separator bg-surface shadow-xl">
+      <div className="border-b border-gate-separator px-3 py-1.5 text-[clamp(0.6rem,1.1vw,0.78rem)] font-extrabold uppercase tracking-wide text-gate-key-foreground">
         Select Revenue Center
       </div>
       <div className="grid grid-cols-3 gap-1.5 p-1.5">
@@ -125,7 +125,7 @@ export function PinPad({
               }}
               className={cn(
                 "flex h-[clamp(2.6rem,5.5vw,3.8rem)] flex-col items-center justify-center gap-0.5 rounded-sm border bg-gradient-to-b from-gate-key-top to-gate-key-bottom px-2 py-1 text-center transition-[filter,transform] hover:brightness-95 active:scale-[0.985]",
-                active ? "border-shell-foreground ring-1 ring-shell-foreground" : "border-transparent",
+                active ? "border-gate-key-foreground ring-1 ring-gate-key-foreground" : "border-gate-separator",
               )}
             >
               <Store className="size-[clamp(0.7rem,1.2vw,0.9rem)] text-gate-action-foreground/70" aria-hidden />
