@@ -407,7 +407,7 @@ function NewOrder() {
                       src={item.outOfStock ? outOfStockIcon : openPriceIcon}
                       alt={item.outOfStock ? "Out of stock" : "Open price"}
                       title={item.outOfStock ? "Out of stock" : "Open price"}
-                      className="size-9 shrink-0 md:size-11 lg:size-12"
+                      className="size-7 shrink-0"
                       draggable={false}
                     />
                   ) : (
