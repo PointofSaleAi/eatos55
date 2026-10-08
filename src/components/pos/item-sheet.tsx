@@ -9,7 +9,7 @@ import {
   Search,
   UtensilsCrossed,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { ItemNotesField } from "@/components/pos/item-notes-field";
