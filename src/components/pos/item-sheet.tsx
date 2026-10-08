@@ -386,6 +386,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                         </div>
                       ) : null}
                     </div>
+                    {query ? null : (
                     <div className="no-scrollbar flex shrink-0 items-center gap-1.5 overflow-x-auto px-4">
                       {groups.map((g) => (
                         <button
