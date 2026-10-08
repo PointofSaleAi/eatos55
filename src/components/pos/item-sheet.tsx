@@ -285,13 +285,16 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                               })
                             }
                             className={cn(
-                              "flex min-h-11 items-center justify-between gap-1.5 rounded-row border px-3 text-left text-fs-sm font-bold transition-colors",
+                              "flex min-h-11 items-center justify-between gap-2 rounded-row border px-3 py-2 text-left text-fs-sm font-bold transition-colors",
                               on
                                 ? "border-accent bg-accent/10 text-foreground"
                                 : "border-border bg-surface text-foreground",
                             )}
                           >
-                            <span className="min-w-0 truncate">{o.name}</span>
+                            {/* Full modifier name: wraps instead of cutting to "...". */}
+                            <span className="min-w-0 whitespace-normal break-words leading-tight">
+                              {o.name}
+                            </span>
                             {o.price ? (
                               <span className="shrink-0 text-fs-xs text-muted-foreground">
                                 +{money(o.price)}
