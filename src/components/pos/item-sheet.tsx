@@ -1,10 +1,13 @@
 import {
+  ArrowUpDown,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
+  Mic,
   NotebookPen,
   Pencil,
   Percent,
+  Search,
   UtensilsCrossed,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -18,6 +21,20 @@ import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
+
+type SpeechRecognitionLike = {
+  lang: string;
+  onresult: ((e: { results: { transcript: string }[][] }) => void) | null;
+  onerror: (() => void) | null;
+  start: () => void;
+};
+
+const SORT_LABELS = {
+  az: "Name A-Z",
+  za: "Name Z-A",
+  lohi: "Price Low-High",
+  hilo: "Price High-Low",
+} as const;
 
 /**
  * Item detail sheet (live app parity): price edit, quantity picker, item notes,
@@ -38,6 +55,9 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [discount, setDiscount] = useState<{ name: string; percent: number } | null>(null);
   const [discountOpen, setDiscountOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<"az" | "za" | "lohi" | "hilo">("az");
+  const [sortOpen, setSortOpen] = useState(false);
   const { dragStyle, handleProps } = useSheetDrag(() => {
     reset();
     onClose();
@@ -62,10 +82,27 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
 
   // Options are paged instead of scrolled so the sheet always fits its height.
   const perPage = 8;
-  const options = activeGroup?.options ?? [];
-  const pages = Math.max(1, Math.ceil(options.length / perPage));
+  const query = search.trim().toLowerCase();
+  const baseOptions = useMemo(() => {
+    // On Add-Ons, searching looks across every add-on group at once.
+    const pool =
+      tab === "addons" && query
+        ? addOns.flatMap((g) => g.options.map((o) => ({ ...o, group: g.name })))
+        : (activeGroup?.options ?? []).map((o) => ({ ...o, group: activeGroup?.name ?? "" }));
+    const filtered = query
+      ? pool.filter((o) => o.name.toLowerCase().includes(query))
+      : pool;
+    const sorted = [...filtered].sort((a, b) => {
+      if (sort === "az") return a.name.localeCompare(b.name);
+      if (sort === "za") return b.name.localeCompare(a.name);
+      if (sort === "lohi") return a.price - b.price || a.name.localeCompare(b.name);
+      return b.price - a.price || a.name.localeCompare(b.name);
+    });
+    return sorted;
+  }, [tab, query, addOns, activeGroup, sort]);
+  const pages = Math.max(1, Math.ceil(baseOptions.length / perPage));
   const pageIndex = Math.min(page, pages - 1);
-  const visibleOptions = options.slice(pageIndex * perPage, pageIndex * perPage + perPage);
+  const visibleOptions = baseOptions.slice(pageIndex * perPage, pageIndex * perPage + perPage);
 
   const modifierTotal = useMemo(
     () => Object.values(selected).reduce((sum, p) => sum + p, 0),
@@ -90,6 +127,30 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
     setPage(0);
     setGroup("");
     setEditingPrice(false);
+    setSearch("");
+    setSort("az");
+    setSortOpen(false);
+  };
+
+  const startVoiceSearch = () => {
+    const w = window as unknown as {
+      SpeechRecognition?: new () => SpeechRecognitionLike;
+      webkitSpeechRecognition?: new () => SpeechRecognitionLike;
+    };
+    const Ctor = w.SpeechRecognition ?? w.webkitSpeechRecognition;
+    if (!Ctor) {
+      toast.info("Voice search is not available on this device");
+      return;
+    }
+    const rec = new Ctor();
+    rec.lang = navigator.language || "en-US";
+    rec.onresult = (e) => {
+      const text = e.results[0]?.[0]?.transcript ?? "";
+      if (text) setSearch(text);
+    };
+    rec.onerror = () => toast.info("Could not hear anything, try again");
+    rec.start();
+    toast.info("Listening…");
   };
 
   return (
@@ -218,6 +279,81 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                   </div>
                 ) : null}
 
+                {tab === "addons" ? (
+                  <div className="flex shrink-0 items-center gap-2 px-4 pt-2.5">
+                    <div className="flex h-ctl-md min-w-0 flex-1 items-center gap-2 rounded-pill border border-border bg-surface px-3">
+                      <Search className="size-4 shrink-0 text-muted-foreground" />
+                      <input
+                        value={search}
+                        onChange={(e) => {
+                          setSearch(e.target.value);
+                          setPage(0);
+                        }}
+                        placeholder="Search for Add-Ons"
+                        aria-label="Search add-ons"
+                        className="h-full min-w-0 flex-1 bg-transparent text-fs-sm text-foreground outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={startVoiceSearch}
+                        aria-label="Voice search"
+                        className="grid size-7 shrink-0 place-items-center rounded-pill text-muted-foreground hover:text-foreground"
+                      >
+                        <Mic className="size-4" />
+                      </button>
+                    </div>
+                    <div className="relative shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setSortOpen((o) => !o)}
+                        aria-label={`Sort add-ons, currently ${SORT_LABELS[sort]}`}
+                        aria-expanded={sortOpen}
+                        className={cn(
+                          "grid size-ctl-md place-items-center rounded-pill border transition-colors",
+                          sortOpen || sort !== "az"
+                            ? "border-accent bg-accent/10 text-foreground"
+                            : "border-border text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        <ArrowUpDown className="size-4" />
+                      </button>
+                      {sortOpen ? (
+                        <>
+                          <button
+                            type="button"
+                            aria-label="Close sort menu"
+                            className="fixed inset-0 z-10 cursor-default"
+                            onClick={() => setSortOpen(false)}
+                          />
+                          <div className="absolute right-0 top-full z-20 mt-1.5 w-40 overflow-hidden rounded-card border border-border bg-surface shadow-lg">
+                            {(Object.keys(SORT_LABELS) as (keyof typeof SORT_LABELS)[]).map(
+                              (key) => (
+                                <button
+                                  key={key}
+                                  type="button"
+                                  onClick={() => {
+                                    setSort(key);
+                                    setSortOpen(false);
+                                    setPage(0);
+                                  }}
+                                  className={cn(
+                                    "block w-full px-3 py-2 text-left text-fs-sm font-bold transition-colors",
+                                    key === sort
+                                      ? "bg-accent/10 text-foreground"
+                                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                                  )}
+                                >
+                                  {SORT_LABELS[key]}
+                                </button>
+                              ),
+                            )}
+                          </div>
+                        </>
+                      ) : null}
+                    </div>
+                  </div>
+                ) : null}
+
                 {activeGroup ? (
                   <>
                     <div className="flex shrink-0 items-center justify-between gap-2 px-4 pb-1.5 pt-3">
@@ -250,6 +386,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                         </div>
                       ) : null}
                     </div>
+                    {query ? null : (
                     <div className="no-scrollbar flex shrink-0 items-center gap-1.5 overflow-x-auto px-4">
                       {groups.map((g) => (
                         <button
@@ -271,10 +408,12 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                         </button>
                       ))}
                     </div>
+                    )}
 
                     <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-2 gap-2 px-4 py-2.5 sm:grid-cols-3 lg:grid-cols-4">
                       {visibleOptions.map((o) => {
-                        const key = `${activeGroup.name} · ${o.name}`;
+                        const optGroup = groups.find((g) => g.name === o.group) ?? activeGroup;
+                        const key = `${o.group} · ${o.name}`;
                         const on = key in selected;
                         return (
                           <button
@@ -288,9 +427,9 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                                   delete next[key];
                                   return next;
                                 }
-                                if ((activeGroup.select ?? "multi") === "single") {
+                                if ((optGroup?.select ?? "multi") === "single") {
                                   for (const existing of Object.keys(next)) {
-                                    if (existing.startsWith(`${activeGroup.name} · `))
+                                    if (existing.startsWith(`${o.group} · `))
                                       delete next[existing];
                                   }
                                 }
@@ -317,6 +456,11 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                           </button>
                         );
                       })}
+                      {visibleOptions.length === 0 ? (
+                        <p className="col-span-full grid place-items-center py-6 text-fs-sm font-bold text-muted-foreground">
+                          No add-ons match “{search.trim()}”
+                        </p>
+                      ) : null}
                     </div>
                   </>
                 ) : null}
