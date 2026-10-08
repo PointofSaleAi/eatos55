@@ -299,14 +299,14 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                               })
                             }
                             className={cn(
-                              "flex min-h-11 items-center justify-between gap-2 rounded-row border px-3 py-2 text-left text-fs-sm font-bold transition-colors",
+                              "flex min-h-11 flex-wrap items-center justify-between gap-x-2 gap-y-0.5 rounded-row border px-3 py-2 text-left text-fs-sm font-bold transition-colors",
                               on
                                 ? "border-accent bg-accent/10 text-foreground"
                                 : "border-border bg-surface text-foreground",
                             )}
                           >
-                            {/* Full modifier name: wraps instead of cutting to "...". */}
-                            <span className="min-w-0 whitespace-normal break-words leading-tight">
+                            {/* Full modifier name on one line; when it cannot fit beside the price, the whole name wraps to its own second line (never split mid-word). */}
+                            <span className="max-w-full shrink-0 whitespace-normal leading-tight">
                               {o.name}
                             </span>
                             {o.price ? (
