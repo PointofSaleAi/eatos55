@@ -39,7 +39,6 @@ export function GuestsSheet({
   return (
     <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
       <SheetContent
-        hideClose
         side="bottom"
         style={dragStyle}
         className="mx-auto w-full max-w-[19rem] rounded-t-sheet border-0 bg-surface p-0 pb-[calc(0.75rem+var(--kb-inset,0px))]"

@@ -18,7 +18,6 @@ import {
   Users,
   Utensils,
   Warehouse,
-  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";

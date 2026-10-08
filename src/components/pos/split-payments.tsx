@@ -447,7 +447,6 @@ export function SplitPayments({
 
       <Dialog open={disclaimer} onOpenChange={(next) => (next ? null : setDisclaimer(false))}>
         <DialogContent
-          hideClose
           className="w-[min(92vw,32rem)] max-w-none rounded-sheet border-0 bg-surface p-6 text-center"
         >
           <DialogTitle className="text-fs-2xl font-extrabold text-foreground">Disclaimer</DialogTitle>

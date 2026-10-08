@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep root error boundaries typed with TanStack Router's `ErrorComponentProps` because router upgrades expose boundary errors as `unknown`.
+- Use the shared DialogContent and SheetContent close control for modal X buttons so they remain outside the top-right corner consistently across viewports.
