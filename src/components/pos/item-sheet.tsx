@@ -29,6 +29,45 @@ type SpeechRecognitionLike = {
   start: () => void;
 };
 
+/**
+ * Modifier/add-on option label. Price sits on its own second line by default;
+ * when the name itself wraps to two lines and the last line has room, the
+ * price rides inline at the end of that line instead.
+ */
+function OptionLabel({ name, price }: { name: string; price: number }) {
+  const nameRef = useRef<HTMLSpanElement>(null);
+  const [multiline, setMultiline] = useState(false);
+  useLayoutEffect(() => {
+    const el = nameRef.current;
+    if (!el) return;
+    const check = () => {
+      const lh = parseFloat(getComputedStyle(el).lineHeight) || 16;
+      setMultiline(el.getBoundingClientRect().height > lh * 1.4);
+    };
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [name]);
+  return (
+    <span className="min-w-0 max-w-full leading-tight">
+      <span ref={nameRef} className="whitespace-normal">
+        {name}
+      </span>
+      {price ? (
+        <span
+          className={cn(
+            "text-fs-xs font-bold text-muted-foreground",
+            multiline ? "ml-1.5 inline-block whitespace-nowrap" : "mt-0.5 block",
+          )}
+        >
+          +{money(price)}
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
 const SORT_LABELS = {
   az: "Name A-Z",
   za: "Name Z-A",
