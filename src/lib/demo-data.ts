@@ -345,6 +345,56 @@ export const initialTickets: Ticket[] = [
     status: "preparing", mode: "dine-in", lines: [custom(66.58)], server: "Elizer Cruz",
     checkNumber: 1058, tips: 0, revenueCenter: "Main dining", paymentType: "Unpaid", payments: [],
   },
+  {
+    id: "t-1059", orderNo: 10259, table: 7, number: 17, label: "Bar tab", seats: 2,
+    total: 18.5, date: DEFAULT_TICKET_DATE, arrivedAt: "5:41 PM", arrivedMinutesAgo: 5,
+    status: "payment", mode: "bar", lines: [line("m15", 2), line("m12")], server: "Elizer Cruz",
+    checkNumber: 1059, tips: 0, revenueCenter: "Bar", paymentType: "Card",
+    payments: [{ no: "1", method: "Card", amount: 10, at: "5:43 PM", ref: "TXN-88420" }],
+  },
+  {
+    id: "t-1060", orderNo: 10260, table: 9, number: 18, label: "Dana R.", seats: 4,
+    total: 42.5, date: DEFAULT_TICKET_DATE, arrivedAt: "5:42 PM", arrivedMinutesAgo: 4,
+    status: "payment", mode: "dine-in", lines: [line("m1", 2), line("m11"), line("m14", 2)], server: "Elizer Cruz",
+    checkNumber: 1060, tips: 0, revenueCenter: "Main dining", paymentType: "Card",
+    payments: [{ no: "1", method: "Card", amount: 20, at: "5:44 PM", ref: "TXN-88421" }],
+  },
+  {
+    id: "t-1061", orderNo: 10261, number: 19, label: "Omar F.", seats: 1,
+    total: 34.9, date: DEFAULT_TICKET_DATE, arrivedAt: "5:43 PM", arrivedMinutesAgo: 3,
+    status: "preparing", mode: "delivery", lines: [line("m2"), line("m9", 2), line("m13", 2)], server: "Elizer Cruz",
+    checkNumber: 1061, tips: 0, revenueCenter: "Counter pickup", paymentType: "Unpaid", payments: [],
+  },
+  {
+    id: "t-1062", orderNo: 10262, number: 20, label: "Curb Side", seats: 2,
+    total: 27.3, date: DEFAULT_TICKET_DATE, arrivedAt: "5:44 PM", arrivedMinutesAgo: 2,
+    status: "ready", mode: "dine-in", lines: [line("m3"), line("m6"), line("m14")], server: "Elizer Cruz",
+    checkNumber: 1062, tips: 0, revenueCenter: "Patio", paymentType: "Unpaid", payments: [],
+  },
+  {
+    id: "t-1063", orderNo: 10263, table: 12, number: 21, label: "Party of 6", seats: 6,
+    total: 96.4, date: DEFAULT_TICKET_DATE, arrivedAt: "5:45 PM", arrivedMinutesAgo: 1,
+    status: "paid", mode: "dine-in", lines: [line("m5", 2), line("m1", 2), line("m10", 3), line("m15", 4)], server: "Elizer Cruz",
+    checkNumber: 1063, stage: "served", tips: 0, revenueCenter: "Main dining", paymentType: "Split",
+    payments: [
+      { no: "1", method: "Card", amount: 50, at: "5:47 PM", ref: "TXN-88422" },
+      { no: "2", method: "Cash", amount: 46.4, at: "5:48 PM" },
+    ],
+  },
+  {
+    id: "t-1064", orderNo: 10264, table: 14, number: 22, label: "Party of 8", seats: 8,
+    total: 142.75, date: DEFAULT_TICKET_DATE, arrivedAt: "5:46 PM", arrivedMinutesAgo: 1,
+    status: "paid", mode: "dine-in", lines: [line("m1", 4), line("m5", 2), line("m12", 4), line("m15", 6)], server: "Elizer Cruz",
+    checkNumber: 1064, stage: "waiting", tips: 0, revenueCenter: "Main dining", paymentType: "Card",
+    payments: [{ no: "1", method: "Card", amount: 142.75, at: "5:48 PM", ref: "TXN-88423" }],
+  },
+  {
+    id: "t-1065", orderNo: 10265, number: 23, label: "Priya T.", seats: 1,
+    total: 9.75, date: DEFAULT_TICKET_DATE, arrivedAt: "5:47 PM", arrivedMinutesAgo: 1,
+    status: "paid", mode: "takeaway", lines: [line("m6"), line("m16")], server: "Elizer Cruz",
+    checkNumber: 1065, stage: "ordering", tips: 0, revenueCenter: "Counter pickup", paymentType: "Cash",
+    payments: [{ no: "1", method: "Cash", amount: 9.75, at: "5:48 PM" }],
+  },
 ];
 
 
