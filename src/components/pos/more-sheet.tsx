@@ -1,6 +1,5 @@
 import {
   ArrowLeftRight,
-  BadgeDollarSign,
   Gift,
   Receipt,
   RotateCcw,
@@ -13,7 +12,6 @@ import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { GuestSheet } from "@/components/pos/guest-sheet";
-import { PinSheet } from "@/components/pos/pin-sheet";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
