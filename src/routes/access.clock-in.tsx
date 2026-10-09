@@ -128,7 +128,7 @@ function ClockIn() {
             onClockOut={() => withPin(clockOut, "Clocked out")}
             onBreak={() => withPin(startBreak, "Break started")}
             clockedIn={session.clockedIn}
-            onBreakNow={session.onBreak}
+            onBreakNow={Boolean(session.onBreak)}
             onClockIn={() => withPin(startClockIn, null, true)}
             onBiometric={() => {
               if (unlocking) return;

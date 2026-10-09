@@ -111,7 +111,7 @@ export function ClockPullDown() {
                 onClockOut={() => requirePin(clockOut, "Clocked out")}
                 onBreak={() => requirePin(startBreak, "Break started")}
                 clockedIn={session.clockedIn}
-                onBreakNow={session.onBreak}
+                onBreakNow={Boolean(session.onBreak)}
                 onClockIn={() =>
                   requirePin(clockIn, `Clocked in at ${settings.clockedInAt}`)
                 }
