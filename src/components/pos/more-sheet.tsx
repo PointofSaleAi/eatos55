@@ -75,20 +75,6 @@ export function MoreSheet({
       run: () => notifyUnavailable("Reopen Check"),
     },
     {
-      id: "comp",
-      label: comped ? "Remove Comp" : "Comp Order",
-      icon: BadgeDollarSign,
-      value: comped ? "On" : undefined,
-      run: () => {
-        if (comped) {
-          setComped(false);
-          toast.success("Comp removed");
-          return;
-        }
-        setPinOpen(true);
-      },
-    },
-    {
       id: "cancel",
       label: "Cancel Order",
       icon: Trash2,
