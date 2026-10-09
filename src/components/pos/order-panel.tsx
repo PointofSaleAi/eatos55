@@ -16,11 +16,15 @@ import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
-import { money, type ServiceOrderType } from "@/lib/demo-data";
+import {
+  money,
+  serviceOrderTypeLabels,
+  serviceOrderTypes,
+  type ServiceOrderType,
+} from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { formatPhone, GuestSheet } from "@/components/pos/guest-sheet";
-import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -29,7 +33,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { orderTypeIcons } from "@/components/pos/guest-sheet";
-import { serviceOrderTypeLabels, serviceOrderTypes } from "@/lib/demo-data";
 
 function CartHeaderActions({
   onDiscount,
