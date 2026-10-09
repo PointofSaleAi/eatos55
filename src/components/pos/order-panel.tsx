@@ -12,7 +12,7 @@ import {
   Wallet,
 } from "lucide-react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
@@ -20,8 +20,7 @@ import { usePos } from "@/lib/pos-store";
 import { money, type ServiceOrderType } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
-import { GuestSheet } from "@/components/pos/guest-sheet";
-import { formatPhone } from "@/components/pos/guest-sheet";
+import { formatPhone, GuestSheet } from "@/components/pos/guest-sheet";
 import { MoreSheet } from "@/components/pos/more-sheet";
 import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { Button } from "@/components/ui/button";
@@ -136,6 +135,11 @@ export function OrderPanel({ wide }: { wide: boolean }) {
   const [notesOpen, setNotesOpen] = useState(false);
   const [guestName, setGuestName] = useState(guest.name);
   const [guestPhone, setGuestPhone] = useState(guest.phone);
+
+  useEffect(() => {
+    setGuestName(guest.name);
+    setGuestPhone(guest.phone);
+  }, [guest.name, guest.phone]);
 
   const saveGuestName = () => {
     const name = guestName.trim();
