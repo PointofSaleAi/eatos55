@@ -27,24 +27,33 @@ function AsteriskMark({ filled }: { filled: boolean }) {
   );
 }
 
+/**
+ * One pad key. When `disabled` it keeps its tone colour at reduced strength and
+ * cannot be clicked, focused or announced as available.
+ */
 function GateKey({
   children,
   onPress,
   label,
   tone = "light",
+  disabled = false,
 }: {
   children: React.ReactNode;
   onPress: () => void;
   label?: string;
   tone?: "light" | "dark" | "danger" | "success";
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       aria-label={label}
+      disabled={disabled}
+      aria-disabled={disabled || undefined}
       onClick={onPress}
       className={cn(
-        "grid min-h-0 place-items-center border border-gate-separator text-[clamp(1.15rem,2.3vw,1.8rem)] font-extrabold transition-[filter,transform] hover:brightness-95 active:scale-[0.985]",
+        "grid min-h-0 place-items-center border border-gate-separator text-[clamp(1.15rem,2.3vw,1.8rem)] font-extrabold transition-[filter,transform]",
+        disabled ? "cursor-not-allowed opacity-40" : "hover:brightness-95 active:scale-[0.985]",
         tone === "light" &&
           "bg-gradient-to-b from-gate-key-top to-gate-key-bottom text-gate-key-foreground",
         tone === "dark" && "bg-gradient-to-b from-gate-dark-top to-gate-dark-bottom text-shell-foreground",
@@ -56,6 +65,7 @@ function GateKey({
     </button>
   );
 }
+
 
 /**
  * Single PIN pad design used everywhere in the app: masked four-star display,
@@ -96,7 +106,10 @@ export function PinPad({
   const showClockRow = Boolean(onClockOut || onBreak || onClockIn);
   const showBiometricRow = Boolean(onBiometric || revenueCenter);
   const canPickCenter = Boolean(revenueCenterOptions?.length && onRevenueCenterSelect);
+  /** Clock and ENTER keys stay locked until the full four-digit PIN is in. */
+  const pinReady = pin.length >= 4;
   const [centerPickerOpen, setCenterPickerOpen] = useState(false);
+
   const rows = [
     "1fr",
     "4fr",
@@ -165,10 +178,11 @@ export function PinPad({
         </GateKey>
         <GateKey onPress={() => onDigit("0")}>0</GateKey>
         {onEnter ? (
-          <GateKey onPress={() => onEnter()} tone="dark">
+          <GateKey onPress={() => onEnter()} tone="dark" disabled={!pinReady}>
             <span className="text-[clamp(0.9rem,1.7vw,1.3rem)]">ENTER</span>
           </GateKey>
         ) : (
+
           <GateKey onPress={() => onBackspace?.()} label="Delete last digit" tone="dark">
             <Delete className="size-[clamp(1.2rem,2.4vw,1.75rem)]" />
           </GateKey>
@@ -180,20 +194,21 @@ export function PinPad({
       {showClockRow ? (
         <div className="relative grid min-h-0 grid-cols-3">
           {centerPickerPanel}
-          <GateKey onPress={() => onClockOut?.()} tone="danger">
+          <GateKey onPress={() => onClockOut?.()} tone="danger" disabled={!pinReady}>
 
             <span className="text-[clamp(0.78rem,1.55vw,1.12rem)]">Clock Out</span>
           </GateKey>
-          <GateKey onPress={() => onBreak?.()}>
+          <GateKey onPress={() => onBreak?.()} disabled={!pinReady}>
             <span className="text-[clamp(0.78rem,1.55vw,1.12rem)] text-gate-action-foreground">
               Break
             </span>
           </GateKey>
-          <GateKey onPress={() => onClockIn?.()} tone="success">
+          <GateKey onPress={() => onClockIn?.()} tone="success" disabled={!pinReady}>
             <span className="text-[clamp(0.78rem,1.55vw,1.12rem)]">Clock In</span>
           </GateKey>
         </div>
       ) : null}
+
 
       {showBiometricRow ? (
         <div className="grid min-h-0 grid-cols-3">
