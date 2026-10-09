@@ -1,12 +1,9 @@
 import {
   ArrowLeftRight,
   BadgeDollarSign,
-  CircleDollarSign,
   Gift,
-  QrCode,
   Receipt,
   RotateCcw,
-  Ticket,
   Trash2,
   UserPlus,
 } from "lucide-react";
