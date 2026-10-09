@@ -21,6 +21,7 @@ import { money, type ServiceOrderType } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { GuestSheet } from "@/components/pos/guest-sheet";
+import { formatPhone } from "@/components/pos/guest-sheet";
 import { MoreSheet } from "@/components/pos/more-sheet";
 import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { Button } from "@/components/ui/button";
@@ -107,6 +108,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
   const navigate = useNavigate();
   const {
     guest,
+    setGuest,
     arrivedAt,
     activeTable,
     tableGroupLabel,
@@ -132,6 +134,20 @@ export function OrderPanel({ wide }: { wide: boolean }) {
   const [typeForSheet, setTypeForSheet] = useState<ServiceOrderType | undefined>(undefined);
   const [discountName, setDiscountName] = useState<string | null>(null);
   const [notesOpen, setNotesOpen] = useState(false);
+  const [guestName, setGuestName] = useState(guest.name);
+  const [guestPhone, setGuestPhone] = useState(guest.phone);
+
+  const saveGuestName = () => {
+    const name = guestName.trim();
+    setGuest({ name });
+    setGuestName(name);
+  };
+
+  const saveGuestPhone = () => {
+    const phone = formatPhone(guestPhone);
+    setGuest({ phone });
+    setGuestPhone(phone);
+  };
 
   const orderNumber = activeTicketId
     ? (tickets.find((t) => t.id === activeTicketId)?.number ?? null)
@@ -142,22 +158,40 @@ export function OrderPanel({ wide }: { wide: boolean }) {
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="shrink-0 border-b border-border px-4 pb-2 pt-2">
-        <button
-          type="button"
-          onClick={() => setGuestOpen(true)}
-          aria-label="Edit guest details"
-          className="grid w-full grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2 rounded-row px-1 py-1 text-left transition-colors hover:bg-muted"
-        >
-          <span className="truncate text-fs-sm font-extrabold leading-tight text-foreground">
-            {guest.name || tableGroupLabel(activeTable) || "Guest Name"}
-          </span>
-          <span className="truncate text-fs-xs font-bold text-muted-foreground">
-            {guest.phone || "(XXX) XXX-XXXX"}
-          </span>
+        <div className="grid w-full grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2 py-1">
+          <input
+            type="text"
+            value={guestName}
+            onChange={(event) => setGuestName(event.target.value)}
+            onBlur={saveGuestName}
+            onKeyDown={(event) => {
+              if (event.key !== "Enter") return;
+              saveGuestName();
+              event.currentTarget.blur();
+            }}
+            placeholder={tableGroupLabel(activeTable) || "Guest Name"}
+            aria-label="Guest name"
+            className="h-8 min-w-0 rounded-row border border-transparent bg-transparent px-1 text-fs-sm font-extrabold text-foreground outline-none transition-colors placeholder:text-foreground focus:border-border focus:bg-muted"
+          />
+          <input
+            type="tel"
+            inputMode="tel"
+            value={guestPhone}
+            onChange={(event) => setGuestPhone(formatPhone(event.target.value))}
+            onBlur={saveGuestPhone}
+            onKeyDown={(event) => {
+              if (event.key !== "Enter") return;
+              saveGuestPhone();
+              event.currentTarget.blur();
+            }}
+            placeholder="(XXX) XXX-XXXX"
+            aria-label="Guest mobile number"
+            className="h-8 min-w-0 rounded-row border border-transparent bg-transparent px-1 text-fs-xs font-bold text-muted-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-border focus:bg-muted focus:text-foreground"
+          />
           <span className="whitespace-nowrap text-fs-xs font-bold text-muted-foreground">
             {arrivedAt ? `Arrived ${arrivedAt}` : "Not started"}
           </span>
-        </button>
+        </div>
 
         <div className="mt-1.5">
           <CartHeaderActions onDiscount={setDiscountName} />
