@@ -27,7 +27,13 @@ function PaymentSuccess() {
   return (
     <div className="flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-background p-3">
       <div className="max-h-full w-full max-w-[40rem] overflow-hidden rounded-sheet bg-surface">
-        <PaymentCompleteCard onDone={() => navigate({ to: "/order/new" })} />
+        <PaymentCompleteCard
+          onDone={() => {
+            const back = sessionStorage.getItem("pos:return-clock-out") === "1";
+            sessionStorage.removeItem("pos:return-clock-out");
+            navigate({ to: back ? "/access/clock-out" : "/order/new" });
+          }}
+        />
       </div>
     </div>
   );

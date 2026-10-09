@@ -187,6 +187,7 @@ function ClockOut() {
                   type="button"
                   className={cn(btn, "bg-accent text-accent-foreground")}
                   onClick={() => {
+                    sessionStorage.setItem("pos:return-clock-out", "1");
                     openTicket(one.id);
                     navigate({ to: "/payment/method" });
                   }}
