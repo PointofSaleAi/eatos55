@@ -37,7 +37,7 @@ type Step = "pin" | "role" | "summary" | "mood" | "moodDetail";
 
 function ClockIn() {
   const navigate = useNavigate();
-  const { clockIn, clockOut, startBreak, signIn, signOut, session, settings, setStation, setRole } = usePos();
+  const { clockIn, clockOut, startBreak, signIn, signOut, session, settings, setStation, setRole, tickets } = usePos();
   const { wide: wideLayout } = useLayoutMode();
   const landscape = useLandscapeWide();
   const wide = wideLayout && landscape;
@@ -125,7 +125,7 @@ function ClockIn() {
             onDigit={(d) => !unlocking && setPin((p) => (p.length < 4 ? p + d : p))}
             onClear={() => !unlocking && setPin("")}
             onEnter={() => withPin(() => void unlock(pin), "PIN accepted", true)}
-            onClockOut={() => withPin(clockOut, "Clocked out")}
+            onClockOut={() => withPin(() => { if (tickets.some((t) => t.server === session.name && !t.closed)) void navigate({ to: "/access/clock-out" }); else { clockOut(); toast.success("Clocked out"); } }, null)}
             onBreak={() => withPin(startBreak, "Break started")}
             clockedIn={session.clockedIn}
             onBreakNow={Boolean(session.onBreak)}
