@@ -580,6 +580,7 @@ type Store = {
   clockIn: (pin?: string) => void;
   clockOut: () => void;
   setStation: (name: string) => void;
+  setRole: (role: string) => void;
 
   /** Remember the current screen and order for whoever is clocked in. */
   saveResume: (path: string) => void;
@@ -1013,6 +1014,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         })),
       clockOut: () => setSession((s) => ({ ...s, clockedIn: false })),
       setStation: (name) => setSession((s) => ({ ...s, station: name })),
+      setRole: (role) => setSession((s) => ({ ...s, role })),
 
       saveResume: (path) => {
         if (!isResumablePath(path)) return;
