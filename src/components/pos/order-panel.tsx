@@ -6,7 +6,6 @@ import {
   MoreVertical,
   NotebookPen,
   Percent,
-  ReceiptText,
   Save,
   Tag,
   Utensils,
@@ -103,11 +102,7 @@ function HeaderAction({
   );
 }
 
-/**
- * Right-hand order area: service type, order number / server / notes, the
- * running items and the totals footer. On phones the guest identity and the
- * action icons live in the screen header; the wide side panel keeps them here.
- */
+/** Running order area shared by phone, tablet and desktop layouts. */
 export function OrderPanel({ wide }: { wide: boolean }) {
   const navigate = useNavigate();
   const {
