@@ -64,26 +64,20 @@ function useSessionGate(): boolean {
 
   // Remember where this person is, so their next PIN unlock lands right back here.
   useEffect(() => {
-    if (!sessionReady || !session.signedIn || !session.clockedIn) return;
+    if (!sessionReady || !session.signedIn) return;
     saveResume(path);
-  }, [saveResume, path, sessionReady, session.signedIn, session.clockedIn]);
+  }, [saveResume, path, sessionReady, session.signedIn]);
 
+  // Signed-in staff may use the app off shift; only signed-out access is blocked.
   useEffect(() => {
     if (!sessionReady) return;
     if (!session.signedIn && !isAccess) {
       router.navigate({ to: "/", replace: true });
-      return;
     }
-    if (session.signedIn && !session.clockedIn && !isAccess) {
-      router.navigate({ to: "/access/clock-in", replace: true });
-    }
-  }, [router, isAccess, sessionReady, session.signedIn, session.clockedIn]);
+  }, [router, isAccess, sessionReady, session.signedIn]);
 
   // True while a redirect is pending, so the protected screen never flashes.
-  return (
-    !sessionReady ||
-    (!isAccess && (!session.signedIn || !session.clockedIn))
-  );
+  return !sessionReady || (!isAccess && !session.signedIn);
 }
 
 /** Screens worth having ready the moment someone unlocks the terminal. */
