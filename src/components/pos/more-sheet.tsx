@@ -39,8 +39,6 @@ export function MoreSheet({
   const {
     serviceCharge,
     setServiceCharge,
-    comped,
-    setComped,
     cart,
     cancelOrder,
   } = usePos();
@@ -49,7 +47,6 @@ export function MoreSheet({
   const [chargeOpen, setChargeOpen] = useState(false);
   const [charge, setCharge] = useState(String(serviceCharge || ""));
   const [guestMode, setGuestMode] = useState<GuestMode>(null);
-  const [pinOpen, setPinOpen] = useState(false);
 
   const notifyUnavailable = (label: string) => {
     toast.info(`${label} is not configured for this location`);
