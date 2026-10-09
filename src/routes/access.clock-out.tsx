@@ -94,7 +94,10 @@ function isFullyPaid(ticket: Ticket) {
 
 /** Status pill on a card, read from the check itself — never from its list position. */
 function cardStatus(ticket: Ticket, tab: Tab): { label: string; tone: string } {
-  if (tab === "unpaid") return { label: "UNPAID", tone: "text-destructive" };
+  if (tab === "unpaid") {
+    if (ticket.status === "payment") return { label: "PARTIAL PAID", tone: "text-warning" };
+    return { label: "UNPAID", tone: "text-destructive" };
+  }
   return stageMeta[ticket.stage ?? "served"];
 }
 
