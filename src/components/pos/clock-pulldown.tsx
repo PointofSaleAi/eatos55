@@ -18,7 +18,7 @@ import { usePos } from "@/lib/pos-store";
  */
 export function ClockPullDown() {
   const navigate = useNavigate();
-  const { session, settings, clockIn, clockOut, signOut } = usePos();
+  const { session, settings, clockIn, clockOut, startBreak, signOut } = usePos();
   const wide = useLandscapeWide();
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -106,13 +106,12 @@ export function ClockPullDown() {
                 onDigit={(d) => setPin((p) => (p.length < 4 ? p + d : p))}
                 onClear={() => setPin("")}
                 onEnter={() =>
-                  requirePin(() => {
-                    clockIn();
-                    navigate({ to: "/floor" });
-                  }, "PIN accepted")
+                  requirePin(() => close(), "PIN accepted")
                 }
                 onClockOut={() => requirePin(clockOut, "Clocked out")}
-                onBreak={() => requirePin(() => undefined, "Break started")}
+                onBreak={() => requirePin(startBreak, "Break started")}
+                clockedIn={session.clockedIn}
+                onBreakNow={session.onBreak}
                 onClockIn={() =>
                   requirePin(clockIn, `Clocked in at ${settings.clockedInAt}`)
                 }

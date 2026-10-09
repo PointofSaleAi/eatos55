@@ -71,6 +71,7 @@ export const emptyFilters: TicketFilters = {
 export type Session = {
   signedIn: boolean;
   clockedIn: boolean;
+  onBreak?: boolean;
   name: string;
   role: string;
   station: string | null;
@@ -579,6 +580,7 @@ type Store = {
   signOut: () => void;
   clockIn: (pin?: string) => void;
   clockOut: () => void;
+  startBreak: () => void;
   setStation: (name: string) => void;
   setRole: (role: string) => void;
 
@@ -1010,9 +1012,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
           ...s,
           signedIn: true,
           clockedIn: true,
+          onBreak: false,
           pin: pin ?? s.pin ?? null,
         })),
-      clockOut: () => setSession((s) => ({ ...s, clockedIn: false })),
+      clockOut: () => setSession((s) => ({ ...s, clockedIn: false, onBreak: false })),
+      startBreak: () => setSession((s) => ({ ...s, onBreak: true })),
       setStation: (name) => setSession((s) => ({ ...s, station: name })),
       setRole: (role) => setSession((s) => ({ ...s, role })),
 

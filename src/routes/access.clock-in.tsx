@@ -37,7 +37,7 @@ type Step = "pin" | "role" | "summary" | "mood" | "moodDetail";
 
 function ClockIn() {
   const navigate = useNavigate();
-  const { clockIn, clockOut, signOut, session, settings, setStation, setRole } = usePos();
+  const { clockIn, clockOut, startBreak, signIn, signOut, session, settings, setStation, setRole } = usePos();
   const { wide: wideLayout } = useLayoutMode();
   const landscape = useLandscapeWide();
   const wide = wideLayout && landscape;
@@ -52,10 +52,11 @@ function ClockIn() {
   const activeCenter = session.station ?? "Main";
 
   /** Unlock and open New Order. */
-  const unlock = async (enteredPin?: string) => {
+  const unlock = async (enteredPin?: string, asClockIn = false) => {
     if (unlocking) return;
     setUnlocking(true);
-    clockIn(enteredPin);
+    if (asClockIn) clockIn(enteredPin);
+    else signIn();
     try {
       await navigate({ to: "/order/new" });
     } catch {
@@ -70,7 +71,7 @@ function ClockIn() {
     setStation(center);
     setRole(role);
     toast.success(`Clocked in at ${clockedAt}`);
-    void unlock(pin);
+    void unlock(pin, true);
   };
 
   /** Nothing on this gate acts without a full 4-digit PIN. */
@@ -125,7 +126,9 @@ function ClockIn() {
             onClear={() => !unlocking && setPin("")}
             onEnter={() => withPin(() => void unlock(pin), "PIN accepted", true)}
             onClockOut={() => withPin(clockOut, "Clocked out")}
-            onBreak={() => withPin(() => undefined, "Break started")}
+            onBreak={() => withPin(startBreak, "Break started")}
+            clockedIn={session.clockedIn}
+            onBreakNow={session.onBreak}
             onClockIn={() => withPin(startClockIn, null, true)}
             onBiometric={() => {
               if (unlocking) return;
