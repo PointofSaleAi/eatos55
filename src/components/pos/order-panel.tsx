@@ -33,7 +33,8 @@ function CartHeaderActions({ onDiscount }: { onDiscount: (name: string) => void 
 
   return (
     <>
-      <div className="no-scrollbar flex items-center gap-1 overflow-x-auto">
+      <div className="flex min-w-0 items-center gap-1">
+        <div className="no-scrollbar flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
         <HeaderAction label="Custom Item" icon={Tag} onPress={() => navigate({ to: "/order/custom-item" })} />
         <HeaderAction label="Discount" icon={BadgePercent} active={totals.discount > 0} onPress={() => setDiscountOpen(true)} />
         <HeaderAction
@@ -46,6 +47,7 @@ function CartHeaderActions({ onDiscount }: { onDiscount: (name: string) => void 
           }}
         />
         <HeaderAction label="No Sale" icon={Wallet} onPress={() => toast.success("Register opened")} />
+        </div>
         <Button
           type="button"
           variant="secondary"
