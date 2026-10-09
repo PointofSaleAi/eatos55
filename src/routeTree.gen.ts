@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AccessClockInRouteImport } from './routes/access.clock-in'
+import { Route as AccessClockOutRouteImport } from './routes/access.clock-out'
 import { Route as AccessCreateAccountRouteImport } from './routes/access.create-account'
 import { Route as AccessForgotPasswordRouteImport } from './routes/access.forgot-password'
 import { Route as AccessManagerPinRouteImport } from './routes/access.manager-pin'
@@ -80,6 +81,11 @@ const IndexRoute = IndexRouteImport.update({
 const AccessClockInRoute = AccessClockInRouteImport.update({
   id: '/access/clock-in',
   path: '/access/clock-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccessClockOutRoute = AccessClockOutRouteImport.update({
+  id: '/access/clock-out',
+  path: '/access/clock-out',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccessCreateAccountRoute = AccessCreateAccountRouteImport.update({
@@ -388,6 +394,7 @@ const TapToPaySetupFromRoute = TapToPaySetupFromRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/access/clock-in': typeof AccessClockInRoute
+  '/access/clock-out': typeof AccessClockOutRoute
   '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
   '/access/manager-pin': typeof AccessManagerPinRoute
@@ -452,6 +459,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/access/clock-in': typeof AccessClockInRoute
+  '/access/clock-out': typeof AccessClockOutRoute
   '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
   '/access/manager-pin': typeof AccessManagerPinRoute
@@ -517,6 +525,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/access/clock-in': typeof AccessClockInRoute
+  '/access/clock-out': typeof AccessClockOutRoute
   '/access/create-account': typeof AccessCreateAccountRoute
   '/access/forgot-password': typeof AccessForgotPasswordRoute
   '/access/manager-pin': typeof AccessManagerPinRoute
@@ -583,6 +592,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/access/clock-in'
+    | '/access/clock-out'
     | '/access/create-account'
     | '/access/forgot-password'
     | '/access/manager-pin'
@@ -647,6 +657,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/access/clock-in'
+    | '/access/clock-out'
     | '/access/create-account'
     | '/access/forgot-password'
     | '/access/manager-pin'
@@ -711,6 +722,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/access/clock-in'
+    | '/access/clock-out'
     | '/access/create-account'
     | '/access/forgot-password'
     | '/access/manager-pin'
@@ -776,6 +788,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccessClockInRoute: typeof AccessClockInRoute
+  AccessClockOutRoute: typeof AccessClockOutRoute
   AccessCreateAccountRoute: typeof AccessCreateAccountRoute
   AccessForgotPasswordRoute: typeof AccessForgotPasswordRoute
   AccessManagerPinRoute: typeof AccessManagerPinRoute
@@ -851,6 +864,13 @@ declare module '@tanstack/react-router' {
       path: '/access/clock-in'
       fullPath: '/access/clock-in'
       preLoaderRoute: typeof AccessClockInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/access/clock-out': {
+      id: '/access/clock-out'
+      path: '/access/clock-out'
+      fullPath: '/access/clock-out'
+      preLoaderRoute: typeof AccessClockOutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/access/create-account': {
@@ -1290,6 +1310,7 @@ const SettingsHardwareRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccessClockInRoute: AccessClockInRoute,
+  AccessClockOutRoute: AccessClockOutRoute,
   AccessCreateAccountRoute: AccessCreateAccountRoute,
   AccessForgotPasswordRoute: AccessForgotPasswordRoute,
   AccessManagerPinRoute: AccessManagerPinRoute,
