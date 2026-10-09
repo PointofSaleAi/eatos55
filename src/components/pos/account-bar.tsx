@@ -30,7 +30,7 @@ const whatsNew = [
 ];
 
 const iconBtn =
-  "size-11 shrink-0 rounded-lg text-topbar-foreground hover:bg-muted hover:text-topbar-foreground";
+  "size-11 shrink-0 rounded-lg text-topbar-foreground hover:bg-topbar-foreground/15 hover:text-topbar-foreground focus-visible:bg-topbar-foreground/15";
 
 /** Live wall clock, formatted compactly for the phone header. */
 function useClock() {
@@ -85,7 +85,7 @@ export function AccountInfo() {
         aria-label="Switch user"
         title="Switch user"
         onClick={() => window.dispatchEvent(new CustomEvent("pos:switch-user"))}
-        className="hidden size-9 shrink-0 text-topbar-foreground hover:bg-muted sm:inline-flex"
+        className="hidden size-9 shrink-0 text-topbar-foreground hover:bg-topbar-foreground/15 hover:text-topbar-foreground focus-visible:bg-topbar-foreground/15 sm:inline-flex"
       >
         <ArrowLeftRight className="size-4" />
       </Button>
