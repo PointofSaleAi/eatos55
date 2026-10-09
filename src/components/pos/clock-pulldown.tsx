@@ -18,7 +18,7 @@ import { usePos } from "@/lib/pos-store";
  */
 export function ClockPullDown() {
   const navigate = useNavigate();
-  const { session, settings, clockIn, clockOut, startBreak, signOut } = usePos();
+  const { session, settings, clockIn, clockOut, startBreak, signOut, tickets } = usePos();
   const wide = useLandscapeWide();
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -108,7 +108,13 @@ export function ClockPullDown() {
                 onEnter={() =>
                   requirePin(() => close(), "PIN accepted")
                 }
-                onClockOut={() => requirePin(clockOut, "Clocked out")}
+                onClockOut={() => {
+                  if (pin.length < 4) return void toast.error("Enter your 4-digit PIN");
+                  if (tickets.some((t) => t.server === session.name && !t.closed)) {
+                    close();
+                    void navigate({ to: "/access/clock-out" });
+                  } else requirePin(clockOut, "Clocked out");
+                }}
                 onBreak={() => requirePin(startBreak, "Break started")}
                 clockedIn={session.clockedIn}
                 onBreakNow={Boolean(session.onBreak)}
