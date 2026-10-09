@@ -188,7 +188,7 @@ function ClockOut() {
   };
 
   return (
-    <div className="relative flex min-h-0 flex-1 overflow-hidden bg-background">
+    <div className="fixed inset-0 z-[60] flex min-h-0 overflow-hidden bg-background">
       <div aria-hidden className="absolute inset-0 grid grid-cols-1 bg-gate-overlay p-6 opacity-70 md:grid-cols-2 md:gap-12 md:p-12">
         <ClockPanel gate className="hidden min-w-0 md:flex" />
         <PinPad
