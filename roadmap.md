@@ -12,4 +12,5 @@
 - [ ] Add real product photos to the menu data (placeholder tile shows until then)
 - [x] Disable Clock Out, Break, Clock In and ENTER on the PIN pad until all four digits are entered
 - [x] Complete the reference-matched unpaid/open checks clock-out flow
+- [x] Rework New Order guest details and move secondary order options into a right-side panel
 
