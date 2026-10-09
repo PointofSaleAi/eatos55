@@ -15,4 +15,5 @@
 - [x] Rework New Order guest details and move secondary order options into a right-side panel
 - [x] Add inline auto-saving guest name and mobile fields to the cart header
 - [x] Dock New Order options as a third column on landscape screens while keeping a right-side overlay on narrow screens
+- [x] Break each two-word option label onto two lines in the docked options rail
 

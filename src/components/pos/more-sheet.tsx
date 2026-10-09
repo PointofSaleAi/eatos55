@@ -24,6 +24,12 @@ import { cn } from "@/lib/utils";
 
 type GuestMode = "transfer" | "add" | null;
 
+/** First word on line one, the rest on line two — the rail is too narrow for one line. */
+function labelLines(label: string) {
+  const [first = "", ...rest] = label.split(" ");
+  return rest.length ? [first, rest.join(" ")] : [first];
+}
+
 /** Secondary order actions presented as a full-height right-side tool rail. */
 export function MoreSheet({
   open,
@@ -146,7 +152,11 @@ export function MoreSheet({
           >
             <Icon className="size-5 shrink-0" />
             <span className="w-full whitespace-normal text-[0.625rem] font-bold leading-tight">
-              {row.label}
+              {labelLines(row.label).map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
             </span>
             {row.value ? (
               <span className="text-[0.5625rem] font-bold leading-none text-muted-foreground">
