@@ -5,6 +5,13 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ClockPanel } from "@/components/pos/clock-panel";
 import { PinPad } from "@/components/pos/pin-pad";
+import {
+  MoodDetailStep,
+  MoodStep,
+  RoleStep,
+  SummaryStep,
+  clockInCenters,
+} from "@/components/pos/clock-in-flow";
 import { revenueCenters } from "@/lib/demo-data";
 import { useLandscapeWide, useLayoutMode } from "@/hooks/use-layout-mode";
 import { usePos } from "@/lib/pos-store";
@@ -26,52 +33,62 @@ export const Route = createFileRoute("/access/clock-in")({
   component: ClockIn,
 });
 
+type Step = "pin" | "role" | "summary" | "mood" | "moodDetail";
+
 function ClockIn() {
   const navigate = useNavigate();
-  const { clockIn, clockOut, signOut, session, settings, resumeAfterUnlock, setStation } = usePos();
+  const { clockIn, clockOut, signOut, session, settings, setStation, setRole } = usePos();
   const { wide: wideLayout } = useLayoutMode();
   const landscape = useLandscapeWide();
   const wide = wideLayout && landscape;
   const [pin, setPin] = useState("");
   // True from a correct PIN until the next screen is actually open.
   const [unlocking, setUnlocking] = useState(false);
+  const [step, setStep] = useState<Step>("pin");
+  const [role, setRoleLocal] = useState("Server");
+  const [center, setCenter] = useState(clockInCenters[0]!.name);
+  const [mood, setMood] = useState<string | undefined>();
+  const [clockedAt, setClockedAt] = useState("");
   const activeCenter = session.station ?? "Main";
 
-  /**
-   * Unlock, then land back on the screen this PIN was last using (with its order
-   * restored). Falls back to Tickets when there is nothing saved or the saved
-   * screen no longer exists.
-   */
+  /** Unlock and open New Order. */
   const unlock = async (enteredPin?: string) => {
     if (unlocking) return;
     setUnlocking(true);
     clockIn(enteredPin);
-    const target = resumeAfterUnlock(enteredPin);
     try {
-      await navigate({ to: target ?? "/tickets" });
+      await navigate({ to: "/order/new" });
     } catch {
-      try {
-        await navigate({ to: "/tickets" });
-      } catch {
-        // Could not open the next screen: let them try again.
-        setUnlocking(false);
-        setPin("");
-        toast.error("Couldn't open the next screen. Please try again.");
-      }
+      setUnlocking(false);
+      setPin("");
+      setStep("pin");
+      toast.error("Couldn't open the next screen. Please try again.");
     }
   };
 
+  const finishClockIn = () => {
+    setStation(center);
+    setRole(role);
+    toast.success(`Clocked in at ${clockedAt}`);
+    void unlock(pin);
+  };
+
   /** Nothing on this gate acts without a full 4-digit PIN. */
-  const withPin = (action: () => void, message: string, keepPin = false) => {
+  const withPin = (action: () => void, message: string | null, keepPin = false) => {
     if (unlocking) return;
     if (pin.length < 4) {
       toast.error("Enter your 4-digit PIN");
       return;
     }
     action();
-    toast.success(message);
+    if (message) toast.success(message);
     // Unlocking keeps the stars filled until the next screen opens.
     if (!keepPin) setPin("");
+  };
+
+  const startClockIn = () => {
+    setClockedAt(new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }));
+    setStep("role");
   };
 
   return (
@@ -92,7 +109,16 @@ function ClockIn() {
       <div className="fixed inset-0 z-[100] flex overflow-hidden bg-gate-overlay px-[clamp(1rem,6vw,6.5rem)] py-[clamp(1rem,4dvh,3rem)] pt-[calc(clamp(1rem,4dvh,3rem)+3rem)]">
         <div className={wide ? "mx-auto grid min-h-0 w-full max-w-[68rem] grid-cols-[minmax(0,1fr)_minmax(25rem,30rem)] gap-[clamp(3rem,8vw,9rem)]" : "mx-auto grid min-h-0 w-full max-w-[28rem] grid-rows-[4.5rem_1fr] gap-3"}>
           <ClockPanel gate compact={!wide} className="min-w-0" />
-          <div className="relative flex min-h-0 flex-col justify-center" aria-busy={unlocking}>
+          <div className="relative flex min-h-0 flex-col justify-center overflow-y-auto" aria-busy={unlocking}>
+          {step === "role" ? (
+            <RoleStep name={session.name} value={role} onBack={() => setStep("pin")} onPick={(r) => { setRoleLocal(r); setStep("summary"); }} />
+          ) : step === "summary" ? (
+            <SummaryStep name={session.name} time={clockedAt} center={center} role={role} onCenter={setCenter} onRole={setRoleLocal} onContinue={() => setStep("mood")} />
+          ) : step === "mood" ? (
+            <MoodStep name={session.name} value={mood} onBack={() => setStep("summary")} onPick={(m) => { setMood(m); setStep("moodDetail"); }} onSubmit={finishClockIn} onSkip={finishClockIn} />
+          ) : step === "moodDetail" && mood ? (
+            <MoodDetailStep mood={mood} onBack={() => setStep("mood")} onSubmit={finishClockIn} onSkip={finishClockIn} />
+          ) : (
           <PinPad
             pin={pin}
             onDigit={(d) => !unlocking && setPin((p) => (p.length < 4 ? p + d : p))}
@@ -100,19 +126,17 @@ function ClockIn() {
             onEnter={() => withPin(() => void unlock(pin), "PIN accepted", true)}
             onClockOut={() => withPin(clockOut, "Clocked out")}
             onBreak={() => withPin(() => undefined, "Break started")}
-            onClockIn={() =>
-              withPin(() => void unlock(pin), `Clocked in at ${settings.clockedInAt}`, true)
-            }
+            onClockIn={() => withPin(startClockIn, null, true)}
             onBiometric={() => {
               if (unlocking) return;
-              toast.success("Clocked in with biometrics");
+              toast.success("Signed in with biometrics");
               void unlock();
             }}
             revenueCenter={activeCenter}
             revenueCenterOptions={revenueCenters}
-            onRevenueCenterSelect={(center) => {
-              setStation(center);
-              toast.success(`Revenue center set to ${center}`);
+            onRevenueCenterSelect={(c) => {
+              setStation(c);
+              toast.success(`Revenue center set to ${c}`);
             }}
             onLogOut={() => {
               signOut();
@@ -120,6 +144,7 @@ function ClockIn() {
             }}
               className="h-full max-h-[34rem] w-full"
           />
+          )}
           {unlocking ? (
             <div
               role="status"
