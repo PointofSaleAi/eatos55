@@ -1,6 +1,5 @@
 import {
   ArrowLeftRight,
-  BadgeDollarSign,
   Gift,
   Receipt,
   RotateCcw,
@@ -13,7 +12,6 @@ import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { GuestSheet } from "@/components/pos/guest-sheet";
-import { PinSheet } from "@/components/pos/pin-sheet";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
@@ -41,8 +39,6 @@ export function MoreSheet({
   const {
     serviceCharge,
     setServiceCharge,
-    comped,
-    setComped,
     cart,
     cancelOrder,
   } = usePos();
@@ -51,7 +47,6 @@ export function MoreSheet({
   const [chargeOpen, setChargeOpen] = useState(false);
   const [charge, setCharge] = useState(String(serviceCharge || ""));
   const [guestMode, setGuestMode] = useState<GuestMode>(null);
-  const [pinOpen, setPinOpen] = useState(false);
 
   const notifyUnavailable = (label: string) => {
     toast.info(`${label} is not configured for this location`);
@@ -78,20 +73,6 @@ export function MoreSheet({
       label: "Reopen Check",
       icon: RotateCcw,
       run: () => notifyUnavailable("Reopen Check"),
-    },
-    {
-      id: "comp",
-      label: comped ? "Remove Comp" : "Comp Order",
-      icon: BadgeDollarSign,
-      value: comped ? "On" : undefined,
-      run: () => {
-        if (comped) {
-          setComped(false);
-          toast.success("Comp removed");
-          return;
-        }
-        setPinOpen(true);
-      },
     },
     {
       id: "cancel",
@@ -240,15 +221,6 @@ export function MoreSheet({
       </Sheet>
 
       <GuestSheet open={guestMode !== null} onClose={() => setGuestMode(null)} />
-      <PinSheet
-        open={pinOpen}
-        onOpenChange={setPinOpen}
-        onSubmit={() => {
-          setPinOpen(false);
-          setComped(true);
-          toast.success("Order comped");
-        }}
-      />
     </>
   );
 }
