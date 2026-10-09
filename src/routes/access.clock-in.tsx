@@ -26,52 +26,62 @@ export const Route = createFileRoute("/access/clock-in")({
   component: ClockIn,
 });
 
+type Step = "pin" | "role" | "summary" | "mood" | "moodDetail";
+
 function ClockIn() {
   const navigate = useNavigate();
-  const { clockIn, clockOut, signOut, session, settings, resumeAfterUnlock, setStation } = usePos();
+  const { clockIn, clockOut, signOut, session, settings, setStation, setRole } = usePos();
   const { wide: wideLayout } = useLayoutMode();
   const landscape = useLandscapeWide();
   const wide = wideLayout && landscape;
   const [pin, setPin] = useState("");
   // True from a correct PIN until the next screen is actually open.
   const [unlocking, setUnlocking] = useState(false);
+  const [step, setStep] = useState<Step>("pin");
+  const [role, setRoleLocal] = useState("Server");
+  const [center, setCenter] = useState(clockInCenters[0].name);
+  const [mood, setMood] = useState<string | undefined>();
+  const [clockedAt, setClockedAt] = useState("");
   const activeCenter = session.station ?? "Main";
 
-  /**
-   * Unlock, then land back on the screen this PIN was last using (with its order
-   * restored). Falls back to Tickets when there is nothing saved or the saved
-   * screen no longer exists.
-   */
+  /** Unlock and open New Order. */
   const unlock = async (enteredPin?: string) => {
     if (unlocking) return;
     setUnlocking(true);
     clockIn(enteredPin);
-    const target = resumeAfterUnlock(enteredPin);
     try {
-      await navigate({ to: target ?? "/tickets" });
+      await navigate({ to: "/order/new" });
     } catch {
-      try {
-        await navigate({ to: "/tickets" });
-      } catch {
-        // Could not open the next screen: let them try again.
-        setUnlocking(false);
-        setPin("");
-        toast.error("Couldn't open the next screen. Please try again.");
-      }
+      setUnlocking(false);
+      setPin("");
+      setStep("pin");
+      toast.error("Couldn't open the next screen. Please try again.");
     }
   };
 
+  const finishClockIn = () => {
+    setStation(center);
+    setRole(role);
+    toast.success(`Clocked in at ${clockedAt}`);
+    void unlock(pin);
+  };
+
   /** Nothing on this gate acts without a full 4-digit PIN. */
-  const withPin = (action: () => void, message: string, keepPin = false) => {
+  const withPin = (action: () => void, message: string | null, keepPin = false) => {
     if (unlocking) return;
     if (pin.length < 4) {
       toast.error("Enter your 4-digit PIN");
       return;
     }
     action();
-    toast.success(message);
+    if (message) toast.success(message);
     // Unlocking keeps the stars filled until the next screen opens.
     if (!keepPin) setPin("");
+  };
+
+  const startClockIn = () => {
+    setClockedAt(new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }));
+    setStep("role");
   };
 
   return (
