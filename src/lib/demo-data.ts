@@ -356,6 +356,14 @@ export const statusMeta: Record<TicketStatus, { label: string; tone: string }> =
   ready: { label: "READY", tone: "text-success" },
 };
 
+/** Stage shown on a paid check that is still open at clock-out. */
+export const stageMeta: Record<NonNullable<Ticket["stage"]>, { label: string; tone: string }> = {
+  ordering: { label: "ORDERING", tone: "text-warning" },
+  waiting: { label: "WAITING", tone: "text-warning" },
+  ready: { label: "READY", tone: "text-success" },
+  served: { label: "SERVED", tone: "text-muted-foreground" },
+};
+
 export const releaseNotes = [
   {
     version: "4.12",
@@ -378,11 +386,11 @@ export const releaseNotes = [
 ];
 
 export const employees = [
-  { id: "e1", name: "Elizer Cruz", role: "Manager", state: "Clocked in · 5h 12m" },
-  { id: "e2", name: "Dana Whitfield", role: "Server", state: "Clocked in · 3h 40m" },
-  { id: "e3", name: "Marcus Lee", role: "Bartender", state: "Clocked in · 1h 05m" },
-  { id: "e4", name: "Priya Nair", role: "Line cook", state: "Break · 12m" },
-  { id: "e5", name: "Sam Okoye", role: "Host", state: "Clocked out" },
+  { id: "e1", name: "Elizer Cruz", role: "Manager", level: "Shift Manager", state: "Clocked in · 5h 12m" },
+  { id: "e2", name: "Dana Whitfield", role: "Server", level: "Senior Staff", state: "Clocked in · 3h 40m" },
+  { id: "e3", name: "Marcus Lee", role: "Bartender", level: "Team Lead", state: "Clocked in · 1h 05m" },
+  { id: "e4", name: "Priya Nair", role: "Line cook", level: "Staff", state: "Break · 12m" },
+  { id: "e5", name: "Sam Okoye", role: "Host", level: "Staff", state: "Clocked out" },
 ];
 
 export const hardware = [
