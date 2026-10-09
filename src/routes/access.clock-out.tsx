@@ -73,7 +73,7 @@ function greeting() {
 function minutesOf(label: string) {
   const match = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.exec(label.trim());
   if (!match) return null;
-  const hour = (Number(match[1]) % 12) + (/pm/i.test(match[3]) ? 12 : 0);
+  const hour = (Number(match[1]) % 12) + (/pm/i.test(match[3] ?? "") ? 12 : 0);
   return hour * 60 + Number(match[2]);
 }
 
