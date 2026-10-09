@@ -311,6 +311,36 @@ export const initialTickets: Ticket[] = [
     checkNumber: 1053, tips: 0, revenueCenter: "Counter pickup", paymentType: "Card",
     payments: [{ no: "1", method: "Card", amount: 18.75, at: "5:33 PM" }],
   },
+  {
+    id: "t-1054", orderNo: 10254, number: 12, label: "Jake P.", seats: 1,
+    total: 12.2, date: DEFAULT_TICKET_DATE, arrivedAt: "5:35 PM", arrivedMinutesAgo: 10,
+    status: "ordering", mode: "takeaway", lines: [custom(12.2)], server: "Elizer Cruz",
+    checkNumber: 1054, tips: 0, revenueCenter: "Counter pickup", paymentType: "Unpaid", payments: [],
+  },
+  {
+    id: "t-1055", orderNo: 10255, number: 13, label: "Lisa K.", seats: 1,
+    total: 26.36, date: DEFAULT_TICKET_DATE, arrivedAt: "5:36 PM", arrivedMinutesAgo: 9,
+    status: "preparing", mode: "takeaway", lines: [custom(26.36)], server: "Elizer Cruz",
+    checkNumber: 1055, tips: 0, revenueCenter: "Counter pickup", paymentType: "Unpaid", payments: [],
+  },
+  {
+    id: "t-1056", orderNo: 10256, table: 5, number: 14, label: "Tom W.", seats: 2,
+    total: 42.5, date: DEFAULT_TICKET_DATE, arrivedAt: "5:37 PM", arrivedMinutesAgo: 8,
+    status: "ordering", mode: "dine-in", lines: [custom(42.5)], server: "Elizer Cruz",
+    checkNumber: 1056, tips: 0, revenueCenter: "Main dining", paymentType: "Unpaid", payments: [],
+  },
+  {
+    id: "t-1057", orderNo: 10257, number: 15, label: "Anna D.", seats: 1,
+    total: 42.5, date: DEFAULT_TICKET_DATE, arrivedAt: "5:38 PM", arrivedMinutesAgo: 7,
+    status: "ready", mode: "takeaway", lines: [custom(42.5)], server: "Elizer Cruz",
+    checkNumber: 1057, tips: 0, revenueCenter: "Counter pickup", paymentType: "Unpaid", payments: [],
+  },
+  {
+    id: "t-1058", orderNo: 10258, table: 1, number: 16, label: "Sarah M.", seats: 3,
+    total: 66.58, date: DEFAULT_TICKET_DATE, arrivedAt: "5:39 PM", arrivedMinutesAgo: 6,
+    status: "preparing", mode: "dine-in", lines: [custom(66.58)], server: "Elizer Cruz",
+    checkNumber: 1058, tips: 0, revenueCenter: "Main dining", paymentType: "Unpaid", payments: [],
+  },
 ];
 
 

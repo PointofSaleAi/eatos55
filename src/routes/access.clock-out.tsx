@@ -61,6 +61,12 @@ function liveTime() {
   return new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 }
 
+function isFullyPaid(ticket: Ticket) {
+  if (ticket.status === "paid") return true;
+  const paid = (ticket.payments ?? []).reduce((sum, payment) => sum + payment.amount, 0);
+  return paid >= ticket.total && ticket.total > 0;
+}
+
 function ClockOut() {
   const navigate = useNavigate();
   const { tickets, session, settings, clockOut, openTicket, transferTickets, closeTickets, addTip } = usePos();
@@ -77,10 +83,10 @@ function ClockOut() {
     return () => window.clearInterval(timer);
   }, []);
 
-  const ownUnpaid = tickets.filter((ticket) => ticket.server === session.name && !ticket.closed && ticket.status !== "paid");
-  const open = tickets.filter((ticket) => ticket.server === session.name && !ticket.closed && ticket.status === "paid");
+  const ownUnpaid = tickets.filter((ticket) => ticket.server === session.name && !ticket.closed && !isFullyPaid(ticket));
+  const open = tickets.filter((ticket) => ticket.server === session.name && !ticket.closed && isFullyPaid(ticket));
   const transferred = tickets.filter(
-    (ticket) => ticket.transferOrigin === session.name && ticket.server !== session.name && !ticket.closed && ticket.status !== "paid",
+    (ticket) => ticket.transferOrigin === session.name && ticket.server !== session.name && !ticket.closed && !isFullyPaid(ticket),
   );
   const visible = tab === "unpaid" ? ownUnpaid : open;
   const selectedTickets = tickets.filter((ticket) => selected.includes(ticket.id));
@@ -283,7 +289,7 @@ function ClockOut() {
 }
 
 function TabButton({ active, count, label, onClick }: { active: boolean; count: number; label: string; onClick: () => void }) {
-  return <Button type="button" variant={active ? "default" : "secondary"} onClick={onClick} className="h-9 rounded-full text-fs-xs font-extrabold"><ReceiptText /> {label} <span className={cn("rounded px-1.5 py-0.5 text-[0.65rem]", active ? "bg-accent text-accent-foreground" : "bg-background text-foreground")}>{count}</span></Button>;
+  return <Button type="button" variant={active ? "default" : "secondary"} onClick={onClick} className={cn("h-9 rounded-full text-fs-xs font-extrabold", active && "text-primary-foreground")}><ReceiptText /> {label} <span className={cn("rounded px-1.5 py-0.5 text-[0.65rem]", active ? "bg-accent text-accent-foreground" : "bg-background text-foreground")}>{count}</span></Button>;
 }
 
 function SelectionBar({ count, selected, checked, onToggle }: { count: number; selected: number; checked: boolean; onToggle: () => void }) {
