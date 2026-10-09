@@ -53,7 +53,7 @@ export const moods = [
 const tileBase =
   "flex min-h-[clamp(4.5rem,11dvh,6.5rem)] flex-col items-center justify-center gap-1.5 rounded-xl border bg-surface/10 px-2 text-center text-fs-sm font-bold text-shell-foreground transition-[filter,transform] hover:brightness-110 active:scale-[0.98]";
 
-function Grid({ options, value, onPick }: { options: Option[]; value?: string; onPick: (n: string) => void }) {
+function Grid({ options, value, onPick }: { options: Option[]; value?: string | undefined; onPick: (n: string) => void }) {
   return (
     <div className="grid grid-cols-3 gap-2">
       {options.map(({ name, icon: Icon, tone }) => (
@@ -96,7 +96,7 @@ function CheckHeader({ title, subtitle }: { title: string; subtitle: string }) {
   );
 }
 
-export function RoleStep({ name, value, onBack, onPick }: { name: string; value?: string; onBack: () => void; onPick: (r: string) => void }) {
+export function RoleStep({ name, value, onBack, onPick }: { name: string; value?: string | undefined; onBack: () => void; onPick: (r: string) => void }) {
   const initials = name.split(" ").map((p) => p[0]).join("").slice(0, 2);
   return (
     <div className="flex flex-col gap-4">
@@ -136,8 +136,8 @@ export function SummaryStep({
   name, time, center, role, onCenter, onRole, onContinue,
 }: { name: string; time: string; center: string; role: string; onCenter: (c: string) => void; onRole: (r: string) => void; onContinue: () => void }) {
   const [open, setOpen] = useState<"center" | "role" | null>(null);
-  const c = clockInCenters.find((x) => x.name === center) ?? clockInCenters[0];
-  const r = jobRoles.find((x) => x.name === role) ?? jobRoles[0];
+  const c = clockInCenters.find((x) => x.name === center) ?? clockInCenters[0]!;
+  const r = jobRoles.find((x) => x.name === role) ?? jobRoles[0]!;
   return (
     <div className="flex flex-col gap-2.5">
       <CheckHeader title="Clocked In!" subtitle={`Welcome back, ${name}`} />
@@ -173,7 +173,7 @@ function FinishButtons({ enabled, onSubmit, onSkip }: { enabled: boolean; onSubm
   );
 }
 
-export function MoodStep({ name, value, onBack, onPick, onSubmit, onSkip }: { name: string; value?: string; onBack: () => void; onPick: (m: string) => void; onSubmit: () => void; onSkip: () => void }) {
+export function MoodStep({ name, value, onBack, onPick, onSubmit, onSkip }: { name: string; value?: string | undefined; onBack: () => void; onPick: (m: string) => void; onSubmit: () => void; onSkip: () => void }) {
   return (
     <div className="flex flex-col gap-3">
       <BackButton onClick={onBack} />
@@ -198,7 +198,7 @@ export function MoodStep({ name, value, onBack, onPick, onSubmit, onSkip }: { na
 }
 
 export function MoodDetailStep({ mood, onBack, onSubmit, onSkip }: { mood: string; onBack: () => void; onSubmit: () => void; onSkip: () => void }) {
-  const m = moods.find((x) => x.name === mood) ?? moods[0];
+  const m = moods.find((x) => x.name === mood) ?? moods[0]!;
   const [picked, setPicked] = useState<string[]>([]);
   const [anon, setAnon] = useState(true);
   return (

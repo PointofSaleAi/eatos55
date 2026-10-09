@@ -46,7 +46,7 @@ function ClockIn() {
   const [unlocking, setUnlocking] = useState(false);
   const [step, setStep] = useState<Step>("pin");
   const [role, setRoleLocal] = useState("Server");
-  const [center, setCenter] = useState(clockInCenters[0].name);
+  const [center, setCenter] = useState(clockInCenters[0]!.name);
   const [mood, setMood] = useState<string | undefined>();
   const [clockedAt, setClockedAt] = useState("");
   const activeCenter = session.station ?? "Main";
