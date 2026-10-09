@@ -112,7 +112,7 @@ function ClockOut() {
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-fs-sm font-extrabold text-foreground">
-                        #{t.orderNo ?? t.number} · {t.name ?? (t.table ? `Table ${t.table}` : "Guest")}
+                        #{t.orderNo ?? t.number} · {t.table ? `Table ${t.table}` : "Guest"}
                       </span>
                       <span className="block truncate text-fs-xs font-bold text-muted-foreground">
                         {t.arrivedAt}
