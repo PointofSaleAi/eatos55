@@ -221,15 +221,6 @@ export function MoreSheet({
       </Sheet>
 
       <GuestSheet open={guestMode !== null} onClose={() => setGuestMode(null)} />
-      <PinSheet
-        open={pinOpen}
-        onOpenChange={setPinOpen}
-        onSubmit={() => {
-          setPinOpen(false);
-          setComped(true);
-          toast.success("Order comped");
-        }}
-      />
     </>
   );
 }
