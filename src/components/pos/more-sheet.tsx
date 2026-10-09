@@ -74,6 +74,7 @@ export function MoreSheet({
       value: serviceCharge ? `$${serviceCharge.toFixed(2)}` : undefined,
       run: () => setChargeOpen(true),
     },
+    { id: "add-guest", label: "Add Guest", icon: UserPlus, run: () => setGuestMode("add") },
     { id: "gift-card", label: "Gift Card", icon: Gift, run: () => notifyUnavailable("Gift Card") },
     {
       id: "reopen-check",
