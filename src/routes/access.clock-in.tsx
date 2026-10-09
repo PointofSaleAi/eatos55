@@ -5,6 +5,13 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ClockPanel } from "@/components/pos/clock-panel";
 import { PinPad } from "@/components/pos/pin-pad";
+import {
+  MoodDetailStep,
+  MoodStep,
+  RoleStep,
+  SummaryStep,
+  clockInCenters,
+} from "@/components/pos/clock-in-flow";
 import { revenueCenters } from "@/lib/demo-data";
 import { useLandscapeWide, useLayoutMode } from "@/hooks/use-layout-mode";
 import { usePos } from "@/lib/pos-store";
@@ -102,7 +109,16 @@ function ClockIn() {
       <div className="fixed inset-0 z-[100] flex overflow-hidden bg-gate-overlay px-[clamp(1rem,6vw,6.5rem)] py-[clamp(1rem,4dvh,3rem)] pt-[calc(clamp(1rem,4dvh,3rem)+3rem)]">
         <div className={wide ? "mx-auto grid min-h-0 w-full max-w-[68rem] grid-cols-[minmax(0,1fr)_minmax(25rem,30rem)] gap-[clamp(3rem,8vw,9rem)]" : "mx-auto grid min-h-0 w-full max-w-[28rem] grid-rows-[4.5rem_1fr] gap-3"}>
           <ClockPanel gate compact={!wide} className="min-w-0" />
-          <div className="relative flex min-h-0 flex-col justify-center" aria-busy={unlocking}>
+          <div className="relative flex min-h-0 flex-col justify-center overflow-y-auto" aria-busy={unlocking}>
+          {step === "role" ? (
+            <RoleStep name={session.name} value={role} onBack={() => setStep("pin")} onPick={(r) => { setRoleLocal(r); setStep("summary"); }} />
+          ) : step === "summary" ? (
+            <SummaryStep name={session.name} time={clockedAt} center={center} role={role} onCenter={setCenter} onRole={setRoleLocal} onContinue={() => setStep("mood")} />
+          ) : step === "mood" ? (
+            <MoodStep name={session.name} value={mood} onBack={() => setStep("summary")} onPick={(m) => { setMood(m); setStep("moodDetail"); }} onSubmit={finishClockIn} onSkip={finishClockIn} />
+          ) : step === "moodDetail" && mood ? (
+            <MoodDetailStep mood={mood} onBack={() => setStep("mood")} onSubmit={finishClockIn} onSkip={finishClockIn} />
+          ) : (
           <PinPad
             pin={pin}
             onDigit={(d) => !unlocking && setPin((p) => (p.length < 4 ? p + d : p))}
@@ -110,19 +126,17 @@ function ClockIn() {
             onEnter={() => withPin(() => void unlock(pin), "PIN accepted", true)}
             onClockOut={() => withPin(clockOut, "Clocked out")}
             onBreak={() => withPin(() => undefined, "Break started")}
-            onClockIn={() =>
-              withPin(() => void unlock(pin), `Clocked in at ${settings.clockedInAt}`, true)
-            }
+            onClockIn={() => withPin(startClockIn, null, true)}
             onBiometric={() => {
               if (unlocking) return;
-              toast.success("Clocked in with biometrics");
+              toast.success("Signed in with biometrics");
               void unlock();
             }}
             revenueCenter={activeCenter}
             revenueCenterOptions={revenueCenters}
-            onRevenueCenterSelect={(center) => {
-              setStation(center);
-              toast.success(`Revenue center set to ${center}`);
+            onRevenueCenterSelect={(c) => {
+              setStation(c);
+              toast.success(`Revenue center set to ${c}`);
             }}
             onLogOut={() => {
               signOut();
@@ -130,6 +144,7 @@ function ClockIn() {
             }}
               className="h-full max-h-[34rem] w-full"
           />
+          )}
           {unlocking ? (
             <div
               role="status"
