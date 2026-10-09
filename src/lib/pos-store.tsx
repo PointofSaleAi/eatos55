@@ -579,7 +579,8 @@ type Store = {
   signIn: () => void;
   signOut: () => void;
   clockIn: (pin?: string) => void;
-  clockOut: () => void;
+  /** Ends a shift only when the current employee owns no outstanding checks. */
+  clockOut: () => boolean;
   startBreak: () => void;
   setStation: (name: string) => void;
   setRole: (role: string) => void;
@@ -1017,7 +1018,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
           onBreak: false,
           pin: pin ?? s.pin ?? null,
         })),
-      clockOut: () => setSession((s) => ({ ...s, clockedIn: false, onBreak: false })),
+      clockOut: () => {
+        if (tickets.some((t) => t.server === session.name && !t.closed)) return false;
+        setSession((s) => ({ ...s, clockedIn: false, onBreak: false }));
+        return true;
+      },
       startBreak: () => setSession((s) => ({ ...s, onBreak: true })),
       setStation: (name) => setSession((s) => ({ ...s, station: name })),
       setRole: (role) => setSession((s) => ({ ...s, role })),
@@ -1177,7 +1182,13 @@ export function PosProvider({ children }: { children: ReactNode }) {
       setTicketStatus: (id, status) =>
         setTickets((list) => list.map((t) => (t.id === id ? { ...t, status } : t))),
       transferTickets: (ids, server) =>
-        setTickets((list) => list.map((t) => (ids.includes(t.id) ? { ...t, server } : t))),
+        setTickets((list) =>
+          list.map((t) =>
+            ids.includes(t.id)
+              ? { ...t, transferOrigin: t.transferOrigin ?? t.server, server }
+              : t,
+          ),
+        ),
       closeTickets: (ids) =>
         setTickets((list) => list.map((t) => (ids.includes(t.id) ? { ...t, closed: true } : t))),
       addTip: (id, amount) =>

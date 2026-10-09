@@ -11,4 +11,5 @@
 - [x] Fix the quantity chip's dropdown arrow spacing so it sits clear of the chip's right edge
 - [ ] Add real product photos to the menu data (placeholder tile shows until then)
 - [x] Disable Clock Out, Break, Clock In and ENTER on the PIN pad until all four digits are entered
+- [ ] Complete the reference-matched unpaid/open checks clock-out flow
 

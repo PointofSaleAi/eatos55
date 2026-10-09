@@ -99,6 +99,8 @@ type RefConfig = {
 
 function PaymentMethod() {
   const navigate = useNavigate();
+  const returningToClockOut =
+    typeof window !== "undefined" && sessionStorage.getItem("pos:return-clock-out") === "1";
   const {
     cart,
     totals,
@@ -838,7 +840,7 @@ function PaymentMethod() {
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <div className="grid shrink-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 border-b border-border bg-surface px-2 py-3 md:grid-cols-[auto_minmax(0,1fr)_auto]">
         <BackButton
-          fallbackTo={wide ? "/order/new" : "/payment/bill"}
+          fallbackTo={returningToClockOut ? "/access/clock-out" : wide ? "/order/new" : "/payment/bill"}
           label={wide ? "Back to order" : "Back to the bill"}
         />
         <div className="min-w-0">
@@ -883,7 +885,10 @@ function PaymentMethod() {
           // Split checks stay on this screen until every child check is paid.
           if (unpaidChecks.length) return;
           clearSplitChecks();
-          navigate({ to: "/order/new" });
+          if (returningToClockOut) {
+            sessionStorage.removeItem("pos:return-clock-out");
+            navigate({ to: "/access/clock-out" });
+          } else navigate({ to: "/order/new" });
         }}
       />
 
