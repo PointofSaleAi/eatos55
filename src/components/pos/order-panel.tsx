@@ -25,11 +25,18 @@ import { MoreSheet } from "@/components/pos/more-sheet";
 import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { Button } from "@/components/ui/button";
 
-function CartHeaderActions({ onDiscount }: { onDiscount: (name: string) => void }) {
+function CartHeaderActions({
+  onDiscount,
+  moreOpen,
+  onMoreOpenChange,
+}: {
+  onDiscount: (name: string) => void;
+  moreOpen: boolean;
+  onMoreOpenChange: (open: boolean) => void;
+}) {
   const navigate = useNavigate();
   const { totals, noTax, setNoTax, setOrderDiscountPercent } = usePos();
   const [discountOpen, setDiscountOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
 
   return (
     <>
@@ -54,7 +61,8 @@ function CartHeaderActions({ onDiscount }: { onDiscount: (name: string) => void 
           size="icon"
           aria-label="More order options"
           title="More order options"
-          onClick={() => setMoreOpen(true)}
+          aria-expanded={moreOpen}
+          onClick={() => onMoreOpenChange(!moreOpen)}
           className="size-8 shrink-0 rounded-pill"
         >
           <MoreVertical className="size-4" />
@@ -71,7 +79,6 @@ function CartHeaderActions({ onDiscount }: { onDiscount: (name: string) => void 
           setDiscountOpen(false);
         }}
       />
-      <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
     </>
   );
 }
@@ -105,7 +112,15 @@ function HeaderAction({
 }
 
 /** Running order area shared by phone, tablet and desktop layouts. */
-export function OrderPanel({ wide }: { wide: boolean }) {
+export function OrderPanel({
+  wide,
+  moreOpen,
+  onMoreOpenChange,
+}: {
+  wide: boolean;
+  moreOpen: boolean;
+  onMoreOpenChange: (open: boolean) => void;
+}) {
   const navigate = useNavigate();
   const {
     guest,
@@ -200,7 +215,11 @@ export function OrderPanel({ wide }: { wide: boolean }) {
         </div>
 
         <div className="mt-1.5">
-          <CartHeaderActions onDiscount={setDiscountName} />
+          <CartHeaderActions
+            onDiscount={setDiscountName}
+            moreOpen={moreOpen}
+            onMoreOpenChange={onMoreOpenChange}
+          />
         </div>
 
         {/* Service type and the table / arrival chip share one scrolling row */}

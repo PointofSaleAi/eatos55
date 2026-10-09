@@ -3,7 +3,6 @@ import {
   BadgeDollarSign,
   CircleDollarSign,
   Gift,
-  Percent,
   QrCode,
   Receipt,
   RotateCcw,
@@ -26,7 +25,15 @@ import { cn } from "@/lib/utils";
 type GuestMode = "transfer" | "add" | null;
 
 /** Secondary order actions presented as a full-height right-side tool rail. */
-export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function MoreSheet({
+  open,
+  onClose,
+  docked = false,
+}: {
+  open: boolean;
+  onClose: () => void;
+  docked?: boolean;
+}) {
   useBackDismiss(open, onClose);
   const {
     serviceCharge,
@@ -121,46 +128,91 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
     },
   ];
 
+  const optionRows = docked ? (
+    <div className="no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto p-1.5">
+      {rows.map((row) => {
+        const Icon = row.icon;
+        return (
+          <Button
+            key={row.id}
+            type="button"
+            variant="ghost"
+            onClick={row.run}
+            title={row.label}
+            className={cn(
+              "h-auto min-h-[4.75rem] w-full shrink-0 flex-col justify-center gap-1 rounded-row px-1 py-2 text-center hover:bg-muted hover:text-foreground",
+              row.destructive ? "text-destructive" : "text-foreground",
+            )}
+          >
+            <Icon className="size-5 shrink-0" />
+            <span className="w-full whitespace-normal text-[0.625rem] font-bold leading-tight">
+              {row.label}
+            </span>
+            {row.value ? (
+              <span className="text-[0.5625rem] font-bold leading-none text-muted-foreground">
+                {row.value}
+              </span>
+            ) : null}
+          </Button>
+        );
+      })}
+    </div>
+  ) : (
+    <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto p-2">
+      {rows.map((row) => {
+        const Icon = row.icon;
+        return (
+          <Button
+            key={row.id}
+            type="button"
+            variant="ghost"
+            onClick={row.run}
+            className={cn(
+              "h-auto min-h-14 w-full justify-start rounded-row px-3 py-2 text-left hover:bg-muted hover:text-foreground",
+              row.destructive ? "text-destructive" : "text-foreground",
+            )}
+          >
+            <span className="grid size-9 shrink-0 place-items-center rounded-row bg-muted">
+              <Icon className="size-5" />
+            </span>
+            <span className="min-w-0 flex-1 text-fs-sm font-bold">{row.label}</span>
+            {row.value ? (
+              <span className="shrink-0 text-fs-xs font-bold text-muted-foreground">
+                {row.value}
+              </span>
+            ) : null}
+          </Button>
+        );
+      })}
+    </div>
+  );
+
   return (
     <>
-      <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
-        <SheetContent
-          side="right"
-          className="flex h-dvh w-[min(21rem,88vw)] flex-col border-l border-border bg-surface p-0 sm:max-w-none"
-        >
-          <SheetHeader className="shrink-0 border-b border-border px-5 py-4 text-left">
-            <SheetTitle className="text-fs-lg font-extrabold text-foreground">Order Options</SheetTitle>
-            <p className="text-fs-xs font-bold text-muted-foreground">Tools for the current check</p>
-          </SheetHeader>
-          <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto p-2">
-            {rows.map((row) => {
-              const Icon = row.icon;
-              return (
-                <Button
-                  key={row.id}
-                  type="button"
-                  variant="ghost"
-                  onClick={row.run}
-                  className={cn(
-                    "h-auto min-h-14 w-full justify-start rounded-row px-3 py-2 text-left hover:bg-muted hover:text-foreground",
-                    row.destructive ? "text-destructive" : "text-foreground",
-                  )}
-                >
-                  <span className="grid size-9 shrink-0 place-items-center rounded-row bg-muted">
-                    <Icon className="size-5" />
-                  </span>
-                  <span className="min-w-0 flex-1 text-fs-sm font-bold">{row.label}</span>
-                  {row.value ? (
-                    <span className="shrink-0 text-fs-xs font-bold text-muted-foreground">
-                      {row.value}
-                    </span>
-                  ) : null}
-                </Button>
-              );
-            })}
-          </div>
-        </SheetContent>
-      </Sheet>
+      {docked ? (
+        open ? (
+          <aside
+            aria-label="Order Options"
+            className="flex min-h-0 w-[5.75rem] shrink-0 flex-col overflow-hidden border-l border-border bg-surface"
+          >
+            <h2 className="sr-only">Order Options</h2>
+            {optionRows}
+          </aside>
+        ) : null
+      ) : (
+        <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
+          <SheetContent
+            side="right"
+            className="flex h-dvh w-[min(21rem,88vw)] flex-col border-l border-border bg-surface p-0 sm:max-w-none"
+          >
+            <SheetHeader className="shrink-0 border-b border-border px-5 py-4 text-left">
+              <SheetTitle className="text-fs-lg font-extrabold text-foreground">Order Options</SheetTitle>
+              <p className="text-fs-xs font-bold text-muted-foreground">Tools for the current check</p>
+            </SheetHeader>
+            {optionRows}
+          </SheetContent>
+        </Sheet>
+      )}
 
       <Sheet open={chargeOpen} onOpenChange={setChargeOpen}>
         <SheetContent side="bottom" className="mx-auto w-full max-w-sheet rounded-t-sheet border-0 bg-surface p-4 pb-[calc(1rem+var(--kb-inset,0px))]">

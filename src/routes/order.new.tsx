@@ -15,8 +15,10 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useWideLayout } from "@/components/pos/shell";
+import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { OrderPanel } from "@/components/pos/order-panel";
+import { MoreSheet } from "@/components/pos/more-sheet";
 import { itemNeedsSheet, liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
 import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
@@ -60,9 +62,11 @@ function NewOrder() {
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [tab, setTab] = useState<"menu" | "order">("menu");
+  const [moreOpen, setMoreOpen] = useState(false);
   // Landscape shows the menu and the running order side by side, so the
   // Menu/Order switch is phone-only.
   const wide = useWideLayout();
+  const dockOptions = useLandscapeWide();
   // Long-press on a tile always opens the item sheet, even for simple items.
   const longPress = useRef<number | null>(null);
   const menuToolsRef = useRef<HTMLDivElement | null>(null);
@@ -437,16 +441,20 @@ function NewOrder() {
 
       <aside
         className={cn(
-          "flex min-h-0 flex-col overflow-hidden",
+          "flex min-h-0 flex-col overflow-hidden transition-[width] duration-300",
           showCart ? "" : "hidden",
           wide
-            ? "w-[21rem] shrink-0 border-l border-border bg-surface lg:w-[24rem] 2xl:w-[26rem]"
+            ? moreOpen && dockOptions
+              ? "w-[18rem] shrink-0 border-l border-border bg-surface lg:w-[20rem]"
+              : "w-[21rem] shrink-0 border-l border-border bg-surface lg:w-[24rem] 2xl:w-[26rem]"
             : "min-w-0 flex-1 bg-surface",
 
         )}
       >
-        <OrderPanel wide={wide} />
+        <OrderPanel wide={wide} moreOpen={moreOpen} onMoreOpenChange={setMoreOpen} />
       </aside>
+
+      <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} docked={dockOptions} />
 
 
       {/* Phone, menu tab: keep the running total and Charge one tap away. */}
