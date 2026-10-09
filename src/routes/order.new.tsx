@@ -8,19 +8,15 @@ import {
   Ban,
   Check,
   ChevronDown,
-  MoreVertical,
   PanelLeftOpen,
   Plus,
   Search,
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { GuestBlock } from "@/components/pos/guest-block";
 import { useWideLayout } from "@/components/pos/shell";
-import { GuestSheet } from "@/components/pos/guest-sheet";
 import { ItemSheet } from "@/components/pos/item-sheet";
-import { MoreSheet } from "@/components/pos/more-sheet";
-import { OrderActionButtons, OrderPanel } from "@/components/pos/order-panel";
+import { OrderPanel } from "@/components/pos/order-panel";
 import { itemNeedsSheet, liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
 import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
@@ -61,8 +57,6 @@ function NewOrder() {
   const [menuToolsOpen, setMenuToolsOpen] = useState(false);
   const [categoryLayout, setCategoryLayout] = useState<"horizontal" | "vertical">("vertical");
   const [sheetItem, setSheetItem] = useState<MenuItem | null>(null);
-  const [moreOpen, setMoreOpen] = useState(false);
-  const [guestOpen, setGuestOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [tab, setTab] = useState<"menu" | "order">("menu");
@@ -261,15 +255,6 @@ function NewOrder() {
             >
               <Search className="size-5" />
             </button>
-            <button
-              type="button"
-              aria-label="More options"
-              title="More options"
-              onClick={() => setMoreOpen(true)}
-              className="-mr-1 grid size-9 tap-safe shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
-            >
-              <MoreVertical className="size-5" />
-            </button>
           </div>
         </div>
 
@@ -280,12 +265,7 @@ function NewOrder() {
               {menuSelector}
               {categoryButtons}
             </div>
-          ) : (
-            <div className="mt-1.5 flex items-center gap-1">
-              <GuestBlock onEdit={() => setGuestOpen(true)} />
-              <OrderActionButtons compact />
-            </div>
-          )
+          ) : null
         ) : null}
 
         {showMenu ? (
@@ -504,8 +484,6 @@ function NewOrder() {
       />
 
       <ItemSheet item={sheetItem} onClose={() => setSheetItem(null)} />
-      <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
-      <GuestSheet open={guestOpen} onClose={() => setGuestOpen(false)} />
     </div>
   );
 }
