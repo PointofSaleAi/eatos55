@@ -1,8 +1,7 @@
 import {
   BadgePercent,
+  ChevronDown,
   Flame,
-  Footprints,
-  Grid2x2,
   MoreVertical,
   NotebookPen,
   Percent,
@@ -17,12 +16,23 @@ import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
-import { money, type ServiceOrderType } from "@/lib/demo-data";
+import {
+  money,
+  serviceOrderTypeLabels,
+  serviceOrderTypes,
+  type ServiceOrderType,
+} from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { formatPhone, GuestSheet } from "@/components/pos/guest-sheet";
-import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { orderTypeIcons } from "@/components/pos/guest-sheet";
 
 function CartHeaderActions({
   onDiscount,
@@ -173,7 +183,12 @@ export function OrderPanel({
     ? (tickets.find((t) => t.id === activeTicketId)?.number ?? null)
     : null;
 
-  const showTableChip = orderType === "Dine In" && activeTable;
+  const OrderTypeIcon = orderTypeIcons[orderType];
+  const selectOrderType = (type: ServiceOrderType) => {
+    setOrderType(type);
+    setTypeForSheet(type);
+    setGuestOpen(true);
+  };
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
@@ -221,50 +236,56 @@ export function OrderPanel({
           />
         </div>
 
-        {/* Service type and the table / arrival chip share one scrolling row */}
-        {showTypeStrip || showTableChip ? (
-          <div className="mt-2 flex items-center gap-2">
-            {showTypeStrip ? (
-              <OrderTypeStrip
-                className="min-w-0 flex-1"
-                value={orderType}
-                onSelect={(t) => {
-                  setOrderType(t);
-                  setTypeForSheet(t);
-                  setGuestOpen(true);
-                }}
-              />
-            ) : null}
-            {showTableChip ? (
-              <span className="flex shrink-0 items-center gap-1.5 rounded-pill bg-foreground px-2.5 py-1 text-fs-xs font-extrabold text-background">
-                <Grid2x2 className="size-3.5" aria-hidden />
-                <span className="max-w-16 truncate">{tableGroupLabel(activeTable) ?? activeTable}</span>
-                <Footprints className="size-3.5" aria-hidden />
-                {arrivedAt || "--"}
-              </span>
-            ) : null}
-          </div>
-        ) : null}
+        {/* Order type, check number and server share one compact information row. */}
+        <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 rounded-row bg-muted/60 p-2">
+          {showTypeStrip ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="h-10 min-w-0 justify-start gap-1.5 rounded-row px-2.5 text-fs-xs font-extrabold uppercase"
+                >
+                  <OrderTypeIcon className="size-4 shrink-0" aria-hidden />
+                  <span className="min-w-0 truncate">{serviceOrderTypeLabels[orderType]}</span>
+                  <ChevronDown className="ml-auto size-4 shrink-0" aria-hidden />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="min-w-[12rem] rounded-card">
+                {serviceOrderTypes.map((type) => {
+                  const Icon = orderTypeIcons[type];
+                  return (
+                    <DropdownMenuItem
+                      key={type}
+                      onSelect={() => selectOrderType(type)}
+                      className="min-h-tap gap-2 text-fs-sm font-bold"
+                    >
+                      <Icon className="size-4 shrink-0" aria-hidden />
+                      {serviceOrderTypeLabels[type]}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <span className="min-w-0 truncate px-1 text-fs-xs font-extrabold uppercase text-foreground">
+              {serviceOrderTypeLabels[orderType]}
+            </span>
+          )}
 
-        {/* Order number, notes shortcut and server share one row */}
-        <div className="mt-1.5 flex items-center justify-between gap-2 text-fs-xs font-bold uppercase text-muted-foreground">
-          <span className="shrink-0">Order# {orderNumber ?? "--"}</span>
-          <span className="flex min-w-0 items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => setNotesOpen(true)}
-              aria-label="Order notes"
-              title="Order notes"
-              className="grid size-7 shrink-0 place-items-center rounded-pill bg-muted text-muted-foreground transition-colors hover:bg-secondary"
-            >
-              <NotebookPen className="size-3.5" />
-            </button>
+          <span className="grid h-10 min-w-12 shrink-0 place-items-center rounded-row bg-background px-2 text-fs-base font-extrabold tabular-nums text-foreground">
+            {orderNumber ?? "--"}
+          </span>
+
+          <span className="flex min-w-0 items-center justify-end gap-1.5 px-1 text-fs-xs font-bold text-muted-foreground">
+            <Utensils className="size-4 shrink-0" aria-hidden />
             <span className="truncate">{session.name}</span>
           </span>
         </div>
 
+        {/* Notes remain directly below order information, including the empty state. */}
         {notesOpen ? (
-          <label className="mt-1.5 flex items-center gap-2 rounded-row bg-muted px-3">
+          <label className="mt-2 flex items-center gap-2 rounded-row bg-muted px-3">
             <NotebookPen className="size-4 shrink-0 text-muted-foreground" />
             <input
               value={orderNotes}
@@ -276,19 +297,20 @@ export function OrderPanel({
               className="min-h-ctl-md w-full bg-transparent text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
           </label>
-        ) : orderNotes ? (
-          <button
+        ) : (
+          <Button
             type="button"
             onClick={() => setNotesOpen(true)}
-            aria-label="Edit order notes"
-            className="mt-1.5 flex min-h-ctl-md w-full items-center gap-2 rounded-row bg-muted px-3 text-left"
+            aria-label={orderNotes ? "Edit order notes" : "Add order notes"}
+            variant="secondary"
+            className="mt-2 min-h-ctl-md w-full justify-start gap-2 rounded-row px-3 text-left"
           >
             <NotebookPen className="size-4 shrink-0 text-muted-foreground" />
             <span className="min-w-0 flex-1 truncate text-fs-xs font-bold text-muted-foreground">
-              {orderNotes}
+              {orderNotes || "Order notes"}
             </span>
-          </button>
-        ) : null}
+          </Button>
+        )}
       </div>
 
 
@@ -300,9 +322,9 @@ export function OrderPanel({
             <p className="text-fs-sm font-bold text-muted-foreground">Let&apos;s create an order</p>
           </div>
         ) : (
-          <ul className="divide-y divide-border/60">
+          <ul className="space-y-1.5">
             {cart.map((l) => (
-              <li key={l.id} className="py-1">
+              <li key={l.id} className="rounded-row border-l-2 border-primary bg-muted/45 px-2.5 py-2.5">
                 <div className="flex items-start gap-1.5 pr-0.5">
 
                   <button
@@ -359,22 +381,24 @@ export function OrderPanel({
             : "pb-[calc(0.5rem+var(--kb-inset,0px)+var(--tabs-h,0px))]",
         )}
       >
-        <dl className="text-fs-sm">
-          <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
-            <dt>Sub Total</dt>
-            <dd className="tabular-nums">{money(totals.subtotal)}</dd>
-          </div>
-          <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
-            <dt>{brand.taxLabel}{noTax ? " (exempt)" : ""}</dt>
-            <dd className="tabular-nums">{money(totals.tax)}</dd>
+        <dl className="rounded-row bg-muted/70 px-3 py-2 text-fs-xs">
+          <div className="grid grid-cols-2 gap-3 font-bold text-muted-foreground">
+            <div className="flex min-w-0 items-center justify-between gap-2">
+              <dt className="truncate">Sub Total</dt>
+              <dd className="shrink-0 tabular-nums text-foreground">{money(totals.subtotal)}</dd>
+            </div>
+            <div className="flex min-w-0 items-center justify-between gap-2">
+              <dt className="truncate">{brand.taxLabel}{noTax ? " (exempt)" : ""}</dt>
+              <dd className="shrink-0 tabular-nums text-foreground">{money(totals.tax)}</dd>
+            </div>
           </div>
           {totals.discount ? (
-            <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
+            <div className="mt-1 flex items-center justify-between font-bold text-muted-foreground">
               <dt>Discount{discountName ? ` · ${discountName}` : ""}</dt>
               <dd className="tabular-nums">-{money(totals.discount)}</dd>
             </div>
           ) : null}
-          <div className="flex items-center justify-between pt-0.5 text-fs-lg font-extrabold text-foreground">
+          <div className="mt-1 flex items-center justify-between border-t border-border/60 pt-1 text-fs-sm font-extrabold text-foreground">
             <dt>Total{comped ? " (comped)" : ""}</dt>
             <dd className="tabular-nums">{money(totals.total)}</dd>
           </div>
