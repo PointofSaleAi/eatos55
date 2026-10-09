@@ -59,6 +59,8 @@ export type Ticket = {
   arrivedAt: string;
   arrivedMinutesAgo: number;
   status: TicketStatus;
+  /** Service stage shown on a paid check that is still open at clock-out. */
+  stage?: "ordering" | "waiting" | "ready" | "served";
   mode: MenuMode;
   lines: CartLine[];
   server: string;
@@ -195,6 +197,7 @@ export const initialTickets: Ticket[] = [
     lines: [custom(5.76)],
     server: "Elizer Cruz",
     checkNumber: 1043,
+    stage: "served",
     tips: 1.0,
     revenueCenter: "Counter pickup",
     paymentType: "Card",
@@ -257,6 +260,7 @@ export const initialTickets: Ticket[] = [
     lines: [line("m3"), line("m9")],
     server: "Elizer Cruz",
     checkNumber: 1046,
+    stage: "ready",
     tips: 2.5,
     revenueCenter: "Patio",
     paymentType: "QR Code",
@@ -266,49 +270,49 @@ export const initialTickets: Ticket[] = [
     id: "t-1047", orderNo: 10247, table: 5, number: 5, label: "John D.", seats: 2,
     total: 28.5, date: DEFAULT_TICKET_DATE, arrivedAt: "5:08 PM", arrivedMinutesAgo: 37,
     status: "paid", mode: "dine-in", lines: [custom(28.5)], server: "Elizer Cruz",
-    checkNumber: 1047, tips: 0, revenueCenter: "Main dining", paymentType: "Card",
+    checkNumber: 1047, stage: "ready", tips: 0, revenueCenter: "Main dining", paymentType: "Card",
     payments: [{ no: "1", method: "Card", amount: 28.5, at: "5:10 PM" }],
   },
   {
     id: "t-1048", orderNo: 10248, number: 6, label: "Amy S.", seats: 1,
     total: 15, date: DEFAULT_TICKET_DATE, arrivedAt: "5:12 PM", arrivedMinutesAgo: 33,
     status: "paid", mode: "takeaway", lines: [custom(15)], server: "Elizer Cruz",
-    checkNumber: 1048, tips: 0, revenueCenter: "Counter pickup", paymentType: "Card",
+    checkNumber: 1048, stage: "served", tips: 0, revenueCenter: "Counter pickup", paymentType: "Card",
     payments: [{ no: "1", method: "Card", amount: 15, at: "5:14 PM" }],
   },
   {
     id: "t-1049", orderNo: 10249, number: 7, label: "Mark T.", seats: 1,
     total: 55.2, date: DEFAULT_TICKET_DATE, arrivedAt: "5:16 PM", arrivedMinutesAgo: 29,
     status: "paid", mode: "delivery", lines: [custom(55.2)], server: "Elizer Cruz",
-    checkNumber: 1049, tips: 0, revenueCenter: "Counter pickup", paymentType: "Card",
+    checkNumber: 1049, stage: "waiting", tips: 0, revenueCenter: "Counter pickup", paymentType: "Card",
     payments: [{ no: "1", method: "Card", amount: 55.2, at: "5:18 PM" }],
   },
   {
     id: "t-1050", orderNo: 10250, table: 22, number: 8, label: "Rachel G.", seats: 3,
     total: 78.9, date: DEFAULT_TICKET_DATE, arrivedAt: "5:20 PM", arrivedMinutesAgo: 25,
     status: "paid", mode: "dine-in", lines: [custom(78.9)], server: "Elizer Cruz",
-    checkNumber: 1050, tips: 0, revenueCenter: "Main dining", paymentType: "Card",
+    checkNumber: 1050, stage: "served", tips: 0, revenueCenter: "Main dining", paymentType: "Card",
     payments: [{ no: "1", method: "Card", amount: 78.9, at: "5:22 PM" }],
   },
   {
     id: "t-1051", orderNo: 10251, number: 9, label: "Steve P.", seats: 1,
     total: 22.4, date: DEFAULT_TICKET_DATE, arrivedAt: "5:24 PM", arrivedMinutesAgo: 21,
     status: "paid", mode: "takeaway", lines: [custom(22.4)], server: "Elizer Cruz",
-    checkNumber: 1051, tips: 0, revenueCenter: "Patio", paymentType: "Cash",
+    checkNumber: 1051, stage: "ready", tips: 0, revenueCenter: "Patio", paymentType: "Cash",
     payments: [{ no: "1", method: "Cash", amount: 22.4, at: "5:25 PM" }],
   },
   {
     id: "t-1052", orderNo: 10252, number: 10, label: "Nina L.", seats: 1,
     total: 45, date: DEFAULT_TICKET_DATE, arrivedAt: "5:27 PM", arrivedMinutesAgo: 18,
     status: "paid", mode: "takeaway", lines: [custom(45)], server: "Elizer Cruz",
-    checkNumber: 1052, tips: 0, revenueCenter: "Counter pickup", paymentType: "Card",
+    checkNumber: 1052, stage: "served", tips: 0, revenueCenter: "Counter pickup", paymentType: "Card",
     payments: [{ no: "1", method: "Card", amount: 45, at: "5:29 PM" }],
   },
   {
     id: "t-1053", orderNo: 10253, number: 11, label: "Kevin M.", seats: 1,
     total: 18.75, date: DEFAULT_TICKET_DATE, arrivedAt: "5:31 PM", arrivedMinutesAgo: 14,
     status: "paid", mode: "takeaway", lines: [custom(18.75)], server: "Elizer Cruz",
-    checkNumber: 1053, tips: 0, revenueCenter: "Counter pickup", paymentType: "Card",
+    checkNumber: 1053, stage: "ordering", tips: 0, revenueCenter: "Counter pickup", paymentType: "Card",
     payments: [{ no: "1", method: "Card", amount: 18.75, at: "5:33 PM" }],
   },
   {
