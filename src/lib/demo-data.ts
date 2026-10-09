@@ -62,6 +62,8 @@ export type Ticket = {
   mode: MenuMode;
   lines: CartLine[];
   server: string;
+  /** Paid check closed out by its server. */
+  closed?: boolean;
   /** Check number printed on the guest copy. */
   checkNumber?: number;
   /** Tips recorded against the ticket. */

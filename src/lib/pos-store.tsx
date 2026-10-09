@@ -613,6 +613,8 @@ type Store = {
 
   setTicketStatus: (id: string, status: TicketStatus) => void;
   addTip: (id: string, amount: number) => void;
+  transferTickets: (ids: string[], server: string) => void;
+  closeTickets: (ids: string[]) => void;
 
   mode: MenuMode;
   setMode: (m: MenuMode) => void;
@@ -1174,6 +1176,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
       },
       setTicketStatus: (id, status) =>
         setTickets((list) => list.map((t) => (t.id === id ? { ...t, status } : t))),
+      transferTickets: (ids, server) =>
+        setTickets((list) => list.map((t) => (ids.includes(t.id) ? { ...t, server } : t))),
+      closeTickets: (ids) =>
+        setTickets((list) => list.map((t) => (ids.includes(t.id) ? { ...t, closed: true } : t))),
       addTip: (id, amount) =>
         setTickets((list) =>
           list.map((t) =>
