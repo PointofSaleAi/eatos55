@@ -1,12 +1,9 @@
 import {
   ArrowLeftRight,
   BadgeDollarSign,
-  CircleDollarSign,
   Gift,
-  QrCode,
   Receipt,
   RotateCcw,
-  Ticket,
   Trash2,
   UserPlus,
 } from "lucide-react";
@@ -76,19 +73,6 @@ export function MoreSheet({
     },
     { id: "add-guest", label: "Add Guest", icon: UserPlus, run: () => setGuestMode("add") },
     { id: "gift-card", label: "Gift Card", icon: Gift, run: () => notifyUnavailable("Gift Card") },
-    { id: "sell-voucher", label: "Sell Voucher", icon: Ticket, run: () => notifyUnavailable("Sell Voucher") },
-    {
-      id: "create-deposit",
-      label: "Create Deposit",
-      icon: CircleDollarSign,
-      run: () => notifyUnavailable("Create Deposit"),
-    },
-    {
-      id: "redeem-deposit",
-      label: "Redeem Deposit",
-      icon: QrCode,
-      run: () => notifyUnavailable("Redeem Deposit"),
-    },
     {
       id: "reopen-check",
       label: "Reopen Check",
