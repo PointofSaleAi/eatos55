@@ -86,6 +86,8 @@ export function PinPad({
   revenueCenterOptions,
   onRevenueCenterSelect,
   onLogOut,
+  clockedIn,
+  onBreakNow,
   className,
 }: {
   pin: string;
@@ -101,6 +103,9 @@ export function PinPad({
   revenueCenterOptions?: string[];
   onRevenueCenterSelect?: (center: string) => void;
   onLogOut?: () => void;
+  /** Clock status: off-shift locks Clock Out/Break; on-shift locks Clock In. */
+  clockedIn?: boolean;
+  onBreakNow?: boolean;
   className?: string;
 }) {
   const showClockRow = Boolean(onClockOut || onBreak || onClockIn);
@@ -194,16 +199,16 @@ export function PinPad({
       {showClockRow ? (
         <div className="relative grid min-h-0 grid-cols-3">
           {centerPickerPanel}
-          <GateKey onPress={() => onClockOut?.()} tone="danger" disabled={!pinReady}>
+          <GateKey onPress={() => onClockOut?.()} tone="danger" disabled={!pinReady || clockedIn === false}>
 
             <span className="text-[clamp(0.78rem,1.55vw,1.12rem)]">Clock Out</span>
           </GateKey>
-          <GateKey onPress={() => onBreak?.()} disabled={!pinReady}>
+          <GateKey onPress={() => onBreak?.()} disabled={!pinReady || clockedIn === false || Boolean(onBreakNow)}>
             <span className="text-[clamp(0.78rem,1.55vw,1.12rem)] text-gate-action-foreground">
               Break
             </span>
           </GateKey>
-          <GateKey onPress={() => onClockIn?.()} tone="success" disabled={!pinReady}>
+          <GateKey onPress={() => onClockIn?.()} tone="success" disabled={!pinReady || clockedIn === true}>
             <span className="text-[clamp(0.78rem,1.55vw,1.12rem)]">Clock In</span>
           </GateKey>
         </div>
