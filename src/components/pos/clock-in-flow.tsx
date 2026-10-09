@@ -125,7 +125,7 @@ function SummaryRow({ icon: Icon, tone, label, value, open, onToggle }: { icon: 
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-fs-xs text-shell-foreground/70">{label}</span>
-        <span className="block text-fs-md font-extrabold text-shell-foreground">{value}</span>
+        <span className="block text-fs-base font-extrabold text-shell-foreground">{value}</span>
       </span>
       {onToggle ? <ChevronDown className={cn("size-5 text-shell-foreground/70 transition-transform", open && "rotate-180")} /> : null}
     </Comp>
@@ -148,7 +148,7 @@ export function SummaryStep({
         <SummaryRow icon={r.icon} tone={r.tone} label="Role" value={r.name} open={open === "role"} onToggle={() => setOpen(open === "role" ? null : "role")} />
         {open === "role" ? <Grid options={jobRoles} value={r.name} onPick={(n) => { onRole(n); setOpen(null); }} /> : null}
       </div>
-      <button type="button" onClick={onContinue} className="mt-1 h-12 rounded-xl bg-shell-foreground text-fs-md font-extrabold text-shell">
+      <button type="button" onClick={onContinue} className="mt-1 h-12 rounded-xl bg-shell-foreground text-fs-base font-extrabold text-shell">
         Continue
       </button>
     </div>
@@ -162,7 +162,7 @@ function FinishButtons({ enabled, onSubmit, onSkip }: { enabled: boolean; onSubm
         type="button"
         disabled={!enabled}
         onClick={onSubmit}
-        className="h-12 rounded-xl bg-gate-success text-fs-md font-extrabold text-shell-foreground transition-opacity disabled:opacity-45"
+        className="h-12 rounded-xl bg-gate-success text-fs-base font-extrabold text-shell-foreground transition-opacity disabled:opacity-45"
       >
         Submit &amp; Done
       </button>
@@ -178,7 +178,7 @@ export function MoodStep({ name, value, onBack, onPick, onSubmit, onSkip }: { na
     <div className="flex flex-col gap-3">
       <BackButton onClick={onBack} />
       <CheckHeader title="Clocked In!" subtitle={`Welcome, ${name}`} />
-      <p className="text-center text-fs-md font-extrabold text-shell-foreground">How are you feeling today?</p>
+      <p className="text-center text-fs-base font-extrabold text-shell-foreground">How are you feeling today?</p>
       <div className="grid grid-cols-3 gap-2">
         {moods.map((m) => (
           <button
