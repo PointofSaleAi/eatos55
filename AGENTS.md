@@ -14,3 +14,4 @@
 - DeviceFrame renders only a blank themed surface until mounted and all saved state (session, settings, floor) is loaded, and layout hooks use useSyncExternalStore over matchMedia: prevents the phone-frame flash and protected-screen flashes on load.
 - Shared React contexts are created via pinnedContext (globalThis registry) and main screens are preloaded after sign-in (router defaultPreload intent + useWarmMainScreens): live preview updates can't split contexts, and first visits/PIN unlock don't stall.
 - Clock-out ownership changes retain each ticket's transfer origin so transferred checks can be grouped and reassigned until the shift is completed.
+- New Order owns the order-options open state and docks the options as a third column only on landscape-wide screens: keeps product, cart, and option widths coordinated while preserving a usable overlay on narrow screens.
