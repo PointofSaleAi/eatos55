@@ -544,8 +544,9 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
 
       </div>
 
-      {/* Footer: totals and Save / Fire / Charge — hidden while the cart is empty */}
-      {cart.length > 0 ? (
+      {/* Footer: totals and Save / Fire / Charge. Hidden only when the cart is
+          empty AND no discount or service charge is applied. */}
+      {cart.length > 0 || totals.discount > 0 || totals.serviceCharge > 0 || orderDiscountPercent > 0 || serviceChargePercent > 0 ? (
       <div
         className={cn(
           "shrink-0 border-t border-border bg-surface px-3 pt-1.5",
@@ -563,10 +564,16 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
             <dt>{brand.taxLabel}{noTax ? " (exempt)" : ""}</dt>
             <dd className="tabular-nums">{money(totals.tax)}</dd>
           </div>
-          {totals.discount ? (
+          {orderDiscountPercent > 0 || totals.discount > 0 ? (
             <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
-              <dt>Discount{discountName ? ` · ${discountName}` : ""}</dt>
+              <dt>Discount{orderDiscountName ? ` · ${orderDiscountName}` : ""}</dt>
               <dd className="tabular-nums">-{money(totals.discount)}</dd>
+            </div>
+          ) : null}
+          {serviceChargePercent > 0 || totals.serviceCharge > 0 ? (
+            <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
+              <dt>Service Charge{serviceChargeName ? ` · ${serviceChargeName}` : ""}</dt>
+              <dd className="tabular-nums">{money(totals.serviceCharge)}</dd>
             </div>
           ) : null}
           <div className="flex items-center justify-between pt-0.5 text-fs-lg font-extrabold text-foreground">
