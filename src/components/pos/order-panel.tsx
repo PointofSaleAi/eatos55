@@ -86,7 +86,7 @@ function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, d
 
   const secondaryActions = (rail: boolean) => {
     const actions = [
-      { label: customItemOpen ? "Menu Item" : "Custom Item", icon: Tag, run: onCustomItem },
+      { label: customItemOpen ? "Menu Item" : "Custom Item", icon: customItemOpen ? Grid2x2 : Tag, run: onCustomItem },
       { label: "Gift Card", icon: Gift, run: () => toast.info("Gift Card is not configured for this location") },
       { label: "Service Charge", icon: Receipt, active: serviceCharge > 0, run: () => { setCharge(String(serviceCharge || "")); setChargeOpen(true); } },
       { label: "Add Guest", icon: UserPlus, run: () => setGuestOpen(true) },
