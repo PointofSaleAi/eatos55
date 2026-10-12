@@ -42,7 +42,9 @@ type OptionsLayout = { moreOpen: boolean; onMoreOpenChange: (open: boolean) => v
 function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCustomItem, customItemOpen }: OptionsLayout) {
   const navigate = useNavigate();
   const confirm = useConfirm();
-  const orderDiscountPercent = usePos().orderDiscountPercent;
+  const {
+    totals,
+    orderDiscountPercent,
     noTax,
     setNoTax,
     setOrderDiscountPercent,
