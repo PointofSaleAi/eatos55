@@ -15,6 +15,8 @@ export function TransferCheckDialog({ currentOwner, onClose, onTransfer }: {
   // to dismiss this dialog, so the guard needs a synchronously updated value.
   const confirmingRef = useRef(false);
   const [confirming, setConfirming] = useState(false);
+  const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState(currentOwner);
   const owners = employees.some((employee) => employee.name === currentOwner)
     ? employees
     : [...employees, { id: "current-owner", name: currentOwner, role: "", level: "", state: "" }];
