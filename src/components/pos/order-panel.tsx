@@ -344,7 +344,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
     comped,
     orderNotes,
     setOrderNotes,
-    session,
+    orderOwner,
     activeTicketId,
     tickets,
     settings,
@@ -466,7 +466,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
             >
               <NotebookPen className="size-3.5" />
             </button>
-            <span className="truncate">{session.name}</span>
+            <span className="truncate">{orderOwner}</span>
           </span>
         </div>
 
