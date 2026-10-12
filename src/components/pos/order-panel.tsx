@@ -602,8 +602,8 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
             Charge {money(totals.total)}
           </button>
         </div>
-
       </div>
+      ) : null}
 
 
       <GuestSheet
