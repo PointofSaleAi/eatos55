@@ -1012,6 +1012,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     floorTemplates,
     tableMerges,
     customFloorKinds,
+    giftCardBalances,
 
     floorReady,
   ]);
