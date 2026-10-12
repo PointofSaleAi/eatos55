@@ -30,6 +30,7 @@ import { usePos } from "@/lib/pos-store";
 import { money, type ServiceOrderType } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
+import { ServiceChargeSheet } from "@/components/pos/service-charge-sheet";
 import { formatPhone, GuestSheet } from "@/components/pos/guest-sheet";
 import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { useConfirm } from "@/components/pos/confirm-sheet";
