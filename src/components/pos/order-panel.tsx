@@ -181,6 +181,8 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
         </SheetContent>
       </Sheet>
 
+      <GiftCardDialog open={giftOpen} onClose={() => setGiftOpen(false)} />
+
       <DiscountSheet
         open={discountOpen}
         selected={null}
