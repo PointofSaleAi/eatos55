@@ -1,7 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
-import openPriceIcon from "@/assets/open-price.svg";
-import outOfStockIcon from "@/assets/out-of-stock.svg";
 import {
   ArrowLeftRight,
   ArrowUpDown,
@@ -396,19 +394,13 @@ function NewOrder() {
                   ) : null}
                 </span>
                 <span className="mt-2 flex items-center justify-between">
-                  {item.outOfStock || item.openPrice ? (
-                    <img
-                      src={item.outOfStock ? outOfStockIcon : openPriceIcon}
-                      alt={item.outOfStock ? "Out of stock" : "Open price"}
-                      title={item.outOfStock ? "Out of stock" : "Open price"}
-                      className="size-7 shrink-0"
-                      draggable={false}
-                    />
-                  ) : (
-                    <span className="text-fs-sm font-bold text-muted-foreground">
-                      {money(item.price)}
-                    </span>
-                  )}
+                  <span className="text-fs-sm font-bold text-muted-foreground">
+                    {item.outOfStock
+                      ? "Out of stock"
+                      : item.openPrice
+                        ? "Open price"
+                        : money(item.price)}
+                  </span>
                   <span
                     role="button"
                     tabIndex={item.outOfStock ? -1 : 0}
