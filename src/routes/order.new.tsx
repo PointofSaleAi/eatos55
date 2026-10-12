@@ -82,6 +82,8 @@ function NewOrder() {
   };
   const showMenu = wide || tab === "menu";
   const showCart = wide || tab === "order";
+  // Custom Item takes over the product area, so menu browsing tools step out.
+  const customActive = customItemOpen && showMenu;
 
   const currentMenu = menus.find((m) => m.id === activeMenu) ?? initialMenu;
   if (!currentMenu) return null;
@@ -222,6 +224,7 @@ function NewOrder() {
           wide ? "min-w-0 flex-1" : showMenu ? "min-h-0 flex-1" : "shrink-0",
         )}
       >
+      {wide && customActive ? null : (
       <div className="shrink-0 border-b border-border bg-surface px-3 pb-2 pt-2.5">
 
         <div className={cn("flex items-center", showMenu ? "gap-2" : "gap-1")}>
@@ -251,33 +254,33 @@ function NewOrder() {
             </div>
           )}
 
-          <div className="flex shrink-0 items-center gap-0.5">
-            <button
-              type="button"
-              aria-label="Search products"
-              title="Search products"
-              onClick={() => setSearching((s) => !s)}
-              className={cn(
-                "grid size-9 shrink-0 place-items-center rounded-pill transition-colors hover:bg-muted tap-safe",
-                searching ? "bg-muted text-accent" : "text-foreground",
-              )}
-            >
-              <Search className="size-5" />
-            </button>
-          </div>
+          {customActive ? null : (
+            <div className="flex shrink-0 items-center gap-0.5">
+              <button
+                type="button"
+                aria-label="Search products"
+                title="Search products"
+                onClick={() => setSearching((s) => !s)}
+                className={cn(
+                  "grid size-9 shrink-0 place-items-center rounded-pill transition-colors hover:bg-muted tap-safe",
+                  searching ? "bg-muted text-accent" : "text-foreground",
+                )}
+              >
+                <Search className="size-5" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Phone: menu selector and categories stay directly above subcategories. */}
-        {!wide ? (
-          showMenu ? (
-            <div className="no-scrollbar mt-1.5 flex flex-nowrap items-center gap-1.5 overflow-x-auto">
-              {menuSelector}
-              {categoryButtons}
-            </div>
-          ) : null
+        {!wide && showMenu && !customActive ? (
+          <div className="no-scrollbar mt-1.5 flex flex-nowrap items-center gap-1.5 overflow-x-auto">
+            {menuSelector}
+            {categoryButtons}
+          </div>
         ) : null}
 
-        {showMenu ? (
+        {showMenu && !customActive ? (
           <div
             className={cn(
               "mt-2 gap-1.5",
@@ -305,10 +308,9 @@ function NewOrder() {
           </div>
         ) : null}
       </div>
+      )}
 
-
-
-        {customItemOpen && showMenu ? (
+        {customActive ? (
           <CustomItemWorkspace onClose={() => setCustomItemOpen(false)} />
         ) : (
         <div
