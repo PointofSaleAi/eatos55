@@ -127,7 +127,7 @@ function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, d
             }
             void (async () => {
               const ok = await confirm({
-                title: `Are you sure you want to apply NO ${brand.taxLabel.toUpperCase()}`,
+                title: `Are you sure you want to apply NO ${brand.taxLabel.toUpperCase()}?`,
                 confirmLabel: "Yes",
                 cancelLabel: "No",
                 rowButtons: true,
