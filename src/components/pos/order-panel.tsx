@@ -39,19 +39,23 @@ import { Button } from "@/components/ui/button";
 
 type OptionsLayout = { moreOpen: boolean; onMoreOpenChange: (open: boolean) => void; railHost: HTMLElement | null; docked: boolean; onCustomItem: () => void; customItemOpen: boolean };
 
-function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, docked, onCustomItem, customItemOpen }: OptionsLayout & { onDiscount: (name: string) => void }) {
+function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCustomItem, customItemOpen }: OptionsLayout) {
   const navigate = useNavigate();
   const confirm = useConfirm();
   const {
     totals,
+    orderDiscountPercent,
     noTax,
     setNoTax,
     setOrderDiscountPercent,
+    setOrderDiscountName,
     tickets,
     activeTicketId,
     cancelOrder,
     mergeTicket,
     serviceCharge,
+    serviceChargePercent,
+    serviceChargeName,
     setServiceCharge,
     allergyNote,
     setAllergyNote,
@@ -87,7 +91,7 @@ function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, d
     const actions = [
       { label: customItemOpen ? "Menu Item" : "Custom Item", icon: customItemOpen ? Grid2x2 : Tag, run: onCustomItem },
       { label: "Gift Card", icon: Gift, run: () => toast.info("Gift Card is not configured for this location") },
-      { label: "Service Charge", icon: Receipt, active: serviceCharge > 0, run: () => setChargeOpen(true) },
+      { label: "Service Charge", icon: Receipt, active: serviceCharge > 0 || serviceChargePercent > 0, run: () => setChargeOpen(true) },
       { label: "Add Guest", icon: UserPlus, run: () => setGuestOpen(true) },
       { label: "Open Orders", icon: ClipboardList, run: () => navigate({ to: "/tickets" }) },
       { label: "Allergy", icon: TriangleAlert, active: Boolean(allergyNote), run: () => { setAllergyDraft(allergyNote); setAllergyOpen(true); } },
@@ -111,7 +115,7 @@ function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, d
         <HeaderAction
           label="Discount"
           icon={BadgePercent}
-          active={totals.discount > 0}
+          active={orderDiscountPercent > 0 || totals.discount > 0}
           onPress={() => setDiscountOpen(true)}
         />
         <HeaderAction
@@ -173,7 +177,7 @@ function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, d
         selected={null}
         onClose={() => setDiscountOpen(false)}
         onPick={(d) => {
-          onDiscount(d.name);
+          setOrderDiscountName(d.name);
           setOrderDiscountPercent(d.percent);
           setDiscountOpen(false);
         }}
@@ -182,10 +186,11 @@ function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, d
       <ServiceChargeSheet
         open={chargeOpen}
         activeCharge={serviceCharge}
-        baseAmount={totals.gross}
+        activePercent={serviceChargePercent}
+        activeName={serviceChargeName}
         onClose={() => setChargeOpen(false)}
         onPick={(preset) => {
-          setServiceCharge(preset ? preset.charge : 0);
+          setServiceCharge(preset);
           setChargeOpen(false);
           toast.success(
             preset
@@ -330,6 +335,10 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
     activeTicketId,
     tickets,
     settings,
+    orderDiscountPercent,
+    orderDiscountName,
+    serviceChargePercent,
+    serviceChargeName,
   } = usePos();
 
   const placement = settings.orderTypePlacement;
@@ -337,7 +346,6 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
 
   const [guestOpen, setGuestOpen] = useState(false);
   const [typeForSheet, setTypeForSheet] = useState<ServiceOrderType | undefined>(undefined);
-  const [discountName, setDiscountName] = useState<string | null>(null);
   const [notesOpen, setNotesOpen] = useState(false);
   const [guestName, setGuestName] = useState(guest.name);
   const [guestPhone, setGuestPhone] = useState(guest.phone);
@@ -404,7 +412,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
         </div>
 
         <div className="mt-1.5">
-          <CartHeaderActions onDiscount={setDiscountName} {...optionsLayout} />
+          <CartHeaderActions {...optionsLayout} />
         </div>
 
         {/* Service type and the table / arrival chip share one scrolling row */}
@@ -536,8 +544,9 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
 
       </div>
 
-      {/* Footer: totals and Save / Fire / Charge — hidden while the cart is empty */}
-      {cart.length > 0 ? (
+      {/* Footer: totals and Save / Fire / Charge. Hidden only when the cart is
+          empty AND no discount or service charge is applied. */}
+      {cart.length > 0 || totals.discount > 0 || totals.serviceCharge > 0 || orderDiscountPercent > 0 || serviceChargePercent > 0 ? (
       <div
         className={cn(
           "shrink-0 border-t border-border bg-surface px-3 pt-1.5",
@@ -555,10 +564,16 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
             <dt>{brand.taxLabel}{noTax ? " (exempt)" : ""}</dt>
             <dd className="tabular-nums">{money(totals.tax)}</dd>
           </div>
-          {totals.discount ? (
+          {orderDiscountPercent > 0 || totals.discount > 0 ? (
             <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
-              <dt>Discount{discountName ? ` · ${discountName}` : ""}</dt>
+              <dt>Discount{orderDiscountName ? ` · ${orderDiscountName}` : ""}</dt>
               <dd className="tabular-nums">-{money(totals.discount)}</dd>
+            </div>
+          ) : null}
+          {serviceChargePercent > 0 || totals.serviceCharge > 0 ? (
+            <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
+              <dt>Service Charge{serviceChargeName ? ` · ${serviceChargeName}` : ""}</dt>
+              <dd className="tabular-nums">{money(totals.serviceCharge)}</dd>
             </div>
           ) : null}
           <div className="flex items-center justify-between pt-0.5 text-fs-lg font-extrabold text-foreground">

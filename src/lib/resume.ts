@@ -22,7 +22,11 @@ export type ResumeOrder = {
   noTax: boolean;
   comped: boolean;
   serviceCharge: number;
+  serviceChargeFlat?: number;
+  serviceChargePercent?: number;
+  serviceChargeName?: string;
   orderDiscountPercent: number;
+  orderDiscountName?: string;
   partialPayments: unknown[];
   splitChecks?: unknown[];
   activeSplitCheckId?: string | null;
