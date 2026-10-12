@@ -36,7 +36,7 @@ import { ReferenceTenderDialog } from "@/components/pos/reference-tender-dialog"
 import { RoomChargeDialog } from "@/components/pos/room-charge-dialog";
 import { GiftCardPaymentDialog } from "@/components/pos/gift-card-payment-dialog";
 import { TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
-import { useTapToPayAvailable } from "@/lib/device";
+import { useTapToPayAvailable, useTapToPayTenderVisible } from "@/lib/device";
 import { BackButton, useWideLayout } from "@/components/pos/shell";
 import { SplitPayments } from "@/components/pos/split-payments";
 import { X } from "lucide-react";
@@ -124,6 +124,8 @@ function PaymentMethod() {
   } = usePos();
   const announce = useAnnounce();
   const ttpDevice = useTapToPayAvailable();
+  // The "Tap to Pay" contactless tender is a phone-only option too.
+  const ttpTenderVisible = useTapToPayTenderVisible();
   const wide = useWideLayout();
   const { methods } = Route.useSearch();
   // Phones split this into two steps: the bill, then the payment options.
@@ -570,7 +572,7 @@ function PaymentMethod() {
     .map((g) => ({
       title: g.title,
       items: g.items
-        .filter((t) => enabled(t.id) && !(t.id === "contactless" && ttpDevice.available))
+        .filter((t) => enabled(t.id) && (t.id !== "contactless" || ttpTenderVisible))
         // Shared tenders carry a regional display name, e.g. Grubhub as Just Eat.
         .map((t) => ({
           ...t,
