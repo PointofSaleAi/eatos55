@@ -6,21 +6,24 @@ function Key({
   onPress,
   className,
   label,
+  disabled,
   textClass = "text-fs-key",
 }: {
   children: React.ReactNode;
   onPress: () => void;
   className?: string;
   label?: string;
+  disabled?: boolean;
   textClass?: string;
 }) {
   return (
     <button
       type="button"
       aria-label={label}
+      disabled={disabled}
       onClick={onPress}
       className={cn(
-        "grid h-full min-h-key place-items-center rounded-card bg-surface font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
+        "grid h-full min-h-key place-items-center rounded-card bg-surface font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97] disabled:opacity-40 disabled:active:scale-100",
         textClass,
         className,
       )}
