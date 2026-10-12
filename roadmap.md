@@ -23,3 +23,4 @@
 - [x] Open Custom Item inline in the New Order product area while keeping the cart and menu state visible
 - [x] Hide menu categories, subcategories and product search while the Custom Item workspace is open
 - [x] Enlarge the Custom Item keypad digits and keep the pad clear of the phone bottom bar
+- [x] Rename the Custom Item option to Menu Item in the three-dot panel while that screen is open
