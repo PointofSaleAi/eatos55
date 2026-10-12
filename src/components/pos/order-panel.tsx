@@ -38,10 +38,11 @@ import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { AddGuestForm } from "@/components/pos/add-guest-form";
 
 type OptionsLayout = { moreOpen: boolean; onMoreOpenChange: (open: boolean) => void; railHost: HTMLElement | null; docked: boolean; onCustomItem: () => void; customItemOpen: boolean };
 
-function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCustomItem, customItemOpen }: OptionsLayout) {
+function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCustomItem, customItemOpen, onAddGuest }: OptionsLayout & { onAddGuest: () => void }) {
   const navigate = useNavigate();
   const confirm = useConfirm();
   const {
@@ -68,7 +69,6 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
   const [discountOpen, setDiscountOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
   const [chargeOpen, setChargeOpen] = useState(false);
-  const [guestOpen, setGuestOpen] = useState(false);
   const [allergyOpen, setAllergyOpen] = useState(false);
   const [allergyDraft, setAllergyDraft] = useState("");
   const [mergeOpen, setMergeOpen] = useState(false);
@@ -98,7 +98,7 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
       { label: customItemOpen ? "Menu Item" : "Custom Item", icon: customItemOpen ? Grid2x2 : Tag, run: onCustomItem },
       { label: "Gift Card", icon: Gift, run: () => toast.info("Gift Card is not configured for this location") },
       { label: "Service Charge", icon: Receipt, active: serviceCharge > 0 || serviceChargePercent > 0, run: () => setChargeOpen(true) },
-      { label: "Add Guest", icon: UserPlus, run: () => setGuestOpen(true) },
+      { label: "Add Guest", icon: UserPlus, run: onAddGuest },
       { label: "Open Orders", icon: ClipboardList, run: () => navigate({ to: "/tickets" }) },
       { label: "Allergy", icon: TriangleAlert, active: Boolean(allergyNote), run: () => { setAllergyDraft(allergyNote); setAllergyOpen(true); } },
       { label: "Merge", icon: GitMerge, run: () => setMergeOpen(true) },
@@ -290,7 +290,6 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
         </SheetContent>
       </Sheet>
 
-      <GuestSheet open={guestOpen} onClose={() => setGuestOpen(false)} />
     </>
   );
 }
@@ -358,6 +357,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
   const showTypeStrip = placement === "Order screen" || placement === "Both";
 
   const [guestOpen, setGuestOpen] = useState(false);
+  const [addGuestOpen, setAddGuestOpen] = useState(false);
   const [typeForSheet, setTypeForSheet] = useState<ServiceOrderType | undefined>(undefined);
   const [notesOpen, setNotesOpen] = useState(false);
   const [guestName, setGuestName] = useState(guest.name);
@@ -425,11 +425,11 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
         </div>
 
         <div className="mt-1.5">
-          <CartHeaderActions {...optionsLayout} />
+          <CartHeaderActions {...optionsLayout} onAddGuest={() => setAddGuestOpen(true)} />
         </div>
 
         {/* Service type and the table / arrival chip share one scrolling row */}
-        {showTypeStrip || showTableChip ? (
+        {!addGuestOpen && (showTypeStrip || showTableChip) ? (
           <div className="mt-2 flex items-center gap-2">
             {showTypeStrip ? (
               <OrderTypeStrip
@@ -454,7 +454,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
         ) : null}
 
         {/* Order number, notes shortcut and server share one row */}
-        <div className="mt-1.5 flex items-center justify-between gap-2 text-fs-xs font-bold uppercase text-muted-foreground">
+        {!addGuestOpen ? <div className="mt-1.5 flex items-center justify-between gap-2 text-fs-xs font-bold uppercase text-muted-foreground">
           <span className="shrink-0">Order# {orderNumber ?? "--"}</span>
           <span className="flex min-w-0 items-center gap-1.5">
             <button
@@ -468,9 +468,9 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
             </button>
             <span className="truncate">{orderOwner}</span>
           </span>
-        </div>
+        </div> : null}
 
-        {notesOpen ? (
+        {!addGuestOpen && notesOpen ? (
           <label className="mt-1.5 flex items-center gap-2 rounded-row bg-muted px-3">
             <NotebookPen className="size-4 shrink-0 text-muted-foreground" />
             <input
@@ -483,7 +483,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
               className="min-h-ctl-md w-full bg-transparent text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
           </label>
-        ) : orderNotes ? (
+        ) : !addGuestOpen && orderNotes ? (
           <button
             type="button"
             onClick={() => setNotesOpen(true)}
@@ -499,6 +499,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
       </div>
 
 
+      {addGuestOpen ? <AddGuestForm onClose={() => setAddGuestOpen(false)} /> : <>
       {/* Items: dense receipt rows, the only scrolling area */}
       <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 pb-[calc(0.5rem+var(--kb-inset,0px))] pt-1.5">
         {cart.length === 0 ? (
@@ -629,8 +630,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
         </div>
       </div>
       ) : null}
-
-
+      </>}
       <GuestSheet
         open={guestOpen}
         initialType={typeForSheet}
