@@ -11,9 +11,12 @@ export function TransferCheckDialog({ currentOwner, onClose, onTransfer }: {
   onTransfer: (owner: string) => void;
 }) {
   const confirm = useConfirm();
-  // A ref, not state: the confirm resolves during the same click that Radix uses
-  // to dismiss this dialog, so the guard needs a synchronously updated value.
+  // The click that answers the confirm alert reaches Radix as an outside
+  // interaction on this dialog, so the guard is held for the whole alert and
+  // briefly after it — refs, because the value must be current within the click.
   const confirmingRef = useRef(false);
+  const guardUntil = useRef(0);
+  const isGuarded = () => confirmingRef.current || Date.now() < guardUntil.current;
   const [confirming, setConfirming] = useState(false);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(currentOwner);
@@ -34,12 +37,13 @@ export function TransferCheckDialog({ currentOwner, onClose, onTransfer }: {
       rowButtons: true,
     });
     confirmingRef.current = false;
+    guardUntil.current = Date.now() + 500;
     setConfirming(false);
     if (ok) onTransfer(selected);
   };
 
   return (
-    <Dialog open onOpenChange={(open) => { console.log("TCD dismiss", open, "ref", confirmingRef.current, "state", confirming); if (!open && !confirmingRef.current) onClose(); }}>
+    <Dialog open onOpenChange={(open) => { if (!open && !isGuarded()) onClose(); }}>
       <DialogContent className="w-[calc(100%-2rem)] max-w-sheet gap-0 rounded-sheet border-border bg-surface p-0">
         <div className="border-b border-border px-4 py-3">
           <DialogTitle className="text-center text-fs-base font-extrabold tracking-normal">Transfer Check</DialogTitle>

@@ -67,8 +67,6 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
   } = usePos();
   const [discountOpen, setDiscountOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
-  useEffect(() => { console.log("PANEL mount/unmount"); }, []);
-  useEffect(() => { console.log("PANEL transferOpen", transferOpen); }, [transferOpen]);
   const [chargeOpen, setChargeOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [allergyOpen, setAllergyOpen] = useState(false);
@@ -192,8 +190,7 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
         }}
       />
 
-      {transferOpen ? <TransferCheckDialog currentOwner={orderOwner} onClose={() => { console.log("PANEL onClose called"); setTransferOpen(false); }} onTransfer={(owner) => {
-        console.log("PANEL onTransfer called", owner);
+      {transferOpen ? <TransferCheckDialog currentOwner={orderOwner} onClose={() => setTransferOpen(false)} onTransfer={(owner) => {
         transferCurrentOrder(owner);
         setTransferOpen(false);
         toast.success(`Check transferred to ${owner}`);
