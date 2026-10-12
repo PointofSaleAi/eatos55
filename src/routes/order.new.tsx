@@ -471,6 +471,13 @@ function NewOrder() {
           docked={docked}
           onCustomItem={() => {
             setMoreOpen(false);
+            // While the workspace is open the option reads "Menu Item": tapping it
+            // hands the product area back to the menu and its products.
+            if (customItemOpen) {
+              setCustomItemOpen(false);
+              setTab("menu");
+              return;
+            }
             setSearching(false);
             setQuery("");
             setCustomItemOpen(true);
