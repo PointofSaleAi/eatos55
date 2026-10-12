@@ -11,8 +11,9 @@ export function TransferCheckDialog({ currentOwner, onClose, onTransfer }: {
   onTransfer: (owner: string) => void;
 }) {
   const confirm = useConfirm();
-  const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState(currentOwner);
+  // A ref, not state: the confirm resolves during the same click that Radix uses
+  // to dismiss this dialog, so the guard needs a synchronously updated value.
+  const confirmingRef = useRef(false);
   const [confirming, setConfirming] = useState(false);
   const owners = employees.some((employee) => employee.name === currentOwner)
     ? employees
@@ -21,6 +22,7 @@ export function TransferCheckDialog({ currentOwner, onClose, onTransfer }: {
   const canUpdate = selected !== currentOwner;
 
   const applyTransfer = async () => {
+    confirmingRef.current = true;
     setConfirming(true);
     const ok = await confirm({
       title: "Confirm",
@@ -29,6 +31,7 @@ export function TransferCheckDialog({ currentOwner, onClose, onTransfer }: {
       cancelLabel: "No",
       rowButtons: true,
     });
+    confirmingRef.current = false;
     setConfirming(false);
     if (ok) onTransfer(selected);
   };
