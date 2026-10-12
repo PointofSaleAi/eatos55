@@ -1443,8 +1443,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
           ...list,
           { id: `custom-${Date.now()}`, name, price, qty: 1, custom: true },
         ]),
-      giftCardBalance: (number) =>
-        number in giftCardBalances ? giftCardBalances[number] : null,
+      giftCardBalance: (number) => giftCardBalances[number] ?? null,
       loadGiftCard: (number, amount) =>
         setGiftCardBalances((map) => ({
           ...map,
@@ -1455,7 +1454,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         if (balance == null || amount <= 0 || amount > balance) return false;
         setGiftCardBalances((map) => ({
           ...map,
-          [number]: Math.round((map[number] - amount) * 100) / 100,
+          [number]: Math.round(((map[number] ?? 0) - amount) * 100) / 100,
         }));
         return true;
       },
