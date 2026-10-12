@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { useWideLayout } from "@/components/pos/shell";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { OrderPanel } from "@/components/pos/order-panel";
@@ -34,6 +35,8 @@ import {
 export const Route = createFileRoute("/order/new")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: `New Order - ${brand.appName} Point of Sale` },
       { name: "description", content: "Add products, scan barcodes and build a guest order." },
       { property: "og:title", content: `New Order - ${brand.appName} Point of Sale` },
@@ -63,6 +66,10 @@ function NewOrder() {
   // Landscape shows the menu and the running order side by side, so the
   // Menu/Order switch is phone-only.
   const wide = useWideLayout();
+  const landscape = useLandscapeWide();
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [railHost, setRailHost] = useState<HTMLElement | null>(null);
+  const docked = wide && landscape;
   // Long-press on a tile always opens the item sheet, even for simple items.
   const longPress = useRef<number | null>(null);
   const menuToolsRef = useRef<HTMLDivElement | null>(null);
@@ -440,15 +447,19 @@ function NewOrder() {
           "flex min-h-0 flex-col overflow-hidden transition-[width] duration-300",
           showCart ? "" : "hidden",
           wide
-            ? "w-[21rem] shrink-0 border-l border-border bg-surface lg:w-[24rem] 2xl:w-[26rem]"
+            ? moreOpen && docked
+              ? "w-[18rem] shrink-0 border-l border-border bg-surface lg:w-[20rem]"
+              : "w-[21rem] shrink-0 border-l border-border bg-surface lg:w-[24rem] 2xl:w-[26rem]"
             : "min-w-0 flex-1 bg-surface",
 
         )}
       >
-        <OrderPanel wide={wide} />
+        <OrderPanel wide={wide} moreOpen={moreOpen} onMoreOpenChange={setMoreOpen} railHost={railHost} docked={docked} />
       </aside>
 
 
+
+      {moreOpen && docked ? <aside ref={setRailHost} className="w-[5.75rem] shrink-0 overflow-hidden border-l border-border bg-surface" /> : null}
 
       {/* Phone, menu tab: keep the running total and Charge one tap away. */}
       {!wide && tab === "menu" && totals.count > 0 ? (
