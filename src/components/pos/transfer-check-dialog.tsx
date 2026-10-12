@@ -34,7 +34,7 @@ export function TransferCheckDialog({ currentOwner, onClose, onTransfer }: {
   };
 
   return (
-    <Dialog open onOpenChange={(open) => { if (!open && !confirming) onClose(); }}>
+    <Dialog open onOpenChange={(open) => { console.log("TCD onOpenChange", open, "confirming", confirming); if (!open && !confirming) onClose(); }}>
       <DialogContent className="w-[calc(100%-2rem)] max-w-sheet gap-0 rounded-sheet border-border bg-surface p-0">
         <div className="border-b border-border px-4 py-3">
           <DialogTitle className="text-center text-fs-base font-extrabold tracking-normal">Transfer Check</DialogTitle>
