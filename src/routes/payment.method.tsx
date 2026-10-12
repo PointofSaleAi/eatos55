@@ -34,6 +34,7 @@ import { PaymentBill } from "@/components/pos/payment-bill";
 import { TipSheet } from "@/components/pos/tip-sheet";
 import { ReferenceTenderDialog } from "@/components/pos/reference-tender-dialog";
 import { RoomChargeDialog } from "@/components/pos/room-charge-dialog";
+import { GiftCardPaymentDialog } from "@/components/pos/gift-card-payment-dialog";
 import { TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
 import { useTapToPayAvailable } from "@/lib/device";
 import { BackButton, useWideLayout } from "@/components/pos/shell";
@@ -147,6 +148,7 @@ function PaymentMethod() {
 
   const [selected, setSelected] = useState<string | null>(null);
   const [roomOpen, setRoomOpen] = useState(false);
+  const [giftPayOpen, setGiftPayOpen] = useState(false);
   const [splitOpen, setSplitOpen] = useState(false);
   const [doneOpen, setDoneOpen] = useState(false);
   const [tipOpen, setTipOpen] = useState(false);
@@ -455,7 +457,7 @@ function PaymentMethod() {
           label: "Gift Card",
           icon: Gift,
           kind: "dialog",
-          run: () => openAmount("Gift Card", "gift"),
+          run: () => setGiftPayOpen(true),
         },
         {
           id: "loyalty",
