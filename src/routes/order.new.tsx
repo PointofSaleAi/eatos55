@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useWideLayout } from "@/components/pos/shell";
-import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { OrderPanel } from "@/components/pos/order-panel";
 import { MoreSheet } from "@/components/pos/more-sheet";
