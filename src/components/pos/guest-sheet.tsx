@@ -22,6 +22,7 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
+import { AddressSearch } from "@/components/pos/address-search";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
   eventTypes,
@@ -34,6 +35,7 @@ import {
 import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
+import { formatUsAddress, type UsAddress } from "@/lib/us-addresses";
 
 /** Format raw digits as (XXX) XXX-XXXX while typing. */
 export function formatPhone(raw: string) {
@@ -79,7 +81,13 @@ export function GuestSheet({
   const [phone, setPhone] = useState(guest.phone);
   const [party, setParty] = useState(guest.partySize);
   const [type, setType] = useState<ServiceOrderType>(initialType ?? orderType);
-  const [address, setAddress] = useState(guest.address ?? "");
+  const [address, setAddress] = useState<UsAddress>({
+    street: guest.addressStreet ?? guest.address ?? "",
+    unit: guest.addressUnit ?? "",
+    city: guest.addressCity ?? "",
+    state: guest.addressState ?? "",
+    zipCode: guest.addressZipCode ?? "",
+  });
   const [eventType, setEventType] = useState(guest.event?.type ?? "");
   const [eventDate, setEventDate] = useState(guest.event?.date ?? "");
   const [eventTime, setEventTime] = useState(guest.event?.time ?? "");
@@ -103,7 +111,13 @@ export function GuestSheet({
       setPhone(guest.phone);
       setParty(guest.partySize);
       setType(initialType ?? orderType);
-      setAddress(guest.address ?? "");
+      setAddress({
+        street: guest.addressStreet ?? guest.address ?? "",
+        unit: guest.addressUnit ?? "",
+        city: guest.addressCity ?? "",
+        state: guest.addressState ?? "",
+        zipCode: guest.addressZipCode ?? "",
+      });
       setEventType(guest.event?.type ?? "");
       setEventDate(guest.event?.date ?? "");
       setEventTime(guest.event?.time ?? "");
@@ -126,7 +140,8 @@ export function GuestSheet({
   const isOnline = type === "Online";
   const required = serviceOrderRequirements[type];
   const showAddress = type === "Delivery" || isBanquet;
-  const values: Record<string, string> = { name, phone, address, scheduledAt };
+  const formattedAddress = formatUsAddress(address);
+  const values: Record<string, string> = { name, phone, address: formattedAddress, scheduledAt };
   const missing = required.filter((f) => !values[f]?.trim());
   const vehicleComplete = Boolean(vehicleType && vehicleColor);
   const colorHex = vehicleColors.find((c) => c.name === vehicleColor)?.hex ?? "#b6bcc2";
@@ -199,37 +214,7 @@ export function GuestSheet({
             />
           </div>
 
-          {showAddress ? (
-            <div className="flex items-center gap-2 sm:col-span-2">
-              <div
-                className={cn(
-                  fieldRow,
-                  "min-w-0 flex-1",
-                  required.includes("address") && !address ? "border-accent" : "border-border",
-                )}
-              >
-                <MapPin className="size-4 shrink-0 text-muted-foreground" />
-                <input
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder={`Address${star("address")}`}
-                  aria-label="Address"
-                  className={fieldInput}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setAddress("1 Market St, San Francisco, CA");
-                  toast.success("Current location used");
-                }}
-                aria-label="Use current location"
-                className="grid h-ctl-lg min-h-tap w-11 shrink-0 place-items-center rounded-row border border-border bg-surface text-foreground"
-              >
-                <Crosshair className="size-4" aria-hidden />
-              </button>
-            </div>
-          ) : null}
+          {showAddress ? <div className="sm:col-span-2"><AddressSearch value={address} onChange={setAddress} required={required.includes("address")} /></div> : null}
 
           {type === "Dine In" ? (
             <div className={cn(fieldRow, "sm:col-span-2")}>
@@ -451,6 +436,11 @@ export function GuestSheet({
                 notes: "",
                 vehicle: undefined,
                 address: "",
+                addressStreet: "",
+                addressUnit: "",
+                addressCity: "",
+                addressState: "",
+                addressZipCode: "",
                 event: undefined,
                 scheduledAt: "",
                 customLabel: "",
@@ -472,7 +462,12 @@ export function GuestSheet({
                 partySize: party,
                 email: email.trim(),
                 notes,
-                address: showAddress ? address.trim() : "",
+                address: showAddress ? formattedAddress : "",
+                addressStreet: showAddress ? address.street.trim() : "",
+                addressUnit: showAddress ? address.unit.trim() : "",
+                addressCity: showAddress ? address.city.trim() : "",
+                addressState: showAddress ? address.state.trim() : "",
+                addressZipCode: showAddress ? address.zipCode.trim() : "",
                 scheduledAt: isScheduled ? scheduledAt : "",
                 customLabel: isCustom ? customLabel.trim() : "",
                 event: isBanquet
