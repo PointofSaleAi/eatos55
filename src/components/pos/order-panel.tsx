@@ -7,6 +7,8 @@ import {
   Gift,
   Grid2x2,
   NotebookPen,
+  MoreHorizontal,
+  X,
   Percent,
   Receipt,
   RotateCcw,
@@ -20,6 +22,7 @@ import {
 } from "lucide-react";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
@@ -33,7 +36,9 @@ import { useConfirm } from "@/components/pos/confirm-sheet";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
-function CartHeaderActions({ onDiscount }: { onDiscount: (name: string) => void }) {
+type OptionsLayout = { moreOpen: boolean; onMoreOpenChange: (open: boolean) => void; railHost: HTMLElement | null; docked: boolean };
+
+function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, docked }: OptionsLayout & { onDiscount: (name: string) => void }) {
   const navigate = useNavigate();
   const confirm = useConfirm();
   const {
@@ -79,9 +84,31 @@ function CartHeaderActions({ onDiscount }: { onDiscount: (name: string) => void 
     })();
   };
 
+  const secondaryActions = (rail: boolean) => {
+    const actions = [
+      { label: "Custom Item", icon: Tag, run: () => navigate({ to: "/order/custom-item" }) },
+      { label: "Gift Card", icon: Gift, run: () => toast.info("Gift Card is not configured for this location") },
+      { label: "Service Charge", icon: Receipt, active: serviceCharge > 0, run: () => { setCharge(String(serviceCharge || "")); setChargeOpen(true); } },
+      { label: "Add Guest", icon: UserPlus, run: () => setGuestOpen(true) },
+      { label: "Open Orders", icon: ClipboardList, run: () => navigate({ to: "/tickets" }) },
+      { label: "Allergy", icon: TriangleAlert, active: Boolean(allergyNote), run: () => { setAllergyDraft(allergyNote); setAllergyOpen(true); } },
+      { label: "Merge", icon: GitMerge, run: () => setMergeOpen(true) },
+      { label: "Reopen Check", icon: RotateCcw, run: () => toast.info("Reopen Check is not configured for this location") },
+    ];
+    return actions.map(({ label, icon: Icon, active, run }) => (
+      <Button key={label} type="button" variant="ghost" aria-label={label} title={label}
+        onClick={() => { onMoreOpenChange(false); run(); }}
+        className={cn(rail ? "h-auto min-h-16 w-full shrink-0 flex-col gap-1 rounded-row px-1 py-2 text-fs-xs font-bold" : "min-h-12 w-full shrink-0 justify-start gap-3 rounded-row px-3 text-fs-sm font-bold", active && "bg-accent/10 text-accent hover:bg-accent/20")}>
+        <Icon className="size-5 shrink-0" />
+        <span className="text-center leading-snug">{rail ? label.split(" ").map((word, index) => <span key={index} className="block">{word}</span>) : label}</span>
+      </Button>
+    ));
+  };
+
   return (
     <>
-      <div className="no-scrollbar flex min-w-0 items-center gap-1 overflow-x-auto">
+      <div className="flex min-w-0 items-center gap-1">
+        <div className="no-scrollbar flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
         <HeaderAction
           label="Discount"
           icon={BadgePercent}
@@ -99,39 +126,33 @@ function CartHeaderActions({ onDiscount }: { onDiscount: (name: string) => void 
         />
         <HeaderAction label="Cancel Order" icon={Trash2} destructive onPress={cancelCurrentOrder} />
         <HeaderAction label="No Sale" icon={Wallet} onPress={() => toast.success("Register opened")} />
-        <HeaderAction label="Custom Item" icon={Tag} onPress={() => navigate({ to: "/order/custom-item" })} />
-        <HeaderAction
-          label="Gift Card"
-          icon={Gift}
-          onPress={() => toast.info("Gift Card is not configured for this location")}
-        />
-        <HeaderAction
-          label={serviceCharge ? `Service Charge · $${serviceCharge.toFixed(2)}` : "Service Charge"}
-          icon={Receipt}
-          active={serviceCharge > 0}
-          onPress={() => {
-            setCharge(String(serviceCharge || ""));
-            setChargeOpen(true);
-          }}
-        />
-        <HeaderAction label="Add Guest" icon={UserPlus} onPress={() => setGuestOpen(true)} />
-        <HeaderAction label="Open Orders" icon={ClipboardList} onPress={() => navigate({ to: "/tickets" })} />
-        <HeaderAction
-          label={allergyNote ? "Allergy · On" : "Allergy"}
-          icon={TriangleAlert}
-          active={Boolean(allergyNote)}
-          onPress={() => {
-            setAllergyDraft(allergyNote);
-            setAllergyOpen(true);
-          }}
-        />
-        <HeaderAction label="Merge" icon={GitMerge} onPress={() => setMergeOpen(true)} />
-        <HeaderAction
-          label="Reopen Check"
-          icon={RotateCcw}
-          onPress={() => toast.info("Reopen Check is not configured for this location")}
-        />
+        </div>
+        <Button
+          type="button"
+          variant="secondary"
+          size="icon"
+          aria-label="More order options"
+          title="More order options"
+          aria-expanded={moreOpen}
+          onClick={() => onMoreOpenChange(!moreOpen)}
+          className="size-8 shrink-0 rounded-pill"
+        >
+          <MoreHorizontal className="size-4" />
+        </Button>
       </div>
+
+      {docked && moreOpen && railHost ? createPortal(
+        <div className="no-scrollbar flex h-full flex-col items-center gap-1 overflow-y-auto py-2" aria-label="More order options panel">
+          <Button variant="ghost" size="icon" aria-label="Close order options" title="Close order options" onClick={() => onMoreOpenChange(false)} className="size-8 shrink-0"><X className="size-4" /></Button>
+          {secondaryActions(true)}
+        </div>, railHost,
+      ) : null}
+      <Sheet open={moreOpen && !docked} onOpenChange={onMoreOpenChange}>
+        <SheetContent side="right" className="flex h-dvh w-[min(21rem,88vw)] flex-col bg-surface px-3 py-5">
+          <SheetHeader><SheetTitle>Order Options</SheetTitle></SheetHeader>
+          <div className="no-scrollbar mt-4 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">{secondaryActions(false)}</div>
+        </SheetContent>
+      </Sheet>
 
       <DiscountSheet
         open={discountOpen}
@@ -292,7 +313,7 @@ function HeaderAction({
 }
 
 /** Running order area shared by phone, tablet and desktop layouts. */
-export function OrderPanel({ wide }: { wide: boolean }) {
+export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & OptionsLayout) {
   const navigate = useNavigate();
   const {
     guest,
@@ -387,7 +408,7 @@ export function OrderPanel({ wide }: { wide: boolean }) {
         </div>
 
         <div className="mt-1.5">
-          <CartHeaderActions onDiscount={setDiscountName} />
+          <CartHeaderActions onDiscount={setDiscountName} {...optionsLayout} />
         </div>
 
         {/* Service type and the table / arrival chip share one scrolling row */}

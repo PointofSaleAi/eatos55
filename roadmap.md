@@ -19,3 +19,4 @@
 - [x] Rearrange cart options into the single agreed row: Discount, No Tax, Cancel Order, No Sale, Custom Item, Gift Card, Service Charge, Add Guest, Open Orders, Allergy, Merge, Reopen Check (three-dot rail removed; Allergy note and Merge checks added)
 
 
+- [ ] Restore the fixed three-dot button with Custom Item onward in the docked landscape rail and narrow-screen panel
