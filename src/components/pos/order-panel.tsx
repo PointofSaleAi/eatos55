@@ -1,14 +1,21 @@
 import {
   BadgePercent,
+  ClipboardList,
   Flame,
   Footprints,
+  GitMerge,
+  Gift,
   Grid2x2,
-  MoreVertical,
   NotebookPen,
   Percent,
+  Receipt,
+  RotateCcw,
   Save,
   Tag,
+  Trash2,
+  TriangleAlert,
   Utensils,
+  UserPlus,
   Wallet,
 } from "lucide-react";
 
@@ -22,27 +29,65 @@ import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { formatPhone, GuestSheet } from "@/components/pos/guest-sheet";
 import { OrderTypeStrip } from "@/components/pos/order-type-strip";
+import { useConfirm } from "@/components/pos/confirm-sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
-function CartHeaderActions({
-  onDiscount,
-  moreOpen,
-  onMoreOpenChange,
-}: {
-  onDiscount: (name: string) => void;
-  moreOpen: boolean;
-  onMoreOpenChange: (open: boolean) => void;
-}) {
+function CartHeaderActions({ onDiscount }: { onDiscount: (name: string) => void }) {
   const navigate = useNavigate();
-  const { totals, noTax, setNoTax, setOrderDiscountPercent } = usePos();
+  const confirm = useConfirm();
+  const {
+    totals,
+    noTax,
+    setNoTax,
+    setOrderDiscountPercent,
+    tickets,
+    activeTicketId,
+    cancelOrder,
+    mergeTicket,
+    serviceCharge,
+    setServiceCharge,
+    allergyNote,
+    setAllergyNote,
+  } = usePos();
   const [discountOpen, setDiscountOpen] = useState(false);
+  const [chargeOpen, setChargeOpen] = useState(false);
+  const [charge, setCharge] = useState(String(serviceCharge || ""));
+  const [guestOpen, setGuestOpen] = useState(false);
+  const [allergyOpen, setAllergyOpen] = useState(false);
+  const [allergyDraft, setAllergyDraft] = useState("");
+  const [mergeOpen, setMergeOpen] = useState(false);
+
+  const mergeCandidates = tickets.filter(
+    (t) => !t.closed && t.status !== "paid" && t.id !== activeTicketId,
+  );
+
+  const cancelCurrentOrder = () => {
+    void (async () => {
+      const ok = await confirm({
+        title: "Cancel this order?",
+        message: totals.count
+          ? "This cannot be undone — every item on the order is removed."
+          : "The order in progress is discarded.",
+        confirmLabel: "Cancel order",
+        destructive: true,
+      });
+      if (!ok) return;
+      cancelOrder();
+      toast.success("Order cancelled");
+      navigate({ to: "/tickets" });
+    })();
+  };
 
   return (
     <>
-      <div className="flex min-w-0 items-center gap-1">
-        <div className="no-scrollbar flex min-w-0 flex-1 items-center gap-1 overflow-x-auto">
-        <HeaderAction label="Custom Item" icon={Tag} onPress={() => navigate({ to: "/order/custom-item" })} />
-        <HeaderAction label="Discount" icon={BadgePercent} active={totals.discount > 0} onPress={() => setDiscountOpen(true)} />
+      <div className="no-scrollbar flex min-w-0 items-center gap-1 overflow-x-auto">
+        <HeaderAction
+          label="Discount"
+          icon={BadgePercent}
+          active={totals.discount > 0}
+          onPress={() => setDiscountOpen(true)}
+        />
         <HeaderAction
           label={noTax ? "No Tax · On" : "No Tax"}
           icon={Percent}
@@ -52,20 +97,40 @@ function CartHeaderActions({
             toast.success(noTax ? "Tax applied" : "Tax removed from this order");
           }}
         />
+        <HeaderAction label="Cancel Order" icon={Trash2} destructive onPress={cancelCurrentOrder} />
         <HeaderAction label="No Sale" icon={Wallet} onPress={() => toast.success("Register opened")} />
-        </div>
-        <Button
-          type="button"
-          variant="secondary"
-          size="icon"
-          aria-label="More order options"
-          title="More order options"
-          aria-expanded={moreOpen}
-          onClick={() => onMoreOpenChange(!moreOpen)}
-          className="size-8 shrink-0 rounded-pill"
-        >
-          <MoreVertical className="size-4" />
-        </Button>
+        <HeaderAction label="Custom Item" icon={Tag} onPress={() => navigate({ to: "/order/custom-item" })} />
+        <HeaderAction
+          label="Gift Card"
+          icon={Gift}
+          onPress={() => toast.info("Gift Card is not configured for this location")}
+        />
+        <HeaderAction
+          label={serviceCharge ? `Service Charge · $${serviceCharge.toFixed(2)}` : "Service Charge"}
+          icon={Receipt}
+          active={serviceCharge > 0}
+          onPress={() => {
+            setCharge(String(serviceCharge || ""));
+            setChargeOpen(true);
+          }}
+        />
+        <HeaderAction label="Add Guest" icon={UserPlus} onPress={() => setGuestOpen(true)} />
+        <HeaderAction label="Open Orders" icon={ClipboardList} onPress={() => navigate({ to: "/tickets" })} />
+        <HeaderAction
+          label={allergyNote ? "Allergy · On" : "Allergy"}
+          icon={TriangleAlert}
+          active={Boolean(allergyNote)}
+          onPress={() => {
+            setAllergyDraft(allergyNote);
+            setAllergyOpen(true);
+          }}
+        />
+        <HeaderAction label="Merge" icon={GitMerge} onPress={() => setMergeOpen(true)} />
+        <HeaderAction
+          label="Reopen Check"
+          icon={RotateCcw}
+          onPress={() => toast.info("Reopen Check is not configured for this location")}
+        />
       </div>
 
       <DiscountSheet
@@ -78,6 +143,119 @@ function CartHeaderActions({
           setDiscountOpen(false);
         }}
       />
+
+      <Sheet open={chargeOpen} onOpenChange={setChargeOpen}>
+        <SheetContent
+          side="bottom"
+          className="mx-auto w-full max-w-sheet rounded-t-sheet border-0 bg-surface p-4 pb-[calc(1rem+var(--kb-inset,0px))]"
+        >
+          <SheetHeader>
+            <SheetTitle className="text-center text-fs-base font-extrabold text-foreground">
+              Service Charge
+            </SheetTitle>
+          </SheetHeader>
+          <input
+            autoFocus
+            type="number"
+            inputMode="decimal"
+            value={charge}
+            onChange={(event) => setCharge(event.target.value)}
+            placeholder="0.00"
+            aria-label="Service charge amount"
+            className="mt-3 h-12 w-full rounded-row border border-border bg-surface px-4 text-fs-base font-bold text-foreground outline-none focus:ring-2 focus:ring-ring"
+          />
+          <Button
+            type="button"
+            onClick={() => {
+              setServiceCharge(Number(charge) || 0);
+              setChargeOpen(false);
+              toast.success("Service charge updated");
+            }}
+            className="mt-3 min-h-ctl-lg w-full rounded-pill text-fs-sm font-extrabold uppercase"
+          >
+            Apply
+          </Button>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={allergyOpen} onOpenChange={setAllergyOpen}>
+        <SheetContent
+          side="bottom"
+          className="mx-auto w-full max-w-sheet rounded-t-sheet border-0 bg-surface p-4 pb-[calc(1rem+var(--kb-inset,0px))]"
+        >
+          <SheetHeader>
+            <SheetTitle className="text-center text-fs-base font-extrabold text-foreground">
+              Allergy Alert
+            </SheetTitle>
+          </SheetHeader>
+          <input
+            autoFocus
+            type="text"
+            value={allergyDraft}
+            onChange={(event) => setAllergyDraft(event.target.value)}
+            placeholder="e.g. Severe peanut allergy"
+            aria-label="Allergy note"
+            className="mt-3 h-12 w-full rounded-row border border-border bg-surface px-4 text-fs-base font-bold text-foreground outline-none focus:ring-2 focus:ring-ring"
+          />
+          <Button
+            type="button"
+            onClick={() => {
+              const note = allergyDraft.trim();
+              setAllergyNote(note);
+              setAllergyOpen(false);
+              toast.success(note ? "Allergy alert added to the order" : "Allergy alert removed");
+            }}
+            className="mt-3 min-h-ctl-lg w-full rounded-pill text-fs-sm font-extrabold uppercase"
+          >
+            Save
+          </Button>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={mergeOpen} onOpenChange={setMergeOpen}>
+        <SheetContent
+          side="bottom"
+          className="mx-auto w-full max-w-sheet rounded-t-sheet border-0 bg-surface p-4 pb-[calc(1rem+var(--kb-inset,0px))]"
+        >
+          <SheetHeader>
+            <SheetTitle className="text-center text-fs-base font-extrabold text-foreground">
+              Merge Checks
+            </SheetTitle>
+          </SheetHeader>
+          <p className="mt-1 text-center text-fs-xs font-bold text-muted-foreground">
+            Move every item from another open check into this order.
+          </p>
+          <div className="no-scrollbar mt-3 max-h-64 overflow-y-auto">
+            {mergeCandidates.length === 0 ? (
+              <p className="py-6 text-center text-fs-sm font-bold text-muted-foreground">
+                No other open checks to merge
+              </p>
+            ) : (
+              mergeCandidates.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => {
+                    mergeTicket(t.id);
+                    setMergeOpen(false);
+                    toast.success(`Check #${t.number} merged into this order`);
+                  }}
+                  className="flex min-h-12 w-full items-center justify-between gap-3 rounded-row bg-muted px-3 py-2 text-left transition-colors hover:bg-secondary"
+                >
+                  <span className="min-w-0 flex-1 truncate text-fs-sm font-extrabold text-foreground">
+                    {t.label} · #{t.number}
+                  </span>
+                  <span className="shrink-0 text-fs-xs font-bold text-muted-foreground">
+                    {t.lines.reduce((n, l) => n + l.qty, 0)} items · {money(t.total)}
+                  </span>
+                </button>
+              ))
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <GuestSheet open={guestOpen} onClose={() => setGuestOpen(false)} />
     </>
   );
 }
@@ -86,11 +264,13 @@ function HeaderAction({
   label,
   icon: Icon,
   active,
+  destructive,
   onPress,
 }: {
   label: string;
   icon: typeof Tag;
   active?: boolean;
+  destructive?: boolean;
   onPress: () => void;
 }) {
   return (
@@ -102,6 +282,7 @@ function HeaderAction({
       className={cn(
         "h-8 shrink-0 rounded-pill px-2.5 text-fs-xs font-extrabold",
         active && "bg-accent text-accent-foreground hover:bg-accent/90",
+        destructive && "text-destructive hover:text-destructive",
       )}
     >
       <Icon className="size-3.5" />
@@ -111,15 +292,7 @@ function HeaderAction({
 }
 
 /** Running order area shared by phone, tablet and desktop layouts. */
-export function OrderPanel({
-  wide,
-  moreOpen,
-  onMoreOpenChange,
-}: {
-  wide: boolean;
-  moreOpen: boolean;
-  onMoreOpenChange: (open: boolean) => void;
-}) {
+export function OrderPanel({ wide }: { wide: boolean }) {
   const navigate = useNavigate();
   const {
     guest,
@@ -214,11 +387,7 @@ export function OrderPanel({
         </div>
 
         <div className="mt-1.5">
-          <CartHeaderActions
-            onDiscount={setDiscountName}
-            moreOpen={moreOpen}
-            onMoreOpenChange={onMoreOpenChange}
-          />
+          <CartHeaderActions onDiscount={setDiscountName} />
         </div>
 
         {/* Service type and the table / arrival chip share one scrolling row */}
@@ -297,7 +466,7 @@ export function OrderPanel({
         {cart.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-3 py-10 text-center">
             <Utensils className="size-10 text-muted-foreground/50" />
-            <p className="text-fs-sm font-bold text-muted-foreground">Let&apos;s create an order</p>
+            <p className="text-fs-sm font-bold text-muted-foreground">Let's create an order</p>
           </div>
         ) : (
           <ul className="divide-y divide-border/60">
@@ -427,4 +596,3 @@ export function OrderPanel({
     </div>
   );
 }
-
