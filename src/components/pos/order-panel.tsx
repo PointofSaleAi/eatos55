@@ -36,9 +36,9 @@ import { useConfirm } from "@/components/pos/confirm-sheet";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
-type OptionsLayout = { moreOpen: boolean; onMoreOpenChange: (open: boolean) => void; railHost: HTMLElement | null; docked: boolean; onCustomItem: () => void };
+type OptionsLayout = { moreOpen: boolean; onMoreOpenChange: (open: boolean) => void; railHost: HTMLElement | null; docked: boolean; onCustomItem: () => void; customItemOpen: boolean };
 
-function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, docked, onCustomItem }: OptionsLayout & { onDiscount: (name: string) => void }) {
+function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, docked, onCustomItem, customItemOpen }: OptionsLayout & { onDiscount: (name: string) => void }) {
   const navigate = useNavigate();
   const confirm = useConfirm();
   const {
@@ -86,7 +86,7 @@ function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, d
 
   const secondaryActions = (rail: boolean) => {
     const actions = [
-      { label: "Custom Item", icon: Tag, run: onCustomItem },
+      { label: customItemOpen ? "Menu Item" : "Custom Item", icon: Tag, run: onCustomItem },
       { label: "Gift Card", icon: Gift, run: () => toast.info("Gift Card is not configured for this location") },
       { label: "Service Charge", icon: Receipt, active: serviceCharge > 0, run: () => { setCharge(String(serviceCharge || "")); setChargeOpen(true); } },
       { label: "Add Guest", icon: UserPlus, run: () => setGuestOpen(true) },
