@@ -2,9 +2,11 @@ import { Camera, ChevronDown, UserPlus, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { AddressSearch } from "@/components/pos/address-search";
 import { formatPhone } from "@/components/pos/guest-sheet";
 import { usePos } from "@/lib/pos-store";
 import { vehicleColors, vehicleTypes } from "@/lib/demo-data";
+import { formatUsAddress, type UsAddress } from "@/lib/us-addresses";
 
 const inputClass = "h-11 w-full min-w-0 rounded-row border border-border bg-muted px-3 text-fs-sm text-foreground outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-ring";
 
@@ -19,7 +21,13 @@ export function AddGuestForm({ onClose }: { onClose: () => void }) {
   const [customerSince, setCustomerSince] = useState(guest.customerSince ?? "");
   const [dateOfBirth, setDateOfBirth] = useState(guest.dateOfBirth ?? "");
   const [anniversary, setAnniversary] = useState(guest.anniversary ?? "");
-  const [address, setAddress] = useState(guest.address ?? "");
+  const [address, setAddress] = useState<UsAddress>({
+    street: guest.addressStreet ?? guest.address ?? "",
+    unit: guest.addressUnit ?? "",
+    city: guest.addressCity ?? "",
+    state: guest.addressState ?? "",
+    zipCode: guest.addressZipCode ?? "",
+  });
   const [photo, setPhoto] = useState(guest.photo ?? "");
   const [vehicleOpen, setVehicleOpen] = useState(Boolean(guest.vehicle));
   const [vehicleType, setVehicleType] = useState(guest.vehicle?.type ?? "");
@@ -40,7 +48,7 @@ export function AddGuestForm({ onClose }: { onClose: () => void }) {
     <form aria-label="Add Guest" className="flex min-h-0 flex-1 flex-col overflow-hidden" onSubmit={(event) => {
       event.preventDefault();
       if (!valid) return;
-      setGuest({ firstName: firstName.trim(), middleName: middleName.trim(), lastName: lastName.trim(), name: [firstName, middleName, lastName].map((part) => part.trim()).filter(Boolean).join(" "), email: email.trim(), phone, customerSince, dateOfBirth, anniversary, address: address.trim(), photo, vehicle: vehicleOpen && (vehicleType || vehicleColor || vehicleBrand || plate) ? { type: vehicleType, color: vehicleColor, brand: vehicleBrand.trim(), plate: plate.trim() } : undefined });
+      setGuest({ firstName: firstName.trim(), middleName: middleName.trim(), lastName: lastName.trim(), name: [firstName, middleName, lastName].map((part) => part.trim()).filter(Boolean).join(" "), email: email.trim(), phone, customerSince, dateOfBirth, anniversary, address: formatUsAddress(address), addressStreet: address.street.trim(), addressUnit: address.unit.trim(), addressCity: address.city.trim(), addressState: address.state.trim(), addressZipCode: address.zipCode.trim(), photo, vehicle: vehicleOpen && (vehicleType || vehicleColor || vehicleBrand || plate) ? { type: vehicleType, color: vehicleColor, brand: vehicleBrand.trim(), plate: plate.trim() } : undefined });
       toast.success("Guest details saved");
       onClose();
     }}>
@@ -74,7 +82,7 @@ export function AddGuestForm({ onClose }: { onClose: () => void }) {
           {field("Date of Birth", dateOfBirth, setDateOfBirth, "date")}
           {field("Anniversary", anniversary, setAnniversary, "date")}
         </div>
-        {field("Address", address, setAddress)}
+        <AddressSearch value={address} onChange={setAddress} />
         <Button type="button" variant="ghost" aria-expanded={vehicleOpen} onClick={() => setVehicleOpen((open) => !open)} className="h-auto w-full justify-start px-0 text-fs-xs font-bold hover:bg-muted hover:text-foreground">Add vehicle details<ChevronDown className={vehicleOpen ? "rotate-180" : ""} /></Button>
         {vehicleOpen ? <div className="grid grid-cols-2 gap-3">
           <label className="min-w-0 space-y-1.5"><span className="text-fs-xs font-bold">Vehicle Type</span><select aria-label="Vehicle Type" value={vehicleType} onChange={(e) => setVehicleType(e.target.value)} className={inputClass}><option value="">Select type</option>{vehicleTypes.map((type) => <option key={type}>{type}</option>)}</select></label>

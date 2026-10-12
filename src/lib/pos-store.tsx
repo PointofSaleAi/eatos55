@@ -798,6 +798,11 @@ export type Guest = {
   notes?: string | undefined;
   vehicle?: GuestVehicle | undefined;
   address?: string | undefined;
+  addressStreet?: string | undefined;
+  addressUnit?: string | undefined;
+  addressCity?: string | undefined;
+  addressState?: string | undefined;
+  addressZipCode?: string | undefined;
   event?: GuestEvent | undefined;
   scheduledAt?: string | undefined;
   customLabel?: string | undefined;
