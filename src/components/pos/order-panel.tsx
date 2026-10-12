@@ -39,19 +39,21 @@ import { Button } from "@/components/ui/button";
 
 type OptionsLayout = { moreOpen: boolean; onMoreOpenChange: (open: boolean) => void; railHost: HTMLElement | null; docked: boolean; onCustomItem: () => void; customItemOpen: boolean };
 
-function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, docked, onCustomItem, customItemOpen }: OptionsLayout & { onDiscount: (name: string) => void }) {
+function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCustomItem, customItemOpen }: OptionsLayout) {
   const navigate = useNavigate();
   const confirm = useConfirm();
-  const {
-    totals,
+  const orderDiscountPercent = usePos().orderDiscountPercent;
     noTax,
     setNoTax,
     setOrderDiscountPercent,
+    setOrderDiscountName,
     tickets,
     activeTicketId,
     cancelOrder,
     mergeTicket,
     serviceCharge,
+    serviceChargePercent,
+    serviceChargeName,
     setServiceCharge,
     allergyNote,
     setAllergyNote,
@@ -87,7 +89,7 @@ function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, d
     const actions = [
       { label: customItemOpen ? "Menu Item" : "Custom Item", icon: customItemOpen ? Grid2x2 : Tag, run: onCustomItem },
       { label: "Gift Card", icon: Gift, run: () => toast.info("Gift Card is not configured for this location") },
-      { label: "Service Charge", icon: Receipt, active: serviceCharge > 0, run: () => setChargeOpen(true) },
+      { label: "Service Charge", icon: Receipt, active: serviceCharge > 0 || serviceChargePercent > 0, run: () => setChargeOpen(true) },
       { label: "Add Guest", icon: UserPlus, run: () => setGuestOpen(true) },
       { label: "Open Orders", icon: ClipboardList, run: () => navigate({ to: "/tickets" }) },
       { label: "Allergy", icon: TriangleAlert, active: Boolean(allergyNote), run: () => { setAllergyDraft(allergyNote); setAllergyOpen(true); } },
@@ -111,7 +113,7 @@ function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, d
         <HeaderAction
           label="Discount"
           icon={BadgePercent}
-          active={totals.discount > 0}
+          active={orderDiscountPercent > 0 || totals.discount > 0}
           onPress={() => setDiscountOpen(true)}
         />
         <HeaderAction
