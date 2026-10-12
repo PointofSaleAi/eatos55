@@ -35,7 +35,21 @@ export type CartLine = {
   notes?: string;
   modifiers?: string[];
   discountPercent?: number;
+  /** Gift card loads are not taxed. */
+  taxExempt?: boolean;
 };
+
+/** Demo gift cards: number -> starting balance. Balances live in the POS store. */
+export const giftCards: { number: string; balance: number }[] = [
+  { number: "60488798989446715", balance: 606.45 },
+  { number: "60488798989446723", balance: 125.0 },
+  { number: "60488798989446731", balance: 75.5 },
+  { number: "60488798989446749", balance: 250.0 },
+  { number: "60488798989446756", balance: 40.0 },
+  { number: "60488798989446764", balance: 10.0 },
+  { number: "60488798989446772", balance: 500.0 },
+  { number: "60488798989446780", balance: 0.0 },
+];
 
 
 export type TicketPayment = {
