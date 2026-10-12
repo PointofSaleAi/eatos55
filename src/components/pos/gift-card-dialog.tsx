@@ -166,7 +166,7 @@ export function GiftCardDialog({
               <p className="text-fs-xs font-extrabold uppercase tracking-[0.08em] text-muted-foreground">
                 Available balance
               </p>
-              <p className="text-fs-money font-extrabold tabular-nums text-foreground">
+              <p className="mt-1 text-fs-lg font-extrabold leading-tight tabular-nums text-foreground">
                 {balanceStatus}
               </p>
               <p className="mt-0.5 text-fs-xs font-semibold text-muted-foreground">
