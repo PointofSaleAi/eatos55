@@ -14,6 +14,7 @@ import {
   menu,
   modeOrderType,
   defaultProductModifierRules,
+  giftCards,
   type CartLine,
   type MenuMode,
   type ProductModifierRules,
@@ -872,6 +873,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
 
 
   const [cart, setCart] = useState<CartLine[]>([]);
+  const [giftCardBalances, setGiftCardBalances] = useState<Record<string, number>>(() =>
+    Object.fromEntries(giftCards.map((c) => [c.number, c.balance])),
+  );
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
   const [draftOwner, setDraftOwner] = useState<string | null>(null);
   const [activeTable, setActiveTable] = useState<string | null>(null);
