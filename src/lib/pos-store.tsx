@@ -14,6 +14,7 @@ import {
   menu,
   modeOrderType,
   defaultProductModifierRules,
+  giftCards,
   type CartLine,
   type MenuMode,
   type ProductModifierRules,
@@ -676,6 +677,12 @@ type Store = {
     },
   ) => void;
   addCustomItem: (name: string, price: number) => void;
+  /** Gift cards: balance lookup, loading funds, and spending balance. */
+  giftCardBalance: (number: string) => number | null;
+  loadGiftCard: (number: string, amount: number) => void;
+  chargeGiftCard: (number: string, amount: number) => boolean;
+  /** Adds a no-tax "Gift Card - XXXX" cart line for a funds load. */
+  addGiftCardLine: (number: string, amount: number) => void;
   changeQty: (id: string, delta: number) => void;
   removeLine: (id: string) => void;
   clearCart: () => void;
@@ -868,6 +875,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
 
 
   const [cart, setCart] = useState<CartLine[]>([]);
+  const [giftCardBalances, setGiftCardBalances] = useState<Record<string, number>>(() =>
+    Object.fromEntries(giftCards.map((c) => [c.number, c.balance])),
+  );
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
   const [draftOwner, setDraftOwner] = useState<string | null>(null);
   const [activeTable, setActiveTable] = useState<string | null>(null);
@@ -1002,6 +1012,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     floorTemplates,
     tableMerges,
     customFloorKinds,
+    giftCardBalances,
 
     floorReady,
   ]);
@@ -1030,7 +1041,16 @@ export function PosProvider({ children }: { children: ReactNode }) {
       (gross * serviceChargePercent) / 100 + serviceChargeFlat,
     );
     const net = round(gross - discount + serviceCharge);
-    const subtotal = noTax ? net : round(net / (1 + TAX_RATE));
+    // Tax-exempt lines (gift card loads) stay out of the tax base.
+    const exempt = round(
+      cart.reduce(
+        (sum, l) =>
+          l.taxExempt ? sum + l.price * l.qty * (1 - (l.discountPercent ?? 0) / 100) : sum,
+        0,
+      ),
+    );
+    const taxBase = noTax ? 0 : round(Math.max(0, net - exempt));
+    const subtotal = round(net - taxBase + taxBase / (1 + TAX_RATE));
     const tax = round(net - subtotal);
     const total = comped ? 0 : net;
 
@@ -1423,6 +1443,36 @@ export function PosProvider({ children }: { children: ReactNode }) {
           ...list,
           { id: `custom-${Date.now()}`, name, price, qty: 1, custom: true },
         ]),
+      giftCardBalance: (number) => giftCardBalances[number] ?? null,
+      loadGiftCard: (number, amount) =>
+        setGiftCardBalances((map) => ({
+          ...map,
+          [number]: Math.round(((map[number] ?? 0) + amount) * 100) / 100,
+        })),
+      chargeGiftCard: (number, amount) => {
+        const balance = giftCardBalances[number];
+        if (balance == null || amount <= 0 || amount > balance) return false;
+        setGiftCardBalances((map) => ({
+          ...map,
+          [number]: Math.round(((map[number] ?? 0) - amount) * 100) / 100,
+        }));
+        return true;
+      },
+      addGiftCardLine: (number, amount) => {
+        setArrivedAt((a) => a || formatTime());
+        setCart((list) => [
+          ...list,
+          {
+            id: `giftcard-${Date.now()}`,
+            name: `Gift Card - ${number.slice(-4)}`,
+            price: amount,
+            qty: 1,
+            custom: true,
+            taxExempt: true,
+            notes: "No Tax added",
+          },
+        ]);
+      },
       changeQty: (id, delta) =>
         setCart((list) =>
           list

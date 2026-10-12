@@ -34,6 +34,7 @@ import { PaymentBill } from "@/components/pos/payment-bill";
 import { TipSheet } from "@/components/pos/tip-sheet";
 import { ReferenceTenderDialog } from "@/components/pos/reference-tender-dialog";
 import { RoomChargeDialog } from "@/components/pos/room-charge-dialog";
+import { GiftCardPaymentDialog } from "@/components/pos/gift-card-payment-dialog";
 import { TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
 import { useTapToPayAvailable } from "@/lib/device";
 import { BackButton, useWideLayout } from "@/components/pos/shell";
@@ -147,6 +148,7 @@ function PaymentMethod() {
 
   const [selected, setSelected] = useState<string | null>(null);
   const [roomOpen, setRoomOpen] = useState(false);
+  const [giftPayOpen, setGiftPayOpen] = useState(false);
   const [splitOpen, setSplitOpen] = useState(false);
   const [doneOpen, setDoneOpen] = useState(false);
   const [tipOpen, setTipOpen] = useState(false);
@@ -455,7 +457,7 @@ function PaymentMethod() {
           label: "Gift Card",
           icon: Gift,
           kind: "dialog",
-          run: () => openAmount("Gift Card", "gift"),
+          run: () => setGiftPayOpen(true),
         },
         {
           id: "loyalty",
@@ -863,6 +865,25 @@ function PaymentMethod() {
         ) : null}
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">{grid}</div>
       </div>
+
+      <GiftCardPaymentDialog
+        open={giftPayOpen}
+        due={Math.round((due + chosenTip) * 100) / 100}
+        onClose={() => setGiftPayOpen(false)}
+        onCommit={(amount) => {
+          setGiftPayOpen(false);
+          const targetDue = Math.round((due + chosenTip) * 100) / 100;
+          if (amount < targetDue) {
+            haptic("medium");
+            addPartialPayment(amount, "gift", "Gift Card");
+            announce("Partial payment applied");
+            toast.success(`Gift Card ${money(amount)} applied · ${money(targetDue - amount)} remaining`);
+            return;
+          }
+          completePayment(Math.max(0, amount - chosenTip), "gift", "Gift Card", "gift", chosenTip);
+          setChosenTip(0);
+        }}
+      />
 
       <AmountEntry
         open={amountFor !== null}

@@ -39,6 +39,7 @@ import { useConfirm } from "@/components/pos/confirm-sheet";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { AddGuestForm } from "@/components/pos/add-guest-form";
+import { GiftCardDialog } from "@/components/pos/gift-card-dialog";
 
 type OptionsLayout = { moreOpen: boolean; onMoreOpenChange: (open: boolean) => void; railHost: HTMLElement | null; docked: boolean; onCustomItem: () => void; customItemOpen: boolean };
 
@@ -72,6 +73,7 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
   const [allergyOpen, setAllergyOpen] = useState(false);
   const [allergyDraft, setAllergyDraft] = useState("");
   const [mergeOpen, setMergeOpen] = useState(false);
+  const [giftOpen, setGiftOpen] = useState(false);
 
   const mergeCandidates = tickets.filter(
     (t) => !t.closed && t.status !== "paid" && t.id !== activeTicketId,
@@ -96,7 +98,7 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
   const secondaryActions = (rail: boolean) => {
     const actions = [
       { label: customItemOpen ? "Menu Item" : "Custom Item", icon: customItemOpen ? Grid2x2 : Tag, run: onCustomItem },
-      { label: "Gift Card", icon: Gift, run: () => toast.info("Gift Card is not configured for this location") },
+      { label: "Gift Card", icon: Gift, run: () => setGiftOpen(true) },
       { label: "Service Charge", icon: Receipt, active: serviceCharge > 0 || serviceChargePercent > 0, run: () => setChargeOpen(true) },
       { label: "Add Guest", icon: UserPlus, run: onAddGuest },
       { label: "Open Orders", icon: ClipboardList, run: () => navigate({ to: "/tickets" }) },
@@ -178,6 +180,8 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
           <div className="no-scrollbar mt-4 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">{secondaryActions(false)}</div>
         </SheetContent>
       </Sheet>
+
+      <GiftCardDialog open={giftOpen} onClose={() => setGiftOpen(false)} />
 
       <DiscountSheet
         open={discountOpen}
