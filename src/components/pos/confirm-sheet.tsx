@@ -91,6 +91,36 @@ function ConfirmSheet({ req, onDone }: { req: ConfirmRequest; onDone: (ok: boole
             <p className="mt-1 text-fs-sm text-muted-foreground">{req.message}</p>
           ) : null}
         </div>
+        {req.rowButtons ? (
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                haptic("light");
+                onDone(false);
+              }}
+              className="min-h-ctl-lg w-full rounded-card border border-border bg-surface text-fs-base font-extrabold text-foreground transition-colors hover:bg-muted"
+            >
+              {req.cancelLabel ?? "Cancel"}
+            </button>
+            <button
+              type="button"
+              autoFocus
+              onClick={() => {
+                haptic(req.destructive ? "error" : "success");
+                onDone(true);
+              }}
+              className={cn(
+                "min-h-ctl-lg w-full rounded-card text-fs-base font-extrabold transition-colors",
+                req.destructive
+                  ? "bg-destructive text-destructive-foreground hover:opacity-90"
+                  : "bg-primary text-primary-foreground hover:opacity-90",
+              )}
+            >
+              {req.confirmLabel}
+            </button>
+          </div>
+        ) : (
         <div className="grid gap-2">
           <button
             type="button"
@@ -116,6 +146,7 @@ function ConfirmSheet({ req, onDone }: { req: ConfirmRequest; onDone: (ok: boole
             {req.cancelLabel ?? "Cancel"}
           </button>
         </div>
+        )}
       </div>
     </div>
   );
