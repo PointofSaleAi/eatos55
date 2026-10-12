@@ -10,18 +10,15 @@ import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
-type Tab = "purchase" | "add-funds" | "check-balance";
-
-const tabs: { id: Tab; label: string }[] = [
-  { id: "purchase", label: "Purchase" },
-  { id: "add-funds", label: "Add Funds" },
-  { id: "check-balance", label: "Check Balance" },
-];
+type Field = "card" | "amount";
 
 /**
- * Gift card desk: sell a new card, top one up, or read a balance. Charging
- * drops a no-tax "Gift Card - XXXX" line on the order so the guest pays for
- * the load through the normal payment flow.
+ * Gift card desk: one flow for selling a new card or topping one up — enter
+ * the card number, enter the amount, charge. A single number pad targets
+ * whichever field is active; a recognized number shows its balance live, so
+ * checking a balance needs no separate mode. Charging drops a no-tax
+ * "Gift Card - XXXX" line on the order so the guest pays for the load
+ * through the normal payment flow.
  */
 export function GiftCardDialog({
   open,
@@ -34,26 +31,35 @@ export function GiftCardDialog({
   const { dragStyle, handleProps } = useSheetDrag(onClose);
   const { giftCardBalance, loadGiftCard, addGiftCardLine } = usePos();
 
-  const [tab, setTab] = useState<Tab>("purchase");
   const [cardNumber, setCardNumber] = useState("");
   const [amount, setAmount] = useState("");
+  const [activeField, setActiveField] = useState<Field>("card");
 
   useEffect(() => {
     if (open) {
-      setTab("purchase");
       setCardNumber("");
       setAmount("");
+      setActiveField("card");
     }
   }, [open]);
 
   const balance = cardNumber ? giftCardBalance(cardNumber) : null;
   const entered = Number(amount || "0");
-  const checkOnly = tab === "check-balance";
-  // A purchase may start a brand-new number; top-ups need a known card.
-  const cardOk = cardNumber.length >= 8 && (tab === "purchase" || balance !== null);
-  const canCharge = !checkOnly && cardOk && entered > 0;
+  const cardReady = cardNumber.length >= 8;
+  const isNewCard = cardReady && balance === null;
+  const canCharge = cardReady && entered > 0;
 
   const type = (d: string) => {
+    if (activeField === "card") {
+      if (d === ".") return;
+      setCardNumber((cur) => {
+        const next = `${cur}${d}`.replace(/\D/g, "").slice(0, 19);
+        // Once the number looks complete, hand the pad over to the amount.
+        if (next.length >= 8 && cur.length < 8) setActiveField("amount");
+        return next;
+      });
+      return;
+    }
     setAmount((cur) => {
       if (d === "." && cur.includes(".")) return cur;
       const next = `${cur}${d}`;
@@ -61,59 +67,82 @@ export function GiftCardDialog({
     });
   };
 
+  const backspace = () => {
+    if (activeField === "card") {
+      setCardNumber((cur) => cur.slice(0, -1));
+    } else {
+      setAmount((cur) => cur.slice(0, -1));
+    }
+  };
+
   const charge = () => {
     if (!canCharge) return;
     loadGiftCard(cardNumber, entered);
     addGiftCardLine(cardNumber, entered);
     toast.success(
-      `${tab === "purchase" ? "Gift card sold" : "Funds added"} · ${money(entered)} on card ·${cardNumber.slice(-4)}`,
+      `${isNewCard ? "Gift card sold" : "Funds added"} · ${money(entered)} on card ·${cardNumber.slice(-4)}`,
     );
     onClose();
   };
+
+  const fieldRing = (field: Field) =>
+    cn(
+      "rounded-row border bg-surface transition-shadow",
+      activeField === field
+        ? "border-primary ring-2 ring-primary/40"
+        : "border-border",
+    );
 
   const body = (
     <div className={cn("flex min-h-0 flex-1 flex-col gap-3 overflow-hidden p-3")}>
       <div className={cn("grid min-h-0 flex-1 gap-4", wide && "grid-cols-2")}>
         <div className="flex min-h-0 flex-col gap-3">
-          <div className="flex flex-wrap items-center gap-1">
-            {tabs.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setTab(t.id)}
-                aria-pressed={tab === t.id}
-                className={cn(
-                  "min-h-ctl-sm rounded-pill px-3 text-fs-xs font-extrabold uppercase tracking-[0.06em] transition-colors",
-                  tab === t.id
-                    ? "bg-shell text-shell-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-muted/70",
-                )}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
           <p className="text-fs-xs font-semibold text-muted-foreground">
             [ Adding funds to any card will activate it ]
           </p>
 
-          <label className="text-fs-xs font-extrabold uppercase tracking-[0.08em] text-muted-foreground">
-            Please enter gift card number
-          </label>
-          <div className="flex items-center gap-2 rounded-row border border-border bg-surface px-3">
-            <input
-              value={cardNumber}
-              onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, "").slice(0, 19))}
-              inputMode="numeric"
-              placeholder="6048 8798 9894 46715"
-              aria-label="Gift card number"
-              className="h-ctl-lg min-w-0 flex-1 bg-transparent text-fs-base font-bold tabular-nums text-foreground outline-none placeholder:text-muted-foreground/50"
-            />
+          <button
+            type="button"
+            onClick={() => setActiveField("card")}
+            aria-pressed={activeField === "card"}
+            className={cn("flex items-center gap-2 px-3 text-left", fieldRing("card"))}
+          >
+            <span className="flex h-ctl-lg min-w-0 flex-1 flex-col justify-center">
+              <span className="text-fs-xs font-extrabold uppercase tracking-[0.08em] text-muted-foreground">
+                Gift card number
+              </span>
+              <span
+                className={cn(
+                  "truncate text-fs-base font-bold tabular-nums text-foreground",
+                  !cardNumber && "text-muted-foreground/50",
+                )}
+              >
+                {cardNumber || "6048 8798 9894 46715"}
+              </span>
+            </span>
             <ScanLine className="size-5 shrink-0 text-muted-foreground" aria-hidden />
-          </div>
-          {cardNumber.length >= 8 && balance === null && tab !== "purchase" ? (
-            <p className="text-fs-xs font-bold text-destructive">Unknown card number</p>
-          ) : null}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveField("amount")}
+            aria-pressed={activeField === "amount"}
+            className={cn("flex items-center gap-2 px-3 text-left", fieldRing("amount"))}
+          >
+            <span className="flex h-ctl-lg min-w-0 flex-1 flex-col justify-center">
+              <span className="text-fs-xs font-extrabold uppercase tracking-[0.08em] text-muted-foreground">
+                Amount
+              </span>
+              <span
+                className={cn(
+                  "text-fs-base font-bold tabular-nums text-foreground",
+                  !amount && "text-muted-foreground/50",
+                )}
+              >
+                {amount ? money(entered) : "$0.00"}
+              </span>
+            </span>
+          </button>
 
           <div className="mt-auto flex items-end justify-between gap-3 border-t border-border pt-3">
             <div>
@@ -121,44 +150,28 @@ export function GiftCardDialog({
                 Available balance
               </p>
               <p className="text-fs-money font-extrabold tabular-nums text-foreground">
-                {balance === null ? "—" : money(balance)}
+                {balance !== null ? money(balance) : isNewCard ? "New card" : "—"}
               </p>
             </div>
-            {!checkOnly ? (
-              <p className="text-fs-lg font-extrabold tabular-nums text-foreground">
-                {money(entered)}
-              </p>
-            ) : null}
           </div>
         </div>
 
-        {!checkOnly ? (
-          <NumPad
-            className={cn("min-h-0 flex-1", wide && "h-full self-stretch")}
-            onDigit={type}
-            onBackspace={() => setAmount((cur) => cur.slice(0, -1))}
-          />
-        ) : null}
+        <NumPad
+          className={cn("min-h-0 flex-1", wide && "h-full self-stretch")}
+          onDigit={type}
+          onBackspace={backspace}
+          disableDecimal={activeField === "card"}
+        />
       </div>
 
-      {!checkOnly ? (
-        <button
-          type="button"
-          disabled={!canCharge}
-          onClick={charge}
-          className="h-ctl-lg w-full shrink-0 rounded-row bg-shell text-fs-base font-extrabold uppercase tracking-[0.06em] text-shell-foreground transition-colors disabled:opacity-40"
-        >
-          Charge {entered > 0 ? money(entered) : ""}
-        </button>
-      ) : (
-        <button
-          type="button"
-          onClick={onClose}
-          className="h-ctl-lg w-full shrink-0 rounded-row bg-shell text-fs-base font-extrabold uppercase tracking-[0.06em] text-shell-foreground transition-colors"
-        >
-          Done
-        </button>
-      )}
+      <button
+        type="button"
+        disabled={!canCharge}
+        onClick={charge}
+        className="h-ctl-lg w-full shrink-0 rounded-row bg-shell text-fs-base font-extrabold uppercase tracking-[0.06em] text-shell-foreground transition-colors disabled:opacity-40"
+      >
+        Charge {entered > 0 ? money(entered) : ""}
+      </button>
     </div>
   );
 
