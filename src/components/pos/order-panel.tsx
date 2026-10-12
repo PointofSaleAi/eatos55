@@ -483,7 +483,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
               className="min-h-ctl-md w-full bg-transparent text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
           </label>
-        ) : orderNotes ? (
+        ) : !addGuestOpen && orderNotes ? (
           <button
             type="button"
             onClick={() => setNotesOpen(true)}
@@ -499,6 +499,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
       </div>
 
 
+      {addGuestOpen ? <AddGuestForm onClose={() => setAddGuestOpen(false)} /> : <>
       {/* Items: dense receipt rows, the only scrolling area */}
       <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 pb-[calc(0.5rem+var(--kb-inset,0px))] pt-1.5">
         {cart.length === 0 ? (
@@ -629,8 +630,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
         </div>
       </div>
       ) : null}
-
-
+      </>}
       <GuestSheet
         open={guestOpen}
         initialType={typeForSheet}
