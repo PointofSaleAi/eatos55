@@ -681,6 +681,8 @@ type Store = {
   giftCardBalance: (number: string) => number | null;
   loadGiftCard: (number: string, amount: number) => void;
   chargeGiftCard: (number: string, amount: number) => boolean;
+  /** Adds a no-tax "Gift Card - XXXX" cart line for a funds load. */
+  addGiftCardLine: (number: string, amount: number) => void;
   changeQty: (id: string, delta: number) => void;
   removeLine: (id: string) => void;
   clearCart: () => void;
@@ -1038,7 +1040,16 @@ export function PosProvider({ children }: { children: ReactNode }) {
       (gross * serviceChargePercent) / 100 + serviceChargeFlat,
     );
     const net = round(gross - discount + serviceCharge);
-    const subtotal = noTax ? net : round(net / (1 + TAX_RATE));
+    // Tax-exempt lines (gift card loads) stay out of the tax base.
+    const exempt = round(
+      cart.reduce(
+        (sum, l) =>
+          l.taxExempt ? sum + l.price * l.qty * (1 - (l.discountPercent ?? 0) / 100) : sum,
+        0,
+      ),
+    );
+    const taxBase = noTax ? 0 : round(Math.max(0, net - exempt));
+    const subtotal = round(net - taxBase + taxBase / (1 + TAX_RATE));
     const tax = round(net - subtotal);
     const total = comped ? 0 : net;
 
