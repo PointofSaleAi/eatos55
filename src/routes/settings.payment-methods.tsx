@@ -37,7 +37,7 @@ import {
   type TileColor,
 } from "@/components/pos/settings-rows";
 import { brand, isTenderVisible, tenderLabel } from "@/lib/brand";
-import { useIsIPhone } from "@/lib/device";
+import { useTapToPayAvailable, useTapToPayTenderVisible } from "@/lib/device";
 import { usePos, TENDER_LABELS, type TenderId } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/settings/payment-methods")({
@@ -125,7 +125,8 @@ const sections: { title: string; rows: Row[] }[] = [
 const NOT_SET = "Not set";
 
 function PaymentMethodsSettings() {
-  const isIPhone = useIsIPhone();
+  const ttpAvailable = useTapToPayAvailable().available;
+  const ttpTenderVisible = useTapToPayTenderVisible();
   const { settings, updateSettings, canManageSettings } = usePos();
   const tenders = settings.tenders;
 
@@ -211,8 +212,8 @@ function PaymentMethodsSettings() {
           const rows = section.rows.filter(
             (row) =>
               isTenderVisible(row.id) &&
-              (row.id !== "tap-to-pay" || isIPhone === true) &&
-              (row.id !== "contactless" || isIPhone !== true),
+              (row.id !== "tap-to-pay" || ttpAvailable) &&
+              (row.id !== "contactless" || ttpTenderVisible),
           );
           if (rows.length === 0) return null;
           return (
