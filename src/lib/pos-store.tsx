@@ -696,8 +696,15 @@ type Store = {
   setAllergyNote: (v: string) => void;
   /** Wall-clock label for when the guest arrived, e.g. "8:01 AM". */
   arrivedAt: string;
+  /** Applied service charge: percent share of the cart plus any flat amount. */
   serviceCharge: number;
-  setServiceCharge: (v: number) => void;
+  /** Percent part of the service charge; recomputed as the cart changes. */
+  serviceChargePercent: number;
+  /** Name of the applied service-charge preset, "" when none. */
+  serviceChargeName: string;
+  setServiceCharge: (
+    opts: { percent?: number; amount?: number; name?: string } | null,
+  ) => void;
   orderDiscountPercent: number;
   setOrderDiscountPercent: (v: number) => void;
   /** Label of the chosen order-level discount, e.g. "Happy Hour". */
@@ -868,7 +875,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [orderNotes, setOrderNotes] = useState("");
   const [allergyNote, setAllergyNote] = useState("");
   const [arrivedAt, setArrivedAt] = useState("");
-  const [serviceCharge, setServiceCharge] = useState(0);
+  const [serviceChargeFlat, setServiceChargeFlat] = useState(0);
+  const [serviceChargePercent, setServiceChargePercent] = useState(0);
+  const [serviceChargeName, setServiceChargeName] = useState("");
   const [orderDiscountPercent, setOrderDiscountPercent] = useState(0);
   const [orderDiscountName, setOrderDiscountName] = useState("");
 
@@ -1002,6 +1011,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
       ),
     );
     const discount = round((gross * orderDiscountPercent) / 100);
+    const serviceCharge = round(
+      (gross * serviceChargePercent) / 100 + serviceChargeFlat,
+    );
     const net = round(gross - discount + serviceCharge);
     const subtotal = noTax ? net : round(net / (1 + TAX_RATE));
     const tax = round(net - subtotal);
@@ -1054,7 +1066,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
             floor,
             noTax,
             comped,
-            serviceCharge,
+            serviceChargeFlat,
+            serviceChargePercent,
+            serviceChargeName,
             orderDiscountPercent,
             orderDiscountName,
             partialPayments,
@@ -1081,7 +1095,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
           if (o.floor) setFloor(o.floor);
           setNoTax(Boolean(o.noTax));
           setComped(Boolean(o.comped));
-          setServiceCharge(o.serviceCharge ?? 0);
+          setServiceChargeFlat(o.serviceChargeFlat ?? 0);
+          setServiceChargePercent(o.serviceChargePercent ?? 0);
+          setServiceChargeName(o.serviceChargeName ?? "");
           setOrderDiscountPercent(o.orderDiscountPercent ?? 0);
           setOrderDiscountName(o.orderDiscountName ?? "");
           setPartialPayments((o.partialPayments as PartialPayment[]) ?? []);
@@ -1385,6 +1401,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
       removeLine: (id) => setCart((list) => list.filter((l) => l.id !== id)),
       clearCart: () => setCart([]),
       cancelOrder: () => {
+        setServiceChargeFlat(0);
+        setServiceChargePercent(0);
+        setServiceChargeName("");
+        setOrderDiscountPercent(0);
+        setOrderDiscountName("");
         setCart([]);
         setActiveTicketId(null);
         setPartialPayments([]);
@@ -1473,7 +1494,13 @@ export function PosProvider({ children }: { children: ReactNode }) {
       setAllergyNote,
       arrivedAt,
       serviceCharge,
-      setServiceCharge,
+      serviceChargePercent,
+      serviceChargeName,
+      setServiceCharge: (opts) => {
+        setServiceChargeFlat(opts?.amount ?? 0);
+        setServiceChargePercent(opts?.percent ?? 0);
+        setServiceChargeName(opts?.name ?? "");
+      },
       orderDiscountPercent,
       setOrderDiscountPercent,
       orderDiscountName,
@@ -1703,6 +1730,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
     allergyNote,
     arrivedAt,
     serviceCharge,
+    serviceChargePercent,
+    serviceChargeName,
     orderDiscountPercent,
     orderDiscountName,
 
