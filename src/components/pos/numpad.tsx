@@ -42,12 +42,15 @@ export function NumPad({
   onBackspace,
   onPlus,
   variant = "plain",
+  disableDecimal,
   className,
 }: {
   onDigit: (d: string) => void;
   onBackspace: () => void;
   onPlus?: () => void;
   variant?: "plain" | "order";
+  /** Greys out the "." key — used when the pad targets a digits-only field. */
+  disableDecimal?: boolean;
   className?: string;
 }) {
   const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
@@ -112,7 +115,7 @@ export function NumPad({
           {d}
         </Key>
       ))}
-      <Key onPress={() => onDigit(".")}>.</Key>
+      <Key onPress={() => onDigit(".")} disabled={disableDecimal}>.</Key>
       <Key onPress={() => onDigit("0")}>0</Key>
       <Key onPress={onBackspace} label="Backspace">
         <Delete className="size-7" />
