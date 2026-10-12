@@ -209,6 +209,11 @@ export function PaymentBill({ room }: { room?: Room | null }) {
             className="min-h-ctl-md w-full bg-transparent text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
           />
         </label>
+      ) : !editable && orderNotes ? (
+        <p className="mt-2 flex items-center gap-2 rounded-row bg-muted px-3 py-2 text-fs-sm text-muted-foreground">
+          <NotebookPen className="size-4 shrink-0" aria-hidden />
+          <span className="min-w-0 break-words">{orderNotes}</span>
+        </p>
       ) : null}
 
       <ul className="mt-3 space-y-1.5 border-t border-dashed border-border pt-3">
