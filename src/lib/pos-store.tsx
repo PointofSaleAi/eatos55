@@ -1642,7 +1642,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
                 revenueCenter: t.revenueCenter ?? session.station ?? "Main dining",
                 orderType,
                 ...(guest.email ? { guestEmail: guest.email } : {}),
-                ...(orderNotes || guest.notes ? { notes: orderNotes || guest.notes } : {}),
+                ...((orderNotes || guest.notes) ? { notes: (orderNotes || guest.notes) as string } : {}),
                 ...(guest.vehicle ? { vehicle: guest.vehicle } : {}),
                 ...extra,
                 payments: [
@@ -1679,7 +1679,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
             paymentType: paymentLabel,
             orderType,
             ...(guest.email ? { guestEmail: guest.email } : {}),
-            ...(orderNotes || guest.notes ? { notes: orderNotes || guest.notes } : {}),
+            ...((orderNotes || guest.notes) ? { notes: (orderNotes || guest.notes) as string } : {}),
             ...(guest.vehicle ? { vehicle: guest.vehicle } : {}),
             ...extra,
             payments: rows.map((r, i) => ({ no: String(i + 1), ...r })),
