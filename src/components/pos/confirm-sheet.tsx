@@ -71,7 +71,7 @@ function ConfirmSheet({ req, onDone }: { req: ConfirmRequest; onDone: (ok: boole
       role="dialog"
       aria-modal="true"
       aria-label={req.title}
-      className="fixed inset-0 z-[70] flex items-end justify-center md:items-center"
+      className="pointer-events-auto fixed inset-0 z-[70] flex items-end justify-center md:items-center"
     >
       <button
         type="button"

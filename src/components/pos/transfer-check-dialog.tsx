@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Check, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { employees } from "@/lib/demo-data";
+import { useConfirm } from "@/components/pos/confirm-sheet";
 import { cn } from "@/lib/utils";
 
 export function TransferCheckDialog({ currentOwner, onClose, onTransfer }: {
@@ -10,20 +10,43 @@ export function TransferCheckDialog({ currentOwner, onClose, onTransfer }: {
   onClose: () => void;
   onTransfer: (owner: string) => void;
 }) {
+  const confirm = useConfirm();
+  // The click that answers the confirm alert reaches Radix as an outside
+  // interaction on this dialog, so the guard is held for the whole alert and
+  // briefly after it — refs, because the value must be current within the click.
+  const confirmingRef = useRef(false);
+  const guardUntil = useRef(0);
+  const isGuarded = () => confirmingRef.current || Date.now() < guardUntil.current;
+  const [confirming, setConfirming] = useState(false);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(currentOwner);
   const owners = employees.some((employee) => employee.name === currentOwner)
     ? employees
     : [...employees, { id: "current-owner", name: currentOwner, role: "", level: "", state: "" }];
   const visible = owners.filter((employee) => employee.name.toLowerCase().includes(query.trim().toLowerCase()));
+  const canUpdate = selected !== currentOwner;
+
+  const applyTransfer = async () => {
+    confirmingRef.current = true;
+    setConfirming(true);
+    const ok = await confirm({
+      title: "Confirm",
+      message: `Are you sure you want to transfer the ordering check to ${selected}?`,
+      confirmLabel: "Yes, Transfer",
+      cancelLabel: "No",
+      rowButtons: true,
+    });
+    confirmingRef.current = false;
+    guardUntil.current = Date.now() + 500;
+    setConfirming(false);
+    if (ok) onTransfer(selected);
+  };
 
   return (
-    <Dialog open onOpenChange={(open) => { if (!open) onClose(); }}>
+    <Dialog open onOpenChange={(open) => { if (!open && !isGuarded()) onClose(); }}>
       <DialogContent className="w-[calc(100%-2rem)] max-w-sheet gap-0 rounded-sheet border-border bg-surface p-0">
-        <div className="grid grid-cols-[5rem_minmax(0,1fr)_5rem] items-center border-b border-border px-3 py-3">
-          <Button variant="ghost" size="sm" onClick={onClose}>Cancel</Button>
+        <div className="border-b border-border px-4 py-3">
           <DialogTitle className="text-center text-fs-base font-extrabold tracking-normal">Transfer Check</DialogTitle>
-          <Button variant="ghost" size="sm" disabled={selected === currentOwner} onClick={() => onTransfer(selected)} className="text-accent hover:text-accent">Update</Button>
         </div>
         <div className="px-4 pt-3">
           <label className="flex h-11 items-center gap-2 rounded-row border border-border bg-muted px-3 focus-within:ring-2 focus-within:ring-ring">
@@ -32,16 +55,26 @@ export function TransferCheckDialog({ currentOwner, onClose, onTransfer }: {
           </label>
           <DialogDescription className="py-3 text-fs-xs text-muted-foreground">Select an employee to transfer the ordering check</DialogDescription>
         </div>
-        <div role="group" aria-label="Employees" className="no-scrollbar max-h-[min(24rem,50dvh)] overflow-y-auto pb-2">
+        <div role="group" aria-label="Employees" className="no-scrollbar max-h-[min(24rem,50dvh)] overflow-y-auto">
           {visible.map((employee) => (
-            <Button key={employee.id} variant="ghost" aria-pressed={selected === employee.name} onClick={() => setSelected(employee.name)} className={cn("h-auto min-h-12 w-full justify-start gap-3 rounded-none border-t border-border px-4 py-2 text-left hover:bg-muted", selected === employee.name && "bg-accent/10")}>
+            <button key={employee.id} type="button" aria-pressed={selected === employee.name} onClick={() => setSelected(employee.name)} className={cn("flex min-h-12 w-full cursor-pointer items-center gap-3 border-t border-border px-4 py-2 text-left text-foreground transition-colors hover:bg-muted", selected === employee.name && "bg-accent/10")}>
               <span className="grid size-8 shrink-0 place-items-center rounded-pill bg-secondary text-fs-xs font-bold text-secondary-foreground">{employee.name.split(" ").filter(Boolean).map((part) => part[0]).slice(0, 2).join("")}</span>
-              <span className="min-w-0 flex-1 whitespace-normal text-fs-sm font-bold">{employee.name}</span>
+              <span className="min-w-0 flex-1 whitespace-normal text-fs-sm font-bold text-foreground">{employee.name}</span>
               {employee.name === currentOwner ? <span className="shrink-0 text-fs-xs text-muted-foreground">Current Owner</span> : null}
               <span className="grid size-5 shrink-0 place-items-center">{selected === employee.name ? <Check className="size-5 text-accent" /> : null}</span>
-            </Button>
+            </button>
           ))}
           {visible.length === 0 ? <p className="px-4 py-6 text-center text-fs-sm text-muted-foreground">No employees found</p> : null}
+        </div>
+        <div className="border-t border-border p-3 pb-[calc(0.75rem+var(--sab,0px))]">
+          <button
+            type="button"
+            disabled={!canUpdate}
+            onClick={applyTransfer}
+            className="min-h-ctl-lg w-full cursor-pointer rounded-card bg-primary text-fs-base font-extrabold text-primary-foreground transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Update
+          </button>
         </div>
       </DialogContent>
     </Dialog>
