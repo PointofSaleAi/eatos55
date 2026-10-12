@@ -24,15 +24,15 @@
    - CHARGE adds a `Gift Card - XXXX` no-tax line item to the cart; the order is then paid via the existing payment flow.
    - Check Balance tab shows balance only, no charge.
 2. **Gift Card tender on the payment screen**:
-   - New "Gift Card" payment method (visible when enabled in payment settings).
-   - Opens the Payment By Gift Card modal: card number, pre-filled due amount (editable), balance lookup, CHARGE disabled until a known card with sufficient balance.
-   - On success, completes the payment through the existing success flow; partial balance leaves a remaining due.
+   - New "Gift Card" payment method, available for all order types (visible when enabled in payment settings).
+   - Opens the Payment By Gift Card modal: card number, pre-filled due amount (editable), balance lookup, CHARGE disabled until a known card with balance.
+   - On success, completes the payment through the existing success flow. If the card balance is less than the amount due, the full balance is applied as a partial payment and the remaining due stays open for a second tender (split payment).
 3. **Demo gift card data**: a small set of demo card numbers with balances (e.g. the 6048... numbers from the recording) stored in demo data; adding funds / paying updates the balance for the session.
 4. Responsive behavior on phone, tablet, and desktop; shared modal close control stays consistent with the app.
 
-## Open questions
-1. Should the Gift Card tender appear for all order types, or only certain ones?
-2. If the card balance is less than the amount due, should it apply the partial balance and ask for a second tender (split), or block the charge?
+## Decided
+- Gift Card tender is available for all order types.
+- Insufficient balance applies the full card balance as a partial payment; the remainder is paid with another tender.
 
 ## Technical notes
 - New `src/components/pos/gift-card-dialog.tsx` (tabs + keypad, reusing the existing keypad styles); new `gift-card-payment-dialog.tsx` on the payment route.
