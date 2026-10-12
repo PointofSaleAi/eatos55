@@ -681,6 +681,8 @@ type Store = {
   cancelOrder: () => void;
   /** Cancel an existing ticket and remove it from the queue. */
   cancelTicket: (id: string) => void;
+  /** Pull another open check's items into the current order and retire that check. */
+  mergeTicket: (id: string) => void;
   noTax: boolean;
   setNoTax: (v: boolean) => void;
   /** Comped order: nothing is charged to the guest. */
@@ -689,6 +691,9 @@ type Store = {
   /** Free-text note attached to the whole order. */
   orderNotes: string;
   setOrderNotes: (v: string) => void;
+  /** Allergy alert attached to the whole order. */
+  allergyNote: string;
+  setAllergyNote: (v: string) => void;
   /** Wall-clock label for when the guest arrived, e.g. "8:01 AM". */
   arrivedAt: string;
   serviceCharge: number;
@@ -857,6 +862,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [noTax, setNoTax] = useState(false);
   const [comped, setComped] = useState(false);
   const [orderNotes, setOrderNotes] = useState("");
+  const [allergyNote, setAllergyNote] = useState("");
   const [arrivedAt, setArrivedAt] = useState("");
   const [serviceCharge, setServiceCharge] = useState(0);
   const [orderDiscountPercent, setOrderDiscountPercent] = useState(0);
@@ -1036,6 +1042,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
             guest,
             orderType,
             orderNotes,
+            allergyNote,
             arrivedAt,
             activeTicketId,
             activeTable,
@@ -1061,6 +1068,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
           setGuestState((g) => ({ ...g, ...(o.guest as Partial<Guest>) }));
           setOrderType(o.orderType as ServiceOrderType);
           setOrderNotes(o.orderNotes ?? "");
+          setAllergyNote(o.allergyNote ?? "");
           setArrivedAt(o.arrivedAt ?? "");
           setActiveTicketId(o.activeTicketId ?? null);
           setActiveTable(o.activeTable ?? null);
@@ -1309,6 +1317,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setActiveTicketId(null);
         setActiveTable(table ?? null);
         setOrderNotes("");
+        setAllergyNote("");
         setComped(false);
         setArrivedAt(
           formatTime(),
@@ -1375,6 +1384,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setSplitChecksState([]);
         setActiveSplitCheckId(null);
         setOrderNotes("");
+        setAllergyNote("");
         setComped(false);
         setNoTax(false);
         setArrivedAt("");
@@ -1417,12 +1427,43 @@ export function PosProvider({ children }: { children: ReactNode }) {
           setActiveTable(null);
         }
       },
+      /** Pull another open check's items into this order and retire that check. */
+      mergeTicket: (id) => {
+        const ticket = tickets.find((t) => t.id === id);
+        if (!ticket) return;
+        setCart((list) => {
+          const next = list.map((l) => ({ ...l }));
+          for (const line of ticket.lines) {
+            const existing = next.find((l) => l.id === line.id);
+            if (existing) existing.qty += line.qty;
+            else next.push({ ...line });
+          }
+          return next;
+        });
+        setTickets((list) => list.filter((t) => t.id !== id));
+        const table = ticket.table ? String(ticket.table) : null;
+        if (table) {
+          setTableStates((s) => ({ ...s, [table]: "available" }));
+          setTableSince((s) => {
+            const next = { ...s };
+            delete next[table];
+            return next;
+          });
+          setTableSeatedMap((s) => {
+            const next = { ...s };
+            delete next[table];
+            return next;
+          });
+        }
+      },
       noTax,
       setNoTax,
       comped,
       setComped,
       orderNotes,
       setOrderNotes,
+      allergyNote,
+      setAllergyNote,
       arrivedAt,
       serviceCharge,
       setServiceCharge,
@@ -1649,6 +1690,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     noTax,
     comped,
     orderNotes,
+    allergyNote,
     arrivedAt,
     serviceCharge,
     orderDiscountPercent,
