@@ -62,7 +62,7 @@ export function ServiceChargeSheet({
               <button
                 key={preset.id}
                 type="button"
-                onClick={() => onPick({ name: preset.name, percent: preset.percent, amount: preset.amount })}
+                onClick={() => onPick({ ...preset })}
                 className={cn(
                   "flex w-full items-center gap-3 px-4 py-3.5 text-left",
                   i % 2 === 0 ? "bg-muted/40" : "bg-surface",
