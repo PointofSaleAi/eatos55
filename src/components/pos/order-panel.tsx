@@ -80,7 +80,6 @@ function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, d
       if (!ok) return;
       cancelOrder();
       toast.success("Order cancelled");
-      navigate({ to: "/tickets" });
     })();
   };
 
