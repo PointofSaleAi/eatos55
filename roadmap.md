@@ -16,4 +16,6 @@
 - [x] Add inline auto-saving guest name and mobile fields to the cart header
 - [x] Dock New Order options as a third column on landscape screens while keeping a right-side overlay on narrow screens
 - [x] Break each two-word option label onto two lines in the docked options rail
+- [x] Rearrange cart options into the single agreed row: Discount, No Tax, Cancel Order, No Sale, Custom Item, Gift Card, Service Charge, Add Guest, Open Orders, Allergy, Merge, Reopen Check (three-dot rail removed; Allergy note and Merge checks added)
+
 
