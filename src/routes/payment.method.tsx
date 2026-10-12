@@ -866,6 +866,25 @@ function PaymentMethod() {
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">{grid}</div>
       </div>
 
+      <GiftCardPaymentDialog
+        open={giftPayOpen}
+        due={Math.round((due + chosenTip) * 100) / 100}
+        onClose={() => setGiftPayOpen(false)}
+        onCommit={(amount) => {
+          setGiftPayOpen(false);
+          const targetDue = Math.round((due + chosenTip) * 100) / 100;
+          if (amount < targetDue) {
+            haptic("medium");
+            addPartialPayment(amount, "gift", "Gift Card");
+            announce("Partial payment applied");
+            toast.success(`Gift Card ${money(amount)} applied · ${money(targetDue - amount)} remaining`);
+            return;
+          }
+          completePayment(Math.max(0, amount - chosenTip), "gift", "Gift Card", "gift", chosenTip);
+          setChosenTip(0);
+        }}
+      />
+
       <AmountEntry
         open={amountFor !== null}
         title={amountFor?.label ?? "Amount"}
