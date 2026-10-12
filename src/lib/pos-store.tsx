@@ -676,6 +676,10 @@ type Store = {
     },
   ) => void;
   addCustomItem: (name: string, price: number) => void;
+  /** Gift cards: balance lookup, loading funds, and spending balance. */
+  giftCardBalance: (number: string) => number | null;
+  loadGiftCard: (number: string, amount: number) => void;
+  chargeGiftCard: (number: string, amount: number) => boolean;
   changeQty: (id: string, delta: number) => void;
   removeLine: (id: string) => void;
   clearCart: () => void;
