@@ -539,7 +539,8 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
 
       </div>
 
-      {/* Footer: totals and Save / Fire / Charge */}
+      {/* Footer: totals and Save / Fire / Charge — hidden while the cart is empty */}
+      {cart.length > 0 ? (
       <div
         className={cn(
           "shrink-0 border-t border-border bg-surface px-3 pt-1.5",
