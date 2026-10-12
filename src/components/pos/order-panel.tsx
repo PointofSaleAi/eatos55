@@ -1,4 +1,5 @@
 import {
+  ArrowLeftRight,
   BadgePercent,
   ClipboardList,
   Flame,
@@ -31,6 +32,7 @@ import { money, type ServiceOrderType } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { ServiceChargeSheet } from "@/components/pos/service-charge-sheet";
+import { TransferCheckDialog } from "@/components/pos/transfer-check-dialog";
 import { formatPhone, GuestSheet } from "@/components/pos/guest-sheet";
 import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { useConfirm } from "@/components/pos/confirm-sheet";
@@ -43,6 +45,9 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
   const navigate = useNavigate();
   const confirm = useConfirm();
   const {
+    cart,
+    orderOwner,
+    transferCurrentOrder,
     totals,
     orderDiscountPercent,
     noTax,
@@ -61,6 +66,7 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
     setAllergyNote,
   } = usePos();
   const [discountOpen, setDiscountOpen] = useState(false);
+  const [transferOpen, setTransferOpen] = useState(false);
   const [chargeOpen, setChargeOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [allergyOpen, setAllergyOpen] = useState(false);
@@ -118,6 +124,7 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
           active={orderDiscountPercent > 0 || totals.discount > 0}
           onPress={() => setDiscountOpen(true)}
         />
+        {cart.length > 0 ? <HeaderAction label="Transfer Check" icon={ArrowLeftRight} onPress={() => setTransferOpen(true)} /> : null}
         <HeaderAction
           label={noTax ? "No Tax · On" : "No Tax"}
           icon={Percent}
@@ -182,6 +189,12 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
           setDiscountOpen(false);
         }}
       />
+
+      {transferOpen ? <TransferCheckDialog currentOwner={orderOwner} onClose={() => setTransferOpen(false)} onTransfer={(owner) => {
+        transferCurrentOrder(owner);
+        setTransferOpen(false);
+        toast.success(`Check transferred to ${owner}`);
+      }} /> : null}
 
       <ServiceChargeSheet
         open={chargeOpen}
