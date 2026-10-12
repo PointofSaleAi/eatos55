@@ -11,6 +11,8 @@ export type ConfirmRequest = {
   confirmLabel: string;
   cancelLabel?: string;
   destructive?: boolean;
+  /** Render Cancel and Confirm side by side, like a system alert (No | Yes). */
+  rowButtons?: boolean;
 };
 
 type Resolver = (ok: boolean) => void;
