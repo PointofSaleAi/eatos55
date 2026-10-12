@@ -17,6 +17,7 @@ export type ResumeOrder = {
   allergyNote: string;
   arrivedAt: string;
   activeTicketId: string | null;
+  draftOwner?: string | null;
   activeTable: string | null;
   floor: string;
   noTax: boolean;
