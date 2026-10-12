@@ -621,6 +621,8 @@ type Store = {
   setMode: (m: MenuMode) => void;
   cart: CartLine[];
   activeTicketId: string | null;
+  orderOwner: string;
+  transferCurrentOrder: (owner: string) => void;
   activeTable: string | null;
   floor: string;
   setFloor: (f: string) => void;
@@ -855,6 +857,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
 
   const [cart, setCart] = useState<CartLine[]>([]);
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
+  const [draftOwner, setDraftOwner] = useState<string | null>(null);
   const [activeTable, setActiveTable] = useState<string | null>(null);
   const [floor, setFloor] = useState<string>("Ground Floor");
   const [guest, setGuestState] = useState<Guest>({ name: "", phone: "", partySize: 1 });
@@ -1062,6 +1065,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
             allergyNote,
             arrivedAt,
             activeTicketId,
+            draftOwner,
             activeTable,
             floor,
             noTax,
@@ -1092,6 +1096,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
           setAllergyNote(o.allergyNote ?? "");
           setArrivedAt(o.arrivedAt ?? "");
           setActiveTicketId(o.activeTicketId ?? null);
+          setDraftOwner(o.draftOwner ?? null);
           setActiveTable(o.activeTable ?? null);
           if (o.floor) setFloor(o.floor);
           setNoTax(Boolean(o.noTax));
@@ -1249,6 +1254,17 @@ export function PosProvider({ children }: { children: ReactNode }) {
       setMode,
       cart,
       activeTicketId,
+      orderOwner: tickets.find((ticket) => ticket.id === activeTicketId)?.server ?? draftOwner ?? session.name,
+      transferCurrentOrder: (owner) => {
+        if (!cart.length) return;
+        if (activeTicketId) {
+          setTickets((list) => list.map((ticket) => ticket.id === activeTicketId
+            ? { ...ticket, transferOrigin: ticket.transferOrigin ?? ticket.server, server: owner }
+            : ticket));
+        } else {
+          setDraftOwner(owner);
+        }
+      },
       activeTable,
       floor,
       setFloor,
@@ -1339,6 +1355,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
       startOrder: (table, partySize) => {
         setCart([]);
         setActiveTicketId(null);
+        setDraftOwner(null);
         setActiveTable(table ?? null);
         setOrderNotes("");
         setAllergyNote("");
@@ -1363,6 +1380,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         const ticket = tickets.find((t) => t.id === id);
         if (!ticket) return;
         setActiveTicketId(id);
+        setDraftOwner(null);
         setCart(ticket.lines.map((l) => ({ ...l })));
         setMode(ticket.mode);
       },
@@ -1402,6 +1420,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
       removeLine: (id) => setCart((list) => list.filter((l) => l.id !== id)),
       clearCart: () => setCart([]),
       cancelOrder: () => {
+        setDraftOwner(null);
         setServiceChargeFlat(0);
         setServiceChargePercent(0);
         setServiceChargeName("");
@@ -1590,7 +1609,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
             status: "paid",
             mode,
             lines: cart.map((l) => ({ ...l })),
-            server: session.name,
+            server: draftOwner ?? session.name,
             checkNumber: 1047 + tickets.length,
             tips: tip,
             revenueCenter: session.station ?? "Main dining",
@@ -1622,6 +1641,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setActiveSplitCheckId(null);
         setCart([]);
         setActiveTicketId(null);
+        setDraftOwner(null);
         return id;
       },
       lastPayment,
@@ -1711,6 +1731,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     mode,
     cart,
     activeTicketId,
+    draftOwner,
     activeTable,
     floor,
     tableStates,

@@ -15,3 +15,4 @@
 - Shared React contexts are created via pinnedContext (globalThis registry) and main screens are preloaded after sign-in (router defaultPreload intent + useWarmMainScreens): live preview updates can't split contexts, and first visits/PIN unlock don't stall.
 - Clock-out ownership changes retain each ticket's transfer origin so transferred checks can be grouped and reassigned until the shift is completed.
 - New Order owns the options panel and inline Custom Item state; cart actions portal into the landscape rail or narrow sheet, while Custom Item replaces only the product area so the cart and menu state persist.
+- Current-order transfers use shared POS ownership state, with a resumable draft owner for unsaved orders and ticket ownership for existing checks, so ownership survives navigation and payment.
