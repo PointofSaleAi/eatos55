@@ -9,11 +9,13 @@ import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
+type Field = "card" | "amount";
+
 /**
  * "Payment By Gift Card": key or scan the card, see its balance, and charge
- * the due amount against it. When the balance cannot cover the check the full
- * balance is applied as a partial payment and the rest stays open for another
- * tender.
+ * the due amount against it. One number pad targets whichever field is
+ * active. When the balance cannot cover the check the full balance is
+ * applied as a partial payment and the rest stays open for another tender.
  */
 export function GiftCardPaymentDialog({
   open,
@@ -34,11 +36,13 @@ export function GiftCardPaymentDialog({
 
   const [cardNumber, setCardNumber] = useState("");
   const [amount, setAmount] = useState("");
+  const [activeField, setActiveField] = useState<Field>("card");
 
   useEffect(() => {
     if (open) {
       setCardNumber("");
       setAmount(due > 0 ? String(due) : "");
+      setActiveField("card");
     }
   }, [open, due]);
 
@@ -49,11 +53,28 @@ export function GiftCardPaymentDialog({
   const canCharge = known && applied > 0;
 
   const type = (d: string) => {
+    if (activeField === "card") {
+      if (d === ".") return;
+      setCardNumber((cur) => {
+        const next = `${cur}${d}`.replace(/\D/g, "").slice(0, 19);
+        if (next.length >= 8 && cur.length < 8) setActiveField("amount");
+        return next;
+      });
+      return;
+    }
     setAmount((cur) => {
       if (d === "." && cur.includes(".")) return cur;
       const next = `${cur}${d}`;
       return next.length > 9 ? cur : next;
     });
+  };
+
+  const backspace = () => {
+    if (activeField === "card") {
+      setCardNumber((cur) => cur.slice(0, -1));
+    } else {
+      setAmount((cur) => cur.slice(0, -1));
+    }
   };
 
   const charge = () => {
@@ -62,27 +83,55 @@ export function GiftCardPaymentDialog({
     onCommit(applied);
   };
 
+  const fieldRing = (field: Field) =>
+    cn(
+      "rounded-row border bg-surface transition-shadow",
+      activeField === field
+        ? "border-primary ring-2 ring-primary/40"
+        : "border-border",
+    );
+
   const body = (
     <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-hidden p-3">
       <div className={cn("grid min-h-0 flex-1 gap-4", wide && "grid-cols-2")}>
         <div className="flex min-h-0 flex-col gap-3">
-          <label className="text-fs-xs font-extrabold uppercase tracking-[0.08em] text-muted-foreground">
-            Card number
-          </label>
-          <div className="flex items-center gap-2 rounded-row border border-border bg-surface px-3">
-            <input
-              value={cardNumber}
-              onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, "").slice(0, 19))}
-              inputMode="numeric"
-              placeholder="XXXX-XXXX-XXXX-XXXX"
-              aria-label="Gift card number"
-              className="h-ctl-lg min-w-0 flex-1 bg-transparent text-fs-base font-bold tabular-nums text-foreground outline-none placeholder:text-muted-foreground/50"
-            />
+          <button
+            type="button"
+            onClick={() => setActiveField("card")}
+            aria-pressed={activeField === "card"}
+            className={cn("flex items-center gap-2 px-3 text-left", fieldRing("card"))}
+          >
+            <span className="flex h-ctl-lg min-w-0 flex-1 flex-col justify-center">
+              <span className="text-fs-xs font-extrabold uppercase tracking-[0.08em] text-muted-foreground">
+                Card number
+              </span>
+              <span
+                className={cn(
+                  "truncate text-fs-base font-bold tabular-nums text-foreground",
+                  !cardNumber && "text-muted-foreground/50",
+                )}
+              >
+                {cardNumber || "XXXX-XXXX-XXXX-XXXX"}
+              </span>
+            </span>
             <ScanLine className="size-5 shrink-0 text-muted-foreground" aria-hidden />
-          </div>
-          {cardNumber.length >= 8 && balance === null ? (
-            <p className="text-fs-xs font-bold text-destructive">Unknown card number</p>
-          ) : null}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveField("amount")}
+            aria-pressed={activeField === "amount"}
+            className={cn("flex items-center gap-2 px-3 text-left", fieldRing("amount"))}
+          >
+            <span className="flex h-ctl-lg min-w-0 flex-1 flex-col justify-center">
+              <span className="text-fs-xs font-extrabold uppercase tracking-[0.08em] text-muted-foreground">
+                Amount
+              </span>
+              <span className="text-fs-base font-bold tabular-nums text-foreground">
+                {money(entered)}
+              </span>
+            </span>
+          </button>
 
           <div className="mt-auto space-y-2 border-t border-border pt-3">
             <div className="flex items-center justify-between gap-3">
@@ -93,7 +142,9 @@ export function GiftCardPaymentDialog({
                 {balance === null ? "—" : money(balance)}
               </p>
             </div>
-            {known && entered > balance ? (
+            {cardNumber.length >= 8 && balance === null ? (
+              <p className="text-fs-xs font-bold text-destructive">Unknown card number</p>
+            ) : known && entered > balance ? (
               <p className="text-fs-xs font-bold text-accent">
                 Balance covers {money(balance)} · the rest stays open for another tender
               </p>
@@ -101,16 +152,12 @@ export function GiftCardPaymentDialog({
           </div>
         </div>
 
-        <div className="flex min-h-0 flex-col gap-2">
-          <p className="text-center text-fs-money font-extrabold tabular-nums text-foreground">
-            {money(entered)}
-          </p>
-          <NumPad
-            className={cn("min-h-0 flex-1", wide && "h-full self-stretch")}
-            onDigit={type}
-            onBackspace={() => setAmount((cur) => cur.slice(0, -1))}
-          />
-        </div>
+        <NumPad
+          className={cn("min-h-0 flex-1", wide && "h-full self-stretch")}
+          onDigit={type}
+          onBackspace={backspace}
+          disableDecimal={activeField === "card"}
+        />
       </div>
 
       <button
