@@ -6,21 +6,24 @@ function Key({
   onPress,
   className,
   label,
+  disabled,
   textClass = "text-fs-key",
 }: {
   children: React.ReactNode;
   onPress: () => void;
   className?: string;
   label?: string;
+  disabled?: boolean;
   textClass?: string;
 }) {
   return (
     <button
       type="button"
       aria-label={label}
+      disabled={disabled}
       onClick={onPress}
       className={cn(
-        "grid h-full min-h-key place-items-center rounded-card bg-surface font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
+        "grid h-full min-h-key place-items-center rounded-card bg-surface font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97] disabled:opacity-40 disabled:active:scale-100",
         textClass,
         className,
       )}
@@ -39,12 +42,15 @@ export function NumPad({
   onBackspace,
   onPlus,
   variant = "plain",
+  disableDecimal,
   className,
 }: {
   onDigit: (d: string) => void;
   onBackspace: () => void;
   onPlus?: () => void;
   variant?: "plain" | "order";
+  /** Greys out the "." key — used when the pad targets a digits-only field. */
+  disableDecimal?: boolean;
   className?: string;
 }) {
   const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
@@ -109,7 +115,7 @@ export function NumPad({
           {d}
         </Key>
       ))}
-      <Key onPress={() => onDigit(".")}>.</Key>
+      <Key onPress={() => onDigit(".")} disabled={disableDecimal ?? false}>.</Key>
       <Key onPress={() => onDigit("0")}>0</Key>
       <Key onPress={onBackspace} label="Backspace">
         <Delete className="size-7" />
