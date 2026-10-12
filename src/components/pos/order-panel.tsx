@@ -335,6 +335,10 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
     activeTicketId,
     tickets,
     settings,
+    orderDiscountPercent,
+    orderDiscountName,
+    serviceChargePercent,
+    serviceChargeName,
   } = usePos();
 
   const placement = settings.orderTypePlacement;
@@ -342,7 +346,6 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
 
   const [guestOpen, setGuestOpen] = useState(false);
   const [typeForSheet, setTypeForSheet] = useState<ServiceOrderType | undefined>(undefined);
-  const [discountName, setDiscountName] = useState<string | null>(null);
   const [notesOpen, setNotesOpen] = useState(false);
   const [guestName, setGuestName] = useState(guest.name);
   const [guestPhone, setGuestPhone] = useState(guest.phone);
@@ -409,7 +412,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
         </div>
 
         <div className="mt-1.5">
-          <CartHeaderActions onDiscount={setDiscountName} {...optionsLayout} />
+          <CartHeaderActions {...optionsLayout} />
         </div>
 
         {/* Service type and the table / arrival chip share one scrolling row */}
