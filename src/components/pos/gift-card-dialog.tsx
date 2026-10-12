@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ScanLine } from "lucide-react";
+import { Info, ScanLine } from "lucide-react";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { NumPad } from "@/components/pos/numpad";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -48,6 +48,11 @@ export function GiftCardDialog({
   const cardReady = cardNumber.length >= 8;
   const isNewCard = cardReady && balance === null;
   const canCharge = cardReady && entered > 0;
+  const balanceStatus = balance !== null
+    ? money(balance)
+    : isNewCard
+      ? "New card"
+      : "Enter card number";
 
   const type = (d: string) => {
     if (activeField === "card") {
@@ -97,9 +102,21 @@ export function GiftCardDialog({
     <div className={cn("flex min-h-0 flex-1 flex-col gap-3 overflow-hidden p-3")}>
       <div className={cn("grid min-h-0 flex-1 gap-4", wide && "grid-cols-2")}>
         <div className="flex min-h-0 flex-col gap-3">
-          <p className="text-fs-xs font-semibold text-muted-foreground">
-            [ Adding funds to any card will activate it ]
-          </p>
+          <div className="space-y-1">
+            <h3 className="text-fs-lg font-extrabold text-foreground">
+              Enter gift card details
+            </h3>
+            <p className="text-fs-sm leading-relaxed text-muted-foreground">
+              Purchase a new card, add funds, or check an existing balance.
+            </p>
+          </div>
+
+          <div className="flex items-start gap-2 rounded-row bg-muted px-3 py-2.5">
+            <Info className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
+            <p className="text-fs-xs font-semibold leading-relaxed text-muted-foreground">
+              Adding funds to a new card will activate it automatically.
+            </p>
+          </div>
 
           <button
             type="button"
@@ -150,7 +167,14 @@ export function GiftCardDialog({
                 Available balance
               </p>
               <p className="text-fs-money font-extrabold tabular-nums text-foreground">
-                {balance !== null ? money(balance) : isNewCard ? "New card" : "—"}
+                {balanceStatus}
+              </p>
+              <p className="mt-0.5 text-fs-xs font-semibold text-muted-foreground">
+                {balance !== null
+                  ? "Current card balance"
+                  : isNewCard
+                    ? "No existing balance found"
+                    : "Balance appears after a valid card number"}
               </p>
             </div>
           </div>
