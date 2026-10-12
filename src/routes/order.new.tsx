@@ -464,6 +464,7 @@ function NewOrder() {
       >
         <OrderPanel
           wide={wide}
+          customItemOpen={customItemOpen}
           moreOpen={moreOpen}
           onMoreOpenChange={setMoreOpen}
           railHost={railHost}
