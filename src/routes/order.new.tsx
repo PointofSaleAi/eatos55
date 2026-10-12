@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { SearchDock } from "@/components/pos/search-dock";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { CustomItemWorkspace } from "@/components/pos/custom-item-workspace";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -68,6 +69,7 @@ function NewOrder() {
   const wide = useWideLayout();
   const landscape = useLandscapeWide();
   const [moreOpen, setMoreOpen] = useState(false);
+  const [customItemOpen, setCustomItemOpen] = useState(false);
   const [railHost, setRailHost] = useState<HTMLElement | null>(null);
   const docked = wide && landscape;
   // Long-press on a tile always opens the item sheet, even for simple items.
@@ -306,6 +308,9 @@ function NewOrder() {
 
 
 
+        {customItemOpen && showMenu ? (
+          <CustomItemWorkspace onClose={() => setCustomItemOpen(false)} />
+        ) : (
         <div
           className={cn(
             "no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 pt-2.5",
@@ -440,6 +445,7 @@ function NewOrder() {
           </div>
         )}
         </div>
+        )}
       </div>
 
       <aside
@@ -454,7 +460,18 @@ function NewOrder() {
 
         )}
       >
-        <OrderPanel wide={wide} moreOpen={moreOpen} onMoreOpenChange={setMoreOpen} railHost={railHost} docked={docked} />
+        <OrderPanel
+          wide={wide}
+          moreOpen={moreOpen}
+          onMoreOpenChange={setMoreOpen}
+          railHost={railHost}
+          docked={docked}
+          onCustomItem={() => {
+            setMoreOpen(false);
+            setCustomItemOpen(true);
+            setTab("menu");
+          }}
+        />
       </aside>
 
 
