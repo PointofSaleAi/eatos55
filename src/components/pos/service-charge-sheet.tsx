@@ -6,32 +6,37 @@ import { cn } from "@/lib/utils";
 
 export type ServiceChargePreset = {
   name: string;
-  /** Resolved charge amount for the current order. */
-  charge: number;
+  /** Percent presets recompute as the cart changes. */
+  percent?: number;
+  /** Flat-fee presets keep their amount. */
+  amount?: number;
 };
 
 /** Service-charge picker sheet, styled like the Discount picker. */
 export function ServiceChargeSheet({
   open,
   activeCharge,
-  baseAmount,
+  activePercent,
+  activeName,
   onClose,
   onPick,
 }: {
   open: boolean;
   /** Charge currently applied to the order, or 0. */
   activeCharge: number;
-  /** Order gross that percent presets calculate from. */
-  baseAmount: number;
+  /** Percent part of the applied charge, or 0. */
+  activePercent: number;
+  /** Name of the applied preset, "" when none. */
+  activeName: string;
   onClose: () => void;
   onPick: (preset: ServiceChargePreset | null) => void;
 }) {
   const { dragStyle, handleProps } = useSheetDrag(onClose);
   const isActive = (percent?: number, amount?: number) => {
-    if (activeCharge <= 0) return false;
-    const value =
-      percent != null ? Math.round(baseAmount * percent) / 100 : (amount ?? 0);
-    return Math.abs(value - activeCharge) < 0.01;
+    if (!activeName) return false;
+    return percent != null
+      ? activePercent === percent
+      : activePercent === 0 && Math.abs(activeCharge - (amount ?? 0)) < 0.01;
   };
 
   return (
@@ -57,13 +62,7 @@ export function ServiceChargeSheet({
               <button
                 key={preset.id}
                 type="button"
-                onClick={() => {
-                  const charge =
-                    preset.percent != null
-                      ? Math.round(baseAmount * preset.percent) / 100
-                      : (preset.amount ?? 0);
-                  onPick({ name: preset.name, charge });
-                }}
+                onClick={() => onPick({ name: preset.name, percent: preset.percent, amount: preset.amount })}
                 className={cn(
                   "flex w-full items-center gap-3 px-4 py-3.5 text-left",
                   i % 2 === 0 ? "bg-muted/40" : "bg-surface",
@@ -79,7 +78,7 @@ export function ServiceChargeSheet({
               </button>
             );
           })}
-          {activeCharge > 0 ? (
+          {activeCharge > 0 || activePercent > 0 ? (
             <button
               type="button"
               onClick={() => onPick(null)}
