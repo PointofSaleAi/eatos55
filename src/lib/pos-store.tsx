@@ -785,6 +785,13 @@ export type GuestEvent = {
 };
 export type Guest = {
   name: string;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  customerSince?: string;
+  dateOfBirth?: string;
+  anniversary?: string;
+  photo?: string;
   phone: string;
   partySize: number;
   email?: string | undefined;

@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Replace the cart with an inline Add Guest form and verify save/cancel across devices
 - [x] Add cart Transfer Check beside Discount with searchable employees and current owner; verify selection across layouts
 - [x] Apply solid black global top bar with centered pull-down
 - [x] Remove visible Wallets groups from checkout and settings
