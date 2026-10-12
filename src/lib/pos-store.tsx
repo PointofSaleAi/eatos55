@@ -701,6 +701,7 @@ type Store = {
   orderDiscountPercent: number;
   setOrderDiscountPercent: (v: number) => void;
   totals: {
+    gross: number;
     subtotal: number;
     tax: number;
     total: number;
@@ -1470,6 +1471,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
       orderDiscountPercent,
       setOrderDiscountPercent,
       totals: {
+        gross,
         subtotal,
         tax,
         total,

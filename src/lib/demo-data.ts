@@ -783,6 +783,17 @@ export const discountPresets = [
   { id: "police-fire", name: "Police & Fire", percent: 20 },
 ] as const;
 
+/** Service-charge presets; percent charges compute off the order's gross. */
+export const serviceChargePresets: {
+  id: string;
+  name: string;
+  percent?: number;
+  amount?: number;
+}[] = [
+  { id: "half-payment", name: "Half Payment", percent: 50 },
+  { id: "delivery-fee", name: "Delivery Fee", amount: 20 },
+];
+
 /* ------------------------------------------------------------------ */
 /* Which choices an item actually offers                               */
 /* ------------------------------------------------------------------ */
