@@ -470,6 +470,8 @@ function NewOrder() {
           docked={docked}
           onCustomItem={() => {
             setMoreOpen(false);
+            setSearching(false);
+            setQuery("");
             setCustomItemOpen(true);
             setTab("menu");
           }}
