@@ -65,7 +65,7 @@ export function CustomItemWorkspace({
         ) : null}
       </div>
 
-      <div className="flex min-h-0 flex-1 p-3 pb-[calc(0.75rem+var(--kb-inset,0px))]">
+      <div className="flex min-h-0 flex-1 p-3 pb-[calc(0.75rem+var(--kb-inset,0px)+var(--tabs-h,0px))]">
         <NumPad
           variant="order"
           className="w-full"

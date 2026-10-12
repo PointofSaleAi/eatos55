@@ -6,11 +6,13 @@ function Key({
   onPress,
   className,
   label,
+  textClass = "text-fs-key",
 }: {
   children: React.ReactNode;
   onPress: () => void;
   className?: string;
   label?: string;
+  textClass?: string;
 }) {
   return (
     <button
@@ -18,7 +20,8 @@ function Key({
       aria-label={label}
       onClick={onPress}
       className={cn(
-        "grid h-full min-h-key place-items-center rounded-card bg-surface text-fs-key font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
+        "grid h-full min-h-key place-items-center rounded-card bg-surface font-extrabold text-foreground shadow-sm transition-transform active:scale-[0.97]",
+        textClass,
         className,
       )}
     >
@@ -53,18 +56,31 @@ export function NumPad({
           <Key
             key={d}
             onPress={() => onDigit(d)}
+            textClass="text-fs-money"
             className={cn(i % 3 === 0 && "col-start-1")}
           >
             {d}
           </Key>
         ))}
-        <Key onPress={() => onDigit(".")} className="col-start-1 row-start-4">
+        <Key
+          onPress={() => onDigit(".")}
+          textClass="text-fs-money"
+          className="col-start-1 row-start-4"
+        >
           .
         </Key>
-        <Key onPress={() => onDigit("0")} className="col-start-2 row-start-4">
+        <Key
+          onPress={() => onDigit("0")}
+          textClass="text-fs-money"
+          className="col-start-2 row-start-4"
+        >
           0
         </Key>
-        <Key onPress={() => onDigit("00")} className="col-start-3 row-start-4">
+        <Key
+          onPress={() => onDigit("00")}
+          textClass="text-fs-money"
+          className="col-start-3 row-start-4"
+        >
           00
         </Key>
         <Key
