@@ -700,6 +700,9 @@ type Store = {
   setServiceCharge: (v: number) => void;
   orderDiscountPercent: number;
   setOrderDiscountPercent: (v: number) => void;
+  /** Label of the chosen order-level discount, e.g. "Happy Hour". */
+  orderDiscountName: string;
+  setOrderDiscountName: (v: string) => void;
   totals: {
     gross: number;
     subtotal: number;
@@ -867,6 +870,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [arrivedAt, setArrivedAt] = useState("");
   const [serviceCharge, setServiceCharge] = useState(0);
   const [orderDiscountPercent, setOrderDiscountPercent] = useState(0);
+  const [orderDiscountName, setOrderDiscountName] = useState("");
 
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [settingsReady, setSettingsReady] = useState(false);
@@ -1052,6 +1056,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
             comped,
             serviceCharge,
             orderDiscountPercent,
+            orderDiscountName,
             partialPayments,
             splitChecks,
             activeSplitCheckId,
@@ -1078,6 +1083,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
           setComped(Boolean(o.comped));
           setServiceCharge(o.serviceCharge ?? 0);
           setOrderDiscountPercent(o.orderDiscountPercent ?? 0);
+          setOrderDiscountName(o.orderDiscountName ?? "");
           setPartialPayments((o.partialPayments as PartialPayment[]) ?? []);
           setSplitChecksState((o.splitChecks as SplitCheck[]) ?? []);
           setActiveSplitCheckId(o.activeSplitCheckId ?? null);
@@ -1470,6 +1476,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
       setServiceCharge,
       orderDiscountPercent,
       setOrderDiscountPercent,
+      orderDiscountName,
+      setOrderDiscountName,
       totals: {
         gross,
         subtotal,
@@ -1696,6 +1704,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     arrivedAt,
     serviceCharge,
     orderDiscountPercent,
+    orderDiscountName,
 
     settings,
     managerUnlocked,
