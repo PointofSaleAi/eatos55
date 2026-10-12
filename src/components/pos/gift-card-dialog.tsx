@@ -89,7 +89,7 @@ export function GiftCardDialog({
     cn(
       "rounded-row border bg-surface transition-shadow",
       activeField === field
-        ? "border-primary ring-2 ring-primary/40"
+        ? "border-accent ring-2 ring-accent/40"
         : "border-border",
     );
 
