@@ -115,7 +115,7 @@ export function NumPad({
           {d}
         </Key>
       ))}
-      <Key onPress={() => onDigit(".")} disabled={disableDecimal}>.</Key>
+      <Key onPress={() => onDigit(".")} disabled={disableDecimal ?? false}>.</Key>
       <Key onPress={() => onDigit("0")}>0</Key>
       <Key onPress={onBackspace} label="Backspace">
         <Delete className="size-7" />
