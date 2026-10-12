@@ -102,6 +102,8 @@ function PaymentPicker() {
           {config.options.map((option) => {
             const active = option === config.value;
             const blocked = option === TTP && !ttp.available;
+            // Off a phone the entry is gone, unless it is the saved reader.
+            if (blocked && option !== config.value) return null;
             if (blocked) {
               return (
                 <div

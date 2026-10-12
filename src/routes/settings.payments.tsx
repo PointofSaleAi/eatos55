@@ -13,7 +13,7 @@ import {
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, IconNavRow, IconValueRow } from "@/components/pos/settings-rows";
 import { usePos } from "@/lib/pos-store";
-import { TTP_DEVICE_NOTE, useTapToPayAvailable } from "@/lib/device";
+import { useTapToPayAvailable } from "@/lib/device";
 
 export const Route = createFileRoute("/settings/payments")({
   head: () => ({
@@ -48,15 +48,14 @@ function PaymentsSettings() {
             color="blue"
             to="/settings/payment-methods"
           />
-          <IconNavRow
-            title="Tap to Pay on iPhone"
-            icon={Smartphone}
-            color="black"
-            to="/settings/tap-to-pay"
-            {...(ttp.available
-              ? {}
-              : { disabled: true, value: TTP_DEVICE_NOTE })}
-          />
+          {ttp.available ? (
+            <IconNavRow
+              title="Tap to Pay on iPhone"
+              icon={Smartphone}
+              color="black"
+              to="/settings/tap-to-pay"
+            />
+          ) : null}
           <IconNavRow title="Gratuity" icon={HandCoins} color="magenta" topic="gratuity" />
 
           <IconNavRow title="Taxes" icon={ScrollText} color="violet" topic="taxes" />

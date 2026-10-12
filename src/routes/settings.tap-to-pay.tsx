@@ -6,7 +6,7 @@ import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, IconValueRow } from "@/components/pos/settings-rows";
 import { TTP, ttpCopy, ttpStatusLabel } from "@/components/pos/tap-to-pay";
 import { usePos } from "@/lib/pos-store";
-import { TTP_DEVICE_NOTE, useTapToPayAvailable } from "@/lib/device";
+import { TTP_DEVICE_NOTE, useRequireTapToPayDevice } from "@/lib/device";
 
 export const Route = createFileRoute("/settings/tap-to-pay")({
   head: () => ({
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/settings/tap-to-pay")({
  */
 function TapToPaySettings() {
   const { settings, canManageSettings } = usePos();
-  const ttpDevice = useTapToPayAvailable();
+  const ttpDevice = useRequireTapToPayDevice();
   const state = settings.tapToPayState;
   const ready = state === "ready" && ttpDevice.available;
 
