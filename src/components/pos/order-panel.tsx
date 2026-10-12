@@ -44,7 +44,6 @@ type OptionsLayout = { moreOpen: boolean; onMoreOpenChange: (open: boolean) => v
 function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCustomItem, customItemOpen }: OptionsLayout) {
   const navigate = useNavigate();
   const confirm = useConfirm();
-  useEffect(() => { console.log("PANEL transferOpen", transferOpen); }, [transferOpen]);
   const {
     cart,
     orderOwner,
@@ -68,6 +67,7 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
   } = usePos();
   const [discountOpen, setDiscountOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
+  useEffect(() => { console.log("PANEL transferOpen", transferOpen); }, [transferOpen]);
   const [chargeOpen, setChargeOpen] = useState(false);
   const [guestOpen, setGuestOpen] = useState(false);
   const [allergyOpen, setAllergyOpen] = useState(false);
