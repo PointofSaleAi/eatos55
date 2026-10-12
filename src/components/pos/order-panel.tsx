@@ -119,8 +119,23 @@ function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, d
           icon={Percent}
           active={noTax}
           onPress={() => {
-            setNoTax(!noTax);
-            toast.success(noTax ? "Tax applied" : "Tax removed from this order");
+            if (noTax) {
+              // Removing the exemption goes straight back to normal taxing.
+              setNoTax(false);
+              toast.success("Tax applied");
+              return;
+            }
+            void (async () => {
+              const ok = await confirm({
+                title: `Are you sure you want to apply NO ${brand.taxLabel.toUpperCase()}`,
+                confirmLabel: "Yes",
+                cancelLabel: "No",
+                rowButtons: true,
+              });
+              if (!ok) return;
+              setNoTax(true);
+              toast.success("Tax removed from this order");
+            })();
           }}
         />
         <HeaderAction label="Cancel Order" icon={Trash2} destructive onPress={cancelCurrentOrder} />
