@@ -18,3 +18,4 @@
 - Current-order transfers use shared POS ownership state, with a resumable draft owner for unsaved orders and ticket ownership for existing checks, so ownership survives navigation and payment.
 - Add Guest replaces only the cart body in OrderPanel and saves through the shared current-order guest state, preserving products and cart actions while editing.
 - Guest addresses retain both structured U.S. fields and a formatted compatibility string so Add Guest and service-order forms stay synchronized.
+- Every Tap to Pay surface (checkout, settings rows, reader list, home reminder, route guards) goes through `useTapToPayAvailable` / `useTapToPayTenderVisible` in `src/lib/device.ts`, which combine the iPhone check with the phone-layout check, so no screen can re-offer Tap to Pay on tablet or web.

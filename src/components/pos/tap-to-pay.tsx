@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { tapToPayTerms } from "@/lib/tap-to-pay-terms";
 import { usePos, type TapToPayState } from "@/lib/pos-store";
+import { useTapToPayAvailable } from "@/lib/device";
 
 /**
  * Tap to Pay on iPhone shared pieces.
@@ -129,7 +130,10 @@ export function TtpBenefits() {
  */
 export function TapToPayNudge({ className }: { className?: string }) {
   const { settings, updateSettings } = usePos();
+  const ttp = useTapToPayAvailable();
   const state = settings.tapToPayState;
+  // The reminder only belongs on a phone, where Tap to Pay can actually run.
+  if (!ttp.available) return null;
   if (state === "ready" || state === "ineligible" || state === "configuring") return null;
   if (settings.tapToPayDismissedAt === "hidden") return null;
 
