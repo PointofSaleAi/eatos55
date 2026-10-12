@@ -1415,6 +1415,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setDraftOwner(null);
         setCart(ticket.lines.map((l) => ({ ...l })));
         setMode(ticket.mode);
+        setOrderNotes(ticket.notes ?? "");
       },
       addItem: (menuId, opts) => {
         const item = [...menu, ...liveMenu].find((m) => m.id === menuId);
@@ -1641,7 +1642,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
                 revenueCenter: t.revenueCenter ?? session.station ?? "Main dining",
                 orderType,
                 ...(guest.email ? { guestEmail: guest.email } : {}),
-                ...(guest.notes ? { notes: guest.notes } : {}),
+                ...(orderNotes || guest.notes ? { notes: orderNotes || guest.notes } : {}),
                 ...(guest.vehicle ? { vehicle: guest.vehicle } : {}),
                 ...extra,
                 payments: [
@@ -1678,7 +1679,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
             paymentType: paymentLabel,
             orderType,
             ...(guest.email ? { guestEmail: guest.email } : {}),
-            ...(guest.notes ? { notes: guest.notes } : {}),
+            ...(orderNotes || guest.notes ? { notes: orderNotes || guest.notes } : {}),
             ...(guest.vehicle ? { vehicle: guest.vehicle } : {}),
             ...extra,
             payments: rows.map((r, i) => ({ no: String(i + 1), ...r })),
