@@ -30,6 +30,7 @@ import { usePos } from "@/lib/pos-store";
 import { money, type ServiceOrderType } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
+import { ServiceChargeSheet } from "@/components/pos/service-charge-sheet";
 import { formatPhone, GuestSheet } from "@/components/pos/guest-sheet";
 import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { useConfirm } from "@/components/pos/confirm-sheet";
@@ -57,7 +58,6 @@ function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, d
   } = usePos();
   const [discountOpen, setDiscountOpen] = useState(false);
   const [chargeOpen, setChargeOpen] = useState(false);
-  const [charge, setCharge] = useState(String(serviceCharge || ""));
   const [guestOpen, setGuestOpen] = useState(false);
   const [allergyOpen, setAllergyOpen] = useState(false);
   const [allergyDraft, setAllergyDraft] = useState("");
@@ -87,7 +87,7 @@ function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, d
     const actions = [
       { label: customItemOpen ? "Menu Item" : "Custom Item", icon: customItemOpen ? Grid2x2 : Tag, run: onCustomItem },
       { label: "Gift Card", icon: Gift, run: () => toast.info("Gift Card is not configured for this location") },
-      { label: "Service Charge", icon: Receipt, active: serviceCharge > 0, run: () => { setCharge(String(serviceCharge || "")); setChargeOpen(true); } },
+      { label: "Service Charge", icon: Receipt, active: serviceCharge > 0, run: () => setChargeOpen(true) },
       { label: "Add Guest", icon: UserPlus, run: () => setGuestOpen(true) },
       { label: "Open Orders", icon: ClipboardList, run: () => navigate({ to: "/tickets" }) },
       { label: "Allergy", icon: TriangleAlert, active: Boolean(allergyNote), run: () => { setAllergyDraft(allergyNote); setAllergyOpen(true); } },
@@ -179,39 +179,21 @@ function CartHeaderActions({ onDiscount, moreOpen, onMoreOpenChange, railHost, d
         }}
       />
 
-      <Sheet open={chargeOpen} onOpenChange={setChargeOpen}>
-        <SheetContent
-          side="bottom"
-          className="mx-auto w-full max-w-sheet rounded-t-sheet border-0 bg-surface p-4 pb-[calc(1rem+var(--kb-inset,0px))]"
-        >
-          <SheetHeader>
-            <SheetTitle className="text-center text-fs-base font-extrabold text-foreground">
-              Service Charge
-            </SheetTitle>
-          </SheetHeader>
-          <input
-            autoFocus
-            type="number"
-            inputMode="decimal"
-            value={charge}
-            onChange={(event) => setCharge(event.target.value)}
-            placeholder="0.00"
-            aria-label="Service charge amount"
-            className="mt-3 h-12 w-full rounded-row border border-border bg-surface px-4 text-fs-base font-bold text-foreground outline-none focus:ring-2 focus:ring-ring"
-          />
-          <Button
-            type="button"
-            onClick={() => {
-              setServiceCharge(Number(charge) || 0);
-              setChargeOpen(false);
-              toast.success("Service charge updated");
-            }}
-            className="mt-3 min-h-ctl-lg w-full rounded-pill text-fs-sm font-extrabold uppercase"
-          >
-            Apply
-          </Button>
-        </SheetContent>
-      </Sheet>
+      <ServiceChargeSheet
+        open={chargeOpen}
+        activeCharge={serviceCharge}
+        baseAmount={totals.gross}
+        onClose={() => setChargeOpen(false)}
+        onPick={(preset) => {
+          setServiceCharge(preset ? preset.charge : 0);
+          setChargeOpen(false);
+          toast.success(
+            preset
+              ? `${preset.name} service charge applied`
+              : "Service charge removed",
+          );
+        }}
+      />
 
       <Sheet open={allergyOpen} onOpenChange={setAllergyOpen}>
         <SheetContent
