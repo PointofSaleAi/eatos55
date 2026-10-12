@@ -14,6 +14,7 @@ export type ResumeOrder = {
   guest: unknown;
   orderType: string;
   orderNotes: string;
+  allergyNote: string;
   arrivedAt: string;
   activeTicketId: string | null;
   activeTable: string | null;
