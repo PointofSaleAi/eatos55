@@ -54,7 +54,7 @@ export function RoomChargeDialog({
   onCharge: (room: Room) => void;
 }) {
   const wide = useWideViewport();
-  const { cart, totals, tickets, settings } = usePos();
+  const { cart, totals, currentOrderNumber, settings } = usePos();
   const [query, setQuery] = useState("");
   const [floor, setFloor] = useState<string>("All floors");
   const [pickedId, setPickedId] = useState<string | null>(null);
@@ -409,7 +409,7 @@ export function RoomChargeDialog({
         tip: 0,
         total: due,
       }}
-      orderNumber={tickets.length + 1}
+      orderNumber={currentOrderNumber}
       venue={settings.restaurantName}
       onClose={() => setBillOpen(false)}
       onPrint={() => {

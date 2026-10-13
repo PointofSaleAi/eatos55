@@ -65,7 +65,9 @@ export function PaymentBill({ room }: { room?: Room | null }) {
   return (
     <ReceiptCard className="mx-auto w-full max-w-md xl:max-w-none">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
-        <p className="truncate text-fs-sm font-extrabold text-foreground">Order #{orderNumber}</p>
+        <p className="truncate text-fs-sm font-extrabold text-foreground">
+          {orderNumber != null ? `Order #${orderNumber}` : "New Order"}
+        </p>
         {editable ? (
           <button
             type="button"
@@ -97,7 +99,7 @@ export function PaymentBill({ room }: { room?: Room | null }) {
           </p>
         )}
         <p className="shrink-0 text-fs-xs text-muted-foreground">
-          Ticket No. {orderNumber} · Amount Due {money(due)}
+          {orderNumber != null ? `Ticket No. ${orderNumber} · ` : ""}Amount Due {money(due)}
         </p>
       </div>
 

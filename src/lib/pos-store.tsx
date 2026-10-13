@@ -722,7 +722,7 @@ type Store = {
   orderDiscountName: string;
   setOrderDiscountName: (v: string) => void;
   /** Order number shown on cart/payment: the active ticket's number, or the next number for a new order. */
-  currentOrderNumber: number;
+  currentOrderNumber: number | null;
   totals: {
     gross: number;
     subtotal: number;
@@ -1057,9 +1057,12 @@ export function PosProvider({ children }: { children: ReactNode }) {
     const subtotal = round(net - taxBase + taxBase / (1 + TAX_RATE));
     const tax = round(net - subtotal);
     const total = comped ? 0 : net;
+    // Numbers are assigned only when an order is fired or charged; an unsaved
+    // order has none yet.
     const currentOrderNumber = activeTicketId
-      ? (tickets.find((t) => t.id === activeTicketId)?.number ?? tickets.length + 1)
-      : tickets.length + 1;
+      ? (tickets.find((t) => t.id === activeTicketId)?.number ?? null)
+      : null;
+    const nextTicketNumber = () => tickets.reduce((m, t) => Math.max(m, t.number ?? 0), 0) + 1;
 
     return {
       currentOrderNumber,
@@ -1450,7 +1453,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
           const id = `t-${1047 + tickets.length}`;
           const created: Ticket = {
             id,
-            number: tickets.length + 1,
+            number: nextTicketNumber(),
             label: guest.name || "Guest",
             seats: guest.partySize || 1,
             total,
@@ -1725,10 +1728,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
           }
         } else {
           id = `t-${1047 + tickets.length}`;
-          orderNumber = tickets.length + 1;
+          orderNumber = nextTicketNumber();
           const created: Ticket = {
             id,
-            number: tickets.length + 1,
+            number: orderNumber,
             label: guest.name || "Guest",
             seats: guest.partySize || 1,
             total: grandTotal,
@@ -1825,7 +1828,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
           total: Math.round((amount + tip) * 100) / 100,
           tendered: Math.round((amount + tip) * 100) / 100,
           change: 0,
-          orderNumber: tickets.length + 1,
+          orderNumber: currentOrderNumber ?? nextTicketNumber(),
           guestName: guest.name,
           ...(tip ? { tip } : {}),
           ...(opts?.notes && Object.keys(opts.notes).length ? { notes: opts.notes } : {}),

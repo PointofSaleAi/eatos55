@@ -33,9 +33,9 @@ export const Route = createFileRoute("/payment/bill")({
 function PaymentBillStep() {
   const navigate = useNavigate();
   const wide = useWideLayout();
-  const { cart, totals, tickets, guest, orderType, activeTable, tableGroupLabel, paidSoFar } =
+  const { cart, totals, currentOrderNumber, guest, orderType, activeTable, tableGroupLabel, paidSoFar } =
     usePos();
-  const orderNumber = tickets.length + 1;
+  const orderNumber = currentOrderNumber;
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
 
   useEffect(() => {
@@ -51,7 +51,8 @@ function PaymentBillStep() {
             Total Due <span className="text-accent">{money(due)}</span>
           </h1>
           <p className="truncate text-fs-xs text-muted-foreground">
-            Order {orderNumber} · {guest.name || tableGroupLabel(activeTable) || "Guest"} ·{" "}
+            {orderNumber != null ? `Order ${orderNumber} · ` : ""}
+            {guest.name || tableGroupLabel(activeTable) || "Guest"} ·{" "}
             {orderType}
           </p>
         </div>
