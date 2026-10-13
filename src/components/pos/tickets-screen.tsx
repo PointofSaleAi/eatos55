@@ -276,7 +276,10 @@ export function TicketsScreen({
               onClick={() => navigate({ to: "/tickets", search: {} })}
               className="flex min-w-0 items-center gap-1.5 rounded-pill bg-foreground px-3 py-1.5 text-fs-sm font-bold text-background"
             >
-              <span className="truncate">Table {tableMembers.join(" + ")}</span>
+              <span className="truncate">
+                {roomNames.has(tableMembers[0]) ? "" : "Table "}
+                {tableMembers.join(" + ")}
+              </span>
               <XIcon className="size-3.5 shrink-0" aria-hidden />
             </button>
             <button
