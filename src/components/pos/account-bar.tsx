@@ -5,7 +5,6 @@ import {
   Banknote,
   ChevronDown,
   Monitor,
-  Sparkles,
   Timer,
   Bell,
   EllipsisVertical,
@@ -15,6 +14,7 @@ import {
   WifiOff,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { AiMark } from "@/components/pos/dashboard/eatos-ai-chat";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useNavDrawer } from "@/lib/nav-drawer-context";
@@ -167,7 +167,7 @@ export function AccountActions() {
         onClick={() => window.dispatchEvent(new CustomEvent("pos:open-dashboard"))}
         className={cn(iconBtn, "hidden md:inline-flex")}
       >
-        <Sparkles className="size-4" />
+        <AiMark className="size-7 rounded-full" />
       </Button>
       <Button
         type="button"
