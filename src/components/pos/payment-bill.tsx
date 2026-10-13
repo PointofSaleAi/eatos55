@@ -19,7 +19,7 @@ export function PaymentBill({ room }: { room?: Room | null }) {
   const {
     cart,
     totals,
-    tickets,
+    currentOrderNumber,
     guest,
     orderType,
     activeTable,

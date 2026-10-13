@@ -105,7 +105,6 @@ function PaymentMethod() {
   const {
     cart,
     totals,
-    tickets,
     currentOrderNumber,
     guest,
     orderType,

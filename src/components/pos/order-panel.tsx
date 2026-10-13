@@ -349,7 +349,6 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
     setOrderNotes,
     orderOwner,
     activeTicketId,
-    tickets,
     currentOrderNumber,
     settings,
     orderDiscountPercent,
