@@ -29,7 +29,7 @@ export function ClockPullDown() {
     const onOpen = () => {
       setOpen(false);
       setMenuOpen(false);
-      void navigate({ to: "/dashboard" });
+      void navigate({ to: "/order/menu" });
     };
     // Switch user now lives in the navigation drawer.
     const onSwitchUser = () => {

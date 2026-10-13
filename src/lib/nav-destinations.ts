@@ -11,8 +11,8 @@ import {
   Receipt,
   Settings as SettingsIcon,
   Sofa,
-  Utensils,
   type LucideIcon,
+
 } from "lucide-react";
 
 export type NavLink = { to: string; label: string; icon: LucideIcon };
@@ -23,14 +23,14 @@ export type NavGroup = { title: string; links: NavLink[] };
  * so both stay in sync. Deeper screens are reached by drilling into a section.
  */
 export const navGroups: NavGroup[] = [
-  { title: "Overview", links: [{ to: "/dashboard", label: "Dashboard", icon: Gauge }] },
   {
     title: "Ordering",
     links: [
+      { to: "/order/menu", label: "Dashboard", icon: Gauge },
       { to: "/order/new", label: "New Order", icon: ClipboardList },
-      { to: "/order/menu", label: "Menus", icon: Utensils },
     ],
   },
+
   {
     title: "Service",
     links: [
@@ -57,13 +57,14 @@ export const navGroups: NavGroup[] = [
 ];
 
 /**
- * Rail destinations in the order used by the reference app: the menu grid first,
- * then new order, floor plan, tickets, rooms and the order status board.
+ * Rail destinations in the order used by the reference app: the dashboard (menu
+ * grid) first, then new order, floor plan, tickets, rooms and the order status
+ * board.
  */
 export const railPrimary: NavLink[] = [
-  { to: "/dashboard", label: "Dashboard", icon: Gauge },
-  { to: "/order/menu", label: "Menu", icon: LayoutGrid },
+  { to: "/order/menu", label: "Dashboard", icon: LayoutGrid },
   { to: "/order/new", label: "New Order", icon: FilePlus2 },
+
   { to: "/floor", label: "Floor Plan", icon: Sofa },
   { to: "/tickets", label: "Tickets", icon: Receipt },
   { to: "/rooms", label: "Rooms", icon: Grid2x2 },
