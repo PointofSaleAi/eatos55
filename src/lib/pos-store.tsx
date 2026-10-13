@@ -1535,7 +1535,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
                       method: "Room Charge",
                       amount,
                       at: formatTime(),
-                    } as NonNullable<Ticket["payments"]>[number],
+                    },
                   ],
                   roomCharge: { ...x.roomCharge, stage: "posted", postedAmount: amount },
                 }
