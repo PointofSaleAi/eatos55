@@ -34,3 +34,4 @@
 - [x] Enlarge the Custom Item keypad digits and keep the pad clear of the phone bottom bar
 - [x] Rename the Custom Item option to Menu Item in the three-dot panel while that screen is open
 - [x] Open Product Information (name, price, image, description, Back to Order) inside the same product modal from its image and name
+- [x] Tap an Ordering/Ordered Table on Table Order to open its tickets sheet: resume a ticket, start a New Order, and Fire now creates a table-linked ticket (charging also stamps the table)
