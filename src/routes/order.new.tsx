@@ -48,102 +48,73 @@ export const Route = createFileRoute("/order/new")({
   component: NewOrder,
 });
 
-/* Width-aware product-name sizing: picks the largest font step (fs-sm → fs-base →
-   fs-lg) whose wrapped line count never exceeds the line count at fs-sm, so names
-   fill the card's horizontal room without changing the card's shape. */
-const fitCtx =
-  typeof document !== "undefined" ? document.createElement("canvas").getContext("2d") : null;
-
-function wrapLines(text: string, font: string, width: number): number {
-  const ctx = fitCtx;
-  if (!ctx || !(width > 0)) return 1;
-  ctx.font = font;
-  let lines = 1;
-  let line = "";
-  for (const word of text.split(/\s+/)) {
-    const next = line ? `${line} ${word}` : word;
-    if (!line || ctx.measureText(next).width <= width) line = next;
-    else {
-      lines += 1;
-      line = word;
-    }
-  }
-  return lines;
-}
-
+// Measure browser-rendered words, not just line counts: a single long word
+// must fit horizontally before a larger typography step can be selected.
+const nameSizes = ["text-fs-sm", "text-fs-base", "text-fs-lg"] as const;
 function FitName({ name }: { name: string }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [fontSize, setFontSize] = useState<number | null>(null);
-  const lastWidth = useRef<number | null>(null);
-  const lastSize = useRef<number | null>(null);
+  const [sizeClass, setSizeClass] = useState<(typeof nameSizes)[number]>("text-fs-sm");
 
   useEffect(() => {
     const el = ref.current;
-    const card = el?.closest("button");
-    if (!el || !card) return;
+    if (!el) return;
     let raf = 0;
+    let disposed = false;
+    let lastWidth = 0;
+    const probe = document.createElement("span");
+    probe.textContent = name;
+    probe.setAttribute("aria-hidden", "true");
+    Object.assign(probe.style, {
+      position: "fixed",
+      visibility: "hidden",
+      pointerEvents: "none",
+      display: "block",
+      whiteSpace: "normal",
+      overflowWrap: "normal",
+      wordBreak: "normal",
+      fontFamily: getComputedStyle(el).fontFamily,
+      fontWeight: getComputedStyle(el).fontWeight,
+      letterSpacing: "0px",
+    });
+    document.body.appendChild(probe);
     const measure = () => {
-      const ctx = fitCtx;
-      if (!ctx) return;
-      const width = card.clientWidth;
-      // Re-measure only when the card's width changes; font-size growth changes
-      // height, which also fires the observer — ignore those to avoid feedback.
-      if (lastWidth.current === width && lastSize.current !== null) return;
-      const cardStyle = getComputedStyle(card);
-      const avail = width - parseFloat(cardStyle.paddingLeft) - parseFloat(cardStyle.paddingRight);
-      if (!(avail > 0)) return;
-      const badge = el.nextElementSibling;
-      const badgeW = badge ? badge.getBoundingClientRect().width + 4 : 0;
-      const box = Math.max(0, avail - badgeW);
-      const cs = getComputedStyle(el);
-      const probe = (cls: string) => {
-        const p = document.createElement("span");
-        p.className = cls;
-        p.style.position = "absolute";
-        p.style.visibility = "hidden";
-        document.body.appendChild(p);
-        const px = parseFloat(getComputedStyle(p).fontSize);
-        p.remove();
-        return px;
-      };
-      const steps = [probe("text-fs-sm"), probe("text-fs-base"), probe("text-fs-lg")]
-        .filter((v) => v > 0)
-        .sort((a, b) => a - b);
-      const smallest = steps[0];
-      if (smallest === undefined) return;
-      const font = (px: number) => `${cs.fontWeight} ${px}px ${cs.fontFamily}`;
-      const baseline = Math.min(wrapLines(name, font(smallest), box), 3);
-      let chosen: number = smallest;
-      for (const px of steps) {
-        if (wrapLines(name, font(px), box) <= baseline) chosen = px;
-        else break;
+      if (disposed) return;
+      const width = el.getBoundingClientRect().width;
+      if (!(width > 0) || width === lastWidth) return;
+      lastWidth = width;
+      probe.style.width = `${width}px`;
+      probe.className = "text-fs-sm leading-tight";
+      const lines = () => Math.round(probe.getBoundingClientRect().height / parseFloat(getComputedStyle(probe).lineHeight));
+      const baseline = lines();
+      let chosen: (typeof nameSizes)[number] = "text-fs-sm";
+      for (const step of nameSizes) {
+        probe.className = `${step} leading-tight`;
+        if (probe.scrollWidth <= Math.ceil(width) && lines() <= baseline) chosen = step;
       }
-      lastWidth.current = width;
-      if (chosen !== lastSize.current) {
-        lastSize.current = chosen;
-        setFontSize(chosen);
-      }
+      setSizeClass(chosen);
     };
     const schedule = (force = false) => {
-      if (force) lastWidth.current = null;
+      if (disposed) return;
+      if (force) lastWidth = 0;
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(measure);
     };
     schedule();
     document.fonts?.ready.then(() => schedule(true)).catch(() => {});
     const ro = new ResizeObserver(() => schedule());
-    ro.observe(card);
+    ro.observe(el);
     return () => {
+      disposed = true;
       cancelAnimationFrame(raf);
       ro.disconnect();
+      probe.remove();
     };
   }, [name]);
 
   return (
     <span
       ref={ref}
-      className={cn(!fontSize && "text-fs-sm")}
-      style={fontSize ? { fontSize: `${fontSize}px` } : undefined}
+      className={cn("block w-full min-w-0 max-w-full leading-tight [overflow-wrap:anywhere]", sizeClass)}
     >
       {name}
     </span>
@@ -473,12 +444,12 @@ function NewOrder() {
                   toast.success(`${item.name} added`);
                 }}
                 className={cn(
-                  "relative flex min-h-tile flex-col justify-between rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
+                  "relative flex min-h-tile min-w-0 flex-col justify-between rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
                   item.outOfStock && "opacity-50",
                 )}
               >
 
-                <span className="font-extrabold leading-tight text-foreground">
+                <span className="block w-full min-w-0 max-w-full font-extrabold leading-tight text-foreground">
                   <FitName name={item.name} />
                   {typeof item.stock === "number" && !item.outOfStock ? (
                     <span
