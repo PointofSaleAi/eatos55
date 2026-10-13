@@ -15,12 +15,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/board/")({
   head: () => ({
     meta: [
-      { title: `Order Status - ${brand.appName} Point of Sale` },
+      { title: `orderOS - ${brand.appName} Point of Sale` },
       {
         name: "description",
         content: "Kitchen board tracking every order from new through completed.",
       },
-      { property: "og:title", content: `Order Status - ${brand.appName} Point of Sale` },
+      { property: "og:title", content: `orderOS - ${brand.appName} Point of Sale` },
       {
         property: "og:description",
         content: "Kitchen board tracking every order from new through completed.",
@@ -65,7 +65,7 @@ function Board() {
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-fs-xl font-extrabold text-foreground">Order Status</h1>
+          <h1 className="text-fs-xl font-extrabold text-foreground">orderOS</h1>
           <div className="flex shrink-0 items-center gap-1">
             <Link
               to="/orders"
