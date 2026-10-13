@@ -126,6 +126,7 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
           active={orderDiscountPercent > 0 || totals.discount > 0}
           onPress={() => setDiscountOpen(true)}
         />
+        {cart.length > 0 ? <HeaderAction label="Cancel Order" icon={Trash2} destructive onPress={cancelCurrentOrder} /> : null}
         {cart.length > 0 ? <HeaderAction label="Transfer Check" icon={ArrowLeftRight} onPress={() => setTransferOpen(true)} /> : null}
         <HeaderAction
           label={noTax ? "No Tax · On" : "No Tax"}
