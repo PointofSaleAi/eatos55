@@ -64,8 +64,7 @@ function Board() {
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-background">
       <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="text-fs-xl font-extrabold text-foreground">orderOS</h1>
+        <div className="flex items-center justify-end gap-3">
           <div className="flex shrink-0 items-center gap-1">
             <Link
               to="/orders"
