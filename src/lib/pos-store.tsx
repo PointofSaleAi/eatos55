@@ -1982,6 +1982,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     tableSince,
     tableSeated,
     roomStates,
+    roomCreditUsed,
     floorLayouts,
     floorTemplates,
     tableMerges,
