@@ -1,11 +1,11 @@
 import type { ComponentType } from "react";
 import {
+  BedDouble,
   Gauge,
   ClipboardList,
   FilePlus2,
   CreditCard,
   FileText,
-  Grid2x2,
   Headset,
   LayoutGrid,
   Receipt,
