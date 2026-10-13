@@ -573,7 +573,7 @@ function PaymentMethod() {
   const enabled = (id: string) => {
     if (id === "cash" || id === "card-present") return true;
     const on = settings.tenders?.[id as TenderId] ?? true;
-    if (id === "room") return on && settings.roomService;
+    if (id === "room") return on;
     // Region visibility comes from the build variant, enablement from Settings.
     return on && isTenderVisible(id);
   };
