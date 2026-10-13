@@ -293,14 +293,13 @@ function NewOrder() {
                 type="button"
                 onClick={() => setSubcategory(entry)}
                 className={cn(
-                  "flex h-10 items-center justify-center rounded-card px-2 text-center text-[0.625rem] font-extrabold uppercase leading-[1.1] tracking-tight transition-colors",
-                  "w-[7.25rem] shrink-0",
+                  "flex h-10 shrink-0 items-center justify-center rounded-card px-3 text-center text-[0.6875rem] font-extrabold uppercase leading-none tracking-tight transition-colors",
                   entry === subcategory
                     ? "bg-accent text-accent-foreground hover:bg-accent/90"
                     : "bg-muted text-muted-foreground hover:bg-secondary",
                 )}
               >
-                <span className="line-clamp-2 whitespace-normal">{entry}</span>
+                <span className="whitespace-nowrap">{entry}</span>
               </button>
             ))}
           </div>
@@ -377,7 +376,12 @@ function NewOrder() {
                 )}
               >
 
-                <span className="text-fs-sm font-extrabold leading-tight text-foreground">
+                <span
+                  className={cn(
+                    "font-extrabold leading-tight text-foreground",
+                    item.name.length <= 12 ? "text-fs-base" : "text-fs-sm",
+                  )}
+                >
                   {item.name}
                   {typeof item.stock === "number" && !item.outOfStock ? (
                     <span
