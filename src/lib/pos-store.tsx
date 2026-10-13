@@ -667,6 +667,16 @@ type Store = {
   openTicket: (id: string) => void;
   /** Fire the current order to the kitchen: create or refresh its ticket. */
   fireTicket: () => void;
+  /** Prints the room bill for signature: saves the order as a room-charge ticket. */
+  printRoomBill: (room: { id: string; name: string; number: string; bookingNumber?: string }) => {
+    id: string;
+    number: number;
+  } | null;
+  markRoomSigned: (ticketId: string, proofName?: string) => void;
+  /** Posts (or re-posts with a new tip) the ticket's charge to its room. */
+  postToRoom: (ticketId: string, tip: number) => void;
+  /** Extra credit used per room id from charges posted this session. */
+  roomCreditUsed: Record<string, number>;
 
   addItem: (
     menuId: string,
@@ -891,6 +901,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [tableStates, setTableStates] = useState<Record<string, TableState>>({});
   const [tableSince, setTableSince] = useState<Record<string, string>>({});
   const [roomStates, setRoomStates] = useState<Record<string, RoomState>>({});
+  const [roomCreditUsed, setRoomCreditUsed] = useState<Record<string, number>>({});
   const [floorLayouts, setFloorLayouts] = useState<Record<string, FloorObject[]>>({});
   const [tableSeated, setTableSeatedMap] = useState<Record<string, number>>({});
   const [floorTemplates, setFloorTemplates] = useState<SavedTemplate[]>([]);
@@ -969,6 +980,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
           tableSince?: Record<string, string>;
           tableSeated?: Record<string, number>;
           roomStates?: Record<string, RoomState>;
+          roomCreditUsed?: Record<string, number>;
           floorLayouts?: Record<string, FloorObject[]>;
           floorTemplates?: SavedTemplate[];
           tableMerges?: TableMerge[];
@@ -978,6 +990,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         if (saved.tableSince) setTableSince(saved.tableSince);
         if (saved.tableSeated) setTableSeatedMap(saved.tableSeated);
         if (saved.roomStates) setRoomStates(saved.roomStates);
+        if (saved.roomCreditUsed) setRoomCreditUsed(saved.roomCreditUsed);
         if (saved.floorLayouts) setFloorLayouts(saved.floorLayouts);
         if (saved.floorTemplates) setFloorTemplates(saved.floorTemplates);
         if (saved.tableMerges) setTableMerges(saved.tableMerges);
@@ -998,6 +1011,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
           tableSince,
           tableSeated,
           roomStates,
+          roomCreditUsed,
           floorLayouts,
           floorTemplates,
           tableMerges,
@@ -1012,6 +1026,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
     tableSince,
     tableSeated,
     roomStates,
+    roomCreditUsed,
     floorLayouts,
     floorTemplates,
     tableMerges,
@@ -1431,6 +1446,103 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setActiveTable(ticket.table ?? null);
       },
       /** Fire sends the cart to the kitchen as (or onto) a ticket tied to its table. */
+      roomCreditUsed,
+      printRoomBill: (room) => {
+        if (!cart.length) return null;
+        const lines = cart.map((l) => ({ ...l }));
+        const roomFields = {
+          status: "payment" as const,
+          paymentType: "Room Charge",
+          table: room.name,
+          roomNumber: room.number,
+          ...(room.bookingNumber ? { bookingNumber: room.bookingNumber } : {}),
+          signedBill: false,
+          roomCharge: { roomId: room.id, roomName: room.name, stage: "printed" as const },
+        };
+        let id = activeTicketId;
+        let number: number;
+        const existing = id ? tickets.find((t) => t.id === id) : undefined;
+        if (existing) {
+          number = existing.number;
+          setTickets((list) =>
+            list.map((t) => (t.id === existing.id ? { ...t, lines, total, ...roomFields } : t)),
+          );
+        } else {
+          id = `t-${1047 + tickets.length}`;
+          number = nextTicketNumber();
+          const created: Ticket = {
+            id,
+            number,
+            label: guest.name || "Guest",
+            seats: guest.partySize || 1,
+            total,
+            date: ticketDate,
+            arrivedAt: formatTime(),
+            arrivedMinutesAgo: 0,
+            mode,
+            lines,
+            server: draftOwner ?? session.name,
+            checkNumber: 1047 + tickets.length,
+            tips: 0,
+            revenueCenter: session.station ?? "Main dining",
+            payments: [],
+            orderType,
+            ...((orderNotes || guest.notes) ? { notes: (orderNotes || guest.notes) as string } : {}),
+            ...roomFields,
+          };
+          setTickets((list) => [created, ...list]);
+        }
+        setCart([]);
+        setActiveTicketId(null);
+        setDraftOwner(null);
+        return { id: id as string, number };
+      },
+      markRoomSigned: (ticketId, proofName) =>
+        setTickets((list) =>
+          list.map((t) =>
+            t.id === ticketId && t.roomCharge
+              ? {
+                  ...t,
+                  signedBill: true,
+                  roomCharge: {
+                    ...t.roomCharge,
+                    stage: t.roomCharge.stage === "posted" ? "posted" : "signed",
+                    ...(proofName ? { proofName } : {}),
+                  },
+                }
+              : t,
+          ),
+        ),
+      postToRoom: (ticketId, tip) => {
+        const t = tickets.find((x) => x.id === ticketId);
+        if (!t?.roomCharge) return;
+        const base = Math.round((t.total - (t.tips ?? 0)) * 100) / 100;
+        const amount = Math.round((base + tip) * 100) / 100;
+        const delta = Math.round((amount - (t.roomCharge.postedAmount ?? 0)) * 100) / 100;
+        const roomId = t.roomCharge.roomId;
+        setRoomCreditUsed((m) => ({ ...m, [roomId]: Math.round(((m[roomId] ?? 0) + delta) * 100) / 100 }));
+        setTickets((list) =>
+          list.map((x) =>
+            x.id === ticketId && x.roomCharge
+              ? {
+                  ...x,
+                  status: "paid",
+                  tips: tip,
+                  total: amount,
+                  payments: [
+                    {
+                      no: "1",
+                      method: "Room Charge",
+                      amount,
+                      at: formatTime(),
+                    } as NonNullable<Ticket["payments"]>[number],
+                  ],
+                  roomCharge: { ...x.roomCharge, stage: "posted", postedAmount: amount },
+                }
+              : x,
+          ),
+        );
+      },
       fireTicket: () => {
         if (!cart.length) return;
         const lines = cart.map((l) => ({ ...l }));

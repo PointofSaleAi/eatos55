@@ -106,6 +106,15 @@ export type Ticket = {
   bookingNumber?: string;
   /** True when the guest bill was printed for signature before posting. */
   signedBill?: boolean;
+  /** Room-charge lifecycle: bill printed, guest signature collected, posted to the room. */
+  roomCharge?: {
+    roomId: string;
+    roomName: string;
+    stage: "printed" | "signed" | "posted";
+    proofName?: string;
+    /** Amount already applied to the room's credit (base + tip). */
+    postedAmount?: number;
+  };
 };
 
 
