@@ -239,19 +239,6 @@ function FloorPlan() {
     return { ...t, name: g.members[0] ?? t.name, seats: g.seats, state: g.state };
   };
 
-  /** Tickets created on (or charged to) this table, open ones first, paid after. */
-  const tableTickets = (name: string) => {
-    const members = layoutGroups.find((g) => g.members.includes(name))?.members ?? [name];
-    return tickets
-      .filter((t) => t.table && members.includes(String(t.table)))
-      .sort((a, b) =>
-        (a.status === "paid") === (b.status === "paid")
-          ? a.arrivedMinutesAgo - b.arrivedMinutesAgo
-          : a.status === "paid"
-            ? 1
-            : -1,
-      );
-  };
 
 
   const decor = layout.filter((o) => isDecor(o.kind)).filter((o) => inSection(o.section));
