@@ -279,7 +279,7 @@ export function TicketsScreen({
               className="flex min-w-0 items-center gap-1.5 rounded-pill bg-foreground px-3 py-1.5 text-fs-sm font-bold text-background"
             >
               <span className="truncate">
-                {roomNames.has(tableMembers[0]) ? "" : "Table "}
+                {roomNames.has(tableMembers[0] ?? "") ? "" : "Table "}
                 {tableMembers.join(" + ")}
               </span>
               <XIcon className="size-3.5 shrink-0" aria-hidden />
