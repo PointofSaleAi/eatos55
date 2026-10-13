@@ -93,8 +93,8 @@ export type Ticket = {
   payments?: TicketPayment[];
   /** Guest-facing order type, when it was chosen explicitly on the order. */
   orderType?: string;
-  /** Table number, when the ticket belongs to a table (dine-in / bar) order. */
-  table?: number;
+  /** Floor-table name, when the ticket belongs to a table (dine-in / bar) order. */
+  table?: string;
   /** Guest-facing order number, up to 5 digits. */
   orderNo?: number;
   guestEmail?: string;
@@ -180,7 +180,7 @@ export const initialTickets: Ticket[] = [
   {
     id: "t-1042",
     orderNo: 10242,
-    table: 2,
+    table: "T3",
     number: 2,
     label: "Guest",
     seats: 2,
@@ -222,7 +222,7 @@ export const initialTickets: Ticket[] = [
   {
     id: "t-1044",
     orderNo: 10244,
-    table: 4,
+    table: "T1",
     number: 4,
     label: "Guest",
     seats: 4,
@@ -243,7 +243,6 @@ export const initialTickets: Ticket[] = [
   {
     id: "t-1045",
     orderNo: 10245,
-    table: 3,
     number: 3,
     label: "Guest",
     seats: 3,
@@ -283,7 +282,7 @@ export const initialTickets: Ticket[] = [
     payments: [{ no: "1", method: "QR Code", amount: 16.5, at: "6:05 PM", ref: "TXN-88419" }],
   },
   {
-    id: "t-1047", orderNo: 10247, table: 5, number: 5, label: "John D.", seats: 2,
+    id: "t-1047", orderNo: 10247, table: "T1", number: 5, label: "John D.", seats: 2,
     total: 28.5, date: DEFAULT_TICKET_DATE, arrivedAt: "5:08 PM", arrivedMinutesAgo: 37,
     status: "paid", mode: "dine-in", lines: [custom(28.5)], server: "Elizer Cruz",
     checkNumber: 1047, stage: "ready", tips: 0, revenueCenter: "Main dining", paymentType: "Card",
@@ -304,7 +303,7 @@ export const initialTickets: Ticket[] = [
     payments: [{ no: "1", method: "Card", amount: 55.2, at: "5:18 PM" }],
   },
   {
-    id: "t-1050", orderNo: 10250, table: 22, number: 8, label: "Rachel G.", seats: 3,
+    id: "t-1050", orderNo: 10250, table: "EW19374", number: 8, label: "Rachel G.", seats: 3,
     total: 78.9, date: DEFAULT_TICKET_DATE, arrivedAt: "5:20 PM", arrivedMinutesAgo: 25,
     status: "paid", mode: "dine-in", lines: [custom(78.9)], server: "Elizer Cruz",
     checkNumber: 1050, stage: "served", tips: 0, revenueCenter: "Main dining", paymentType: "Card",
@@ -344,7 +343,7 @@ export const initialTickets: Ticket[] = [
     checkNumber: 1055, tips: 0, revenueCenter: "Counter pickup", paymentType: "Unpaid", payments: [],
   },
   {
-    id: "t-1056", orderNo: 10256, table: 5, number: 14, label: "Tom W.", seats: 2,
+    id: "t-1056", orderNo: 10256, table: "T3", number: 14, label: "Tom W.", seats: 2,
     total: 42.5, date: DEFAULT_TICKET_DATE, arrivedAt: "5:37 PM", arrivedMinutesAgo: 8,
     status: "ordering", mode: "dine-in", lines: [custom(42.5)], server: "Elizer Cruz",
     checkNumber: 1056, tips: 0, revenueCenter: "Main dining", paymentType: "Unpaid", payments: [],
@@ -356,20 +355,20 @@ export const initialTickets: Ticket[] = [
     checkNumber: 1057, tips: 0, revenueCenter: "Counter pickup", paymentType: "Unpaid", payments: [],
   },
   {
-    id: "t-1058", orderNo: 10258, table: 1, number: 16, label: "Sarah M.", seats: 3,
+    id: "t-1058", orderNo: 10258, table: "EW79223", number: 16, label: "Sarah M.", seats: 3,
     total: 66.58, date: DEFAULT_TICKET_DATE, arrivedAt: "5:39 PM", arrivedMinutesAgo: 6,
     status: "preparing", mode: "dine-in", lines: [custom(66.58)], server: "Elizer Cruz",
     checkNumber: 1058, tips: 0, revenueCenter: "Main dining", paymentType: "Unpaid", payments: [],
   },
   {
-    id: "t-1059", orderNo: 10259, table: 7, number: 17, label: "Bar tab", seats: 2,
+    id: "t-1059", orderNo: 10259, number: 17, label: "Bar tab", seats: 2,
     total: 18.5, date: DEFAULT_TICKET_DATE, arrivedAt: "5:41 PM", arrivedMinutesAgo: 5,
     status: "payment", mode: "bar", lines: [line("m15", 2), line("m12")], server: "Elizer Cruz",
     checkNumber: 1059, tips: 0, revenueCenter: "Bar", paymentType: "Card",
     payments: [{ no: "1", method: "Card", amount: 10, at: "5:43 PM", ref: "TXN-88420" }],
   },
   {
-    id: "t-1060", orderNo: 10260, table: 9, number: 18, label: "Dana R.", seats: 4,
+    id: "t-1060", orderNo: 10260, table: "EW6072", number: 18, label: "Dana R.", seats: 4,
     total: 42.5, date: DEFAULT_TICKET_DATE, arrivedAt: "5:42 PM", arrivedMinutesAgo: 4,
     status: "payment", mode: "dine-in", lines: [line("m1", 2), line("m11"), line("m14", 2)], server: "Elizer Cruz",
     checkNumber: 1060, tips: 0, revenueCenter: "Main dining", paymentType: "Card",
@@ -388,7 +387,7 @@ export const initialTickets: Ticket[] = [
     checkNumber: 1062, tips: 0, revenueCenter: "Patio", paymentType: "Unpaid", payments: [],
   },
   {
-    id: "t-1063", orderNo: 10263, table: 12, number: 21, label: "Party of 6", seats: 6,
+    id: "t-1063", orderNo: 10263, table: "P2", number: 21, label: "Party of 6", seats: 6,
     total: 96.4, date: DEFAULT_TICKET_DATE, arrivedAt: "5:45 PM", arrivedMinutesAgo: 1,
     status: "paid", mode: "dine-in", lines: [line("m5", 2), line("m1", 2), line("m10", 3), line("m15", 4)], server: "Elizer Cruz",
     checkNumber: 1063, stage: "served", tips: 0, revenueCenter: "Main dining", paymentType: "Split",
@@ -398,7 +397,7 @@ export const initialTickets: Ticket[] = [
     ],
   },
   {
-    id: "t-1064", orderNo: 10264, table: 14, number: 22, label: "Party of 8", seats: 8,
+    id: "t-1064", orderNo: 10264, number: 22, label: "Party of 8", seats: 8,
     total: 142.75, date: DEFAULT_TICKET_DATE, arrivedAt: "5:46 PM", arrivedMinutesAgo: 1,
     status: "paid", mode: "dine-in", lines: [line("m1", 4), line("m5", 2), line("m12", 4), line("m15", 6)], server: "Elizer Cruz",
     checkNumber: 1064, stage: "waiting", tips: 0, revenueCenter: "Main dining", paymentType: "Card",

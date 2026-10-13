@@ -355,6 +355,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
     orderDiscountName,
     serviceChargePercent,
     serviceChargeName,
+    fireTicket,
   } = usePos();
 
   const placement = settings.orderTypePlacement;
@@ -617,7 +618,10 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
           <button
             type="button"
             disabled={!totals.count}
-            onClick={() => toast.success("Order fired to the kitchen")}
+            onClick={() => {
+              fireTicket();
+              toast.success("Order fired to the kitchen");
+            }}
             className="flex min-h-ctl-lg shrink-0 items-center justify-center gap-1.5 rounded-row bg-tile-orange px-3 text-fs-sm font-extrabold uppercase text-white transition-opacity hover:opacity-90 disabled:opacity-40"
           >
             <Flame className="size-4 shrink-0" />

@@ -23,6 +23,7 @@ import { FloorEditor } from "@/components/pos/floor-editor";
 import { GuestsSheet } from "@/components/pos/guests-sheet";
 import { StaffPanel } from "@/components/pos/staff-panel";
 import { StatusSheet, type StatusOption } from "@/components/pos/status-sheet";
+import { TableTicketsSheet } from "@/components/pos/table-tickets-sheet";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 
 import { ScreenBody } from "@/components/pos/shell";
@@ -104,6 +105,9 @@ function FloorPlan() {
     tableSeated,
     setTableState,
     startOrder,
+    tickets,
+    openTicket,
+    tableGroupLabel,
     settings,
     getFloorLayout,
     saveFloorLayout,
@@ -128,6 +132,12 @@ function FloorPlan() {
   const [section, setSection] = useState<FloorSection>("all");
   const [view, setView] = useState<"grid" | "layout">("grid");
   const [staffOpen, setStaffOpen] = useState(false);
+  // The table whose tickets the bottom sheet lists, when open.
+  const [ticketsFor, setTicketsFor] = useState<{
+    name: string;
+    seats: number;
+    state: TableState;
+  } | null>(null);
   const [statusFor, setStatusFor] = useState<{ name: string; label: string; state: TableState } | null>(
     null,
   );
@@ -236,6 +246,20 @@ function FloorPlan() {
     return { ...t, name: g.members[0] ?? t.name, seats: g.seats, state: g.state };
   };
 
+  /** Tickets created on (or charged to) this table, open ones first, paid after. */
+  const tableTickets = (name: string) => {
+    const members = layoutGroups.find((g) => g.members.includes(name))?.members ?? [name];
+    return tickets
+      .filter((t) => t.table && members.includes(String(t.table)))
+      .sort((a, b) =>
+        (a.status === "paid") === (b.status === "paid")
+          ? a.arrivedMinutesAgo - b.arrivedMinutesAgo
+          : a.status === "paid"
+            ? 1
+            : -1,
+      );
+  };
+
 
   const decor = layout.filter((o) => isDecor(o.kind)).filter((o) => inSection(o.section));
 
@@ -282,6 +306,12 @@ function FloorPlan() {
     // Occupied tables resume; free tables ask how many are seated first.
     if (t.state === "available" || t.state === "reserved") {
       setGuestsFor({ name: t.name, seats: t.seats });
+      return;
+    }
+    // Tables with tickets show their checks first; occupied tables without any
+    // go straight to a new order.
+    if (tableTickets(t.name).length > 0) {
+      setTicketsFor({ name: t.name, seats: t.seats, state: t.state });
       return;
     }
     startOrder(t.name);
@@ -782,6 +812,27 @@ function FloorPlan() {
               toast.success(`${statusFor.label} · ${tableStateMeta[state].label}`);
             }
             setStatusFor(null);
+          }}
+        />
+
+        <TableTicketsSheet
+          open={ticketsFor !== null}
+          label={ticketsFor ? tableGroupLabel(ticketsFor.name) ?? ticketsFor.name : ""}
+          seats={ticketsFor?.seats ?? 0}
+          state={ticketsFor?.state ?? "ordering"}
+          tickets={ticketsFor ? tableTickets(ticketsFor.name) : []}
+          onClose={() => setTicketsFor(null)}
+          onOpenTicket={(id) => {
+            openTicket(id);
+            setTicketsFor(null);
+            navigate({ to: "/order/new" });
+          }}
+          onNewOrder={() => {
+            if (ticketsFor) {
+              startOrder(ticketsFor.name);
+              setTicketsFor(null);
+              navigate({ to: "/order/new" });
+            }
           }}
         />
 
