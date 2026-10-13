@@ -14,6 +14,7 @@ import {
   WifiOff,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { AiMark } from "@/components/pos/dashboard/eatos-ai-chat";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useNavDrawer } from "@/lib/nav-drawer-context";
