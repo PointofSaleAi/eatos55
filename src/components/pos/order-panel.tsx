@@ -349,7 +349,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
     setOrderNotes,
     orderOwner,
     activeTicketId,
-    tickets,
+    currentOrderNumber,
     settings,
     orderDiscountPercent,
     orderDiscountName,
@@ -385,9 +385,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
     setGuestPhone(phone);
   };
 
-  const orderNumber = activeTicketId
-    ? (tickets.find((t) => t.id === activeTicketId)?.number ?? null)
-    : null;
+  const orderNumber = currentOrderNumber;
 
   const showTableChip = orderType === "Dine In" && activeTable;
 

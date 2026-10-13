@@ -19,7 +19,7 @@ export function PaymentBill({ room }: { room?: Room | null }) {
   const {
     cart,
     totals,
-    tickets,
+    currentOrderNumber,
     guest,
     orderType,
     activeTable,
@@ -33,7 +33,7 @@ export function PaymentBill({ room }: { room?: Room | null }) {
     setOrderNotes,
     setOrderDiscountPercent,
   } = usePos();
-  const orderNumber = tickets.length + 1;
+  const orderNumber = currentOrderNumber;
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
 
   const [guestOpen, setGuestOpen] = useState(false);

@@ -105,7 +105,7 @@ function PaymentMethod() {
   const {
     cart,
     totals,
-    tickets,
+    currentOrderNumber,
     guest,
     orderType,
     activeTable,
@@ -134,7 +134,7 @@ function PaymentMethod() {
     if (!wide && methods !== 1) void navigate({ to: "/payment/bill", replace: true });
   }, [wide, methods, navigate]);
   const ttpEnabled = (settings.tenders?.["tap-to-pay"] ?? true) && ttpDevice.available;
-  const orderNumber = tickets.length + 1;
+  const orderNumber = currentOrderNumber;
   // A split check is paid one child at a time; the last one clears the order.
   const unpaidChecks = splitChecks.filter((c) => !c.paid);
   const activeCheck =
