@@ -570,18 +570,20 @@ export type Room = {
   /** Room number as printed on the key card. */
   number: string;
   floor: string;
+  /** Wing or area within the floor, used by the Rooms section tabs. */
+  section?: string;
   guest?: string;
   amount?: number;
   state: "available" | "occupied";
   stay?: RoomStay;
 };
 
-export const rooms: Room[] = [
+const baseRooms: Room[] = [
   {
     id: "r1",
     name: "Room 2",
     number: "2",
-    floor: "Ground Floor",
+    floor: "Ground Floor", section: "Lobby",
     guest: "Maa DD",
     state: "available",
     stay: {
@@ -614,7 +616,7 @@ export const rooms: Room[] = [
     id: "r2",
     name: "Mahmoud Shaaban",
     number: "104",
-    floor: "First Floor",
+    floor: "First Floor", section: "Entrance",
     guest: "saof ali",
     amount: 0,
     state: "occupied",
@@ -640,7 +642,7 @@ export const rooms: Room[] = [
     id: "r3",
     name: "Ocean",
     number: "222",
-    floor: "First Floor",
+    floor: "First Floor", section: "Entrance",
     guest: "Test sdfsdf",
     state: "available",
     stay: {
@@ -665,7 +667,7 @@ export const rooms: Room[] = [
     id: "r4",
     name: "Francis Room",
     number: "303",
-    floor: "Patio",
+    floor: "Patio", section: "Garden",
     guest: "Francis Obera",
     amount: 2500,
     state: "occupied",
@@ -691,7 +693,7 @@ export const rooms: Room[] = [
     id: "r5",
     name: "King room",
     number: "982",
-    floor: "Patio",
+    floor: "Patio", section: "Garden",
     guest: "Tommy telles",
     state: "available",
     stay: {
@@ -713,6 +715,54 @@ export const rooms: Room[] = [
     },
   },
 ];
+
+/** Extra demo rooms so every floor and section has something to browse. */
+const extraRooms: Room[] = [
+  {
+    id: "r6",
+    name: "Ocean View",
+    number: "201",
+    floor: "2nd Floor",
+    section: "East Wing",
+    guest: "Chichi Trano",
+    amount: 500,
+    state: "occupied",
+    stay: {
+      bookingNumber: "BK-OV201",
+      stayFrom: "Jul 29",
+      stayTo: "Oct 10",
+      nights: 73,
+      occupancy: "2 Adults",
+      roomType: "Suite",
+      bedType: "King",
+      maxAdults: 2,
+      maxChildren: 1,
+      creditLimit: 1500,
+      creditUsed: 500,
+      foodAllowancePerDay: 50,
+      alcoholAllowed: true,
+      meals: ["Breakfast", "Dinner"],
+      entitlements: "Sea view, late checkout",
+    },
+  },
+  { id: "r7", name: "Sandy Room", number: "105", floor: "First Floor", section: "Entrance", state: "available" },
+  { id: "r8", name: "Room 0199", number: "199", floor: "First Floor", section: "Entrance", state: "available" },
+  ...Array.from({ length: 4 }, (_, f) =>
+    Array.from({ length: f < 3 ? 9 : 7 }, (_, i) => {
+      const num = `0${f + 1}0${i + 1}`;
+      return {
+        id: `mews-${num}`,
+        name: num,
+        number: num,
+        floor: "Mews",
+        section: "Mews Rooms",
+        state: "available" as const,
+      };
+    }),
+  ).flat(),
+];
+
+export const rooms: Room[] = [...baseRooms, ...extraRooms];
 
 export const boardChannels = ["DINE IN", "ONLINE"] as const;
 
