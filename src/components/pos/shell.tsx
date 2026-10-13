@@ -82,7 +82,7 @@ function useSessionGate(): boolean {
 
 /** Screens worth having ready the moment someone unlocks the terminal. */
 const MAIN_SCREENS = [
-  "/dashboard",
+  "/order/menu",
   "/tickets",
   "/floor",
   "/order/new",
