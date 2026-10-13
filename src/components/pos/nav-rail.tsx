@@ -105,7 +105,7 @@ export function NavRail() {
         }}
         className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-2 pt-4"
       >
-        <ul className="flex flex-col gap-4">
+        <ul className="flex flex-col gap-3.5">
           {railPrimary.map((l) => (
             <li key={l.to}>
               <Link
