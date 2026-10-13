@@ -54,8 +54,9 @@ export function GiftCardDialog({
       if (d === ".") return;
       setCardNumber((cur) => {
         const next = `${cur}${d}`.replace(/\D/g, "").slice(0, 19);
-        // Once the number looks complete, hand the pad over to the amount.
-        if (next.length >= 8 && cur.length < 8) setActiveField("amount");
+        // Only a full-length number hands the pad over to the amount;
+        // otherwise the user picks the field by tapping it.
+        if (next.length >= 19 && cur.length < 19) setActiveField("amount");
         return next;
       });
       return;
