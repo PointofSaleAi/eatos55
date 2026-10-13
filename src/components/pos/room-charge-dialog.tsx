@@ -13,9 +13,12 @@ import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
 /** Remaining credit on the stay; a room with none cannot take a charge. */
-function creditLeft(room: Room) {
+export function creditLeft(room: Room, extraUsed = 0) {
   if (!room.stay) return 0;
-  return Math.max(0, Math.round((room.stay.creditLimit - room.stay.creditUsed) * 100) / 100);
+  return Math.max(
+    0,
+    Math.round((room.stay.creditLimit - room.stay.creditUsed - extraUsed) * 100) / 100,
+  );
 }
 
 /** Column and row count for the room grid so it never needs a scrollbar. */
@@ -54,7 +57,7 @@ export function RoomChargeDialog({
   onCharge: (room: Room) => void;
 }) {
   const wide = useWideViewport();
-  const { cart, totals, currentOrderNumber, settings } = usePos();
+  const { cart, totals, currentOrderNumber, settings, roomCreditUsed } = usePos();
   const [query, setQuery] = useState("");
   const [floor, setFloor] = useState<string>("All floors");
   const [pickedId, setPickedId] = useState<string | null>(null);
@@ -99,13 +102,13 @@ export function RoomChargeDialog({
   const visible = list.slice(safePage * pageSize, safePage * pageSize + pageSize);
 
   const picked = rooms.find((r) => r.id === pickedId) ?? null;
-  const left = picked ? creditLeft(picked) : 0;
+  const left = picked ? creditLeft(picked, roomCreditUsed[picked.id] ?? 0) : 0;
   const canCharge = Boolean(picked && picked.stay && left >= due);
 
   const pct = picked?.stay
     ? Math.min(
         100,
-        Math.round((picked.stay.creditUsed / Math.max(1, picked.stay.creditLimit)) * 100),
+        Math.round(((picked.stay.creditUsed + (roomCreditUsed[picked.id] ?? 0)) / Math.max(1, picked.stay.creditLimit)) * 100),
       )
     : 0;
 
@@ -163,7 +166,7 @@ export function RoomChargeDialog({
             }}
           >
             {visible.map((r) => {
-              const spare = creditLeft(r);
+              const spare = creditLeft(r, roomCreditUsed[r.id] ?? 0);
               const blocked = !r.stay || spare < due;
               const active = r.id === pickedId;
               return (
@@ -256,37 +259,20 @@ export function RoomChargeDialog({
           type="button"
           disabled={!canCharge}
           onClick={() => setBillOpen(true)}
+          className="flex h-ctl-lg w-full items-center justify-center gap-2 rounded-row bg-primary px-4 text-fs-base font-extrabold uppercase tracking-[0.06em] text-primary-foreground transition-colors disabled:opacity-40"
+        >
+          <Printer className="size-4 shrink-0" aria-hidden />
+          <span className="min-w-0 truncate">Print bill</span>
+        </button>
+        <p
           className={cn(
-            "flex h-ctl-lg w-full items-center justify-center gap-2 rounded-row border px-4 text-fs-sm font-extrabold uppercase tracking-[0.06em] transition-colors disabled:opacity-40",
-            printedAt
-              ? "border-success bg-success/10 text-foreground"
-              : "border-border bg-surface text-foreground hover:bg-muted",
+            "truncate text-center text-fs-xs",
+            canCharge ? "text-muted-foreground" : "font-bold text-destructive",
           )}
         >
-          {printedAt ? (
-            <Check className="size-4 shrink-0" aria-hidden />
-          ) : (
-            <Printer className="size-4 shrink-0" aria-hidden />
-          )}
-          <span className="min-w-0 truncate">
-            {printedAt ? `Bill printed ${printedAt} · view again` : "Print bill for signature"}
-          </span>
-        </button>
-        <button
-          type="button"
-          disabled={!canCharge || !printedAt}
-          onClick={() => onCharge(picked)}
-          className="flex h-ctl-lg w-full items-center justify-center gap-3 rounded-row bg-primary px-4 text-fs-base font-extrabold uppercase tracking-[0.06em] text-primary-foreground transition-colors disabled:opacity-40"
-        >
-          <span className="min-w-0 truncate">Post charge to room {picked.number}</span>
-          <span className="shrink-0 rounded-row bg-primary-foreground/20 px-2.5 py-0.5 text-fs-sm">
-            {money(due)}
-          </span>
-        </button>
-        <p className="truncate text-center text-fs-xs text-muted-foreground">
-          {printedAt
-            ? "Tips are added later from the ticket."
-            : "Guest signs the printed bill before it posts."}
+          {canCharge
+            ? "Guest signs the printed bill, then you post it from the ticket."
+            : `Low credit: ${money(left)} remaining`}
         </p>
       </div>
     ) : (
@@ -413,10 +399,8 @@ export function RoomChargeDialog({
       venue={settings.restaurantName}
       onClose={() => setBillOpen(false)}
       onPrint={() => {
-        const at = formatTime();
-        setPrintedAt(at);
         setBillOpen(false);
-        toast.success(`Bill printed for signature at ${at}`);
+        if (picked) onCharge(picked);
       }}
     />
   );
