@@ -226,82 +226,141 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
             <>
               <SheetGrabber handleProps={handleProps} />
               <SheetHeader className="shrink-0 px-4 pb-1.5 pt-0.5 text-left" {...handleProps}>
-                <div className="flex items-center gap-2">
-                  {item.image ? (
-                    <img
-                      src={item.image}
-                      alt=""
-                      className="size-11 shrink-0 rounded-card border border-border object-cover sm:size-14"
-                    />
-                  ) : (
-                    <span
-                      aria-hidden
-                      className="grid size-11 shrink-0 place-items-center rounded-card border border-border bg-muted text-muted-foreground sm:size-14"
-                    >
-                      <UtensilsCrossed className="size-5" />
-                    </span>
-                  )}
-                  <SheetTitle className="line-clamp-2 min-w-0 flex-1 leading-tight text-fs-base font-extrabold uppercase tracking-[0.02em] text-foreground">
-                    {item.name}
+                {view === "info" ? (
+                  <SheetTitle className="text-center text-fs-xs font-extrabold uppercase tracking-[0.08em] text-muted-foreground">
+                    Product Information
                   </SheetTitle>
-                  {/* Cost and quantity sit at the right end of the name row. */}
-                  <div className="flex shrink-0 items-center gap-1.5">
-                    {editingPrice ? (
-                      <input
-                        autoFocus
-                        type="number"
-                        inputMode="decimal"
-                        value={price}
-                        onChange={(e) => setPrice(Number(e.target.value) || 0)}
-                        onBlur={() => setEditingPrice(false)}
-                        onPointerDown={(e) => e.stopPropagation()}
-                        aria-label="Item price"
-                        className="h-ctl-sm w-20 rounded-pill border border-border bg-surface px-3 text-fs-sm font-bold text-foreground outline-none"
-                      />
-                    ) : (
-                      <button
-                        type="button"
-                        aria-label="Edit price (manager PIN required)"
-                        onClick={() =>
-                          item.openPrice ? setEditingPrice(true) : setOverrideOpen(true)
-                        }
-                        onPointerDown={(e) => e.stopPropagation()}
-                        className="flex min-h-ctl-sm items-center gap-1 rounded-pill border border-border px-2.5 py-0.5 text-fs-sm font-bold text-foreground sm:gap-1.5 sm:px-3"
-                      >
-                        <span className="flex flex-col items-center leading-tight">
-                          {money(price)}
-                          {!item.openPrice && price !== item.price ? (
-                            <span className="text-[0.65rem] font-semibold text-muted-foreground line-through">
-                              {money(item.price)}
-                            </span>
-                          ) : null}
+                ) : (
+                  <div className="flex items-center gap-2">
+                    {/* The photo and name open Product Information inside this same modal. */}
+                    <button
+                      type="button"
+                      onClick={() => setView("info")}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      aria-label="View product information"
+                      className="flex min-w-0 flex-1 items-center gap-2 rounded-card text-left"
+                    >
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt=""
+                          className="size-11 shrink-0 rounded-card border border-border object-cover sm:size-14"
+                        />
+                      ) : (
+                        <span
+                          aria-hidden
+                          className="grid size-11 shrink-0 place-items-center rounded-card border border-border bg-muted text-muted-foreground sm:size-14"
+                        >
+                          <UtensilsCrossed className="size-5" />
                         </span>
-                        <Pencil className="size-3.5 text-muted-foreground" />
-                      </button>
-                    )}
-                    <span className="relative w-[3.25rem] shrink-0">
-                      <select
-                        aria-label="Quantity"
-                        value={qty}
-                        onChange={(e) => setQty(Number(e.target.value))}
-                        onPointerDown={(e) => e.stopPropagation()}
-                        className="h-ctl-sm w-full appearance-none rounded-pill border border-border bg-surface pl-2.5 pr-5 text-left text-fs-sm font-bold text-foreground outline-none"
-                      >
-                        {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                          <option key={n} value={n}>
-                            {n}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown
-                        aria-hidden
-                        className="pointer-events-none absolute right-1.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground"
-                      />
-                    </span>
+                      )}
+                      <span className="line-clamp-2 min-w-0 flex-1 leading-tight text-fs-base font-extrabold uppercase tracking-[0.02em] text-foreground">
+                        {item.name}
+                      </span>
+                    </button>
+                    <SheetTitle className="sr-only">{item.name}</SheetTitle>
+                    {/* Cost and quantity sit at the right end of the name row. */}
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      {editingPrice ? (
+                        <input
+                          autoFocus
+                          type="number"
+                          inputMode="decimal"
+                          value={price}
+                          onChange={(e) => setPrice(Number(e.target.value) || 0)}
+                          onBlur={() => setEditingPrice(false)}
+                          onPointerDown={(e) => e.stopPropagation()}
+                          aria-label="Item price"
+                          className="h-ctl-sm w-20 rounded-pill border border-border bg-surface px-3 text-fs-sm font-bold text-foreground outline-none"
+                        />
+                      ) : (
+                        <button
+                          type="button"
+                          aria-label="Edit price (manager PIN required)"
+                          onClick={() =>
+                            item.openPrice ? setEditingPrice(true) : setOverrideOpen(true)
+                          }
+                          onPointerDown={(e) => e.stopPropagation()}
+                          className="flex min-h-ctl-sm items-center gap-1 rounded-pill border border-border px-2.5 py-0.5 text-fs-sm font-bold text-foreground sm:gap-1.5 sm:px-3"
+                        >
+                          <span className="flex flex-col items-center leading-tight">
+                            {money(price)}
+                            {!item.openPrice && price !== item.price ? (
+                              <span className="text-[0.65rem] font-semibold text-muted-foreground line-through">
+                                {money(item.price)}
+                              </span>
+                            ) : null}
+                          </span>
+                          <Pencil className="size-3.5 text-muted-foreground" />
+                        </button>
+                      )}
+                      <span className="relative w-[3.25rem] shrink-0">
+                        <select
+                          aria-label="Quantity"
+                          value={qty}
+                          onChange={(e) => setQty(Number(e.target.value))}
+                          onPointerDown={(e) => e.stopPropagation()}
+                          className="h-ctl-sm w-full appearance-none rounded-pill border border-border bg-surface pl-2.5 pr-5 text-left text-fs-sm font-bold text-foreground outline-none"
+                        >
+                          {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                            <option key={n} value={n}>
+                              {n}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown
+                          aria-hidden
+                          className="pointer-events-none absolute right-1.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground"
+                        />
+                      </span>
+                    </div>
                   </div>
-                </div>
+                )}
               </SheetHeader>
 
+                {view === "info" ? (
+                  <>
+                    <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-3">
+                      <div className="flex items-center gap-2">
+                        <h3 className="line-clamp-2 min-w-0 flex-1 leading-tight text-fs-base font-extrabold uppercase tracking-[0.02em] text-foreground">
+                          {item.name}
+                        </h3>
+                        <span className="shrink-0 text-fs-sm font-extrabold text-foreground">
+                          {money(price)}
+                        </span>
+                      </div>
+                      <div className="mt-2.5 overflow-hidden rounded-card border border-border bg-muted">
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            alt=""
+                            className="h-40 w-full object-cover sm:h-52"
+                          />
+                        ) : (
+                          <span className="grid h-40 w-full place-items-center text-muted-foreground sm:h-52">
+                            <UtensilsCrossed className="size-10" aria-hidden />
+                          </span>
+                        )}
+                      </div>
+                      <h4 className="mt-3 text-fs-xs font-extrabold uppercase tracking-[0.06em] text-muted-foreground">
+                        Description
+                      </h4>
+                      <p className="mt-1 text-fs-sm font-semibold leading-relaxed text-foreground [overflow-wrap:anywhere]">
+                        {item.description?.trim() || "No description available."}
+                      </p>
+                    </div>
+                    <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-2.5">
+                      <button
+                        type="button"
+                        onClick={() => setView("order")}
+                        className="h-ctl-lg w-full rounded-pill bg-primary text-fs-sm font-extrabold uppercase tracking-[0.06em] text-primary-foreground"
+                      >
+                        Back to Order
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
               <div className="flex min-h-0 flex-1 flex-col">
 
                 <div className="relative z-10 px-4 pb-2">
