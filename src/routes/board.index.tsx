@@ -63,8 +63,23 @@ function Board() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-background">
-      <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
-        <div className="flex items-center justify-end gap-3">
+      <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="inline-flex shrink-0 rounded-pill bg-muted p-1">
+            {boardChannels.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setChannel(c)}
+                className={cn(
+                  "min-h-ctl-sm rounded-pill px-4 text-fs-sm font-bold transition-colors",
+                  c === channel ? "bg-primary text-primary-foreground" : "text-muted-foreground",
+                )}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
           <div className="flex shrink-0 items-center gap-1">
             <Link
               to="/orders"
@@ -98,30 +113,15 @@ function Board() {
             >
               <XCircle className="size-5" />
             </button>
-            <p className="ml-1 text-fs-sm font-bold text-muted-foreground">
+            <p className="ml-1 hidden text-fs-sm font-bold text-muted-foreground sm:block">
               {formatTime()}
             </p>
           </div>
         </div>
-        <div className="mt-3 inline-flex rounded-pill bg-muted p-1">
-          {boardChannels.map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => setChannel(c)}
-              className={cn(
-                "min-h-ctl-sm rounded-pill px-4 text-fs-sm font-bold transition-colors",
-                c === channel ? "bg-primary text-primary-foreground" : "text-muted-foreground",
-              )}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="no-scrollbar flex-1 overflow-x-auto">
-        <div className="flex h-full min-w-max gap-3 px-4 py-4">
+        <div className="flex h-full min-w-max gap-3 px-4 pb-4 pt-3">
           {boardColumns.map((col) => {
             const list = forColumn(col.id);
             return (
