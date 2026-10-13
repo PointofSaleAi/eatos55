@@ -33,3 +33,4 @@
 - [x] Hide menu categories, subcategories and product search while the Custom Item workspace is open
 - [x] Enlarge the Custom Item keypad digits and keep the pad clear of the phone bottom bar
 - [x] Rename the Custom Item option to Menu Item in the three-dot panel while that screen is open
+- [x] Open Product Information (name, price, image, description, Back to Order) inside the same product modal from its image and name
