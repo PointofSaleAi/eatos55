@@ -1,24 +1,7 @@
 import { Navigate, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
-import {
-  Bell,
-  Briefcase,
-  FileText,
-  Headset,
-  Images,
-  LifeBuoy,
-  LogOut,
-  Mail,
-  Mic,
-  Search,
-  Settings2,
-  SmartphoneNfc,
-  Tablet,
-  UserRoundCog,
-  Utensils,
-  Wallet,
-  Wifi,
-} from "lucide-react";
+import { Bell, LogOut, Mic, Search, Settings2 } from "lucide-react";
+import { settingsGroups } from "@/lib/settings-destinations";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ScreenBody, useWideLayout } from "@/components/pos/shell";
@@ -43,6 +26,8 @@ export const Route = createFileRoute("/settings/")({
         property: "og:description",
         content: "Device, menu, payments, workforce and hardware settings for the handheld app.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: SettingsHub,
@@ -58,7 +43,7 @@ type Row = {
 
 function SettingsHub() {
   const navigate = useNavigate();
-  const { session, settings, signOut } = usePos();
+  const { session, settings, signOut, canManageSettings } = usePos();
   const confirmAction = useConfirm();
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
@@ -67,40 +52,9 @@ function SettingsHub() {
 
   const groups = useMemo<Row[][]>(
     () => [
-      [
-        { title: "General", icon: UserRoundCog, color: "green", to: "/settings/general" },
-        {
-          title: "Login Screen",
-          icon: Images,
-          color: "blue",
-          to: "/settings/login-screen",
-        },
-        {
-          title: "Control Center",
-          icon: SmartphoneNfc,
-          color: "violet",
-          to: "/settings/control-center",
-        },
-        { title: "Menu", icon: Utensils, color: "orange", to: "/settings/menu" },
-        { title: "Payments", icon: Wallet, color: "indigo", to: "/settings/payments" },
-        { title: "Workforce", icon: Briefcase, color: "purple", to: "/settings/workforce" },
-        {
-          title: "Reports",
-          icon: FileText,
-          color: "slate",
-          to: "/settings/reports",
-        },
-      ],
-      [
-        { title: "Network", icon: Wifi, color: "sky", to: "/settings/network" },
-        { title: "Hardware", icon: Tablet, color: "violet", to: "/settings/hardware" },
-      ],
-      [
-        { title: "Notifications", icon: Bell, color: "grey", to: "/settings/notifications" },
-        { title: "Customer Support", icon: Headset, color: "red", to: "/system/customer-support" },
-        { title: "Contact Us", icon: Mail, color: "blue", to: "/system/contact-us" },
-        { title: "Help Center", icon: LifeBuoy, color: "sky", to: "/system/help-center" },
-      ],
+      ...settingsGroups.map((group) => group
+        .filter((row) => !row.manager || canManageSettings)
+        .map((row) => ({ title: row.label, icon: row.icon, color: row.color, to: row.to }))),
       [
         {
           title: "Switch User",
@@ -128,7 +82,7 @@ function SettingsHub() {
         },
       ],
     ],
-    [],
+    [canManageSettings, confirmAction, navigate, signOut],
   );
 
   const q = query.trim().toLowerCase();

@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Lock, Settings as SettingsIcon, Sparkles } from "lucide-react";
+import { Lock } from "lucide-react";
 import { useCallback, useState } from "react";
 import { EMark } from "@/components/pos/brand";
 import { railPrimary } from "@/lib/nav-destinations";
@@ -26,7 +26,7 @@ export function NavRail() {
   // Always starts collapsed: expansion is a per-visit choice, never remembered.
   const toggle = useCallback(() => setExpanded((v) => !v), []);
 
-  const venue = settings.restaurantName.split("·")[0]!.trim();
+  const venue = (settings.restaurantName.split("·")[0] ?? "").trim();
   const venueInitials =
     venue
       .split(" ")
@@ -124,39 +124,7 @@ export function NavRail() {
               </Link>
             </li>
           ))}
-          <li>
-            <Link
-              to="/settings"
-              preload="intent"
-              title="Settings"
-              aria-label="Settings"
-              className={cn(
-                cell,
-                expanded ? "justify-start px-2" : "justify-center px-0",
-                isActive("/settings") ? active : rest,
-              )}
-            >
-              <SettingsIcon className="size-6 shrink-0" />
-              {expanded ? <span className="min-w-0 flex-1 truncate">Settings</span> : null}
-            </Link>
-          </li>
-          <li>
-            <button
-              type="button"
-              title="Shift assistant"
-              aria-label="Shift assistant"
-              onClick={() => window.dispatchEvent(new CustomEvent("pos:open-dashboard"))}
-              className={cn(
-                cell,
-                rest,
-                "w-full",
-                expanded ? "justify-start px-2" : "justify-center px-0",
-              )}
-            >
-              <Sparkles className="size-6 shrink-0" />
-              {expanded ? <span className="min-w-0 flex-1 truncate">Shift assistant</span> : null}
-            </button>
-          </li>
+
         </ul>
       </div>
 

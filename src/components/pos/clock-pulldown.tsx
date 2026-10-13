@@ -24,11 +24,12 @@ export function ClockPullDown() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [pin, setPin] = useState("");
 
-  // The rail's shift assistant opens the same pull-down pad.
+  // Preserve the header Maya AI shortcut independently of the settings chevron.
   useEffect(() => {
     const onOpen = () => {
       setOpen(false);
-      setMenuOpen(true);
+      setMenuOpen(false);
+      void navigate({ to: "/dashboard" });
     };
     // Switch user now lives in the navigation drawer.
     const onSwitchUser = () => {
@@ -41,7 +42,7 @@ export function ClockPullDown() {
       window.removeEventListener("pos:open-dashboard", onOpen);
       window.removeEventListener("pos:switch-user", onSwitchUser);
     };
-  }, []);
+  }, [navigate]);
 
 
   const close = () => {

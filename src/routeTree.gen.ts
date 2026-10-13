@@ -17,6 +17,7 @@ import { Route as AccessForgotPasswordRouteImport } from './routes/access.forgot
 import { Route as AccessManagerPinRouteImport } from './routes/access.manager-pin'
 import { Route as AccessSelectStationRouteImport } from './routes/access.select-station'
 import { Route as BoardIndexRouteImport } from './routes/board.index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as FloorIndexRouteImport } from './routes/floor.index'
 import { Route as OrderCustomItemRouteImport } from './routes/order.custom-item'
 import { Route as OrderMenuRouteImport } from './routes/order.menu'
@@ -111,6 +112,11 @@ const AccessSelectStationRoute = AccessSelectStationRouteImport.update({
 const BoardIndexRoute = BoardIndexRouteImport.update({
   id: '/board/',
   path: '/board/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FloorIndexRoute = FloorIndexRouteImport.update({
@@ -442,6 +448,7 @@ export interface FileRoutesByFullPath {
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
   '/board/': typeof BoardIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/floor/': typeof FloorIndexRoute
   '/orders/': typeof OrdersIndexRoute
   '/rooms/': typeof RoomsIndexRoute
@@ -507,6 +514,7 @@ export interface FileRoutesByTo {
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
   '/board': typeof BoardIndexRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/floor': typeof FloorIndexRoute
   '/orders': typeof OrdersIndexRoute
   '/rooms': typeof RoomsIndexRoute
@@ -573,6 +581,7 @@ export interface FileRoutesById {
   '/tickets/sort': typeof TicketsSortRoute
   '/tickets/whats-new': typeof TicketsWhatsNewRoute
   '/board/': typeof BoardIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/floor/': typeof FloorIndexRoute
   '/orders/': typeof OrdersIndexRoute
   '/rooms/': typeof RoomsIndexRoute
@@ -640,6 +649,7 @@ export interface FileRouteTypes {
     | '/tickets/sort'
     | '/tickets/whats-new'
     | '/board/'
+    | '/dashboard/'
     | '/floor/'
     | '/orders/'
     | '/rooms/'
@@ -705,6 +715,7 @@ export interface FileRouteTypes {
     | '/tickets/sort'
     | '/tickets/whats-new'
     | '/board'
+    | '/dashboard'
     | '/floor'
     | '/orders'
     | '/rooms'
@@ -770,6 +781,7 @@ export interface FileRouteTypes {
     | '/tickets/sort'
     | '/tickets/whats-new'
     | '/board/'
+    | '/dashboard/'
     | '/floor/'
     | '/orders/'
     | '/rooms/'
@@ -836,6 +848,7 @@ export interface RootRouteChildren {
   TicketsSortRoute: typeof TicketsSortRoute
   TicketsWhatsNewRoute: typeof TicketsWhatsNewRoute
   BoardIndexRoute: typeof BoardIndexRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
   FloorIndexRoute: typeof FloorIndexRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
   RoomsIndexRoute: typeof RoomsIndexRoute
@@ -906,6 +919,13 @@ declare module '@tanstack/react-router' {
       path: '/board'
       fullPath: '/board/'
       preLoaderRoute: typeof BoardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/floor/': {
@@ -1358,6 +1378,7 @@ const rootRouteChildren: RootRouteChildren = {
   TicketsSortRoute: TicketsSortRoute,
   TicketsWhatsNewRoute: TicketsWhatsNewRoute,
   BoardIndexRoute: BoardIndexRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
   FloorIndexRoute: FloorIndexRoute,
   OrdersIndexRoute: OrdersIndexRoute,
   RoomsIndexRoute: RoomsIndexRoute,
