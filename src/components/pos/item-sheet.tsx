@@ -82,11 +82,13 @@ const SORT_LABELS = {
  * Compact portrait-phone scale: pinned header + footer, single scroll area.
  */
 export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: () => void }) {
-  useBackDismiss(!!item, onClose);
+  useBackDismiss(!!item, dismiss);
   const { addItem, settings } = usePos();
   const announce = useAnnounce();
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState(item?.price ?? 0);
+  /** "order" is the normal cart-building content, "info" is Product Information. */
+  const [view, setView] = useState<"order" | "info">("order");
   const [editingPrice, setEditingPrice] = useState(false);
   const [overrideOpen, setOverrideOpen] = useState(false);
   const [notes, setNotes] = useState<string[]>([]);
@@ -99,15 +101,13 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<"az" | "za" | "lohi" | "hilo">("az");
   const [sortOpen, setSortOpen] = useState(false);
-  const { dragStyle, handleProps } = useSheetDrag(() => {
-    reset();
-    onClose();
-  });
+  const { dragStyle, handleProps } = useSheetDrag(dismiss);
 
   useEffect(() => {
     if (!item) return;
     setPrice(item.openPrice ? 0 : item.price);
     setEditingPrice(Boolean(item.openPrice));
+    setView("order");
   }, [item]);
 
   const itemGroups = useMemo(
@@ -171,7 +171,22 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
     setSearch("");
     setSort("az");
     setSortOpen(false);
+    setView("order");
   };
+
+  /**
+   * Escape, browser back, outside tap and drag-down: while Product Information
+   * is open they return to the order content instead of closing the modal, and
+   * no dismissal ever adds the item to the cart.
+   */
+  function dismiss() {
+    if (view === "info") {
+      setView("order");
+      return;
+    }
+    reset();
+    onClose();
+  }
 
   const startVoiceSearch = () => {
     const w = window as unknown as {
@@ -199,10 +214,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
       <Sheet
         open={item !== null}
         onOpenChange={(open) => {
-          if (!open) {
-            reset();
-            onClose();
-          }
+          if (!open) dismiss();
         }}
       >
         <SheetContent

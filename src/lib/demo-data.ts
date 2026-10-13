@@ -11,6 +11,8 @@ export type MenuItem = {
   category: string;
   /** Product photo shown before the name in the item sheet. */
   image?: string;
+  /** Written-up details shown on the Product Information view. */
+  description?: string;
   note?: string;
   /** Tracked inventory count, when the item counts stock. */
   stock?: number;
@@ -122,24 +124,24 @@ export const categories = [
 ] as const;
 
 export const menu: MenuItem[] = [
-  { id: "m1", name: "Classic Smash", price: 11.0, category: "Burgers" },
-  { id: "m2", name: "Double Smash", price: 14.5, category: "Burgers" },
-  { id: "m3", name: "Crispy Chicken", price: 12.25, category: "Burgers" },
-  { id: "m4", name: "Garden Burger", price: 10.75, category: "Burgers" },
-  { id: "m5", name: "Steak & Eggs", price: 16.0, category: "Breakfast" },
-  { id: "m6", name: "Buttermilk Pancakes", price: 9.5, category: "Breakfast" },
-  { id: "m7", name: "Breakfast Burrito", price: 10.25, category: "Breakfast" },
-  { id: "m8", name: "Skillet Hash", price: 11.5, category: "Breakfast" },
-  { id: "m9", name: "Shoestring Fries", price: 4.25, category: "Sides" },
-  { id: "m10", name: "Truffle Tots", price: 6.5, category: "Sides" },
-  { id: "m11", name: "House Salad", price: 7.0, category: "Sides" },
-  { id: "m12", name: "Onion Rings", price: 5.75, category: "Sides" },
-  { id: "m13", name: "Cold Brew", price: 4.5, category: "Drinks" },
-  { id: "m14", name: "Fresh Lemonade", price: 3.75, category: "Drinks" },
-  { id: "m15", name: "Draft Lager", price: 7.0, category: "Drinks" },
-  { id: "m16", name: "Espresso", price: 3.25, category: "Drinks" },
-  { id: "m17", name: "Salted Brownie", price: 6.0, category: "Desserts" },
-  { id: "m18", name: "Soft Serve", price: 4.0, category: "Desserts" },
+  { id: "m1", name: "Classic Smash", price: 11.0, category: "Burgers", description: "Two smashed all-beef patties with American cheese, pickles and house sauce on a toasted potato bun." },
+  { id: "m2", name: "Double Smash", price: 14.5, category: "Burgers", description: "Four thin smashed patties, double American cheese, pickles and house sauce on a toasted potato bun." },
+  { id: "m3", name: "Crispy Chicken", price: 12.25, category: "Burgers", description: "Buttermilk-brined chicken thigh fried crisp, with slaw, bread-and-butter pickles and spicy mayo." },
+  { id: "m4", name: "Garden Burger", price: 10.75, category: "Burgers", description: "Grilled black-bean and roasted corn patty with avocado, lettuce, tomato and vegan aioli on a sesame bun." },
+  { id: "m5", name: "Steak & Eggs", price: 16.0, category: "Breakfast", description: "Six-ounce hanger steak with two eggs any style, crispy smashed potatoes and chimichurri." },
+  { id: "m6", name: "Buttermilk Pancakes", price: 9.5, category: "Breakfast", description: "Three tall buttermilk pancakes with whipped maple butter and warm maple syrup." },
+  { id: "m7", name: "Breakfast Burrito", price: 10.25, category: "Breakfast", description: "Scrambled eggs, chorizo, breakfast potato and pepper jack rolled in a flour tortilla with salsa verde." },
+  { id: "m8", name: "Skillet Hash", price: 11.5, category: "Breakfast", description: "Crispy potato hash with onions and peppers, two fried eggs and a drizzle of chili oil." },
+  { id: "m9", name: "Shoestring Fries", price: 4.25, category: "Sides", description: "Fine-cut fries fried twice until feather-light, finished with sea salt." },
+  { id: "m10", name: "Truffle Tots", price: 6.5, category: "Sides", description: "Crispy tater tots tossed in truffle parmesan salt, served with a garlic aioli for dipping." },
+  { id: "m11", name: "House Salad", price: 7.0, category: "Sides", description: "Butter lettuce, cucumber, radish and shaved fennel with lemon vinaigrette and croutons." },
+  { id: "m12", name: "Onion Rings", price: 5.75, category: "Sides", description: "Thick-cut sweet onion in a cold-beer batter, fried golden and served with smoked ketchup." },
+  { id: "m13", name: "Cold Brew", price: 4.5, category: "Drinks", description: "Slow-steeped for eighteen hours and served over ice, with cream on the side." },
+  { id: "m14", name: "Fresh Lemonade", price: 3.75, category: "Drinks", description: "Lemons squeezed to order, shaken with cane sugar and a little mint." },
+  { id: "m15", name: "Draft Lager", price: 7.0, category: "Drinks", description: "Crisp Czech-style pilsner on draft, poured cold with a firm white head." },
+  { id: "m16", name: "Espresso", price: 3.25, category: "Drinks", description: "A double shot of our house espresso, pulled short and syrupy." },
+  { id: "m17", name: "Salted Brownie", price: 6.0, category: "Desserts", description: "Warm fudge brownie with flaked sea salt and a scoop of vanilla bean ice cream." },
+  { id: "m18", name: "Soft Serve", price: 4.0, category: "Desserts", description: "Fresh-churned vanilla soft serve, swirled high, with a choice of sauce." },
 ];
 
 export const popularIds = ["m1", "m9", "m13", "m3", "m10", "m17"];
