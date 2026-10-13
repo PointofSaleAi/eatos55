@@ -1,4 +1,5 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
+import { money } from "@/lib/demo-data";
 import { rooms as allRooms } from "@/lib/floor-data";
 const roomNames = new Set(allRooms.map((r) => r.name));
 import { X as XIcon } from "lucide-react";
