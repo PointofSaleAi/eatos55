@@ -3,11 +3,8 @@ import { brand } from "@/lib/brand";
 import {
   ArrowLeftRight,
   Banknote,
-  ChevronDown,
-  Monitor,
   Timer,
   Bell,
-  EllipsisVertical,
   Headphones,
   RotateCw,
   Wifi,
@@ -125,39 +122,26 @@ export function AccountActions() {
   const { settings } = usePos();
   const navigate = useNavigate();
   const [news, setNews] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
   const [seen, setSeen] = useState(false);
   const clock = useClock();
   const online = useOnline();
 
   useEffect(() => {
-    if (!moreOpen && !news) return;
+    if (!news) return;
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setMoreOpen(false);
-        setNews(false);
-      }
+      if (event.key === "Escape") setNews(false);
     };
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [moreOpen, news]);
+  }, [news]);
 
   const openNews = () => {
     setNews(true);
-    setMoreOpen(false);
     setSeen(true);
   };
 
   return (
     <div className="relative flex shrink-0 items-center justify-end gap-0.5">
-      <span
-        title="Device connected"
-        className="mr-1 hidden items-center gap-1.5 rounded-pill bg-topbar-foreground/10 px-2.5 py-1.5 text-topbar-foreground lg:flex"
-      >
-        <span aria-hidden className="size-1.5 rounded-full bg-success" />
-        <Monitor className="size-4" />
-        <ChevronDown className="size-3.5 text-topbar-muted" />
-      </span>
       <Button
         type="button"
         variant="ghost"
