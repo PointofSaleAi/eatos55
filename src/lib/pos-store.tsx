@@ -150,7 +150,7 @@ export const TENDER_LABELS: Record<TenderId, string> = {
   gift: "Gift Card",
   loyalty: "Loyalty",
   "in-kind": "In-kind",
-  room: "Room Charge",
+  room: "Rooms",
   uber: "Uber Eats",
   doordash: "Doordash",
   grubhub: "Grubhub",
