@@ -1,8 +1,8 @@
 import { ArrowRight, MessageSquarePlus, X } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import mayaMotion from "@/assets/maya-ai-animation.mp4.asset.json";
-import mayaMotionWebm from "@/assets/maya-ai-animation.webm.asset.json";
+import mayaMotion from "@/assets/maya-ai-animation-transparent.webp.asset.json";
+import mayaLogo from "@/assets/maya-ai-logo.png.asset.json";
 import { formatMoney } from "@/lib/brand";
 import { floorTables, tableStateMeta } from "@/lib/floor-data";
 import { usePos } from "@/lib/pos-store";
@@ -16,26 +16,20 @@ const quickAsks = ["Summarise this shift", "Which tables are free?", "Flag slow 
 /** The conversation is kept here so closing the overlay does not lose it. */
 let keptMsgs: Msg[] | null = null;
 
-/** The Maya AI mark: a looping animated AI video. */
+/** The Maya AI mark: a looping transparent animation, static logo as fallback. */
 export function AiMark({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "grid size-9 shrink-0 place-items-center overflow-hidden rounded-card bg-muted/60",
+        "grid size-9 shrink-0 place-items-center overflow-hidden rounded-card",
         className,
       )}
       aria-hidden
     >
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="size-full object-cover"
-      >
-        <source src={mayaMotion.url} type="video/mp4" />
-        <source src={mayaMotionWebm.url} type="video/webm" />
-      </video>
+      <picture className="size-full">
+        <source srcSet={mayaMotion.url} type="image/webp" />
+        <img src={mayaLogo.url} alt="" className="size-full object-contain p-0.5" />
+      </picture>
     </span>
   );
 }
