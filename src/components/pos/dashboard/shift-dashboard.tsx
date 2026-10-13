@@ -1,22 +1,12 @@
-import { useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import {
   ArrowDownRight,
   ArrowUpRight,
-  BarChart3,
-  BookMarked,
   ChevronRight,
-  CircleDollarSign,
-  Headset,
-  LayoutGrid,
   Lock,
-  LogOut,
   Sparkles,
-  SlidersHorizontal,
-  Users,
-  Utensils,
 } from "lucide-react";
 import { useState } from "react";
-import { useConfirm } from "@/components/pos/confirm-sheet";
 import { AiMark, EatosAiChat } from "@/components/pos/dashboard/eatos-ai-chat";
 
 import { formatMoney } from "@/lib/brand";
@@ -25,25 +15,6 @@ import { floorTables, floors, formatDwell, tableStateMeta } from "@/lib/floor-da
 import { usePos } from "@/lib/pos-store";
 import { useShiftSummary } from "@/lib/shift-summary";
 import { cn } from "@/lib/utils";
-
-/** Settings destinations, one line each, pinned to the right of the dashboard. */
-const settingsLinks: {
-  title: string;
-  icon: typeof LayoutGrid;
-  to?: string;
-  action?: "sign-out";
-  manager?: boolean;
-}[] = [
-  { title: "Restaurant", icon: LayoutGrid, to: "/settings/general" },
-  { title: "Menu", icon: Utensils, to: "/settings/menu" },
-  { title: "Payment", icon: CircleDollarSign, to: "/settings/payments" },
-  { title: "Workforce", icon: Users, to: "/settings/workforce" },
-  { title: "Reports", icon: BarChart3, to: "/settings/reports" },
-  { title: "Advanced", icon: SlidersHorizontal, to: "/settings/more", manager: true },
-  { title: "Guestbook", icon: BookMarked, to: "/rooms" },
-  { title: "Support", icon: Headset, to: "/system/customer-support" },
-  { title: "Log out", icon: LogOut, action: "sign-out" },
-];
 
 const statusMeta: Record<TicketStatus, { label: string; text: string }> = {
   ordering: { label: "ORDERING", text: "text-accent" },
@@ -92,15 +63,9 @@ function SectionLabel({ children, icon: Icon }: { children: string; icon?: typeo
   );
 }
 
-/**
- * Server dashboard shown when the top bar is pulled down. Suggestions first,
- * then the server's tickets, then the shift figures a manager chooses to share,
- * with the settings destinations as one slim column on the right.
- */
-export function ShiftDashboard({ onClose }: { onClose: () => void }) {
-  const navigate = useNavigate();
-  const confirm = useConfirm();
-  const { canManageSettings, signOut, floor, setFloor, tableStates, tableSince, settings } = usePos();
+/** Shift overview for the dedicated Dashboard page. */
+export function ShiftDashboard() {
+  const { canManageSettings, floor, setFloor, tableStates, tableSince, settings } = usePos();
   const { kpis, suggestions, tickets } = useShiftSummary();
   const [tab, setTab] = useState<TicketStatus | "all">("all");
   const [aiOpen, setAiOpen] = useState(false);
@@ -108,24 +73,6 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
 
   const showTotals = settings.serverShiftTotals || canManageSettings;
   const visibleKpis = showTotals ? kpis : kpis.filter((k) => !privateKpis.has(k.id));
-
-  const go = (to: string) => {
-    onClose();
-    navigate({ to });
-  };
-
-  const signOutFlow = async () => {
-    const ok = await confirm({
-      title: "Log out?",
-      message: "Logging out will restart the application.",
-      confirmLabel: "Log Out",
-      destructive: true,
-    });
-    if (!ok) return;
-    onClose();
-    signOut();
-    navigate({ to: "/", replace: true });
-  };
 
   const rows: Ticket[] = tab === "all" ? tickets : tickets.filter((t) => t.status === tab);
 
@@ -147,7 +94,7 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="flex min-w-0 flex-col gap-3">
-      <div className="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_14rem]">
+      <div className="grid min-w-0 gap-3 grid-cols-1">
         <div className="relative flex min-w-0 flex-col gap-3">
           {/* Maya AI: the next best action, tap to chat about the shift */}
           <button
@@ -217,7 +164,7 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
                       )}
                     >
                       {t.label} {n}
-                    </button>
+                    </Link>
                   </li>
                 );
               })}
@@ -230,9 +177,9 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
               ) : (
                 rows.map((t) => (
                   <li key={t.id}>
-                    <button
-                      type="button"
-                      onClick={() => go(`/tickets/${t.id}`)}
+                    <Link
+                      to="/tickets/$ticketId"
+                      params={{ ticketId: t.id }}
                       className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-row px-2 py-2 text-left transition-colors hover:bg-muted"
                     >
                       <span className="grid size-9 shrink-0 place-items-center rounded-row border border-border text-fs-xs font-extrabold text-foreground">
@@ -257,7 +204,7 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
                           {statusMeta[t.status].label}
                         </span>
                       </span>
-                    </button>
+                    </Link>
                   </li>
                 ))
               )}
@@ -291,9 +238,8 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
                   (seatedMinutesAgo === undefined ? null : formatDwell(seatedMinutesAgo));
                 return (
                   <li key={name}>
-                    <button
-                      type="button"
-                      onClick={() => go("/floor")}
+                    <Link
+                      to="/floor"
                       className="min-w-[5.5rem] rounded-card border border-border px-2 py-1.5 text-left transition-colors hover:bg-muted"
                     >
                       <span className="flex items-center justify-between gap-2">
@@ -307,7 +253,7 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
                       <span className={cn("mt-0.5 block truncate text-fs-2xs font-bold", meta.text)}>
                         {meta.label}
                       </span>
-                    </button>
+                    </Link>
                   </li>
                 );
               })}
@@ -315,44 +261,7 @@ export function ShiftDashboard({ onClose }: { onClose: () => void }) {
           </div>
         </div>
 
-        {/* Settings, one line per destination */}
-        <div className={cn(card, "min-w-0 self-start p-2")}>
-          <SectionLabel>Settings</SectionLabel>
-          <ul>
-            {settingsLinks.map((l) => {
-              const locked = Boolean(l.manager) && !canManageSettings;
-              return (
-                <li key={l.title}>
-                  <button
-                    type="button"
-                    disabled={locked}
-                    aria-disabled={locked}
-                    onClick={() => {
-                      if (locked) return;
-                      if (l.action === "sign-out") {
-                        void signOutFlow();
-                        return;
-                      }
-                      if (l.to) go(l.to);
-                    }}
-                    className={cn(
-                      "flex min-h-tap w-full items-center gap-2 rounded-row px-2 text-left text-fs-sm font-semibold text-foreground transition-colors",
-                      locked ? "cursor-not-allowed opacity-40" : "hover:bg-muted",
-                    )}
-                  >
-                    <l.icon className="size-4 shrink-0 opacity-80" aria-hidden />
-                    <span className="min-w-0 flex-1 truncate">{l.title}</span>
-                    {locked ? (
-                      <Lock className="size-3.5 shrink-0 opacity-60" aria-hidden />
-                    ) : (
-                      <ChevronRight className="size-4 shrink-0 opacity-50" aria-hidden />
-                    )}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
+
       </div>
     </div>
   );

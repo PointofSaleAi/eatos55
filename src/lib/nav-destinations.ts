@@ -1,4 +1,5 @@
 import {
+  Gauge,
   ClipboardList,
   Columns3,
   FilePlus2,
@@ -22,6 +23,7 @@ export type NavGroup = { title: string; links: NavLink[] };
  * so both stay in sync. Deeper screens are reached by drilling into a section.
  */
 export const navGroups: NavGroup[] = [
+  { title: "Overview", links: [{ to: "/dashboard", label: "Dashboard", icon: Gauge }] },
   {
     title: "Ordering",
     links: [
@@ -59,6 +61,7 @@ export const navGroups: NavGroup[] = [
  * then new order, floor plan, tickets, rooms and the order status board.
  */
 export const railPrimary: NavLink[] = [
+  { to: "/dashboard", label: "Dashboard", icon: Gauge },
   { to: "/order/menu", label: "Menu", icon: LayoutGrid },
   { to: "/order/new", label: "New Order", icon: FilePlus2 },
   { to: "/floor", label: "Floor Plan", icon: Sofa },

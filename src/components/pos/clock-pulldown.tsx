@@ -24,7 +24,7 @@ export function ClockPullDown() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [pin, setPin] = useState("");
 
-  // The rail's shift assistant opens the same pull-down pad.
+  // Preserve the header Maya AI shortcut independently of the settings chevron.
   useEffect(() => {
     const onOpen = () => {
       setOpen(false);

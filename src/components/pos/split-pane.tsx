@@ -3,22 +3,9 @@ import { ChevronRight, Inbox } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { TicketsScreen } from "@/components/pos/tickets-screen";
 import { cn } from "@/lib/utils";
-import {
-  Bell,
-  Briefcase,
-  FileText,
-  Headset,
-  LifeBuoy,
-  Mail,
-  SmartphoneNfc,
-  Tablet,
-  UserRoundCog,
-  Utensils,
-  Wallet,
-  Wifi,
-  SlidersHorizontal,
-  type LucideIcon,
-} from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
+import { settingsGroups } from "@/lib/settings-destinations";
+import { usePos } from "@/lib/pos-store";
 
 /**
  * Two-pane layout for landscape tablet/web: list pane on the left, the routed
@@ -66,29 +53,6 @@ export function PaneEmpty({ title, detail }: { title: string; detail: string }) 
   );
 }
 
-type SettingsLink = { to: string; label: string; icon: LucideIcon };
-
-const settingsGroups: SettingsLink[][] = [
-  [
-    { to: "/settings/general", label: "General", icon: UserRoundCog },
-    { to: "/settings/control-center", label: "Control Center", icon: SmartphoneNfc },
-    { to: "/settings/menu", label: "Menu", icon: Utensils },
-    { to: "/settings/payments", label: "Payments", icon: Wallet },
-    { to: "/settings/workforce", label: "Workforce", icon: Briefcase },
-    { to: "/settings/reports", label: "Reports", icon: FileText },
-  ],
-  [
-    { to: "/settings/network", label: "Network", icon: Wifi },
-    { to: "/settings/hardware", label: "Hardware", icon: Tablet },
-  ],
-  [
-    { to: "/settings/notifications", label: "Notifications", icon: Bell },
-    { to: "/system/customer-support", label: "Customer Support", icon: Headset },
-    { to: "/system/contact-us", label: "Contact Us", icon: Mail },
-    { to: "/system/help-center", label: "Help Center", icon: LifeBuoy },
-  ],
-];
-
 /** Top level settings destinations reachable straight from the sidebar. */
 const settingsTopLevel = new Set(settingsGroups.flat().map((l) => l.to));
 
@@ -103,6 +67,7 @@ export function isSettingsTopLevel(pathname: string) {
  * the nav rail: the choice is per visit and never remembered.
  */
 export function SettingsNavList() {
+  const { canManageSettings } = usePos();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [collapsed, setCollapsed] = useState(false);
   return (
@@ -131,7 +96,7 @@ export function SettingsNavList() {
       <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto p-2 lg:p-3">
         {settingsGroups.map((group, i) => (
           <ul key={i} className="mb-3 overflow-hidden rounded-row border border-border bg-background">
-            {group.map((l) => {
+            {group.filter((l) => !l.manager || canManageSettings).map((l) => {
               const active = pathname === l.to || pathname.startsWith(`${l.to}/`);
               return (
                 <li key={l.to} className="border-b border-border last:border-b-0">
