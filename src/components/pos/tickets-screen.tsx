@@ -183,7 +183,7 @@ export function TicketsScreen({
 
   const aggregate = tab === "all" || tab === "unpaid" || tab === "open" || tab === "closed";
   const baseList = visibleTickets(aggregate ? "all" : tab, {
-    ignoreDate: searching && searchAllDates,
+    ignoreDate: (searching && searchAllDates) || tableMembers.length > 0,
   });
   const tableList = tableMembers.length
     ? baseList.filter((t) => t.table && tableMembers.includes(String(t.table)))
