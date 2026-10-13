@@ -131,12 +131,6 @@ function FloorPlan() {
   const [section, setSection] = useState<FloorSection>("all");
   const [view, setView] = useState<"grid" | "layout">("grid");
   const [staffOpen, setStaffOpen] = useState(false);
-  // The table whose tickets the bottom sheet lists, when open.
-  const [ticketsFor, setTicketsFor] = useState<{
-    name: string;
-    seats: number;
-    state: TableState;
-  } | null>(null);
   const [statusFor, setStatusFor] = useState<{ name: string; label: string; state: TableState } | null>(
     null,
   );
