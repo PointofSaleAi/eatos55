@@ -15,12 +15,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/board/")({
   head: () => ({
     meta: [
-      { title: `Order Status - ${brand.appName} Point of Sale` },
+      { title: `orderOS - ${brand.appName} Point of Sale` },
       {
         name: "description",
         content: "Kitchen board tracking every order from new through completed.",
       },
-      { property: "og:title", content: `Order Status - ${brand.appName} Point of Sale` },
+      { property: "og:title", content: `orderOS - ${brand.appName} Point of Sale` },
       {
         property: "og:description",
         content: "Kitchen board tracking every order from new through completed.",

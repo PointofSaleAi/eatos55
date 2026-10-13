@@ -69,9 +69,9 @@ export const railPrimary: NavLink[] = [
   { to: "/order/menu", label: "Dashboard", icon: LayoutGrid },
   { to: "/order/new", label: "New Order", icon: FilePlus2 },
 
-  { to: "/floor", label: "Floor Plan", icon: Sofa },
+  { to: "/floor", label: "Table Order", icon: Sofa },
   { to: "/tickets", label: "Tickets", icon: Receipt },
   { to: "/rooms", label: "Rooms", icon: Grid2x2 },
-  { to: "/board", label: "Order Status", icon: Columns3 },
+  { to: "/board", label: "orderOS", icon: OrderOSIcon },
 ];
 
