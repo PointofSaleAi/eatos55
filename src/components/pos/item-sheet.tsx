@@ -618,6 +618,8 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                 </button>
                 </div>
               </div>
+                  </>
+                )}
             </>
           ) : null}
         </SheetContent>
