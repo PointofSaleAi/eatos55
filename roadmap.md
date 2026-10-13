@@ -1,5 +1,5 @@
 # Roadmap
-- [ ] Move Dashboard to navigation, move full Settings into the header menu, and remove rail Settings/Shift Assistant
+- [x] Move Dashboard to navigation, move full Settings into the header menu, and remove rail Settings/Shift Assistant
 - [x] Remove outside-corner modal X controls app-wide and verify safe outside dismissal across devices
 - [x] Arrange all in-app number pads in calculator order and verify across devices
 - [x] Add searchable U.S. address suggestions and structured address fields to guest forms

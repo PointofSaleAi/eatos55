@@ -23,7 +23,7 @@ export function SettingsPullDown({ open, onClose }: { open: boolean; onClose: ()
         style={{ paddingBottom: "calc(1rem + var(--tabs-h, 0px))" }}>
         <div className="mx-auto w-full max-w-[68rem] px-[clamp(0.75rem,2vw,1.5rem)]">
           <h1 className="mb-5 text-fs-xl font-extrabold text-foreground">Settings</h1>
-          <nav aria-label="Settings categories" className="grid min-w-0 gap-6 md:grid-cols-2">
+          <nav aria-label="Settings categories" className="grid min-w-0 items-start gap-6 md:grid-cols-2">
             {settingsGroups.map((group, index) => (
               <ul key={index} className="min-w-0 divide-y divide-border border-y border-border">
                 {group.map((entry) => {
