@@ -164,7 +164,7 @@ export function ShiftDashboard() {
                       )}
                     >
                       {t.label} {n}
-                    </Link>
+                    </button>
                   </li>
                 );
               })}
