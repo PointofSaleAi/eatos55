@@ -13,5 +13,7 @@ export const Route = createFileRoute("/tickets/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>): { table?: string } =>
+    typeof s.table === "string" && s.table ? { table: s.table } : {},
   component: () => <TicketsScreen />,
 });

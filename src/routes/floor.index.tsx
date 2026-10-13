@@ -23,7 +23,6 @@ import { FloorEditor } from "@/components/pos/floor-editor";
 import { GuestsSheet } from "@/components/pos/guests-sheet";
 import { StaffPanel } from "@/components/pos/staff-panel";
 import { StatusSheet, type StatusOption } from "@/components/pos/status-sheet";
-import { TableTicketsSheet } from "@/components/pos/table-tickets-sheet";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 
 import { ScreenBody } from "@/components/pos/shell";
@@ -311,7 +310,8 @@ function FloorPlan() {
     // Tables with tickets show their checks first; occupied tables without any
     // go straight to a new order.
     if (tableTickets(t.name).length > 0) {
-      setTicketsFor({ name: t.name, seats: t.seats, state: t.state });
+      const members = layoutGroups.find((g) => g.members.includes(t.name))?.members ?? [t.name];
+      navigate({ to: "/tickets", search: { table: members.join(",") } });
       return;
     }
     startOrder(t.name);
@@ -815,26 +815,6 @@ function FloorPlan() {
           }}
         />
 
-        <TableTicketsSheet
-          open={ticketsFor !== null}
-          label={ticketsFor ? tableGroupLabel(ticketsFor.name) ?? ticketsFor.name : ""}
-          seats={ticketsFor?.seats ?? 0}
-          state={ticketsFor?.state ?? "ordering"}
-          tickets={ticketsFor ? tableTickets(ticketsFor.name) : []}
-          onClose={() => setTicketsFor(null)}
-          onOpenTicket={(id) => {
-            openTicket(id);
-            setTicketsFor(null);
-            navigate({ to: "/order/new" });
-          }}
-          onNewOrder={() => {
-            if (ticketsFor) {
-              startOrder(ticketsFor.name);
-              setTicketsFor(null);
-              navigate({ to: "/order/new" });
-            }
-          }}
-        />
 
         {/* Name a saved template so staff can reapply it to any floor. */}
         <Dialog open={templateName !== null} onOpenChange={(o) => (o ? null : setTemplateName(null))}>
