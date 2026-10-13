@@ -24,7 +24,7 @@ export const Route = createFileRoute("/tickets/$ticketId")({
     ],
   }),
   validateSearch: (s: Record<string, unknown>): { table?: string } =>
-    typeof s.table === "string" && s.table ? { table: s.table } : {},
+    typeof s["table"] === "string" && s["table"] ? { table: s["table"] } : {},
   component: TicketDetail,
 });
 
