@@ -10,7 +10,7 @@
 <!-- LOVABLE:END -->
 
 - Keep root error boundaries typed with TanStack Router's `ErrorComponentProps` because router upgrades expose boundary errors as `unknown`.
-- Use the shared DialogContent and SheetContent close control for modal X buttons so they remain outside the top-right corner consistently across viewports.
+- Shared DialogContent and SheetContent never render outside-corner X controls; use their existing outside-dismissal callbacks, and give custom overlays equivalent cancel-only dismissal so closing cannot commit an action.
 - DeviceFrame renders only a blank themed surface until mounted and all saved state (session, settings, floor) is loaded, and layout hooks use useSyncExternalStore over matchMedia: prevents the phone-frame flash and protected-screen flashes on load.
 - Shared React contexts are created via pinnedContext (globalThis registry) and main screens are preloaded after sign-in (router defaultPreload intent + useWarmMainScreens): live preview updates can't split contexts, and first visits/PIN unlock don't stall.
 - Clock-out ownership changes retain each ticket's transfer origin so transferred checks can be grouped and reassigned until the shift is completed.
