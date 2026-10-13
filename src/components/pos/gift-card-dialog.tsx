@@ -4,7 +4,7 @@ import { Info, ScanLine } from "lucide-react";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { NumPad } from "@/components/pos/numpad";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useWideViewport } from "@/hooks/use-layout-mode";
 import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
@@ -48,11 +48,6 @@ export function GiftCardDialog({
   const cardReady = cardNumber.length >= 8;
   const isNewCard = cardReady && balance === null;
   const canCharge = cardReady && entered > 0;
-  const balanceStatus = balance !== null
-    ? money(balance)
-    : isNewCard
-      ? "New card"
-      : "Enter card number";
 
   const type = (d: string) => {
     if (activeField === "card") {
@@ -161,23 +156,16 @@ export function GiftCardDialog({
             </span>
           </button>
 
-          <div className="mt-auto flex items-end justify-between gap-3 border-t border-border pt-3">
-            <div>
-              <p className="text-fs-xs font-extrabold uppercase tracking-[0.08em] text-muted-foreground">
+          {balance !== null && (
+            <div className="mt-auto flex items-baseline justify-between gap-3 pt-3">
+              <span className="text-fs-xs font-extrabold uppercase tracking-[0.08em] text-muted-foreground">
                 Available balance
-              </p>
-              <p className="mt-1 text-fs-lg font-extrabold leading-tight tabular-nums text-foreground">
-                {balanceStatus}
-              </p>
-              <p className="mt-0.5 text-fs-xs font-semibold text-muted-foreground">
-                {balance !== null
-                  ? "Current card balance"
-                  : isNewCard
-                    ? "No existing balance found"
-                    : "Balance appears after a valid card number"}
-              </p>
+              </span>
+              <span className="text-fs-base font-extrabold tabular-nums text-foreground">
+                {money(balance)}
+              </span>
             </div>
-          </div>
+          )}
         </div>
 
         <NumPad
@@ -203,11 +191,7 @@ export function GiftCardDialog({
     return (
       <Dialog open={open} onOpenChange={(next) => (next ? null : onClose())}>
         <DialogContent className="flex h-[min(34rem,88dvh)] w-[min(46rem,94vw)] max-w-none flex-col gap-0 rounded-sheet border-border bg-surface p-0">
-          <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-3">
-            <DialogTitle className="min-w-0 flex-1 truncate text-fs-lg font-extrabold text-foreground">
-              Gift Card
-            </DialogTitle>
-          </div>
+          <DialogTitle className="sr-only">Gift Card</DialogTitle>
           {body}
         </DialogContent>
       </Dialog>
@@ -222,11 +206,7 @@ export function GiftCardDialog({
         className="mx-auto flex max-h-[92dvh] w-full max-w-sheet flex-col gap-0 rounded-t-sheet border-0 bg-surface p-0"
       >
         <SheetGrabber handleProps={handleProps} />
-        <SheetHeader className="shrink-0 px-4 pb-1 pt-1" {...handleProps}>
-          <SheetTitle className="text-center text-fs-base font-extrabold text-foreground">
-            Gift Card
-          </SheetTitle>
-        </SheetHeader>
+        <SheetTitle className="sr-only">Gift Card</SheetTitle>
         {body}
       </SheetContent>
     </Sheet>
