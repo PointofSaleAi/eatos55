@@ -1,3 +1,4 @@
+import type { ComponentType } from "react";
 import {
   Gauge,
   ClipboardList,
@@ -14,8 +15,11 @@ import {
   type LucideIcon,
 
 } from "lucide-react";
+import { OrderOSIcon } from "@/components/pos/icons/orderos-icon";
 
-export type NavLink = { to: string; label: string; icon: LucideIcon };
+/** Rail/drawer icon: any component that takes a className (Lucide or custom SVG). */
+export type NavIcon = ComponentType<{ className?: string }>;
+export type NavLink = { to: string; label: string; icon: NavIcon };
 export type NavGroup = { title: string; links: NavLink[] };
 
 /**
@@ -34,10 +38,10 @@ export const navGroups: NavGroup[] = [
   {
     title: "Service",
     links: [
-      { to: "/floor", label: "Floor Plan", icon: Sofa },
+      { to: "/floor", label: "Table Order", icon: Sofa },
       { to: "/rooms", label: "Rooms", icon: Grid2x2 },
       { to: "/tickets", label: "Tickets", icon: Receipt },
-      { to: "/board", label: "Order Status Board", icon: LayoutGrid },
+      { to: "/board", label: "orderOS", icon: OrderOSIcon },
     ],
   },
   {
