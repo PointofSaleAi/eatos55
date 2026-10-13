@@ -109,10 +109,11 @@ function FitName({ name }: { name: string }) {
       const steps = [probe("text-fs-sm"), probe("text-fs-base"), probe("text-fs-lg")]
         .filter((v) => v > 0)
         .sort((a, b) => a - b);
-      if (!steps.length) return;
+      const smallest = steps[0];
+      if (smallest === undefined) return;
       const font = (px: number) => `${cs.fontWeight} ${px}px ${cs.fontFamily}`;
-      const baseline = Math.min(wrapLines(name, font(steps[0]), box), 3);
-      let chosen = steps[0];
+      const baseline = Math.min(wrapLines(name, font(smallest), box), 3);
+      let chosen: number = smallest;
       for (const px of steps) {
         if (wrapLines(name, font(px), box) <= baseline) chosen = px;
         else break;
@@ -130,7 +131,7 @@ function FitName({ name }: { name: string }) {
     };
     schedule();
     document.fonts?.ready.then(() => schedule(true)).catch(() => {});
-    const ro = new ResizeObserver(schedule);
+    const ro = new ResizeObserver(() => schedule());
     ro.observe(card);
     return () => {
       cancelAnimationFrame(raf);
