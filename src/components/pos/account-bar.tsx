@@ -211,55 +211,6 @@ export function AccountActions() {
       <p className="shrink-0 whitespace-nowrap px-1 text-[0.8125rem] font-extrabold tabular-nums text-topbar-foreground">
         {clock}
       </p>
-      <span aria-hidden className="mx-0.5 hidden h-6 w-px bg-topbar-border sm:block" />
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        aria-label="More top bar actions"
-        aria-expanded={moreOpen}
-        onClick={() => setMoreOpen((value) => !value)}
-        className={cn(iconBtn, "relative")}
-      >
-        <EllipsisVertical className="size-5" />
-        {!seen ? <span className="absolute right-2 top-2 size-2 rounded-full bg-tile-blue" /> : null}
-      </Button>
-
-      {moreOpen ? (
-        <>
-          <button
-            type="button"
-            aria-label="Close more actions"
-            onClick={() => setMoreOpen(false)}
-            className="fixed inset-0 z-30 cursor-default"
-          />
-          <div className="absolute right-0 top-[calc(100%+0.375rem)] z-40 w-56 overflow-hidden rounded-lg border border-border bg-popover p-1 shadow-lg">
-            <Button variant="ghost" className="w-full justify-start" onClick={openNews}>
-              <Bell /> What&apos;s new
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start md:hidden"
-              onClick={() => {
-                setMoreOpen(false);
-                toast.success("Tickets refreshed");
-              }}
-            >
-              <RotateCw /> Refresh tickets
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start md:hidden"
-              onClick={() => {
-                setMoreOpen(false);
-                navigate({ to: "/system/customer-support" });
-              }}
-            >
-              <Headphones /> Customer support
-            </Button>
-          </div>
-        </>
-      ) : null}
 
       {news ? (
         <>
