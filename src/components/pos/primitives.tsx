@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { roomChargeLabel } from "@/components/pos/room-ticket-actions";
 import { brand } from "@/lib/brand";
 import {
   Bike,
@@ -237,7 +238,7 @@ function orderTypeIcon(label: string) {
 
 export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () => void }) {
   const { tableGroupLabel } = usePos();
-  const meta = statusMeta[ticket.status];
+  const meta = roomChargeLabel(ticket) ?? statusMeta[ticket.status];
   const timer = useTicketTimer(ticket.arrivedMinutesAgo);
   const [open, setOpen] = useState(false);
   const dateLabel = new Date(`${ticket.date}T12:00:00`).toLocaleDateString(brand.locale, {

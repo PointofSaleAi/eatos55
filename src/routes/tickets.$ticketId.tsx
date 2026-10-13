@@ -7,6 +7,7 @@ import { useConfirm } from "@/components/pos/confirm-sheet";
 import { ScreenBody, ScreenFooter, ScreenHeader } from "@/components/pos/shell";
 import { Card } from "@/components/pos/primitives";
 import { TipSheet } from "@/components/pos/tip-sheet";
+import { RoomTicketActions, roomChargeLabel, roomProofLabel } from "@/components/pos/room-ticket-actions";
 import { Button } from "@/components/ui/button";
 import { TAX_RATE, modeOrderType, money, statusMeta } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
@@ -50,7 +51,7 @@ function TicketDetail() {
     );
   }
 
-  const meta = statusMeta[ticket.status];
+  const meta = roomChargeLabel(ticket) ?? statusMeta[ticket.status];
   const gross = ticket.lines.reduce((s, l) => s + l.price * l.qty, 0);
   const tax = Math.round(gross * TAX_RATE * 100) / 100;
   const subTotal = Math.round((gross - tax) * 100) / 100;
@@ -90,7 +91,7 @@ function TicketDetail() {
             <p className="mt-2 truncate border-t border-border pt-2 text-fs-xs text-muted-foreground">
               <span className="font-extrabold text-foreground">Room {ticket.roomNumber}</span>
               {ticket.bookingNumber ? ` · Booking ${ticket.bookingNumber}` : ""}
-              {ticket.signedBill ? " · signed bill posted" : ""}
+              {roomProofLabel(ticket) ? ` · ${roomProofLabel(ticket)}` : ticket.signedBill ? " · signed bill posted" : ""}
             </p>
           ) : null}
         </Card>
@@ -184,6 +185,10 @@ function TicketDetail() {
       </ScreenBody>
 
       <ScreenFooter>
+        {ticket.roomCharge ? (
+          <RoomTicketActions ticket={ticket} />
+        ) : (
+        <>
         <Button
           variant="outline"
           className="h-12 w-full rounded-pill font-extrabold uppercase tracking-[0.08em]"
@@ -246,6 +251,8 @@ function TicketDetail() {
             </>
           )}
         </div>
+        </>
+        )}
       </ScreenFooter>
 
 
