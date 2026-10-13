@@ -106,6 +106,7 @@ function PaymentMethod() {
     cart,
     totals,
     tickets,
+    currentOrderNumber,
     guest,
     orderType,
     activeTable,
