@@ -2,7 +2,6 @@ import type { ComponentType } from "react";
 import {
   Gauge,
   ClipboardList,
-  Columns3,
   FilePlus2,
   CreditCard,
   FileText,
@@ -12,7 +11,6 @@ import {
   Receipt,
   Settings as SettingsIcon,
   Sofa,
-  type LucideIcon,
 
 } from "lucide-react";
 import { OrderOSIcon } from "@/components/pos/icons/orderos-icon";
