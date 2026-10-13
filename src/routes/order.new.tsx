@@ -123,12 +123,13 @@ function FitName({ name }: { name: string }) {
         setFontSize(chosen);
       }
     };
-    const schedule = () => {
+    const schedule = (force = false) => {
+      if (force) lastWidth.current = null;
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(measure);
     };
     schedule();
-    document.fonts?.ready.then(schedule).catch(() => {});
+    document.fonts?.ready.then(() => schedule(true)).catch(() => {});
     const ro = new ResizeObserver(schedule);
     ro.observe(card);
     return () => {
