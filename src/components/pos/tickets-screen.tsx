@@ -279,11 +279,19 @@ export function TicketsScreen({
               className="flex min-w-0 items-center gap-1.5 rounded-pill bg-foreground px-3 py-1.5 text-fs-sm font-bold text-background"
             >
               <span className="truncate">
-                {roomNames.has(tableMembers[0] ?? "") ? "" : "Table "}
+                {roomNames.has(tableMembers[0] ?? "") ? "Rooms / " : "Table "}
                 {tableMembers.join(" + ")}
               </span>
               <XIcon className="size-3.5 shrink-0" aria-hidden />
             </button>
+            {(() => {
+              const unpaid = tableList.filter((t) => t.status !== "paid");
+              return unpaid.length ? (
+                <span className="shrink-0 rounded-pill bg-muted px-2.5 py-1 text-fs-xs font-bold text-foreground">
+                  {unpaid.length} unpaid · {money(unpaid.reduce((n, t) => n + t.total, 0))}
+                </span>
+              ) : null;
+            })()}
             <button
               type="button"
               onClick={() => {
