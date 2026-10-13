@@ -37,7 +37,7 @@ export const navGroups: NavGroup[] = [
     title: "Service",
     links: [
       { to: "/floor", label: "Table Order", icon: Sofa },
-      { to: "/rooms", label: "Rooms", icon: Grid2x2 },
+      { to: "/rooms", label: "Rooms", icon: BedDouble },
       { to: "/tickets", label: "Tickets", icon: Receipt },
       { to: "/board", label: "orderOS", icon: OrderOSIcon },
     ],
@@ -69,7 +69,7 @@ export const railPrimary: NavLink[] = [
 
   { to: "/floor", label: "Table Order", icon: Sofa },
   { to: "/tickets", label: "Tickets", icon: Receipt },
-  { to: "/rooms", label: "Rooms", icon: Grid2x2 },
+  { to: "/rooms", label: "Rooms", icon: BedDouble },
   { to: "/board", label: "orderOS", icon: OrderOSIcon },
 ];
 
