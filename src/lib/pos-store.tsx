@@ -721,6 +721,8 @@ type Store = {
   /** Label of the chosen order-level discount, e.g. "Happy Hour". */
   orderDiscountName: string;
   setOrderDiscountName: (v: string) => void;
+  /** Order number shown on cart/payment: the active ticket's number, or the next number for a new order. */
+  currentOrderNumber: number;
   totals: {
     gross: number;
     subtotal: number;
@@ -1055,8 +1057,12 @@ export function PosProvider({ children }: { children: ReactNode }) {
     const subtotal = round(net - taxBase + taxBase / (1 + TAX_RATE));
     const tax = round(net - subtotal);
     const total = comped ? 0 : net;
+    const currentOrderNumber = activeTicketId
+      ? (tickets.find((t) => t.id === activeTicketId)?.number ?? tickets.length + 1)
+      : tickets.length + 1;
 
     return {
+      currentOrderNumber,
       session,
       // Ready only once every saved slice (session, settings, floor) is applied,
       // so no screen renders defaults and then redraws.
