@@ -38,7 +38,7 @@ const floors = [...new Set(rooms.map((r) => r.floor))];
 
 function Rooms() {
   const navigate = useNavigate();
-  const { roomStates, setRoomState, settings, sessionReady } = usePos();
+  const { roomStates, setRoomState } = usePos();
   const [statusFor, setStatusFor] = useState<{ name: string; state: RoomState } | null>(null);
   const [floor, setFloor] = useState(floors[0]);
   const [section, setSection] = useState<string | null>(null);
@@ -50,11 +50,6 @@ function Rooms() {
     const saved = window.localStorage.getItem(FLOOR_KEY);
     if (saved && floors.includes(saved)) setFloor(saved);
   }, []);
-
-  // Rooms is a hotel module: without it switched on there is nothing to show here.
-  useEffect(() => {
-    if (sessionReady && !settings.roomService) navigate({ to: "/floor", replace: true });
-  }, [sessionReady, settings.roomService, navigate]);
 
   const sections = useMemo(
     () => [...new Set(rooms.filter((r) => r.floor === floor && r.section).map((r) => r.section!))],
