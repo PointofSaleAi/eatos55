@@ -409,7 +409,7 @@ export function RoomChargeDialog({
         tip: 0,
         total: due,
       }}
-      orderNumber={tickets.length + 1}
+      orderNumber={currentOrderNumber}
       venue={settings.restaurantName}
       onClose={() => setBillOpen(false)}
       onPrint={() => {

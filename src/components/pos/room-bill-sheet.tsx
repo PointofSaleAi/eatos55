@@ -34,7 +34,7 @@ export function RoomBillSheet({
   room: Room | null;
   lines: CartLine[];
   totals: RoomBillTotals;
-  orderNumber: number;
+  orderNumber: number | null;
   venue: string;
   onPrint: () => void;
   onClose: () => void;
@@ -68,7 +68,7 @@ export function RoomBillSheet({
             {stay ? (
               <BillFact label="Stay" value={`${stay.stayFrom} - ${stay.stayTo}`} />
             ) : null}
-            <BillFact label="Order" value={`#${orderNumber}`} />
+            {orderNumber != null ? <BillFact label="Order" value={`#${orderNumber}`} /> : null}
             <BillFact label="Printed" value={stamp} />
           </dl>
 

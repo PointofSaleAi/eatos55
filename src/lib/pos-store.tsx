@@ -1731,7 +1731,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
           orderNumber = nextTicketNumber();
           const created: Ticket = {
             id,
-            number: nextTicketNumber(),
+            number: orderNumber,
             label: guest.name || "Guest",
             seats: guest.partySize || 1,
             total: grandTotal,

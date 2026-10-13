@@ -852,7 +852,8 @@ function PaymentMethod() {
             Total Due <span className="text-accent">{money(due)}</span>
           </h1>
           <p className="truncate text-fs-xs text-muted-foreground">
-            Order {orderNumber} · {guest.name || tableGroupLabel(activeTable) || "Guest"} ·{" "}
+            {orderNumber != null ? `Order ${orderNumber} · ` : ""}
+            {guest.name || tableGroupLabel(activeTable) || "Guest"} ·{" "}
             {orderType}
           </p>
         </div>
