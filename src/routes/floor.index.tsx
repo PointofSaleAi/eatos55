@@ -301,15 +301,9 @@ function FloorPlan() {
       setGuestsFor({ name: t.name, seats: t.seats });
       return;
     }
-    // Tables with tickets show their checks first; occupied tables without any
-    // go straight to a new order.
-    if (tableTickets(t.name).length > 0) {
-      const members = layoutGroups.find((g) => g.members.includes(t.name))?.members ?? [t.name];
-      navigate({ to: "/tickets", search: { table: members.join(",") } });
-      return;
-    }
-    startOrder(t.name);
-    navigate({ to: "/order/new" });
+    // Occupied tables always show their checks; New Order is offered there.
+    const members = layoutGroups.find((g) => g.members.includes(t.name))?.members ?? [t.name];
+    navigate({ to: "/tickets", search: { table: members.join(",") } });
   };
 
 
