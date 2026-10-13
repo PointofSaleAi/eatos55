@@ -10,7 +10,7 @@
 <!-- LOVABLE:END -->
 
 - Keep root error boundaries typed with TanStack Router's `ErrorComponentProps` because router upgrades expose boundary errors as `unknown`.
-- Dashboard is a dedicated routed screen; the header chevron owns the settings menu, and settings destinations are shared by the hub, header and sidebar so navigation stays consistent.
+- Dashboard and the four-square Menu destination render the same shared shift overview so figures and interactions stay consistent; the header chevron owns the settings menu, and settings destinations are shared by the hub, header and sidebar.
 - Shared DialogContent and SheetContent never render outside-corner X controls; use their existing outside-dismissal callbacks, and give custom overlays equivalent cancel-only dismissal so closing cannot commit an action.
 - DeviceFrame renders only a blank themed surface until mounted and all saved state (session, settings, floor) is loaded, and layout hooks use useSyncExternalStore over matchMedia: prevents the phone-frame flash and protected-screen flashes on load.
 - Shared React contexts are created via pinnedContext (globalThis registry) and main screens are preloaded after sign-in (router defaultPreload intent + useWarmMainScreens): live preview updates can't split contexts, and first visits/PIN unlock don't stall.

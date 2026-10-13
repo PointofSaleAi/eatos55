@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Replace the four-square Menu page content with the shared Dashboard and verify across devices
 - [x] Move Dashboard to navigation, move full Settings into the header menu, and remove rail Settings/Shift Assistant
 - [x] Remove outside-corner modal X controls app-wide and verify safe outside dismissal across devices
 - [x] Arrange all in-app number pads in calculator order and verify across devices
