@@ -39,7 +39,8 @@ import { TTP, TapToPayMark } from "@/components/pos/tap-to-pay";
 import { useTapToPayAvailable, useTapToPayTenderVisible } from "@/lib/device";
 import { BackButton, useWideLayout } from "@/components/pos/shell";
 import { SplitPayments } from "@/components/pos/split-payments";
-import { X } from "lucide-react";
+import { CircleCheck, X } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 import { haptic } from "@/lib/haptics";
 import { money } from "@/lib/demo-data";
@@ -100,6 +101,13 @@ type RefConfig = {
 
 function PaymentMethod() {
   const navigate = useNavigate();
+  const [roomPrinted, setRoomPrinted] = useState<{ ticketId: string; roomName: string } | null>(
+    null,
+  );
+  const leaveAfterPrint = () => {
+    setRoomPrinted(null);
+    void navigate({ to: "/order/new" });
+  };
   const returningToClockOut =
     typeof window !== "undefined" && sessionStorage.getItem("pos:return-clock-out") === "1";
   const {
@@ -116,6 +124,7 @@ function PaymentMethod() {
     removePartialPayment,
     settings,
     commitPayment,
+    printRoomBill,
     splitChecks,
     activeSplitCheckId,
     setActiveSplitCheck,
@@ -953,21 +962,58 @@ function PaymentMethod() {
         due={due}
         onClose={() => setRoomOpen(false)}
         onCharge={(r) => {
-          setRoom(r);
-          setRoomOpen(false);
-          setSelected("room");
-          haptic("success");
-          commitPayment("other", due, {
-            label: "Room Charge",
-            roomNumber: r.number,
+          const saved = printRoomBill({
+            id: r.id,
+            name: r.name,
+            number: r.number,
             ...(r.stay ? { bookingNumber: r.stay.bookingNumber } : {}),
-            signedBill: true,
           });
-          announce("Charge posted to room");
-          toast.success(`Signed bill posted to room ${r.number} · add the tip from Tickets`);
-          setDoneOpen(true);
+          setRoomOpen(false);
+          if (!saved) return;
+          haptic("success");
+          announce("Bill sent to printer");
+          toast.success("Bill sent to printer");
+          setRoomPrinted({ ticketId: saved.id, roomName: r.name });
         }}
       />
+
+      <Dialog open={roomPrinted !== null} onOpenChange={(o) => (o ? null : leaveAfterPrint())}>
+        <DialogContent className="w-[min(24rem,92vw)] gap-3 rounded-sheet border-border bg-surface p-5">
+          <DialogTitle className="flex items-center gap-2 text-fs-lg font-extrabold text-foreground">
+            <CircleCheck className="size-5 shrink-0 text-success" aria-hidden />
+            Bill printed successfully
+          </DialogTitle>
+          <p className="text-fs-sm text-muted-foreground">
+            The bill has been sent to the printer. Collect the guest's signature, then upload the
+            signed receipt and post the charge to the room from the ticket.
+          </p>
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <button
+              type="button"
+              onClick={leaveAfterPrint}
+              className="h-ctl rounded-pill border border-border text-fs-sm font-bold text-foreground hover:bg-muted"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const p = roomPrinted;
+                setRoomPrinted(null);
+                if (p)
+                  void navigate({
+                    to: "/tickets/$ticketId",
+                    params: { ticketId: p.ticketId },
+                    search: { table: p.roomName },
+                  });
+              }}
+              className="h-ctl rounded-pill bg-primary text-fs-sm font-bold text-primary-foreground"
+            >
+              Go to Ticket
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <ReferenceTenderDialog
         open={refConfig !== null}
