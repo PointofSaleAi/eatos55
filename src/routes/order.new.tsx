@@ -74,6 +74,8 @@ function wrapLines(text: string, font: string, width: number): number {
 function FitName({ name }: { name: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [fontSize, setFontSize] = useState<number | null>(null);
+  const lastWidth = useRef<number | null>(null);
+  const lastSize = useRef<number | null>(null);
 
   useEffect(() => {
     const el = ref.current;
@@ -83,15 +85,16 @@ function FitName({ name }: { name: string }) {
       const ctx = fitCtx;
       const card = el.closest("button");
       if (!ctx || !card) return;
+      const width = card.clientWidth;
+      // Re-measure only when the card's width changes; font-size growth changes
+      // height, which also fires the observer — ignore those to avoid feedback.
+      if (lastWidth.current === width && lastSize.current !== null) return;
       const cardStyle = getComputedStyle(card);
-      const avail =
-        card.clientWidth -
-        parseFloat(cardStyle.paddingLeft) -
-        parseFloat(cardStyle.paddingRight);
+      const avail = width - parseFloat(cardStyle.paddingLeft) - parseFloat(cardStyle.paddingRight);
       if (!(avail > 0)) return;
       const badge = el.nextElementSibling;
       const badgeW = badge ? badge.getBoundingClientRect().width + 4 : 0;
-      const width = Math.max(0, avail - badgeW);
+      const box = Math.max(0, avail - badgeW);
       const cs = getComputedStyle(el);
       const probe = (cls: string) => {
         const p = document.createElement("span");
@@ -103,17 +106,22 @@ function FitName({ name }: { name: string }) {
         p.remove();
         return px;
       };
-      const steps = [parseFloat(cs.fontSize), probe("text-fs-base"), probe("text-fs-lg")].filter(
-        (v) => v > 0,
-      );
-      const baseline = wrapLines(name, `${cs.fontWeight} ${steps[0]}px ${cs.fontFamily}`, width);
+      const steps = [probe("text-fs-sm"), probe("text-fs-base"), probe("text-fs-lg")]
+        .filter((v) => v > 0)
+        .sort((a, b) => a - b);
+      if (!steps.length) return;
+      const font = (px: number) => `${cs.fontWeight} ${px}px ${cs.fontFamily}`;
+      const baseline = Math.min(wrapLines(name, font(steps[0]), box), 3);
       let chosen = steps[0];
       for (const px of steps) {
-        if (wrapLines(name, `${cs.fontWeight} ${px}px ${cs.fontFamily}`, width) <= baseline) {
-          chosen = px;
-        } else break;
+        if (wrapLines(name, font(px), box) <= baseline) chosen = px;
+        else break;
       }
-      setFontSize(chosen);
+      lastWidth.current = width;
+      if (chosen !== lastSize.current) {
+        lastSize.current = chosen;
+        setFontSize(chosen);
+      }
     };
     const schedule = () => {
       cancelAnimationFrame(raf);
@@ -122,7 +130,7 @@ function FitName({ name }: { name: string }) {
     schedule();
     document.fonts?.ready.then(schedule).catch(() => {});
     const ro = new ResizeObserver(schedule);
-    if (el.parentElement) ro.observe(el.parentElement);
+    ro.observe(card);
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
