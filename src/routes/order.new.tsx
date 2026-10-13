@@ -48,6 +48,98 @@ export const Route = createFileRoute("/order/new")({
   component: NewOrder,
 });
 
+/* Width-aware product-name sizing: picks the largest font step (fs-sm → fs-base →
+   fs-lg) whose wrapped line count never exceeds the line count at fs-sm, so names
+   fill the card's horizontal room without changing the card's shape. */
+const fitCtx =
+  typeof document !== "undefined" ? document.createElement("canvas").getContext("2d") : null;
+
+function wrapLines(text: string, font: string, width: number): number {
+  const ctx = fitCtx;
+  if (!ctx || !(width > 0)) return 1;
+  ctx.font = font;
+  let lines = 1;
+  let line = "";
+  for (const word of text.split(/\s+/)) {
+    const next = line ? `${line} ${word}` : word;
+    if (!line || ctx.measureText(next).width <= width) line = next;
+    else {
+      lines += 1;
+      line = word;
+    }
+  }
+  return lines;
+}
+
+function FitName({ name }: { name: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [fontSize, setFontSize] = useState<number | null>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let raf = 0;
+    const measure = () => {
+      const ctx = fitCtx;
+      const card = el.closest("button");
+      if (!ctx || !card) return;
+      const cardStyle = getComputedStyle(card);
+      const avail =
+        card.clientWidth -
+        parseFloat(cardStyle.paddingLeft) -
+        parseFloat(cardStyle.paddingRight);
+      if (!(avail > 0)) return;
+      const badge = el.nextElementSibling;
+      const badgeW = badge ? badge.getBoundingClientRect().width + 4 : 0;
+      const width = Math.max(0, avail - badgeW);
+      const cs = getComputedStyle(el);
+      const probe = (cls: string) => {
+        const p = document.createElement("span");
+        p.className = cls;
+        p.style.position = "absolute";
+        p.style.visibility = "hidden";
+        document.body.appendChild(p);
+        const px = parseFloat(getComputedStyle(p).fontSize);
+        p.remove();
+        return px;
+      };
+      const steps = [parseFloat(cs.fontSize), probe("text-fs-base"), probe("text-fs-lg")].filter(
+        (v) => v > 0,
+      );
+      const baseline = wrapLines(name, `${cs.fontWeight} ${steps[0]}px ${cs.fontFamily}`, width);
+      let chosen = steps[0];
+      for (const px of steps) {
+        if (wrapLines(name, `${cs.fontWeight} ${px}px ${cs.fontFamily}`, width) <= baseline) {
+          chosen = px;
+        } else break;
+      }
+      setFontSize(chosen);
+    };
+    const schedule = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(measure);
+    };
+    schedule();
+    document.fonts?.ready.then(schedule).catch(() => {});
+    const ro = new ResizeObserver(schedule);
+    if (el.parentElement) ro.observe(el.parentElement);
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
+  }, [name]);
+
+  return (
+    <span
+      ref={ref}
+      className={cn(!fontSize && "text-fs-sm")}
+      style={fontSize ? { fontSize: `${fontSize}px` } : undefined}
+    >
+      {name}
+    </span>
+  );
+}
+
 function NewOrder() {
   const navigate = useNavigate();
   const { totals, addItem, settings } = usePos();
@@ -376,13 +468,8 @@ function NewOrder() {
                 )}
               >
 
-                <span
-                  className={cn(
-                    "font-extrabold leading-tight text-foreground",
-                    item.name.length <= 12 ? "text-fs-base" : "text-fs-sm",
-                  )}
-                >
-                  {item.name}
+                <span className="font-extrabold leading-tight text-foreground">
+                  <FitName name={item.name} />
                   {typeof item.stock === "number" && !item.outOfStock ? (
                     <span
                       title={`${item.stock} in stock`}
@@ -398,7 +485,7 @@ function NewOrder() {
                   ) : null}
                 </span>
                 <span className="mt-2 flex items-center justify-between">
-                  <span className="text-fs-sm font-bold text-muted-foreground">
+                  <span className="text-fs-sm font-bold leading-none text-muted-foreground">
                     {item.outOfStock
                       ? "Out of stock"
                       : item.openPrice
