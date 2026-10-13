@@ -16,7 +16,7 @@ export const helpArticles: Record<string, HelpArticle> = {
     sections: [
       {
         heading: "1. Start a ticket",
-        body: "Tap the plus action in the tab bar, then pick a table on the Floor Plan or choose an order type for a walk-in guest.",
+        body: "Tap the plus action in the tab bar, then pick a table on the Table Order screen or choose an order type for a walk-in guest.",
       },
       {
         heading: "2. Add items",
@@ -24,7 +24,7 @@ export const helpArticles: Record<string, HelpArticle> = {
       },
       {
         heading: "3. Send it",
-        body: "Review the order, then send it to the kitchen. The ticket appears on the Order Status Board within a few seconds.",
+        body: "Review the order, then send it to the kitchen. The ticket appears on orderOS within a few seconds.",
       },
     ],
   },
@@ -157,7 +157,7 @@ export const helpArticles: Record<string, HelpArticle> = {
     sections: [
       {
         heading: "Tickets and the board",
-        body: "Every order becomes a ticket. The Order Status Board shows preparation state for the kitchen and expo.",
+        body: "Every order becomes a ticket. orderOS shows preparation state for the kitchen and expo.",
       },
       {
         heading: "Devices share one venue",

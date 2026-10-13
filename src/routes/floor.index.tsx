@@ -68,12 +68,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/floor/")({
   head: () => ({
     meta: [
-      { title: `Floor Plan - ${brand.appName} Point of Sale` },
+      { title: `Table Order - ${brand.appName} Point of Sale` },
       {
         name: "description",
         content: "Live table status by floor and section, in grid or seating layout view.",
       },
-      { property: "og:title", content: `Floor Plan - ${brand.appName} Point of Sale` },
+      { property: "og:title", content: `Table Order - ${brand.appName} Point of Sale` },
       {
         property: "og:description",
         content: "Live table status by floor and section, in grid or seating layout view.",
