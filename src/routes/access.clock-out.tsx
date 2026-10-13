@@ -11,7 +11,7 @@ import {
   Utensils,
   X,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ClockPanel } from "@/components/pos/clock-panel";
 import { PinPad } from "@/components/pos/pin-pad";
@@ -113,6 +113,26 @@ function ClockOut() {
   const [now, setNow] = useState(liveTime);
   const [done, setDone] = useState<ShiftSummary | null>(null);
 
+  const dismiss = useCallback(() => {
+    if (confirm) {
+      setConfirm(null);
+    } else if (pickerOpen) {
+      setPickerOpen(false);
+    } else {
+      void navigate({ to: "/access/clock-in" });
+    }
+  }, [confirm, pickerOpen, navigate]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || event.defaultPrevented) return;
+      event.preventDefault();
+      dismiss();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [dismiss]);
+
   useEffect(() => {
     const timer = window.setInterval(() => setNow(liveTime()), 30_000);
     return () => window.clearInterval(timer);
@@ -206,24 +226,18 @@ function ClockOut() {
       </div>
 
       <div className="absolute inset-0 z-10 bg-gate-overlay/80" />
-      <main className="relative z-20 flex min-h-0 flex-1 items-center justify-center p-2 sm:p-4">
+      <main
+        className="relative z-20 flex min-h-0 flex-1 items-center justify-center p-2 sm:p-4"
+        onClick={(event) => {
+          if (event.target === event.currentTarget) dismiss();
+        }}
+      >
         <section
           role="dialog"
           aria-modal="true"
           aria-labelledby="clock-out-title"
           className="relative flex max-h-full w-full max-w-[46rem] flex-col overflow-visible rounded-md border border-border bg-surface shadow-xl"
         >
-          <Button
-            type="button"
-            variant="secondary"
-            size="icon"
-            aria-label="Close clock out"
-            onClick={() => navigate({ to: "/access/clock-in" })}
-            className="absolute right-2 top-0 z-30 size-9 -translate-y-[calc(100%+0.375rem)] rounded-full sm:right-0 sm:translate-x-1/4"
-          >
-            <X />
-          </Button>
-
           {done ? (
             <ShiftSummaryView summary={done} onExit={() => navigate({ to: "/access/clock-in", replace: true })} />
           ) : (
