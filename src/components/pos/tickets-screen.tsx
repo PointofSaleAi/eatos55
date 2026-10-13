@@ -183,7 +183,7 @@ export function TicketsScreen({
 
   const aggregate = tab === "all" || tab === "unpaid" || tab === "open" || tab === "closed";
   const baseList = visibleTickets(aggregate ? "all" : tab, {
-    ignoreDate: searching && searchAllDates,
+    ignoreDate: (searching && searchAllDates) || tableMembers.length > 0,
   });
   const tableList = tableMembers.length
     ? baseList.filter((t) => t.table && tableMembers.includes(String(t.table)))
@@ -623,13 +623,17 @@ export function TicketsScreen({
           </div>
         ) : (
           <EmptyState
-            title="No Tickets Found"
+            title={
+              tableMembers.length
+                ? `No tickets for Table ${tableMembers.join(" + ")} yet`
+                : "No Tickets Found"
+            }
             detail="Let's create an order."
             icon={<ReceiptText className="size-6" aria-hidden />}
             action={{
               label: "New order",
               onPress: () => {
-                startOrder();
+                startOrder(tableMembers[0]);
                 navigate({ to: "/order/new" });
               },
             }}

@@ -239,19 +239,6 @@ function FloorPlan() {
     return { ...t, name: g.members[0] ?? t.name, seats: g.seats, state: g.state };
   };
 
-  /** Tickets created on (or charged to) this table, open ones first, paid after. */
-  const tableTickets = (name: string) => {
-    const members = layoutGroups.find((g) => g.members.includes(name))?.members ?? [name];
-    return tickets
-      .filter((t) => t.table && members.includes(String(t.table)))
-      .sort((a, b) =>
-        (a.status === "paid") === (b.status === "paid")
-          ? a.arrivedMinutesAgo - b.arrivedMinutesAgo
-          : a.status === "paid"
-            ? 1
-            : -1,
-      );
-  };
 
 
   const decor = layout.filter((o) => isDecor(o.kind)).filter((o) => inSection(o.section));
@@ -301,15 +288,9 @@ function FloorPlan() {
       setGuestsFor({ name: t.name, seats: t.seats });
       return;
     }
-    // Tables with tickets show their checks first; occupied tables without any
-    // go straight to a new order.
-    if (tableTickets(t.name).length > 0) {
-      const members = layoutGroups.find((g) => g.members.includes(t.name))?.members ?? [t.name];
-      navigate({ to: "/tickets", search: { table: members.join(",") } });
-      return;
-    }
-    startOrder(t.name);
-    navigate({ to: "/order/new" });
+    // Occupied tables always show their checks; New Order is offered there.
+    const members = layoutGroups.find((g) => g.members.includes(t.name))?.members ?? [t.name];
+    navigate({ to: "/tickets", search: { table: members.join(",") } });
   };
 
 
