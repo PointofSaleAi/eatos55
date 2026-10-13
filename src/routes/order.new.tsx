@@ -79,12 +79,12 @@ function FitName({ name }: { name: string }) {
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    const card = el?.closest("button");
+    if (!el || !card) return;
     let raf = 0;
     const measure = () => {
       const ctx = fitCtx;
-      const card = el.closest("button");
-      if (!ctx || !card) return;
+      if (!ctx) return;
       const width = card.clientWidth;
       // Re-measure only when the card's width changes; font-size growth changes
       // height, which also fires the observer — ignore those to avoid feedback.
