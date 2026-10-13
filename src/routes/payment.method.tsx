@@ -520,7 +520,7 @@ function PaymentMethod() {
       items: [
         {
           id: "room",
-          label: "Room Charge",
+          label: "Rooms",
           icon: BedDouble,
           kind: "room" as const,
           run: () => setRoomOpen(true),
