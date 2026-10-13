@@ -23,14 +23,14 @@ export type NavGroup = { title: string; links: NavLink[] };
  * so both stay in sync. Deeper screens are reached by drilling into a section.
  */
 export const navGroups: NavGroup[] = [
-  { title: "Overview", links: [{ to: "/dashboard", label: "Dashboard", icon: Gauge }] },
   {
     title: "Ordering",
     links: [
+      { to: "/order/menu", label: "Dashboard", icon: Gauge },
       { to: "/order/new", label: "New Order", icon: ClipboardList },
-      { to: "/order/menu", label: "Menus", icon: Utensils },
     ],
   },
+
   {
     title: "Service",
     links: [
