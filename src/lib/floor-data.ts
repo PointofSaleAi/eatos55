@@ -348,38 +348,38 @@ export function formatDwell(minutes: number): string {
 
 export const floorTables: FloorTable[] = [
   // Ground floor, section B1
-  { id: "ft-test", name: "test", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "B1", shape: "square", x: 74, y: 46 },
-  { id: "ft-t1", name: "T1", state: "ordered", seats: 4, seated: 4, seatedMinutesAgo: 1380, floor: "Ground Floor", section: "B1", shape: "round", x: 33, y: 34 },
-  { id: "ft-ew1", name: "EW1", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "B1", shape: "round", x: 62, y: 20 },
-  { id: "ft-t3", name: "T3", state: "ordered", seats: 4, seated: 1, seatedMinutesAgo: 48, floor: "Ground Floor", section: "B1", shape: "round", x: 33, y: 55 },
-  { id: "ft-t4", name: "T4", state: "available", seats: 4, seated: 0, floor: "Ground Floor", section: "B1", shape: "round", x: 33, y: 74 },
-  { id: "ft-4", name: "4", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "B1", shape: "round", x: 60, y: 12 },
-  { id: "ft-t7", name: "T7", state: "available", seats: 2, seated: 0, floor: "Ground Floor", section: "B1", shape: "round", x: 66, y: 34 },
-  { id: "ft-t8", name: "T8", state: "available", seats: 8, seated: 0, floor: "Ground Floor", section: "B1", shape: "round", x: 44, y: 55 },
-  { id: "ft-t9", name: "T9", state: "available", seats: 8, seated: 0, floor: "Ground Floor", section: "B1", shape: "round", x: 53, y: 55 },
-  { id: "ft-t10", name: "T10", state: "available", seats: 8, seated: 0, floor: "Ground Floor", section: "B1", shape: "round", x: 44, y: 74 },
+  { id: "ft-test", name: "test", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B1", shape: "square", x: 74, y: 46 },
+  { id: "ft-t1", name: "T1", state: "ordered", seats: 4, seated: 4, seatedMinutesAgo: 1380, floor: "Ground Floor", section: "Lobby", section: "B1", shape: "round", x: 33, y: 34 },
+  { id: "ft-ew1", name: "EW1", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B1", shape: "round", x: 62, y: 20 },
+  { id: "ft-t3", name: "T3", state: "ordered", seats: 4, seated: 1, seatedMinutesAgo: 48, floor: "Ground Floor", section: "Lobby", section: "B1", shape: "round", x: 33, y: 55 },
+  { id: "ft-t4", name: "T4", state: "available", seats: 4, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B1", shape: "round", x: 33, y: 74 },
+  { id: "ft-4", name: "4", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B1", shape: "round", x: 60, y: 12 },
+  { id: "ft-t7", name: "T7", state: "available", seats: 2, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B1", shape: "round", x: 66, y: 34 },
+  { id: "ft-t8", name: "T8", state: "available", seats: 8, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B1", shape: "round", x: 44, y: 55 },
+  { id: "ft-t9", name: "T9", state: "available", seats: 8, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B1", shape: "round", x: 53, y: 55 },
+  { id: "ft-t10", name: "T10", state: "available", seats: 8, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B1", shape: "round", x: 44, y: 74 },
   // Ground floor, section B2
-  { id: "ft-ew11", name: "EW11", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "B2", shape: "round", x: 55, y: 82 },
-  { id: "ft-ew12", name: "EW12", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "B2", shape: "square", x: 14, y: 22 },
-  { id: "ft-ew104", name: "EW104", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "B2", shape: "square", x: 84, y: 62 },
-  { id: "ft-ew112", name: "EW112", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "B2", shape: "square", x: 76, y: 72 },
-  { id: "ft-ew123", name: "EW123", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "B2", shape: "square", x: 14, y: 52 },
-  { id: "ft-ew4426", name: "EW4426", state: "available", seats: 4, seated: 0, floor: "Ground Floor", section: "B2", shape: "square", x: 24, y: 88 },
-  { id: "ft-ew6072", name: "EW6072", state: "ordering", seats: 3, seated: 2, seatedMinutesAgo: 14, floor: "Ground Floor", section: "B2", shape: "round", x: 60, y: 92 },
-  { id: "ft-ew19374", name: "EW19374", state: "ordered", seats: 4, seated: 2, seatedMinutesAgo: 31, floor: "Ground Floor", section: "B2", shape: "round", x: 70, y: 92 },
-  { id: "ft-ew23324", name: "EW23324", state: "available", seats: 3, seated: 0, floor: "Ground Floor", section: "B2", shape: "round", x: 74, y: 58 },
-  { id: "ft-ew32298", name: "EW32298", state: "available", seats: 4, seated: 0, floor: "Ground Floor", section: "B2", shape: "round", x: 86, y: 84 },
-  { id: "ft-ew77353", name: "EW77353", state: "available", seats: 3, seated: 0, floor: "Ground Floor", section: "B2", shape: "round", x: 88, y: 92 },
-  { id: "ft-ew79223", name: "EW79223", state: "ordering", seats: 4, seated: 3, seatedMinutesAgo: 9, floor: "Ground Floor", section: "B2", shape: "round", x: 22, y: 26 },
+  { id: "ft-ew11", name: "EW11", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B2", shape: "round", x: 55, y: 82 },
+  { id: "ft-ew12", name: "EW12", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B2", shape: "square", x: 14, y: 22 },
+  { id: "ft-ew104", name: "EW104", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B2", shape: "square", x: 84, y: 62 },
+  { id: "ft-ew112", name: "EW112", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B2", shape: "square", x: 76, y: 72 },
+  { id: "ft-ew123", name: "EW123", state: "available", seats: 1, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B2", shape: "square", x: 14, y: 52 },
+  { id: "ft-ew4426", name: "EW4426", state: "available", seats: 4, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B2", shape: "square", x: 24, y: 88 },
+  { id: "ft-ew6072", name: "EW6072", state: "ordering", seats: 3, seated: 2, seatedMinutesAgo: 14, floor: "Ground Floor", section: "Lobby", section: "B2", shape: "round", x: 60, y: 92 },
+  { id: "ft-ew19374", name: "EW19374", state: "ordered", seats: 4, seated: 2, seatedMinutesAgo: 31, floor: "Ground Floor", section: "Lobby", section: "B2", shape: "round", x: 70, y: 92 },
+  { id: "ft-ew23324", name: "EW23324", state: "available", seats: 3, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B2", shape: "round", x: 74, y: 58 },
+  { id: "ft-ew32298", name: "EW32298", state: "available", seats: 4, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B2", shape: "round", x: 86, y: 84 },
+  { id: "ft-ew77353", name: "EW77353", state: "available", seats: 3, seated: 0, floor: "Ground Floor", section: "Lobby", section: "B2", shape: "round", x: 88, y: 92 },
+  { id: "ft-ew79223", name: "EW79223", state: "ordering", seats: 4, seated: 3, seatedMinutesAgo: 9, floor: "Ground Floor", section: "Lobby", section: "B2", shape: "round", x: 22, y: 26 },
   // First floor
-  { id: "ft-f1", name: "T8", state: "reserved", seats: 6, seated: 0, floor: "First Floor", section: "B1", shape: "round", x: 30, y: 30 },
-  { id: "ft-f2", name: "T9", state: "course-2", seats: 4, seated: 4, seatedMinutesAgo: 12, floor: "First Floor", section: "B1", shape: "round", x: 60, y: 40 },
-  { id: "ft-f3", name: "T11", state: "running-late", seats: 2, seated: 2, seatedMinutesAgo: 60, floor: "First Floor", section: "B2", shape: "square", x: 40, y: 70 },
-  { id: "ft-f4", name: "T12", state: "dessert", seats: 6, seated: 5, seatedMinutesAgo: 52, floor: "First Floor", section: "B2", shape: "round", x: 74, y: 74 },
+  { id: "ft-f1", name: "T8", state: "reserved", seats: 6, seated: 0, floor: "First Floor", section: "Entrance", section: "B1", shape: "round", x: 30, y: 30 },
+  { id: "ft-f2", name: "T9", state: "course-2", seats: 4, seated: 4, seatedMinutesAgo: 12, floor: "First Floor", section: "Entrance", section: "B1", shape: "round", x: 60, y: 40 },
+  { id: "ft-f3", name: "T11", state: "running-late", seats: 2, seated: 2, seatedMinutesAgo: 60, floor: "First Floor", section: "Entrance", section: "B2", shape: "square", x: 40, y: 70 },
+  { id: "ft-f4", name: "T12", state: "dessert", seats: 6, seated: 5, seatedMinutesAgo: 52, floor: "First Floor", section: "Entrance", section: "B2", shape: "round", x: 74, y: 74 },
   // Patio
-  { id: "ft-p1", name: "P1", state: "available", seats: 4, seated: 0, floor: "Patio", section: "B1", shape: "round", x: 28, y: 36 },
-  { id: "ft-p2", name: "P2", state: "ordering", seats: 2, seated: 2, seatedMinutesAgo: 8, floor: "Patio", section: "B1", shape: "round", x: 56, y: 36 },
-  { id: "ft-p3", name: "P3", state: "partially-seated", seats: 6, seated: 3, seatedMinutesAgo: 22, floor: "Patio", section: "B2", shape: "square", x: 44, y: 72 },
+  { id: "ft-p1", name: "P1", state: "available", seats: 4, seated: 0, floor: "Patio", section: "Garden", section: "B1", shape: "round", x: 28, y: 36 },
+  { id: "ft-p2", name: "P2", state: "ordering", seats: 2, seated: 2, seatedMinutesAgo: 8, floor: "Patio", section: "Garden", section: "B1", shape: "round", x: 56, y: 36 },
+  { id: "ft-p3", name: "P3", state: "partially-seated", seats: 6, seated: 3, seatedMinutesAgo: 22, floor: "Patio", section: "Garden", section: "B2", shape: "square", x: 44, y: 72 },
 ];
 
 /** The saved-layout shape a floor starts from, built out of the seeded tables. */
@@ -570,18 +570,20 @@ export type Room = {
   /** Room number as printed on the key card. */
   number: string;
   floor: string;
+  /** Wing or area within the floor, used by the Rooms section tabs. */
+  section?: string;
   guest?: string;
   amount?: number;
   state: "available" | "occupied";
   stay?: RoomStay;
 };
 
-export const rooms: Room[] = [
+const baseRooms: Room[] = [
   {
     id: "r1",
     name: "Room 2",
     number: "2",
-    floor: "Ground Floor",
+    floor: "Ground Floor", section: "Lobby",
     guest: "Maa DD",
     state: "available",
     stay: {
@@ -614,7 +616,7 @@ export const rooms: Room[] = [
     id: "r2",
     name: "Mahmoud Shaaban",
     number: "104",
-    floor: "First Floor",
+    floor: "First Floor", section: "Entrance",
     guest: "saof ali",
     amount: 0,
     state: "occupied",
@@ -640,7 +642,7 @@ export const rooms: Room[] = [
     id: "r3",
     name: "Ocean",
     number: "222",
-    floor: "First Floor",
+    floor: "First Floor", section: "Entrance",
     guest: "Test sdfsdf",
     state: "available",
     stay: {
@@ -665,7 +667,7 @@ export const rooms: Room[] = [
     id: "r4",
     name: "Francis Room",
     number: "303",
-    floor: "Patio",
+    floor: "Patio", section: "Garden",
     guest: "Francis Obera",
     amount: 2500,
     state: "occupied",
@@ -691,7 +693,7 @@ export const rooms: Room[] = [
     id: "r5",
     name: "King room",
     number: "982",
-    floor: "Patio",
+    floor: "Patio", section: "Garden",
     guest: "Tommy telles",
     state: "available",
     stay: {
@@ -713,6 +715,54 @@ export const rooms: Room[] = [
     },
   },
 ];
+
+/** Extra demo rooms so every floor and section has something to browse. */
+const extraRooms: Room[] = [
+  {
+    id: "r6",
+    name: "Ocean View",
+    number: "201",
+    floor: "2nd Floor",
+    section: "East Wing",
+    guest: "Chichi Trano",
+    amount: 500,
+    state: "occupied",
+    stay: {
+      bookingNumber: "BK-OV201",
+      stayFrom: "Jul 29",
+      stayTo: "Oct 10",
+      nights: 73,
+      occupancy: "2 Adults",
+      roomType: "Suite",
+      bedType: "King",
+      maxAdults: 2,
+      maxChildren: 1,
+      creditLimit: 1500,
+      creditUsed: 500,
+      foodAllowancePerDay: 50,
+      alcoholAllowed: true,
+      meals: ["Breakfast", "Dinner"],
+      entitlements: "Sea view, late checkout",
+    },
+  },
+  { id: "r7", name: "Sandy Room", number: "105", floor: "First Floor", section: "Entrance", state: "available" },
+  { id: "r8", name: "Room 0199", number: "199", floor: "First Floor", section: "Entrance", state: "available" },
+  ...Array.from({ length: 4 }, (_, f) =>
+    Array.from({ length: f < 3 ? 9 : 7 }, (_, i) => {
+      const num = `0${f + 1}0${i + 1}`;
+      return {
+        id: `mews-${num}`,
+        name: num,
+        number: num,
+        floor: "Mews",
+        section: "Mews Rooms",
+        state: "available" as const,
+      };
+    }),
+  ).flat(),
+];
+
+export const rooms: Room[] = [...baseRooms, ...extraRooms];
 
 export const boardChannels = ["DINE IN", "ONLINE"] as const;
 
