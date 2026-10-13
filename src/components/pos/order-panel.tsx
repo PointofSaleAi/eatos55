@@ -152,7 +152,6 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
             })();
           }}
         />
-        {cart.length > 0 ? <HeaderAction label="Cancel Order" icon={Trash2} destructive onPress={cancelCurrentOrder} /> : null}
         <HeaderAction label="No Sale" icon={Wallet} onPress={() => toast.success("Register opened")} />
         </div>
         <Button
