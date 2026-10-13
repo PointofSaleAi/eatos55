@@ -26,6 +26,8 @@ export const Route = createFileRoute("/settings/")({
         property: "og:description",
         content: "Device, menu, payments, workforce and hardware settings for the handheld app.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: SettingsHub,
