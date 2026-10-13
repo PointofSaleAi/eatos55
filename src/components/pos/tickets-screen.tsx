@@ -1,4 +1,5 @@
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import { X as XIcon } from "lucide-react";
 import { TapToPayNudge } from "@/components/pos/tap-to-pay";
 import {
   Calendar,
@@ -138,6 +139,8 @@ export function TicketsScreen({
   pane?: boolean;
 }) {
   const navigate = useNavigate();
+  const tableParam = (useSearch({ strict: false }) as { table?: string }).table;
+  const tableMembers = tableParam ? tableParam.split(",").filter(Boolean) : [];
   const {
     visibleTickets,
     openTicket,
@@ -179,12 +182,15 @@ export function TicketsScreen({
   const baseList = visibleTickets(aggregate ? "all" : tab, {
     ignoreDate: searching && searchAllDates,
   });
+  const tableList = tableMembers.length
+    ? baseList.filter((t) => t.table && tableMembers.includes(String(t.table)))
+    : baseList;
   const list =
     tab === "unpaid" || tab === "open"
-      ? baseList.filter((t) => t.status !== "paid")
+      ? tableList.filter((t) => t.status !== "paid")
       : tab === "closed"
-        ? baseList.filter((t) => t.status === "paid")
-        : baseList;
+        ? tableList.filter((t) => t.status === "paid")
+        : tableList;
 
   const dateLabel = rangeLabel(ticketRange, DEFAULT_TICKET_DATE);
   const isDefaultPeriod =
@@ -261,6 +267,30 @@ export function TicketsScreen({
             </button>
           </div>
         </div>
+
+        {tableParam ? (
+          <div className="flex items-center gap-2 pt-1.5">
+            <button
+              type="button"
+              aria-label={`Clear table ${tableMembers.join(" + ")} filter`}
+              onClick={() => navigate({ to: "/tickets", search: {} })}
+              className="flex min-w-0 items-center gap-1.5 rounded-pill bg-foreground px-3 py-1.5 text-fs-sm font-bold text-background"
+            >
+              <span className="truncate">Table {tableMembers.join(" + ")}</span>
+              <XIcon className="size-3.5 shrink-0" aria-hidden />
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                startOrder(tableMembers[0]);
+                navigate({ to: "/order/new" });
+              }}
+              className="ml-auto shrink-0 rounded-pill bg-accent px-3 py-1.5 text-fs-sm font-bold text-accent-foreground"
+            >
+              New Order
+            </button>
+          </div>
+        ) : null}
 
         {/* Date stepper + facet icons */}
         <div className="flex flex-col items-center gap-1 pt-0.5 md:flex-row md:justify-center md:gap-3">
@@ -567,7 +597,11 @@ export function TicketsScreen({
                   ticket={t}
                   onClick={() => {
                     openTicket(t.id);
-                    navigate({ to: "/tickets/$ticketId", params: { ticketId: t.id } });
+                    navigate({
+                      to: "/tickets/$ticketId",
+                      params: { ticketId: t.id },
+                      search: tableParam ? { table: tableParam } : {},
+                    });
                   }}
                 />
               </SwipeRow>
