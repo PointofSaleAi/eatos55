@@ -3,11 +3,8 @@ import { brand } from "@/lib/brand";
 import {
   ArrowLeftRight,
   Banknote,
-  ChevronDown,
-  Monitor,
   Timer,
   Bell,
-  EllipsisVertical,
   Headphones,
   RotateCw,
   Wifi,
@@ -125,39 +122,26 @@ export function AccountActions() {
   const { settings } = usePos();
   const navigate = useNavigate();
   const [news, setNews] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
   const [seen, setSeen] = useState(false);
   const clock = useClock();
   const online = useOnline();
 
   useEffect(() => {
-    if (!moreOpen && !news) return;
+    if (!news) return;
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setMoreOpen(false);
-        setNews(false);
-      }
+      if (event.key === "Escape") setNews(false);
     };
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [moreOpen, news]);
+  }, [news]);
 
   const openNews = () => {
     setNews(true);
-    setMoreOpen(false);
     setSeen(true);
   };
 
   return (
     <div className="relative flex shrink-0 items-center justify-end gap-0.5">
-      <span
-        title="Device connected"
-        className="mr-1 hidden items-center gap-1.5 rounded-pill bg-topbar-foreground/10 px-2.5 py-1.5 text-topbar-foreground lg:flex"
-      >
-        <span aria-hidden className="size-1.5 rounded-full bg-success" />
-        <Monitor className="size-4" />
-        <ChevronDown className="size-3.5 text-topbar-muted" />
-      </span>
       <Button
         type="button"
         variant="ghost"
@@ -227,55 +211,6 @@ export function AccountActions() {
       <p className="shrink-0 whitespace-nowrap px-1 text-[0.8125rem] font-extrabold tabular-nums text-topbar-foreground">
         {clock}
       </p>
-      <span aria-hidden className="mx-0.5 hidden h-6 w-px bg-topbar-border sm:block" />
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        aria-label="More top bar actions"
-        aria-expanded={moreOpen}
-        onClick={() => setMoreOpen((value) => !value)}
-        className={cn(iconBtn, "relative")}
-      >
-        <EllipsisVertical className="size-5" />
-        {!seen ? <span className="absolute right-2 top-2 size-2 rounded-full bg-tile-blue" /> : null}
-      </Button>
-
-      {moreOpen ? (
-        <>
-          <button
-            type="button"
-            aria-label="Close more actions"
-            onClick={() => setMoreOpen(false)}
-            className="fixed inset-0 z-30 cursor-default"
-          />
-          <div className="absolute right-0 top-[calc(100%+0.375rem)] z-40 w-56 overflow-hidden rounded-lg border border-border bg-popover p-1 shadow-lg">
-            <Button variant="ghost" className="w-full justify-start" onClick={openNews}>
-              <Bell /> What&apos;s new
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start md:hidden"
-              onClick={() => {
-                setMoreOpen(false);
-                toast.success("Tickets refreshed");
-              }}
-            >
-              <RotateCw /> Refresh tickets
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full justify-start md:hidden"
-              onClick={() => {
-                setMoreOpen(false);
-                navigate({ to: "/system/customer-support" });
-              }}
-            >
-              <Headphones /> Customer support
-            </Button>
-          </div>
-        </>
-      ) : null}
 
       {news ? (
         <>
