@@ -53,7 +53,7 @@ export function NumPad({
   disableDecimal?: boolean;
   className?: string;
 }) {
-  const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+  const digits = ["7", "8", "9", "4", "5", "6", "1", "2", "3"];
 
   if (variant === "order") {
     return (
