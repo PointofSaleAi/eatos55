@@ -32,8 +32,9 @@ export function PaymentBill({ room }: { room?: Room | null }) {
     orderNotes,
     setOrderNotes,
     setOrderDiscountPercent,
+    currentOrderNumber,
   } = usePos();
-  const orderNumber = tickets.length + 1;
+  const orderNumber = currentOrderNumber;
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
 
   const [guestOpen, setGuestOpen] = useState(false);
