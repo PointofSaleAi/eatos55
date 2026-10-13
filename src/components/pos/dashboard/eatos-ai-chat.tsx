@@ -2,6 +2,7 @@ import { ArrowRight, MessageSquarePlus, X } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import mayaMotion from "@/assets/maya-ai-animation.mp4.asset.json";
+import mayaMotionWebm from "@/assets/maya-ai-animation.webm.asset.json";
 import { formatMoney } from "@/lib/brand";
 import { floorTables, tableStateMeta } from "@/lib/floor-data";
 import { usePos } from "@/lib/pos-store";
@@ -26,13 +27,15 @@ export function AiMark({ className }: { className?: string }) {
       aria-hidden
     >
       <video
-        src={mayaMotion.url}
         autoPlay
         loop
         muted
         playsInline
         className="size-full object-cover"
-      />
+      >
+        <source src={mayaMotion.url} type="video/mp4" />
+        <source src={mayaMotionWebm.url} type="video/webm" />
+      </video>
     </span>
   );
 }
