@@ -5,7 +5,6 @@ import {
   Banknote,
   ChevronDown,
   Monitor,
-  Sparkles,
   Timer,
   Bell,
   EllipsisVertical,
@@ -167,7 +166,7 @@ export function AccountActions() {
         onClick={() => window.dispatchEvent(new CustomEvent("pos:open-dashboard"))}
         className={cn(iconBtn, "hidden md:inline-flex")}
       >
-        <Sparkles className="size-4" />
+        <AiMark className="size-7 rounded-full" />
       </Button>
       <Button
         type="button"
