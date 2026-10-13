@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Arrange all in-app number pads in calculator order and verify across devices
 - [x] Add searchable U.S. address suggestions and structured address fields to guest forms
 - [x] Replace the cart with an inline Add Guest form and verify save/cancel across devices
 - [x] Add cart Transfer Check beside Discount with searchable employees and current owner; verify selection across layouts

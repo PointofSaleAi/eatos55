@@ -7,7 +7,7 @@ import { useWideViewport } from "@/hooks/use-layout-mode";
 import { money } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 
-const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+const keys = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0"];
 
 /**
  * Reference-capture surface shared by the delivery partners, loyalty lookup and

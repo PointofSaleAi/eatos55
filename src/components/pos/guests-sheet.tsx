@@ -61,7 +61,7 @@ export function GuestsSheet({
         </p>
 
         <div className="grid grid-cols-3 gap-1.5 px-3 pt-2">
-          {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((d) => (
+          {["7", "8", "9", "4", "5", "6", "1", "2", "3"].map((d) => (
             <button
               key={d}
               type="button"

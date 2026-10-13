@@ -112,7 +112,7 @@ export function PriceOverrideFlow({
               ))}
             </div>
             <div className="grid w-full max-w-xs grid-cols-3 gap-2">
-              {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((d) => (
+              {["7", "8", "9", "4", "5", "6", "1", "2", "3"].map((d) => (
                 <button key={d} type="button" className={keyCls} onClick={() => pushPin(d)}>
                   {d}
                 </button>
@@ -207,7 +207,7 @@ export function PriceOverrideFlow({
             </div>
 
             <div className="grid grid-cols-3 gap-2">
-              {["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0"].map((k) => (
+              {["7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0"].map((k) => (
                 <button key={k} type="button" className={keyCls} onClick={() => pushPrice(k)}>
                   {k}
                 </button>
