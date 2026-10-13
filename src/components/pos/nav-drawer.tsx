@@ -58,7 +58,6 @@ export function NavDrawer({ open, onClose }: { open: boolean; onClose: () => voi
                       >
                         <l.icon
                           className={cn("size-5 shrink-0", active ? "" : "text-accent")}
-                          strokeWidth={2}
                         />
                         <span className="min-w-0 flex-1 truncate">{l.label}</span>
                         <ChevronRight
