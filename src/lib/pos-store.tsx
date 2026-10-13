@@ -665,6 +665,8 @@ type Store = {
   orderType: ServiceOrderType;
   setOrderType: (t: ServiceOrderType) => void;
   openTicket: (id: string) => void;
+  /** Fire the current order to the kitchen: create or refresh its ticket. */
+  fireTicket: () => void;
 
   addItem: (
     menuId: string,
@@ -1416,6 +1418,62 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setCart(ticket.lines.map((l) => ({ ...l })));
         setMode(ticket.mode);
         setOrderNotes(ticket.notes ?? "");
+        // Keep charging against the table the check belongs to.
+        setActiveTable(ticket.table ?? null);
+      },
+      /** Fire sends the cart to the kitchen as (or onto) a ticket tied to its table. */
+      fireTicket: () => {
+        if (!cart.length) return;
+        const lines = cart.map((l) => ({ ...l }));
+        const server = draftOwner ?? session.name;
+        if (activeTicketId) {
+          setTickets((list) =>
+            list.map((t) =>
+              t.id === activeTicketId
+                ? {
+                    ...t,
+                    lines,
+                    total,
+                    status: "preparing",
+                    ...(activeTable ? { table: activeTable } : {}),
+                  }
+                : t,
+            ),
+          );
+        } else {
+          const id = `t-${1047 + tickets.length}`;
+          const created: Ticket = {
+            id,
+            number: tickets.length + 1,
+            label: guest.name || "Guest",
+            seats: guest.partySize || 1,
+            total,
+            date: ticketDate,
+            arrivedAt: formatTime(),
+            arrivedMinutesAgo: 0,
+            status: "preparing",
+            mode,
+            lines,
+            server,
+            checkNumber: 1047 + tickets.length,
+            tips: 0,
+            revenueCenter: session.station ?? "Main dining",
+            paymentType: "Unpaid",
+            payments: [],
+            orderType,
+            ...(activeTable ? { table: activeTable } : {}),
+            ...((orderNotes || guest.notes) ? { notes: (orderNotes || guest.notes) as string } : {}),
+          };
+          setTickets((list) => [created, ...list]);
+          setActiveTicketId(id);
+        }
+        if (activeTable) {
+          // A fired order moves the table from Ordering to Ordered.
+          setTableStates((s) => ({ ...s, [activeTable]: "ordered" }));
+          setTableSince((s) =>
+            s[activeTable] ? s : { ...s, [activeTable]: new Date().toISOString() },
+          );
+        }
       },
       addItem: (menuId, opts) => {
         const item = [...menu, ...liveMenu].find((m) => m.id === menuId);
@@ -1619,6 +1677,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
           ...(opts?.roomNumber ? { roomNumber: opts.roomNumber } : {}),
           ...(opts?.bookingNumber ? { bookingNumber: opts.bookingNumber } : {}),
           ...(opts?.signedBill ? { signedBill: true } : {}),
+          // Charged orders stay attached to the table they were opened on.
+          ...(activeTable ? { table: activeTable } : {}),
         };
         let id = activeTicketId;
         let orderNumber = 0;
