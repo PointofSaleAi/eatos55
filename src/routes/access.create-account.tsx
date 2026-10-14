@@ -288,7 +288,7 @@ function CreateAccount() {
                     {(["email", "phone"] as const).map((value) => (
                       <label key={value} className="flex min-w-0 items-start gap-3 rounded-row border border-input bg-surface p-4 text-foreground">
                         <input type="radio" name="confirmation" className="mt-1 shrink-0" checked={channel === value} onChange={() => setChannel(value)} />
-                        <span className="min-w-0"><span className="block text-fs-xs font-bold text-muted-foreground">{value === "email" ? "Email Address" : "Mobile Number"}</span><span className="mt-1 block break-words text-fs-sm font-bold">{value === "email" ? form.email : `+1 ${form.phone}`}</span></span>
+                        <span className="min-w-0"><span className="block text-fs-xs font-bold text-muted-foreground">{value === "email" ? "Email Address" : "Mobile Number"}</span><span className="mt-1 block break-words text-fs-sm font-bold">{value === "email" ? form.email : `${phoneCountryByName(form.country).dial} ${form.phone}`}</span></span>
                       </label>
                     ))}
                   </fieldset>
@@ -296,7 +296,7 @@ function CreateAccount() {
                 </>
               ) : step === 3 ? (
                 <form onSubmit={(e) => { e.preventDefault(); verify(); }}>
-                  <p className="text-fs-sm text-muted-foreground">Enter the confirmation code for <span className="break-words font-bold text-foreground">{channel === "email" ? form.email : `+1 ${form.phone}`}</span>.</p>
+                  <p className="text-fs-sm text-muted-foreground">Enter the confirmation code for <span className="break-words font-bold text-foreground">{channel === "email" ? form.email : `${phoneCountryByName(form.country).dial} ${form.phone}`}</span>.</p>
                   <p className="mt-3 text-fs-sm text-muted-foreground">Demo code: <strong className="text-foreground">1234</strong>. No email or SMS is sent.</p>
                   <InputOTP aria-label="Confirmation code" maxLength={4} pattern="[0-9]*" value={code} onChange={(value) => { setCode(value); setError(""); }} autoComplete="one-time-code" containerClassName="mt-7 justify-center">
                     <InputOTPGroup>{[0, 1, 2, 3].map((index) => <InputOTPSlot key={index} index={index} className="h-14 w-14 bg-surface text-fs-xl" />)}</InputOTPGroup>
