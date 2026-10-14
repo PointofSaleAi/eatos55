@@ -44,7 +44,8 @@ export function GiftCardDialog({
   }, [open]);
 
   const balance = cardNumber ? giftCardBalance(cardNumber) : null;
-  const entered = Number(amount || "0");
+  // Cash-register entry: `amount` holds cents digits, so 9 → $0.09.
+  const entered = moneyDigitsToAmount(amount);
   const cardReady = cardNumber.length >= 8;
   const isNewCard = cardReady && balance === null;
   const canCharge = cardReady && entered > 0;
@@ -61,18 +62,14 @@ export function GiftCardDialog({
       });
       return;
     }
-    setAmount((cur) => {
-      if (d === "." && cur.includes(".")) return cur;
-      const next = `${cur}${d}`;
-      return next.length > 9 ? cur : next;
-    });
+    setAmount((cur) => pushMoneyDigit(cur, d));
   };
 
   const backspace = () => {
     if (activeField === "card") {
       setCardNumber((cur) => cur.slice(0, -1));
     } else {
-      setAmount((cur) => cur.slice(0, -1));
+      setAmount((cur) => popMoneyDigit(cur));
     }
   };
 

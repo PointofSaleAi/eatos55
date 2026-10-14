@@ -175,9 +175,10 @@ export function AmountEntryPanel({
 
   const pad = (
     <NumPad
+      moneyMode
       className={cn("min-h-0 flex-1", wide && "h-full self-stretch")}
       onDigit={type}
-      onBackspace={() => setAmount((cur) => cur.slice(0, -1))}
+      onBackspace={() => setAmount((cur) => popMoneyDigit(cur))}
     />
   );
 
