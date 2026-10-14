@@ -69,6 +69,26 @@ export function SettingsNavList() {
   const { canManageSettings } = usePos();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [collapsed, setCollapsed] = useState(false);
+  const [query, setQuery] = useState("");
+  const q = query.trim().toLowerCase();
+  const visibleGroups = useMemo(
+    () =>
+      settingsGroups.map((group) =>
+        group
+          .filter((l) => !l.manager || canManageSettings)
+          .filter((l) => !q || l.label.toLowerCase().includes(q)),
+      ),
+    [canManageSettings, q],
+  );
+  const anyMatches = visibleGroups.some((g) => g.length > 0);
+
+  const toggleCollapsed = () => {
+    setCollapsed((v) => {
+      if (!v) setQuery("");
+      return !v;
+    });
+  };
+
   return (
     <div
       className={cn(
@@ -79,7 +99,7 @@ export function SettingsNavList() {
       <div className="shrink-0 border-b border-border px-2 pb-3 pt-4">
         <button
           type="button"
-          onClick={() => setCollapsed((v) => !v)}
+          onClick={toggleCollapsed}
           aria-expanded={!collapsed}
           aria-label={collapsed ? "Expand settings list" : "Collapse settings list"}
           title={collapsed ? "Expand settings list" : "Collapse settings list"}
@@ -92,36 +112,72 @@ export function SettingsNavList() {
           {collapsed ? null : <h2 className="truncate t-title text-foreground">Settings</h2>}
         </button>
       </div>
+      {!collapsed ? (
+        <div className="shrink-0 border-b border-border px-3 pb-3 pt-3 lg:px-4">
+          <label className="flex min-h-ctl-lg items-center gap-2 rounded-pill border border-border bg-muted px-3">
+            <Search className="size-5 shrink-0 text-muted-foreground" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              type="text"
+              inputMode="search"
+              autoComplete="off"
+              placeholder="Search"
+              aria-label="Search settings"
+              className="min-h-tap min-w-0 flex-1 bg-transparent text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
+            />
+            {query ? (
+              <button
+                type="button"
+                aria-label="Clear search"
+                onClick={() => setQuery("")}
+                className="grid size-7 tap-safe shrink-0 place-items-center rounded-pill text-muted-foreground"
+              >
+                <X className="size-4" />
+              </button>
+            ) : null}
+          </label>
+        </div>
+      ) : null}
       <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto p-2 lg:p-3">
-        {settingsGroups.map((group, i) => (
-          <ul key={i} className="mb-3 overflow-hidden rounded-row border border-border bg-background">
-            {group.filter((l) => !l.manager || canManageSettings).map((l) => {
-              const active = pathname === l.to || pathname.startsWith(`${l.to}/`);
-              return (
-                <li key={l.to} className="border-b border-border last:border-b-0">
-                  <Link
-                    to={l.to}
-                    preload="intent"
-                    title={l.label}
-                    className={cn(
-                      "flex min-h-tap items-center gap-3 px-3 py-2.5 t-row transition-colors",
-                      collapsed && "justify-center px-0",
-                      active ? "bg-accent/15 text-accent" : "text-foreground hover:bg-muted",
-                    )}
-                  >
-                    <l.icon className={cn("size-5 shrink-0", active ? "" : "text-accent")} />
-                    {collapsed ? null : (
-                      <>
-                        <span className="min-w-0 flex-1 truncate">{l.label}</span>
-                        <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
-                      </>
-                    )}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        ))}
+        {anyMatches ? (
+          visibleGroups.map((group, i) =>
+            group.length === 0 ? null : (
+              <ul key={i} className="mb-3 overflow-hidden rounded-row border border-border bg-background">
+                {group.map((l) => {
+                  const active = pathname === l.to || pathname.startsWith(`${l.to}/`);
+                  return (
+                    <li key={l.to} className="border-b border-border last:border-b-0">
+                      <Link
+                        to={l.to}
+                        preload="intent"
+                        title={l.label}
+                        className={cn(
+                          "flex min-h-tap items-center gap-3 px-3 py-2.5 t-row transition-colors",
+                          collapsed && "justify-center px-0",
+                          active ? "bg-accent/15 text-accent" : "text-foreground hover:bg-muted",
+                        )}
+                      >
+                        <l.icon className={cn("size-5 shrink-0", active ? "" : "text-accent")} />
+                        {collapsed ? null : (
+                          <>
+                            <span className="min-w-0 flex-1 truncate">{l.label}</span>
+                            <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+                          </>
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            ),
+          )
+        ) : (
+          <div className="px-4 py-10 text-center">
+            <p className="t-row font-bold text-foreground">No settings found</p>
+            <p className="pt-1 text-fs-xs text-muted-foreground">Try a different search term.</p>
+          </div>
+        )}
       </div>
     </div>
   );
