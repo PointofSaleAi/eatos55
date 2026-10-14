@@ -2,7 +2,6 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import {
   ArrowLeftRight,
-  Banknote,
   Timer,
   Bell,
   Headphones,
@@ -152,18 +151,6 @@ export function AccountActions() {
         className={cn(iconBtn, "hidden md:inline-flex")}
       >
         <AiMark className="size-7 rounded-full" />
-      </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        aria-label="Cash drawer"
-        title="Cash drawer"
-        onClick={() => toast.success("Cash drawer opened")}
-        className={cn(iconBtn, "relative hidden lg:inline-flex")}
-      >
-        <Banknote className="size-4" />
-        <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-warning" />
       </Button>
       <Button
         type="button"
