@@ -155,8 +155,8 @@ export function PaymentCompleteCard({
           </span>
           <input
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="Phone Number"
+            onChange={(e) => setPhone(formatPhone(e.target.value))}
+            placeholder="(123) 456-7890"
             inputMode="tel"
             aria-label="Phone number for receipt"
             className="h-ctl-lg min-w-0 flex-1 rounded-card border-2 border-border bg-surface px-3 text-fs-base font-bold text-foreground outline-none placeholder:text-muted-foreground"
