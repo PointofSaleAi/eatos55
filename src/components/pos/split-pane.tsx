@@ -1,9 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ChevronRight, Inbox } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { ChevronRight, Inbox, Search, SlidersHorizontal, X } from "lucide-react";
+import { useMemo, useState, type ReactNode } from "react";
 import { TicketsScreen } from "@/components/pos/tickets-screen";
 import { cn } from "@/lib/utils";
-import { SlidersHorizontal } from "lucide-react";
 import { settingsGroups } from "@/lib/settings-destinations";
 import { usePos } from "@/lib/pos-store";
 
