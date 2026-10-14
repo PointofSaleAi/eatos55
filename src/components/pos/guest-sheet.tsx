@@ -35,12 +35,11 @@ import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
 import { formatUsAddress, type UsAddress } from "@/lib/us-addresses";
 
+import { defaultPhoneCountry, formatPhoneFor } from "@/lib/phone";
+
 /** Format raw digits as (XXX) XXX-XXXX while typing. */
 export function formatPhone(raw: string) {
-  const d = raw.replace(/\D/g, "").slice(0, 10);
-  if (d.length <= 3) return d;
-  if (d.length <= 6) return `(${d.slice(0, 3)}) ${d.slice(3)}`;
-  return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+  return formatPhoneFor(defaultPhoneCountry, raw);
 }
 
 export const orderTypeIcons: Record<ServiceOrderType, typeof Utensils> = {
