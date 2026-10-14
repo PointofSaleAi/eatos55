@@ -649,7 +649,7 @@ function OrderDetail({ o, now, onClose, onAction, onConfirm, onCancel, onReport 
                 <dd className="tabular-nums">{money(v)}</dd>
               </div>
             ))}
-            <div className="flex justify-between border-t border-border pt-1 text-fs-md font-extrabold">
+            <div className="flex justify-between border-t border-border pt-1 text-fs-base font-extrabold">
               <dt>Total Due</dt>
               <dd className="tabular-nums">{money(totals.total)}</dd>
             </div>
@@ -661,7 +661,7 @@ function OrderDetail({ o, now, onClose, onAction, onConfirm, onCancel, onReport 
               </button>
               {o.status === "new" ? (
                 <>
-                  <button type="button" onClick={onConfirm} className="min-h-ctl-lg w-full rounded-pill bg-primary text-fs-md font-bold text-primary-foreground">
+                  <button type="button" onClick={onConfirm} className="min-h-ctl-lg w-full rounded-pill bg-primary text-fs-base font-bold text-primary-foreground">
                     Confirm Order
                   </button>
                   <div className="grid grid-cols-2 gap-2">
@@ -675,7 +675,7 @@ function OrderDetail({ o, now, onClose, onAction, onConfirm, onCancel, onReport 
                 </>
               ) : (
                 action && (
-                  <button type="button" onClick={onAction} className="min-h-ctl-lg w-full rounded-pill bg-primary text-fs-md font-bold text-primary-foreground">
+                  <button type="button" onClick={onAction} className="min-h-ctl-lg w-full rounded-pill bg-primary text-fs-base font-bold text-primary-foreground">
                     {action}
                   </button>
                 )
@@ -750,7 +750,7 @@ function OrderList({ title, orders, onOpen, onClose }: { title: string; orders: 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="inline-flex items-center gap-2 text-fs-md font-extrabold">
+        <h2 className="inline-flex items-center gap-2 text-fs-base font-extrabold">
           {title}
           <span className="grid min-w-5 place-items-center rounded-pill bg-foreground px-1 text-fs-xs text-background">{orders.length}</span>
         </h2>
@@ -766,7 +766,7 @@ function OrderList({ title, orders, onOpen, onClose }: { title: string; orders: 
             <li key={o.id}>
               <button type="button" onClick={() => onOpen(o.id)} className="grid w-full grid-cols-2 items-center gap-2 rounded-card border border-border bg-surface p-3 text-left hover:bg-muted sm:grid-cols-5">
                 <span>
-                  <span className="block text-fs-md font-extrabold">#{o.number}</span>
+                  <span className="block text-fs-base font-extrabold">#{o.number}</span>
                   <span className="text-fs-xs text-muted-foreground" suppressHydrationWarning>Arrived {clock(baseTime - o.placedOffset * 60000)}</span>
                 </span>
                 <span>
