@@ -43,3 +43,4 @@
 - [x] Complete the four-step demo signup flow and verify navigation, validation, code expiry and completion across devices
 
 - [x] Add the Settings sidebar search bar above the navigation list (matches iPadOS: filters destinations live, empty state, hidden while collapsed)
+- [x] Add voice dictation to both Settings search bars and shorten them; verify across phone, tablet and desktop

@@ -27,3 +27,4 @@
 - Demo password recovery stays in ephemeral route-local step state and never persists passwords or claims real code delivery; this keeps the prototype separate from real authentication.
 
 - Demo signup uses transient route-local steps and only enters the demo session after code verification; setup credentials are never persisted or used for employee authentication.
+- Voice dictation in any search field goes through `useVoiceSearch` in `src/lib/voice-search.ts`, so every mic shares one listening state, the same notices, and never submits or overwrites text when nothing is heard.
