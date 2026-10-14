@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate, useRouter, useCanGoBack } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
-import { ArrowLeft, ChevronDown, Eye, EyeOff } from "lucide-react";
-import { useState, type ReactNode } from "react";
-import { toast } from "sonner";
+import { ArrowLeft, ChevronDown, Eye, EyeOff, Check } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { PinPad } from "@/components/pos/pin-pad";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Checkbox } from "@/components/ui/checkbox";
 import { countries, restaurantTypes } from "@/lib/demo-data";
 import { Wordmark } from "@/components/pos/brand";
@@ -54,7 +55,27 @@ function CreateAccount() {
   const { signIn } = usePos();
   const wide = useLandscapeWide();
   const canGoBack = useCanGoBack();
-  const goBack = () => canGoBack ? router.history.back() : navigate({ to: "/" });
+  const [step, setStep] = useState(0);
+  const [pin, setPin] = useState("");
+  const [channel, setChannel] = useState<"email" | "phone">("email");
+  const [code, setCode] = useState("");
+  const [expiresAt, setExpiresAt] = useState(0);
+  const [remaining, setRemaining] = useState(300);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const steps = ["Create Account", "Set PIN", "Confirmation", "OTP"];
+  const goBack = () => {
+    setError(""); setNotice("");
+    if (step > 0) { setStep(step - 1); setCode(""); return; }
+    if (canGoBack) router.history.back(); else navigate({ to: "/" });
+  };
+  useEffect(() => {
+    if (step !== 3) return;
+    const update = () => setRemaining(Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000)));
+    update();
+    const timer = window.setInterval(update, 1000);
+    return () => window.clearInterval(timer);
+  }, [step, expiresAt]);
   const [show, setShow] = useState(false);
   const [agree, setAgree] = useState(false);
   const [form, setForm] = useState({
@@ -69,6 +90,33 @@ function CreateAccount() {
   });
   const set = (k: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
 
+  const startCode = () => {
+    setError(""); setCode(""); setRemaining(300); setExpiresAt(Date.now() + 300000); setStep(3);
+  };
+  const validateAccount = () => {
+    if (!form.first.trim() || !form.last.trim() || !form.restaurant.trim() || !form.country || !form.type) { setError("Complete all account and restaurant fields."); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) { setError("Enter a valid email address."); return; }
+    if (!/^\d{10}$/.test(form.phone.replace(/\D/g, ""))) { setError("Enter a valid 10-digit U.S. mobile number."); return; }
+    if (form.password.length < 8) { setError("Use at least 8 characters for your password."); return; }
+    if (!agree) { setError("Accept the Seller Agreement and e-Sign Consent to continue."); return; }
+    setError(""); setStep(1);
+  };
+  const verify = () => {
+    if (Date.now() >= expiresAt) { setError("This code has expired. Select Resend Code to try again."); return; }
+    if (code !== "1234") { setError("Incorrect code. Use the demo code 1234."); return; }
+    setError(""); setPin(""); setForm((f) => ({ ...f, password: "" })); setStep(4);
+  };
+  const progress = (
+    <ol aria-label="Signup progress" className={cn(wide ? "mt-10 space-y-5" : "mb-7 grid grid-cols-4 gap-2")}>
+      {steps.map((label, index) => (
+        <li key={label} aria-current={step === index ? "step" : undefined} className={cn("flex min-w-0 items-center gap-3 text-fs-sm", wide ? "flex-row" : "flex-col text-center", index > step ? "text-muted-foreground" : "font-bold text-foreground")}>
+          <span className="grid size-7 shrink-0 place-items-center rounded-pill border border-border">{index < step ? <Check className="size-4" /> : index + 1}</span>
+          <span className={wide ? "" : "text-fs-xs leading-tight"}>{label}</span>
+        </li>
+      ))}
+    </ol>
+  );
+
   return (
     <div className={cn("flex min-h-0 min-w-0 flex-1 bg-background", wide ? "flex-row" : "flex-col")}>
       {wide ? (
@@ -80,10 +128,7 @@ function CreateAccount() {
             <Wordmark />
             <p className="mt-4 text-fs-lg font-extrabold text-foreground">Point of Sale</p>
           </div>
-          <div className="mt-10 flex items-center gap-3 text-fs-sm font-bold text-foreground" aria-current="step">
-            <span className="grid size-7 shrink-0 place-items-center rounded-pill border border-border">1</span>
-            Create Account
-          </div>
+          {progress}
         </aside>
       ) : null}
       <div className="no-scrollbar flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto pb-[var(--kb-inset,0px)]">
@@ -94,8 +139,10 @@ function CreateAccount() {
                 <ArrowLeft className="size-6" />
               </Button>
             ) : null}
-            <h1 className="min-w-0 text-fs-xl font-extrabold text-foreground">Create an Account</h1>
+            <h1 className="min-w-0 text-fs-xl font-extrabold text-foreground">{step === 0 ? "Create an Account" : step === 4 ? "Demo Signup Complete" : steps[step]}</h1>
           </div>
+          {!wide ? progress : null}
+          {step === 0 ? (<>
           <div className={cn("grid min-w-0 gap-x-6 gap-y-6", wide ? "grid-cols-2" : "grid-cols-1")}>
         <Field label="First Name">
           <input
@@ -214,20 +261,60 @@ function CreateAccount() {
           </span>
         </label>
 
+      {error ? <p role="alert" className="mt-4 text-fs-sm text-destructive">{error}</p> : null}
       <div className="mt-6 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3">
         <Button type="button" variant="outline" className="h-12 rounded-pill text-fs-sm font-bold" onClick={() => navigate({ to: "/" })}>Cancel</Button>
         <Button
           disabled={!agree}
           className="h-12 w-full rounded-pill bg-accent text-fs-sm font-bold text-accent-foreground hover:bg-accent/90 disabled:opacity-40"
-          onClick={() => {
-            signIn();
-            toast.success(`Account created - welcome to ${brand.appName}`);
-            navigate({ to: "/access/clock-in" });
-          }}
+          onClick={validateAccount}
         >
           Create Account
         </Button>
       </div>
+          </>) : (
+            <div className="mx-auto w-full max-w-[26rem]">
+              {step === 1 ? (
+                <>
+                  <PinPad pin={pin} onDigit={(digit) => setPin((value) => (value + digit).slice(0, 4))} onClear={() => setPin("")} onBackspace={() => setPin((value) => value.slice(0, -1))} className="h-[23rem] w-full" />
+                  <Button className="mt-6 h-12 w-full rounded-pill bg-accent font-bold text-accent-foreground hover:bg-accent/90" disabled={pin.length !== 4} onClick={() => setStep(2)}>Continue</Button>
+                </>
+              ) : step === 2 ? (
+                <>
+                  <p className="mb-6 text-fs-sm text-muted-foreground">Where do you want to send your confirmation code?</p>
+                  <fieldset className="space-y-4">
+                    <legend className="sr-only">Confirmation destination</legend>
+                    {(["email", "phone"] as const).map((value) => (
+                      <label key={value} className="flex min-w-0 items-start gap-3 rounded-row border border-input bg-surface p-4 text-foreground">
+                        <input type="radio" name="confirmation" className="mt-1 shrink-0" checked={channel === value} onChange={() => setChannel(value)} />
+                        <span className="min-w-0"><span className="block text-fs-xs font-bold text-muted-foreground">{value === "email" ? "Email Address" : "Mobile Number"}</span><span className="mt-1 block break-words text-fs-sm font-bold">{value === "email" ? form.email : `+1 ${form.phone}`}</span></span>
+                      </label>
+                    ))}
+                  </fieldset>
+                  <Button className="mt-6 h-12 w-full rounded-pill bg-accent font-bold text-accent-foreground hover:bg-accent/90" onClick={startCode}>Send Code</Button>
+                </>
+              ) : step === 3 ? (
+                <form onSubmit={(e) => { e.preventDefault(); verify(); }}>
+                  <p className="text-fs-sm text-muted-foreground">Enter the confirmation code for <span className="break-words font-bold text-foreground">{channel === "email" ? form.email : `+1 ${form.phone}`}</span>.</p>
+                  <p className="mt-3 text-fs-sm text-muted-foreground">Demo code: <strong className="text-foreground">1234</strong>. No email or SMS is sent.</p>
+                  <InputOTP aria-label="Confirmation code" maxLength={4} pattern="[0-9]*" value={code} onChange={(value) => { setCode(value); setError(""); }} autoComplete="one-time-code" containerClassName="mt-7 justify-center">
+                    <InputOTPGroup>{[0, 1, 2, 3].map((index) => <InputOTPSlot key={index} index={index} className="h-14 w-14 bg-surface text-fs-xl" />)}</InputOTPGroup>
+                  </InputOTP>
+                  <p className="mt-5 text-center text-fs-sm tabular-nums text-muted-foreground">{remaining > 0 ? `Code expires in ${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")}` : "Code expired"}</p>
+                  {error ? <p role="alert" className="mt-4 text-fs-sm text-destructive">{error}</p> : null}
+                  {notice ? <p role="status" className="mt-4 text-fs-sm text-muted-foreground">{notice}</p> : null}
+                  <Button type="submit" disabled={code.length !== 4} className="mt-6 h-12 w-full rounded-pill bg-accent font-bold text-accent-foreground hover:bg-accent/90">Verify Code</Button>
+                  <Button type="button" variant="outline" className="mt-3 h-11 w-full rounded-pill" onClick={() => { startCode(); setNotice("Demo code refreshed. Use 1234."); }}>Resend Code</Button>
+                </form>
+              ) : (
+                <>
+                  <p role="status" className="text-fs-sm text-muted-foreground">Demo signup is complete. No real account was created. Your chosen setup PIN does not change the existing demo employee PIN behavior.</p>
+                  <Button className="mt-6 h-12 w-full rounded-pill bg-accent font-bold text-accent-foreground hover:bg-accent/90" onClick={() => { signIn(); navigate({ to: "/access/clock-in" }); }}>Continue to Clock In</Button>
+                </>
+              )}
+              {step < 4 ? <div className="mt-4 grid grid-cols-2 gap-3"><Button variant="outline" className="h-11 rounded-pill" onClick={goBack}>Back</Button><Button variant="ghost" className="h-11 rounded-pill" onClick={() => navigate({ to: "/" })}>Cancel</Button></div> : null}
+            </div>
+          )}
         </div>
       </div>
     </div>
