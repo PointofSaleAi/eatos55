@@ -287,6 +287,13 @@ function CreateAccount() {
                 </>
               ) : step === 2 ? (
                 <>
+                  <p className="mb-4 text-fs-sm text-muted-foreground">Re-enter your 4-digit PIN to confirm it.</p>
+                  <PinPad pin={confirmPin} onDigit={(digit) => { setError(""); setConfirmPin((value) => (value + digit).slice(0, 4)); }} onClear={() => setConfirmPin("")} onBackspace={() => setConfirmPin((value) => value.slice(0, -1))} className="h-[23rem] w-full" />
+                  {error ? <p role="alert" className="mt-4 text-fs-sm text-destructive">{error}</p> : null}
+                  <Button className="mt-6 h-12 w-full rounded-pill bg-accent font-bold text-accent-foreground hover:bg-accent/90" disabled={confirmPin.length !== 4} onClick={confirmPinEntry}>Continue</Button>
+                </>
+              ) : step === 3 ? (
+                <>
                   <p className="mb-6 text-fs-sm text-muted-foreground">Where do you want to send your confirmation code?</p>
                   <fieldset className="space-y-4">
                     <legend className="sr-only">Confirmation destination</legend>
