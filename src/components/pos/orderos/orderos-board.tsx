@@ -567,7 +567,7 @@ function ExpandedNewCard({ o, now, prep, onCollapse, onAccept, onCancel, onRepor
       <button type="button" onClick={onCollapse} className="block w-full text-left" aria-label="Collapse order">
         <div className="flex items-center justify-between bg-primary px-3 py-1.5 text-primary-foreground">
           <span className="text-fs-xs font-extrabold uppercase">{o.type}</span>
-          <span className="text-[10px] font-bold uppercase opacity-80">{o.source}</span>
+          <span className={cn("text-[10px] font-bold uppercase", sourceTone(o.source))}>{o.source}</span>
         </div>
         <div className="flex items-start justify-between px-3 pt-2">
           <p className="truncate text-fs-sm font-extrabold">{o.guest}</p>
@@ -807,7 +807,7 @@ function OrderList({ title, orders, onOpen, onClose }: { title: string; orders: 
                   <Car className="size-4" /> {o.type}
                 </span>
                 <span className="text-fs-sm">{o.items.length} items</span>
-                <span className="text-fs-xs font-bold uppercase text-muted-foreground sm:text-right">{o.refunded ? "Refunded" : o.source}</span>
+                <span className={cn("text-fs-xs font-bold uppercase sm:text-right", o.refunded ? "text-destructive" : sourceTone(o.source))}>{o.refunded ? "Refunded" : o.source}</span>
               </button>
             </li>
           ))}
