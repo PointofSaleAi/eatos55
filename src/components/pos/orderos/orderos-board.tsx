@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { cancelReasons, orderTotals, type OOItem, type OOrder, type OOStatus } from "@/lib/orderos-data";
-import { useOrderOS } from "@/lib/orderos-store";
+import { nextStatus, useOrderOS } from "@/lib/orderos-store";
 import { money } from "@/lib/demo-data";
 import { haptic } from "@/lib/haptics";
 import { cn } from "@/lib/utils";
