@@ -473,7 +473,7 @@ function OrderCard({ o, now, dim, onOpen, onAccept, onCancel }: { o: OOrder; now
       <button type="button" onClick={onOpen} className="block w-full text-left">
         <div className="flex items-center justify-between gap-2 bg-primary px-3 py-1.5 text-primary-foreground">
           <span className="text-fs-xs font-extrabold uppercase tracking-wide">{o.type}</span>
-          <span className="text-[10px] font-bold uppercase opacity-80">{o.source}</span>
+          <span className={cn("text-[10px] font-bold uppercase", sourceTone(o.source))}>{o.source}</span>
         </div>
         <div className="flex items-start justify-between gap-2 px-3 pt-2">
           <div className="min-w-0">
@@ -502,7 +502,7 @@ function OrderCard({ o, now, dim, onOpen, onAccept, onCancel }: { o: OOrder; now
           </p>
         )}
         {o.status !== "new" && (
-          <div className="flex items-center justify-center gap-2 border-t border-border bg-muted py-2 text-fs-xs font-extrabold uppercase text-foreground">
+          <div className={cn("flex items-center justify-center gap-2 border-t border-border py-2 text-fs-xs font-extrabold uppercase", stripTone(o.status))}>
             {o.status === "preparing" ? (
               <>
                 Preparing <span className="tabular-nums" suppressHydrationWarning>{now ? `${t.leftSec < 0 ? "-" : ""}${mmss(t.leftSec)}` : ""}</span>
