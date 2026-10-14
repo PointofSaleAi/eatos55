@@ -8,6 +8,8 @@ import { Wordmark } from "@/components/pos/brand";
 export const Route = createFileRoute("/system/contact-us")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Contact Us - ${brand.appName} Help Center` },
       {
         name: "description",

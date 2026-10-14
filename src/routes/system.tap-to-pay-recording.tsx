@@ -7,6 +7,8 @@ import { TTP } from "@/components/pos/tap-to-pay";
 export const Route = createFileRoute("/system/tap-to-pay-recording")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `${TTP} recording guide - ${brand.appName}` },
       {
         name: "description",

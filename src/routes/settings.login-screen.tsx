@@ -14,6 +14,8 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/login-screen")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Login Screen - ${brand.appName} Point of Sale settings` },
       {
         name: "description",

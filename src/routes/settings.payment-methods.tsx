@@ -43,6 +43,8 @@ import { usePos, TENDER_LABELS, type TenderId } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/payment-methods")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Payment Methods - ${brand.appName} Point of Sale settings` },
       {
         name: "description",

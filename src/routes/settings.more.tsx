@@ -10,6 +10,8 @@ import { useConfirm } from "@/components/pos/confirm-sheet";
 export const Route = createFileRoute("/settings/more")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `More settings - ${brand.appName} Handheld` },
       { name: "description", content: "Advanced device options, support and legal information." },
       { property: "og:title", content: `More settings - ${brand.appName} Handheld` },

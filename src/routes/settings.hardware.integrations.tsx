@@ -5,6 +5,8 @@ import { ScreenBody, SubHeader } from "@/components/pos/shell";
 export const Route = createFileRoute("/settings/hardware/integrations")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Integrations - ${brand.appName} Handheld hardware` },
       { name: "description", content: "Manage third-party integrations on the Handheld app." },
       { property: "og:title", content: `Integrations - ${brand.appName} Handheld hardware` },

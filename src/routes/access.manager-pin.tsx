@@ -19,6 +19,8 @@ export const Route = createFileRoute("/access/manager-pin")({
   validateSearch: searchSchema,
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Manager PIN - ${brand.appName} Handheld` },
       { name: "description", content: "Manager approval for protected handheld actions." },
       { property: "og:title", content: `Manager PIN - ${brand.appName} Handheld` },

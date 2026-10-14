@@ -18,6 +18,8 @@ import { useTapToPayAvailable } from "@/lib/device";
 export const Route = createFileRoute("/settings/payments")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Payments - ${brand.appName} Handheld settings` },
       {
         name: "description",

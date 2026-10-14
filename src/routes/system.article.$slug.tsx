@@ -9,6 +9,8 @@ import { helpArticles } from "@/lib/help-content";
 export const Route = createFileRoute("/system/article/$slug")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Support guide - ${brand.appName} Handheld` },
       { name: "description", content: `Step-by-step guidance for using the ${brand.appName} handheld.` },
       { property: "og:title", content: `Support guide - ${brand.appName} Handheld` },

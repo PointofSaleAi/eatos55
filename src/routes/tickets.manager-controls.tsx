@@ -9,6 +9,8 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/tickets/manager-controls")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Manager controls - ${brand.appName} Handheld` },
       { name: "description", content: "Session controls, alerts and protected shift actions." },
       { property: "og:title", content: `Manager controls - ${brand.appName} Handheld` },
