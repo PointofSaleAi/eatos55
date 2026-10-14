@@ -48,4 +48,4 @@
 - [x] orderOS end-to-end flow (board, detail, report issue, cancel, scheduled, prep/auto-accept/pause)
 - [x] Match the recorded header settings panel with tap/drag and safe dismissal across devices
 - [x] Add Guestbook directory, details and shared Settings shortcut; verify navigation and history
-- [ ] Smooth settings drawer collapse and upward swipe dismissal; verify arrows, scrolling and gestures across devices
+- [x] Smooth settings drawer collapse and upward swipe dismissal; verify arrows, scrolling and gestures across devices
