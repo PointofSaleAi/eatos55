@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cashDenominations, money } from "@/lib/demo-data";
+import { formatPhone } from "@/components/pos/guest-sheet";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
