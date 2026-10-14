@@ -93,7 +93,11 @@ function CreateAccount() {
   const set = (k: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   const startCode = () => {
-    setError(""); setCode(""); setRemaining(300); setExpiresAt(Date.now() + 300000); setStep(3);
+    setError(""); setCode(""); setRemaining(300); setExpiresAt(Date.now() + 300000); setStep(4);
+  };
+  const confirmPinEntry = () => {
+    if (confirmPin !== pin) { setError("PINs don't match. Try again."); setConfirmPin(""); return; }
+    setError(""); setStep(3);
   };
   const validateAccount = () => {
     if (!form.first.trim() || !form.last.trim() || !form.restaurant.trim() || !form.country || !form.type) { setError("Complete all account and restaurant fields."); return; }
