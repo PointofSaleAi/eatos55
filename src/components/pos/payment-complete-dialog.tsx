@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cashDenominations, money } from "@/lib/demo-data";
 import { formatPhone } from "@/components/pos/guest-sheet";
+import { defaultPhoneCountry, isValidPhoneFor } from "@/lib/phone";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
@@ -179,7 +180,7 @@ export function PaymentCompleteCard({
         {choice === "sms" ? (
           <button
             type="button"
-            disabled={!phone.trim()}
+            disabled={!isValidPhoneFor(defaultPhoneCountry, phone)}
             onClick={() => send(`Receipt texted to ${phone.trim()}`)}
             className="h-ctl-lg shrink-0 rounded-card bg-shell px-8 text-fs-base font-extrabold uppercase tracking-[0.04em] text-shell-foreground disabled:opacity-40"
           >
