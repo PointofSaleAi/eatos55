@@ -420,7 +420,37 @@ function ColumnHeader({ label, count, onSort }: { label: string; count: number; 
 }
 
 function waitTone(sec: number) {
-  return sec < 60 ? "bg-success text-success-foreground" : sec < 300 ? "bg-warning text-warning-foreground" : "bg-destructive text-destructive-foreground";
+  // Recording: fresh orders red, then blue, then green the longer they wait.
+  return sec < 60 ? "bg-tile-red text-white" : sec < 300 ? "bg-tile-blue text-white" : "bg-tile-green text-white";
+}
+
+function stripTone(status: OOrder["status"]) {
+  switch (status) {
+    case "preparing":
+    case "cancelled":
+      return "bg-tile-red text-white";
+    case "ready":
+      return "bg-tile-purple text-white";
+    case "delivery":
+      return "bg-tile-yellow text-foreground";
+    case "completed":
+      return "bg-tile-pink text-white";
+    default:
+      return "bg-muted text-foreground";
+  }
+}
+
+function sourceTone(source: OOrder["source"]) {
+  switch (source) {
+    case "Grubhub":
+      return "text-tile-orange";
+    case "Uber Eats":
+      return "text-tile-green";
+    case "DoorDash":
+      return "text-tile-red";
+    default:
+      return "opacity-80";
+  }
 }
 
 function OrderCard({ o, now, dim, onOpen, onAccept, onCancel }: { o: OOrder; now: number | null; dim?: boolean; onOpen: () => void; onAccept?: () => void; onCancel?: () => void }) {
@@ -443,7 +473,7 @@ function OrderCard({ o, now, dim, onOpen, onAccept, onCancel }: { o: OOrder; now
       <button type="button" onClick={onOpen} className="block w-full text-left">
         <div className="flex items-center justify-between gap-2 bg-primary px-3 py-1.5 text-primary-foreground">
           <span className="text-fs-xs font-extrabold uppercase tracking-wide">{o.type}</span>
-          <span className="text-[10px] font-bold uppercase opacity-80">{o.source}</span>
+          <span className={cn("text-[10px] font-bold uppercase", sourceTone(o.source))}>{o.source}</span>
         </div>
         <div className="flex items-start justify-between gap-2 px-3 pt-2">
           <div className="min-w-0">
@@ -472,7 +502,7 @@ function OrderCard({ o, now, dim, onOpen, onAccept, onCancel }: { o: OOrder; now
           </p>
         )}
         {o.status !== "new" && (
-          <div className="flex items-center justify-center gap-2 border-t border-border bg-muted py-2 text-fs-xs font-extrabold uppercase text-foreground">
+          <div className={cn("flex items-center justify-center gap-2 border-t border-border py-2 text-fs-xs font-extrabold uppercase", stripTone(o.status))}>
             {o.status === "preparing" ? (
               <>
                 Preparing <span className="tabular-nums" suppressHydrationWarning>{now ? `${t.leftSec < 0 ? "-" : ""}${mmss(t.leftSec)}` : ""}</span>
@@ -537,7 +567,7 @@ function ExpandedNewCard({ o, now, prep, onCollapse, onAccept, onCancel, onRepor
       <button type="button" onClick={onCollapse} className="block w-full text-left" aria-label="Collapse order">
         <div className="flex items-center justify-between bg-primary px-3 py-1.5 text-primary-foreground">
           <span className="text-fs-xs font-extrabold uppercase">{o.type}</span>
-          <span className="text-[10px] font-bold uppercase opacity-80">{o.source}</span>
+          <span className={cn("text-[10px] font-bold uppercase", sourceTone(o.source))}>{o.source}</span>
         </div>
         <div className="flex items-start justify-between px-3 pt-2">
           <p className="truncate text-fs-sm font-extrabold">{o.guest}</p>
@@ -777,7 +807,7 @@ function OrderList({ title, orders, onOpen, onClose }: { title: string; orders: 
                   <Car className="size-4" /> {o.type}
                 </span>
                 <span className="text-fs-sm">{o.items.length} items</span>
-                <span className="text-fs-xs font-bold uppercase text-muted-foreground sm:text-right">{o.refunded ? "Refunded" : o.source}</span>
+                <span className={cn("text-fs-xs font-bold uppercase sm:text-right", o.refunded ? "text-destructive" : sourceTone(o.source))}>{o.refunded ? "Refunded" : o.source}</span>
               </button>
             </li>
           ))}
