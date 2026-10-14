@@ -1,5 +1,3 @@
-import { PhoneField } from "@/components/pos/phone-field";
-import { inferPhoneCountry, validatePhone, type PhoneCountry } from "@/lib/phone";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { Check, ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
@@ -33,14 +31,14 @@ import {
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/settings/detail/$topic")({
-  head: ({ params }) => ({
+  head: () => ({
     meta: [
-      { title: `${settingsDetails[params.topic]?.title ?? "Settings"} - ${brand.appName} Handheld` },
+      { title: `Settings detail - ${brand.appName} Handheld` },
       {
         name: "description",
         content: "Device, menu, payment, hardware and workforce settings detail on the handheld.",
       },
-      { property: "og:title", content: `${settingsDetails[params.topic]?.title ?? "Settings"} - ${brand.appName} Handheld` },
+      { property: "og:title", content: `Settings detail - ${brand.appName} Handheld` },
       {
         property: "og:description",
         content: "Device, menu, payment, hardware and workforce settings detail on the handheld.",
@@ -396,11 +394,10 @@ function SettingsDetail() {
       {edit ? (
         <EditSheet
           target={edit}
-          savedPhoneCountry={settings.restaurantPhoneCountry}
           onClose={() => setEdit(null)}
-          onSave={(next, phoneCountry) => {
+          onSave={(next) => {
             if (next.type === "text") {
-              updateSettings({ [next.field]: next.value, ...(next.field === "restaurantPhone" ? { restaurantPhoneCountry: phoneCountry } : {}) } as Partial<AppSettings>);
+              updateSettings({ [next.field]: next.value } as Partial<AppSettings>);
             } else {
               saveItem(
                 next.field,
@@ -511,21 +508,16 @@ function EditSheet({
   target,
   onClose,
   onSave,
-  savedPhoneCountry,
 }: {
-  savedPhoneCountry?: PhoneCountry | undefined;
   target: EditTarget;
   onClose: () => void;
-  onSave: (t: EditTarget, phoneCountry?: PhoneCountry) => void;
+  onSave: (t: EditTarget) => void;
 }) {
   const [draft, setDraft] = useState<EditTarget>(target);
-  const [phoneCountry, setPhoneCountry] = useState(inferPhoneCountry(target.type === "text" ? target.value : "", savedPhoneCountry));
-  const editingPhone = draft.type === "text" && draft.field === "restaurantPhone";
-  const phoneResult = validatePhone(draft.type === "text" ? draft.value : "", phoneCountry, true, false);
   useEffect(() => setDraft(target), [target]);
 
   const disabled =
-    draft.type === "text" ? draft.value.trim() === "" || (editingPhone && !phoneResult.valid) : draft.name.trim() === "";
+    draft.type === "text" ? draft.value.trim() === "" : draft.name.trim() === "";
 
   return (
     <div
@@ -545,9 +537,7 @@ function EditSheet({
           {draft.label}
         </p>
         <div className="grid gap-3">
-          {draft.type === "text" ? editingPhone ? (
-            <PhoneField label="Restaurant phone number" value={draft.value} onChange={(value) => setDraft({ ...draft, value })} country={phoneCountry} onCountryChange={setPhoneCountry} mobile={false} required />
-          ) : (
+          {draft.type === "text" ? (
             <input
               autoFocus
               value={draft.value}
@@ -577,7 +567,7 @@ function EditSheet({
           <button
             type="button"
             disabled={disabled}
-            onClick={() => { if (disabled) return; onSave(draft.type === "text" && editingPhone ? { ...draft, value: phoneResult.phone } : draft, editingPhone ? phoneCountry : undefined); }}
+            onClick={() => onSave(draft)}
             className="min-h-ctl-md w-full rounded-pill bg-accent text-fs-sm font-extrabold text-accent-foreground disabled:opacity-50"
           >
             Save

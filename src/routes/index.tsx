@@ -1,4 +1,3 @@
-import { phoneSignInError } from "@/lib/phone";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { Eye, EyeOff } from "lucide-react";
@@ -38,7 +37,6 @@ function SignInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
-  const [phoneError, setPhoneError] = useState("");
   const [booting, setBooting] = useState(false);
 
   if (booting) {
@@ -66,9 +64,6 @@ function SignInScreen() {
           className="mt-8 space-y-4"
           onSubmit={(e) => {
             e.preventDefault();
-            const error = phoneSignInError(email);
-            setPhoneError(error);
-            if (error) return;
             signIn();
             setBooting(true);
           }}
@@ -77,10 +72,8 @@ function SignInScreen() {
             <Label htmlFor="email">Email Address</Label>
             <Input
               id="email"
-              aria-invalid={Boolean(phoneError)}
-              aria-describedby={phoneError ? "signin-phone-error" : undefined}
               value={email}
-              onChange={(e) => { setEmail(e.target.value); setPhoneError(""); }}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter Email or Phone Number"
               className="h-12 rounded-row bg-surface"
             />
@@ -107,7 +100,6 @@ function SignInScreen() {
             </div>
           </div>
 
-          {phoneError ? <p id="signin-phone-error" role="alert" className="text-fs-sm text-destructive">{phoneError}</p> : null}
           <Button
             type="submit"
             className="h-12 w-full rounded-pill bg-accent text-fs-base font-bold text-accent-foreground hover:bg-accent/90"

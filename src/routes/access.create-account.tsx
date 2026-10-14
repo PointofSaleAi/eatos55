@@ -1,5 +1,3 @@
-import { PhoneField } from "@/components/pos/phone-field";
-import { countryFromName, displayPhone, validatePhone } from "@/lib/phone";
 import { createFileRoute, useNavigate, useRouter, useCanGoBack } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { ArrowLeft, ChevronDown, Eye, EyeOff, Check } from "lucide-react";
@@ -98,8 +96,7 @@ function CreateAccount() {
   const validateAccount = () => {
     if (!form.first.trim() || !form.last.trim() || !form.restaurant.trim() || !form.country || !form.type) { setError("Complete all account and restaurant fields."); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) { setError("Enter a valid email address."); return; }
-    const phoneResult = validatePhone(form.phone, countryFromName(form.country), true);
-    if (!phoneResult.valid) { setError(phoneResult.error); return; }
+    if (!/^\d{10}$/.test(form.phone.replace(/\D/g, ""))) { setError("Enter a valid 10-digit U.S. mobile number."); return; }
     if (form.password.length < 8) { setError("Use at least 8 characters for your password."); return; }
     if (!agree) { setError("Accept the Seller Agreement and e-Sign Consent to continue."); return; }
     setError(""); setStep(1);
@@ -191,10 +188,20 @@ function CreateAccount() {
             </button>
           </div>
         </Field>
-        <div className="min-w-0 space-y-1.5">
-          <span className="text-fs-xs font-extrabold text-foreground">Phone Number</span>
-          <PhoneField label="Phone Number" value={form.phone} onChange={set("phone")} country={countryFromName(form.country)} hideCountry required forceError={Boolean(error)} />
-        </div>
+        <Field label="Phone Number">
+          <div className="flex h-12 items-center">
+            <span className="flex h-8 tap-safe shrink-0 items-center gap-2 border-r border-input px-3 text-fs-sm font-bold text-foreground">
+              <span aria-hidden>🇺🇸</span> +1
+            </span>
+            <input
+              className="h-full min-w-0 flex-1 bg-transparent px-3 text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
+              inputMode="tel"
+              placeholder="(123) 456 7890"
+              value={form.phone}
+              onChange={(e) => set("phone")(e.target.value)}
+            />
+          </div>
+        </Field>
         <Field label="Country">
           <div className="relative">
             <select
@@ -280,7 +287,7 @@ function CreateAccount() {
                     {(["email", "phone"] as const).map((value) => (
                       <label key={value} className="flex min-w-0 items-start gap-3 rounded-row border border-input bg-surface p-4 text-foreground">
                         <input type="radio" name="confirmation" className="mt-1 shrink-0" checked={channel === value} onChange={() => setChannel(value)} />
-                        <span className="min-w-0"><span className="block text-fs-xs font-bold text-muted-foreground">{value === "email" ? "Email Address" : "Mobile Number"}</span><span className="mt-1 block break-words text-fs-sm font-bold">{value === "email" ? form.email : displayPhone(form.phone, countryFromName(form.country))}</span></span>
+                        <span className="min-w-0"><span className="block text-fs-xs font-bold text-muted-foreground">{value === "email" ? "Email Address" : "Mobile Number"}</span><span className="mt-1 block break-words text-fs-sm font-bold">{value === "email" ? form.email : `+1 ${form.phone}`}</span></span>
                       </label>
                     ))}
                   </fieldset>
@@ -288,7 +295,7 @@ function CreateAccount() {
                 </>
               ) : step === 3 ? (
                 <form onSubmit={(e) => { e.preventDefault(); verify(); }}>
-                  <p className="text-fs-sm text-muted-foreground">Enter the confirmation code for <span className="break-words font-bold text-foreground">{channel === "email" ? form.email : displayPhone(form.phone, countryFromName(form.country))}</span>.</p>
+                  <p className="text-fs-sm text-muted-foreground">Enter the confirmation code for <span className="break-words font-bold text-foreground">{channel === "email" ? form.email : `+1 ${form.phone}`}</span>.</p>
                   <p className="mt-3 text-fs-sm text-muted-foreground">Demo code: <strong className="text-foreground">1234</strong>. No email or SMS is sent.</p>
                   <InputOTP aria-label="Confirmation code" maxLength={4} pattern="[0-9]*" value={code} onChange={(value) => { setCode(value); setError(""); }} autoComplete="one-time-code" containerClassName="mt-7 justify-center">
                     <InputOTPGroup>{[0, 1, 2, 3].map((index) => <InputOTPSlot key={index} index={index} className="h-14 w-14 bg-surface text-fs-xl" />)}</InputOTPGroup>

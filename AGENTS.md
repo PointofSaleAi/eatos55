@@ -27,5 +27,3 @@
 - Demo password recovery stays in ephemeral route-local step state and never persists passwords or claims real code delivery; this keeps the prototype separate from real authentication.
 
 - Demo signup uses transient route-local steps and only enters the demo session after code verification; setup credentials are never persisted or used for employee authentication.
-
-- Phone entry uses one country-aware field and a shared Zod/libphonenumber schema at explicit save boundaries; retain the selected country with international numbers so guest/settings edits round-trip without silent truncation.

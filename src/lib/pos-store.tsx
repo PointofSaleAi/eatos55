@@ -1,4 +1,3 @@
-import { inferPhoneCountry, validatePhone, type PhoneCountry } from "@/lib/phone";
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { brand, formatTime } from "@/lib/brand";
 import loginSlide1 from "@/assets/login-1.jpg.asset.json";
@@ -247,7 +246,6 @@ export type AppSettings = {
   restaurantAddress: string;
   restaurantCity: string;
   restaurantPhone: string;
-  restaurantPhoneCountry?: PhoneCountry;
   taxId: string;
   timezone: string;
   currency: string;
@@ -816,7 +814,6 @@ export type Guest = {
   anniversary?: string;
   photo?: string;
   phone: string;
-  phoneCountry?: PhoneCountry;
   partySize: number;
   email?: string | undefined;
   notes?: string | undefined;
@@ -1410,15 +1407,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
       setRoomState: (room, state) => setRoomStates((s) => ({ ...s, [room]: state })),
 
       guest,
-      setGuest: (patch) => setGuestState((g) => {
-        if (patch.phone !== undefined || patch.phoneCountry !== undefined) {
-          const country = patch.phoneCountry ?? inferPhoneCountry(patch.phone ?? g.phone, g.phoneCountry);
-          const result = validatePhone(patch.phone ?? g.phone, country);
-          if (!result.valid) return g;
-          return { ...g, ...patch, phone: result.phone, phoneCountry: country };
-        }
-        return { ...g, ...patch };
-      }),
+      setGuest: (patch) => setGuestState((g) => ({ ...g, ...patch })),
       orderType,
       setOrderType,
       startOrder: (table, partySize) => {
@@ -1959,15 +1948,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
       },
 
       settings,
-      updateSettings: (patch) => setSettings((s) => {
-        if (patch.restaurantPhone !== undefined || patch.restaurantPhoneCountry !== undefined) {
-          const country = patch.restaurantPhoneCountry ?? inferPhoneCountry(patch.restaurantPhone ?? s.restaurantPhone, s.restaurantPhoneCountry);
-          const result = validatePhone(patch.restaurantPhone ?? s.restaurantPhone, country, true, false);
-          if (!result.valid) return s;
-          return { ...s, ...patch, restaurantPhone: result.phone, restaurantPhoneCountry: country };
-        }
-        return { ...s, ...patch };
-      }),
+      updateSettings: (patch) => setSettings((s) => ({ ...s, ...patch })),
       canManageSettings:
         managerUnlocked ||
         ["Manager", "Supervisor", "Owner", "Admin"].includes(session.role),

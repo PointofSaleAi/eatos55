@@ -5,9 +5,6 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cashDenominations, money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
-import { PhoneField } from "@/components/pos/phone-field";
-import { inferPhoneCountry, validatePhone, displayPhone } from "@/lib/phone";
-import { Button } from "@/components/ui/button";
 
 type Receipt = "email" | "sms" | "print";
 
@@ -38,8 +35,6 @@ export function PaymentCompleteCard({
   const [choice, setChoice] = useState<Receipt | null>(null);
   const [email, setEmail] = useState(guest.email ?? "");
   const [phone, setPhone] = useState(guest.phone ?? "");
-  const [phoneCountry, setPhoneCountry] = useState(inferPhoneCountry(guest.phone, guest.phoneCountry));
-  const phoneResult = validatePhone(phone, phoneCountry, true);
 
   const total = lastPayment?.total ?? 0;
   const tip = lastPayment?.tip ?? 0;
@@ -154,7 +149,19 @@ export function PaymentCompleteCard({
       ) : null}
 
       {choice === "sms" ? (
-        <PhoneField className="shrink-0" label="Phone number for receipt" value={phone} onChange={setPhone} country={phoneCountry} onCountryChange={setPhoneCountry} required />
+        <div className="flex shrink-0 items-center gap-2">
+          <span className="grid h-ctl-lg shrink-0 place-items-center rounded-card border-2 border-border bg-surface px-3 text-fs-base font-extrabold text-foreground">
+            +1
+          </span>
+          <input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="Phone Number"
+            inputMode="tel"
+            aria-label="Phone number for receipt"
+            className="h-ctl-lg min-w-0 flex-1 rounded-card border-2 border-border bg-surface px-3 text-fs-base font-bold text-foreground outline-none placeholder:text-muted-foreground"
+          />
+        </div>
       ) : null}
 
       <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:justify-center">
@@ -169,14 +176,14 @@ export function PaymentCompleteCard({
           </button>
         ) : null}
         {choice === "sms" ? (
-          <Button
+          <button
             type="button"
-            disabled={!phoneResult.valid}
-            onClick={() => { if (phoneResult.valid) send(`Receipt texted to ${displayPhone(phoneResult.phone)}`); }}
+            disabled={!phone.trim()}
+            onClick={() => send(`Receipt texted to ${phone.trim()}`)}
             className="h-ctl-lg shrink-0 rounded-card bg-shell px-8 text-fs-base font-extrabold uppercase tracking-[0.04em] text-shell-foreground disabled:opacity-40"
           >
             Send
-          </Button>
+          </button>
         ) : null}
         {choice === "print" ? (
           <button

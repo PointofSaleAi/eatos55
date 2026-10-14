@@ -1,5 +1,3 @@
-import { PhoneField } from "@/components/pos/phone-field";
-import { inferPhoneCountry, validatePhone, type PhoneCountry } from "@/lib/phone";
 import {
   ArrowLeftRight,
   BadgePercent,
@@ -35,7 +33,7 @@ import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { ServiceChargeSheet } from "@/components/pos/service-charge-sheet";
 import { TransferCheckDialog } from "@/components/pos/transfer-check-dialog";
-import { GuestSheet } from "@/components/pos/guest-sheet";
+import { formatPhone, GuestSheet } from "@/components/pos/guest-sheet";
 import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -369,13 +367,11 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
   const [notesOpen, setNotesOpen] = useState(false);
   const [guestName, setGuestName] = useState(guest.name);
   const [guestPhone, setGuestPhone] = useState(guest.phone);
-  const [guestPhoneCountry, setGuestPhoneCountry] = useState(inferPhoneCountry(guest.phone, guest.phoneCountry));
 
   useEffect(() => {
     setGuestName(guest.name);
     setGuestPhone(guest.phone);
-    setGuestPhoneCountry(inferPhoneCountry(guest.phone, guest.phoneCountry));
-  }, [guest.name, guest.phone, guest.phoneCountry]);
+  }, [guest.name, guest.phone]);
 
   const saveGuestName = () => {
     const name = guestName.trim();
@@ -383,11 +379,10 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
     setGuestName(name);
   };
 
-  const saveGuestPhone = (value: string, country: PhoneCountry) => {
-    const result = validatePhone(value, country);
-    if (!result.valid) return;
-    setGuest({ phone: result.phone, phoneCountry: country });
-    setGuestPhone(result.phone);
+  const saveGuestPhone = () => {
+    const phone = formatPhone(guestPhone);
+    setGuest({ phone });
+    setGuestPhone(phone);
   };
 
   const orderNumber = currentOrderNumber;
@@ -397,7 +392,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="shrink-0 border-b border-border px-4 pb-2 pt-2">
-        <div className="grid w-full grid-cols-[minmax(0,0.8fr)_minmax(0,1.5fr)_auto] items-center gap-2 py-1">
+        <div className="grid w-full grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2 py-1">
           <input
             type="text"
             value={guestName}
@@ -412,7 +407,21 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
             aria-label="Guest name"
             className="h-8 min-w-0 rounded-row border border-transparent bg-transparent px-1 text-fs-sm font-extrabold text-foreground outline-none transition-colors placeholder:text-foreground focus:border-border focus:bg-muted"
           />
-          <PhoneField compact label="Guest mobile number" value={guestPhone} onChange={setGuestPhone} country={guestPhoneCountry} onCountryChange={setGuestPhoneCountry} onCommit={saveGuestPhone} />
+          <input
+            type="tel"
+            inputMode="tel"
+            value={guestPhone}
+            onChange={(event) => setGuestPhone(formatPhone(event.target.value))}
+            onBlur={saveGuestPhone}
+            onKeyDown={(event) => {
+              if (event.key !== "Enter") return;
+              saveGuestPhone();
+              event.currentTarget.blur();
+            }}
+            placeholder="(XXX) XXX-XXXX"
+            aria-label="Guest mobile number"
+            className="h-8 min-w-0 rounded-row border border-transparent bg-transparent px-1 text-fs-xs font-bold text-muted-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-border focus:bg-muted focus:text-foreground"
+          />
           <span className="whitespace-nowrap text-fs-xs font-bold text-muted-foreground">
             {arrivedAt ? `Arrived ${arrivedAt}` : "Not started"}
           </span>
