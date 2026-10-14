@@ -28,7 +28,7 @@ import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
-import { money, type ServiceOrderType } from "@/lib/demo-data";
+import { money, type CartLine, type ServiceOrderType } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { ServiceChargeSheet } from "@/components/pos/service-charge-sheet";
@@ -41,7 +41,7 @@ import { Button } from "@/components/ui/button";
 import { AddGuestForm } from "@/components/pos/add-guest-form";
 import { GiftCardDialog } from "@/components/pos/gift-card-dialog";
 
-type OptionsLayout = { moreOpen: boolean; onMoreOpenChange: (open: boolean) => void; railHost: HTMLElement | null; docked: boolean; onCustomItem: () => void; customItemOpen: boolean };
+type OptionsLayout = { moreOpen: boolean; onMoreOpenChange: (open: boolean) => void; railHost: HTMLElement | null; docked: boolean; onCustomItem: () => void; customItemOpen: boolean; onEditLine?: (line: CartLine) => void };
 
 function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCustomItem, customItemOpen, onAddGuest }: OptionsLayout & { onAddGuest: () => void }) {
   const navigate = useNavigate();
@@ -330,7 +330,7 @@ function HeaderAction({
 }
 
 /** Running order area shared by phone, tablet and desktop layouts. */
-export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & OptionsLayout) {
+export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boolean } & OptionsLayout) {
   const navigate = useNavigate();
   const {
     guest,
@@ -525,7 +525,13 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
                   >
                     {l.qty}
                   </button>
-                  <div className="min-w-0 flex-1">
+                  <button
+                    type="button"
+                    disabled={l.custom || !onEditLine}
+                    onClick={() => onEditLine?.(l)}
+                    aria-label={l.custom ? undefined : `Edit ${l.name}`}
+                    className="min-w-0 flex-1 rounded-md text-left enabled:hover:bg-muted/60 disabled:cursor-default"
+                  >
                     <div className="flex items-baseline gap-2">
                       <span className="min-w-0 flex-1 truncate text-fs-sm font-bold leading-snug text-foreground">
                         {l.name}
@@ -544,7 +550,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
                         {l.notes}
                       </p>
                     ) : null}
-                  </div>
+                  </button>
                   <button
                     type="button"
                     onClick={() => changeQty(l.id, -1)}

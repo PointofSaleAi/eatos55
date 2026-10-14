@@ -16,7 +16,7 @@ import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { useWideLayout } from "@/components/pos/shell";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { OrderPanel } from "@/components/pos/order-panel";
-import { itemNeedsSheet, liveMenu, menus, money, type MenuItem } from "@/lib/demo-data";
+import { itemNeedsSheet, liveMenu, menu as baseMenu, menus, money, type CartLine, type MenuItem } from "@/lib/demo-data";
 import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { toast } from "sonner";
@@ -132,6 +132,13 @@ function NewOrder() {
   const [menuToolsOpen, setMenuToolsOpen] = useState(false);
   const [categoryLayout, setCategoryLayout] = useState<"horizontal" | "vertical">("vertical");
   const [sheetItem, setSheetItem] = useState<MenuItem | null>(null);
+  const [editingLine, setEditingLine] = useState<CartLine | null>(null);
+  const editCartLine = (line: CartLine) => {
+    const found = [...baseMenu, ...liveMenu].find((m) => line.id === m.id || line.id.startsWith(`${m.id}-`));
+    if (!found) return;
+    setEditingLine(line);
+    setSheetItem(found);
+  };
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [tab, setTab] = useState<"menu" | "order">("menu");
@@ -528,6 +535,7 @@ function NewOrder() {
       >
         <OrderPanel
           wide={wide}
+          onEditLine={editCartLine}
           customItemOpen={customItemOpen}
           moreOpen={moreOpen}
           onMoreOpenChange={setMoreOpen}
@@ -588,7 +596,14 @@ function NewOrder() {
         placeholder="Search products"
       />
 
-      <ItemSheet item={sheetItem} onClose={() => setSheetItem(null)} />
+      <ItemSheet
+        item={sheetItem}
+        editLine={editingLine}
+        onClose={() => {
+          setSheetItem(null);
+          setEditingLine(null);
+        }}
+      />
     </div>
   );
 }
