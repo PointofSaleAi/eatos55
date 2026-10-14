@@ -788,7 +788,7 @@ function OrderList({ title, orders, onOpen, onClose }: { title: string; orders: 
 }
 
 function CancelDialog({ order, onDismiss, onConfirm }: { order: OOrder | null; onDismiss: () => void; onConfirm: (reason: string) => void }) {
-  const [reason, setReason] = useState(cancelReasons[0]);
+  const [reason, setReason] = useState(cancelReasons[0]!);
   const title = useMemo(() => (order ? `Cancel order #${order.number}?` : ""), [order]);
   return (
     <Dialog open={!!order} onOpenChange={(v) => !v && onDismiss()}>

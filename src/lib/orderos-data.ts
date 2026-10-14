@@ -17,8 +17,8 @@ export type OOItem = {
   name: string;
   price: number;
   mods: OOMod[];
-  note?: string;
-  unavailable?: "temporary" | "permanent";
+  note?: string | undefined;
+  unavailable?: "temporary" | "permanent" | undefined;
 };
 export type OOrder = {
   id: string;
@@ -53,7 +53,7 @@ const menu: Omit<OOItem, "id" | "qty">[] = [
 
 function items(seed: number, count: number): OOItem[] {
   return Array.from({ length: count }, (_, i) => {
-    const m = menu[(seed + i) % menu.length];
+    const m = menu[(seed + i) % menu.length]!;
     return { ...m, mods: m.mods.map((x) => ({ ...x })), id: `i${seed}-${i}`, qty: ((seed + i) % 2) + 1 };
   });
 }
@@ -69,8 +69,8 @@ function make(o: Partial<OOrder> & Pick<OOrder, "number" | "status" | "channel">
   return {
     id: `oo-${o.number}-${o.channel}`,
     type,
-    source: o.channel === "dinein" ? "eatOS" : sources[n % 3],
-    guest: names[n % names.length],
+    source: o.channel === "dinein" ? "eatOS" : sources[n % 3]!,
+    guest: names[n % names.length]!,
     phone: "+1 (415) 123-4567",
     address: type === "Delivery" || type === "Curbside" ? addr : undefined,
     items: items(n, (n % 4) + 2),
