@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { NumPad } from "@/components/pos/numpad";
 import { Button } from "@/components/ui/button";
 import { money } from "@/lib/demo-data";
+import { moneyDigitsToAmount, popMoneyDigit, pushMoneyDigit } from "@/lib/money-entry";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 

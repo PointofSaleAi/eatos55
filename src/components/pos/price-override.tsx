@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { haptic } from "@/lib/haptics";
 import { money, type MenuItem } from "@/lib/demo-data";
+import { moneyDigitsToAmount, popMoneyDigit, pushMoneyDigit } from "@/lib/money-entry";
 import { cn } from "@/lib/utils";
 
 const REASONS = ["Manager Discount", "Price Match", "Damaged Item", "Promotional Offer", "Loyalty Discount", "Other"];
@@ -65,18 +66,14 @@ export function PriceOverrideFlow({
     }
   };
 
+  // Cash-register entry: `entry` holds cents digits, so 9 → $0.09.
   const pushPrice = (k: string) => {
-    setEntry((e) => {
-      if (k === "." && e.includes(".")) return e;
-      if (e.includes(".") && (e.split(".")[1] ?? "").length >= 2) return e;
-      if (e.replace(".", "").length >= 6) return e;
-      return e === "0" && k !== "." ? k : e + k;
-    });
+    setEntry((e) => pushMoneyDigit(e, k));
   };
 
   const isOther = reason === "Other";
   const note = otherNote.trim();
-  const newPrice = Number(entry || "0");
+  const newPrice = moneyDigitsToAmount(entry);
   const canApply = Boolean(reason) && (!isOther || note.length > 0) && entry !== "" && newPrice !== price;
 
   const thumb = item.image ? (
@@ -207,12 +204,12 @@ export function PriceOverrideFlow({
             </div>
 
             <div className="grid grid-cols-3 gap-2">
-              {["7", "8", "9", "4", "5", "6", "1", "2", "3", ".", "0"].map((k) => (
+              {["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "00"].map((k) => (
                 <button key={k} type="button" className={keyCls} onClick={() => pushPrice(k)}>
                   {k}
                 </button>
               ))}
-              <button type="button" aria-label="Backspace" className={keyCls} onClick={() => setEntry((e) => e.slice(0, -1))}>
+              <button type="button" aria-label="Backspace" className={keyCls} onClick={() => setEntry((e) => popMoneyDigit(e))}>
                 <Delete className="size-5" />
               </button>
             </div>
