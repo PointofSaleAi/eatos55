@@ -44,3 +44,5 @@
 
 - [x] Add the Settings sidebar search bar above the navigation list (matches iPadOS: filters destinations live, empty state, hidden while collapsed)
 - [x] Add voice dictation to both Settings search bars and shorten them; verify across phone, tablet and desktop
+
+- [x] orderOS end-to-end flow (board, detail, report issue, cancel, scheduled, prep/auto-accept/pause)
