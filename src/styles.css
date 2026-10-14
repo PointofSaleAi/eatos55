@@ -698,6 +698,8 @@ html[data-layout="wide"] [role="dialog"].sheet-compact.inset-x-0.bottom-0 {
 }
 
 .header-settings-panel { transition: transform 220ms ease, opacity 220ms ease; letter-spacing: 0; }
+.header-settings-panel[data-open="true"] { animation: settings-reveal 220ms ease both; }
+@keyframes settings-reveal { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 .header-settings-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: clamp(1rem, 7dvh, 5rem); column-gap: 1.5rem; }
 .header-settings-shortcut { min-height: 7rem; }
 .header-settings-shortcut svg { width: 1.75rem; height: 1.75rem; }
