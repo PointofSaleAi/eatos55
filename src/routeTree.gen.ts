@@ -35,6 +35,7 @@ import { Route as RoomsIndexRouteImport } from './routes/rooms.index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SettingsControlCenterRouteImport } from './routes/settings.control-center'
 import { Route as SettingsGeneralRouteImport } from './routes/settings.general'
+import { Route as SettingsGuestbookRouteImport } from './routes/settings.guestbook'
 import { Route as SettingsHardwareRouteImport } from './routes/settings.hardware'
 import { Route as SettingsLoginScreenRouteImport } from './routes/settings.login-screen'
 import { Route as SettingsMenuRouteImport } from './routes/settings.menu'
@@ -202,6 +203,11 @@ const SettingsControlCenterRoute = SettingsControlCenterRouteImport.update({
 const SettingsGeneralRoute = SettingsGeneralRouteImport.update({
   id: '/settings/general',
   path: '/settings/general',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsGuestbookRoute = SettingsGuestbookRouteImport.update({
+  id: '/settings/guestbook',
+  path: '/settings/guestbook',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsHardwareRoute = SettingsHardwareRouteImport.update({
@@ -418,6 +424,7 @@ export interface FileRoutesByFullPath {
   '/payment/tap-to-pay': typeof PaymentTapToPayRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
+  '/settings/guestbook': typeof SettingsGuestbookRoute
   '/settings/hardware': typeof SettingsHardwareRouteWithChildren
   '/settings/login-screen': typeof SettingsLoginScreenRoute
   '/settings/menu': typeof SettingsMenuRoute
@@ -484,6 +491,7 @@ export interface FileRoutesByTo {
   '/payment/tap-to-pay': typeof PaymentTapToPayRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
+  '/settings/guestbook': typeof SettingsGuestbookRoute
   '/settings/hardware': typeof SettingsHardwareRouteWithChildren
   '/settings/login-screen': typeof SettingsLoginScreenRoute
   '/settings/menu': typeof SettingsMenuRoute
@@ -551,6 +559,7 @@ export interface FileRoutesById {
   '/payment/tap-to-pay': typeof PaymentTapToPayRoute
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/general': typeof SettingsGeneralRoute
+  '/settings/guestbook': typeof SettingsGuestbookRoute
   '/settings/hardware': typeof SettingsHardwareRouteWithChildren
   '/settings/login-screen': typeof SettingsLoginScreenRoute
   '/settings/menu': typeof SettingsMenuRoute
@@ -619,6 +628,7 @@ export interface FileRouteTypes {
     | '/payment/tap-to-pay'
     | '/settings/control-center'
     | '/settings/general'
+    | '/settings/guestbook'
     | '/settings/hardware'
     | '/settings/login-screen'
     | '/settings/menu'
@@ -685,6 +695,7 @@ export interface FileRouteTypes {
     | '/payment/tap-to-pay'
     | '/settings/control-center'
     | '/settings/general'
+    | '/settings/guestbook'
     | '/settings/hardware'
     | '/settings/login-screen'
     | '/settings/menu'
@@ -751,6 +762,7 @@ export interface FileRouteTypes {
     | '/payment/tap-to-pay'
     | '/settings/control-center'
     | '/settings/general'
+    | '/settings/guestbook'
     | '/settings/hardware'
     | '/settings/login-screen'
     | '/settings/menu'
@@ -818,6 +830,7 @@ export interface RootRouteChildren {
   PaymentTapToPayRoute: typeof PaymentTapToPayRoute
   SettingsControlCenterRoute: typeof SettingsControlCenterRoute
   SettingsGeneralRoute: typeof SettingsGeneralRoute
+  SettingsGuestbookRoute: typeof SettingsGuestbookRoute
   SettingsHardwareRoute: typeof SettingsHardwareRouteWithChildren
   SettingsLoginScreenRoute: typeof SettingsLoginScreenRoute
   SettingsMenuRoute: typeof SettingsMenuRoute
@@ -1045,6 +1058,13 @@ declare module '@tanstack/react-router' {
       path: '/settings/general'
       fullPath: '/settings/general'
       preLoaderRoute: typeof SettingsGeneralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/guestbook': {
+      id: '/settings/guestbook'
+      path: '/settings/guestbook'
+      fullPath: '/settings/guestbook'
+      preLoaderRoute: typeof SettingsGuestbookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings/hardware': {
@@ -1348,6 +1368,7 @@ const rootRouteChildren: RootRouteChildren = {
   PaymentTapToPayRoute: PaymentTapToPayRoute,
   SettingsControlCenterRoute: SettingsControlCenterRoute,
   SettingsGeneralRoute: SettingsGeneralRoute,
+  SettingsGuestbookRoute: SettingsGuestbookRoute,
   SettingsHardwareRoute: SettingsHardwareRouteWithChildren,
   SettingsLoginScreenRoute: SettingsLoginScreenRoute,
   SettingsMenuRoute: SettingsMenuRoute,

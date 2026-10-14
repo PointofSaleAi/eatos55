@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AccountActions, AccountInfo } from "@/components/pos/account-bar";
 import { ClockPanel } from "@/components/pos/clock-panel";
@@ -22,6 +22,9 @@ export function ClockPullDown() {
   const wide = useLandscapeWide();
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuDrag = useRef<number | null>(null);
+  const skipMenuClick = useRef(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
   const [pin, setPin] = useState("");
 
   // Preserve the header Maya AI shortcut independently of the settings chevron.
@@ -75,11 +78,21 @@ export function ClockPullDown() {
             size="icon"
             aria-label={menuOpen ? "Close settings menu" : "Open settings menu"}
             aria-expanded={menuOpen}
+            onPointerDown={(event) => { menuDrag.current = event.clientY; skipMenuClick.current = false; event.currentTarget.setPointerCapture(event.pointerId); }}
+            onPointerUp={(event) => {
+              const dy = menuDrag.current === null ? 0 : event.clientY - menuDrag.current;
+              menuDrag.current = null;
+              if (Math.abs(dy) < 25) return;
+              skipMenuClick.current = true;
+              close(); setMenuOpen(dy > 0);
+            }}
+            onPointerCancel={() => { menuDrag.current = null; }}
             onClick={() => {
+              if (skipMenuClick.current) { skipMenuClick.current = false; return; }
               close();
               setMenuOpen((v) => !v);
             }}
-            className="pointer-events-auto h-11 w-14 items-end rounded-none bg-transparent p-0 text-topbar-muted hover:bg-transparent hover:text-topbar-foreground"
+            className="pointer-events-auto h-11 w-14 touch-none items-end rounded-none bg-transparent p-0 text-topbar-muted hover:bg-transparent hover:text-topbar-foreground"
           >
             <span className="grid h-3 w-12 place-items-center rounded-t-md border border-b-0 border-topbar-border bg-topbar text-topbar-foreground">
               {menuOpen ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
@@ -88,7 +101,7 @@ export function ClockPullDown() {
         </div>
       </div>
 
-      <SettingsPullDown open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <SettingsPullDown open={menuOpen} onClose={closeMenu} />
 
 
       {open ? (
