@@ -29,7 +29,7 @@ export type OOrder = {
   source: OOSource;
   guest: string;
   phone: string;
-  address?: string;
+  address?: string | undefined;
   items: OOItem[];
   placedOffset: number; // minutes ago placed
   readyOffset: number; // minutes from now until ready (negative = past)
