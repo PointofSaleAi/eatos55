@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ClockPanel } from "@/components/pos/clock-panel";
 import { PinPad } from "@/components/pos/pin-pad";
+import { Wordmark } from "@/components/pos/brand";
 import {
   MoodDetailStep,
   MoodStep,
@@ -94,16 +95,10 @@ function ClockIn() {
 
   return (
     <div className="relative flex min-h-0 flex-1 overflow-hidden bg-background" aria-label="Locked point of sale">
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-surface opacity-50">
-        <div className="border-b border-border px-8 py-5 text-fs-xl font-extrabold uppercase text-foreground">
-          Ground Floor
-        </div>
-        <div className="grid grid-cols-4 gap-6 p-8">
-          {["Table T1", "Table T2", "Table T3", "Table T4", "Table T5"].map((table, i) => (
-            <div key={table} className="grid aspect-[1.15] place-items-center border border-border bg-background text-center">
-              <span className="font-bold text-foreground">{table}<br /><small>{i + 1} / 8</small></span>
-            </div>
-          ))}
+      <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center bg-surface opacity-50">
+        <div className="flex flex-col items-center gap-4">
+          <Wordmark />
+          <p className="text-fs-lg font-extrabold text-foreground">Point of Sale</p>
         </div>
       </div>
 
