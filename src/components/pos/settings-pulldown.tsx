@@ -9,14 +9,14 @@ import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
 const shortcuts: { to?: string; label: string; description: string; icon: LucideIcon; manager?: boolean }[] = [
-  { to: "/settings/general", label: "Restaurant", description: "Restaurant and owner information.", icon: LayoutGrid },
-  { to: "/settings/menu", label: "Menu", description: "Menus, categories, modifiers, add-ons and products.", icon: Utensils },
-  { to: "/settings/payments", label: "Payment", description: "Payment types, taxes, discounts, gratuity and card readers.", icon: CircleDollarSign },
-  { to: "/settings/workforce", label: "Workforce", description: "Your team and their schedules.", icon: Users },
-  { to: "/settings/reports", label: "Reports", description: "Your daily performance data.", icon: ChartNoAxesColumn },
-  { to: "/settings/more", label: "Advanced", description: "Advanced point of sale settings.", icon: SlidersHorizontal, manager: true },
+  { to: "/settings/general", label: "Restaurant", description: "View and manage your restaurant & owner information.", icon: LayoutGrid },
+  { to: "/settings/menu", label: "Menu", description: "View and manage your restaurant menu, categories, default modifiers, modifiers, add-ons, products, group.", icon: Utensils },
+  { to: "/settings/payments", label: "Payment", description: "View and manage your accepted payment types, taxes, discounts, gratuity, service charge, card reader, card management, reports.", icon: CircleDollarSign },
+  { to: "/settings/workforce", label: "Workforce", description: "View and manage your team and their schedules.", icon: Users },
+  { to: "/settings/reports", label: "Reports", description: "View your daily performance data.", icon: ChartNoAxesColumn },
+  { to: "/settings/more", label: "Advanced", description: "View and manage your advanced point of sale features.", icon: SlidersHorizontal, manager: true },
   { to: "/settings/guestbook", label: "Guestbook", description: "Guest contact information and order history.", icon: BookUser },
-  { to: "/system/customer-support", label: "Support", description: "Support personnel information.", icon: Headset },
+  { to: "/system/customer-support", label: "Support", description: "View support personnel information.", icon: Headset },
   { label: "Log out", description: "Sign out of this device.", icon: LogOut },
 ];
 
@@ -66,15 +66,15 @@ export function SettingsPullDown({ open, onClose }: { open: boolean; onClose: ()
     <div ref={panelRef} tabIndex={-1} role="region" aria-label="Settings menu" aria-hidden={!open} data-open={open}
       className={cn("header-settings-panel absolute inset-x-0 bottom-0 top-14 z-[35] flex flex-col bg-settings-overlay text-topbar-foreground outline-none", open ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-full opacity-0")}
       onClick={(event) => { if (!(event.target as HTMLElement).closest("a,button")) onClose(); }}>
-      <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-5 py-6 md:px-7 md:py-10">
+      <div className="header-settings-body no-scrollbar min-h-0 flex-1 overflow-y-auto">
         <nav aria-label="Settings categories" className="header-settings-grid mx-auto w-full max-w-[90rem]">
           {shortcuts.map((entry) => {
             const destination = settingsGroups.flat().find((row) => row.to === entry.to);
             const locked = Boolean(destination?.manager || entry.manager) && !canManageSettings;
-            const content = <><entry.icon className="mt-1 size-7 shrink-0" strokeWidth={1.8} /><span className="min-w-0 flex-1 whitespace-normal text-left"><span className="inline-flex max-w-full items-center gap-2 border-b border-topbar-muted pb-2 text-xl font-bold leading-tight md:text-2xl">{entry.label}{locked ? <Lock className="size-4 shrink-0" /> : null}</span><span className="mt-2 block text-sm font-medium leading-snug">{entry.description}</span></span></>;
+            const content = <><entry.icon className="header-settings-icon shrink-0" strokeWidth={1.8} /><span className="min-w-0 flex-1 whitespace-normal text-left"><span className="header-settings-heading inline-flex max-w-full items-center gap-2 border-b border-topbar-muted">{entry.label}{locked ? <Lock className="size-4 shrink-0" /> : null}</span><span className="header-settings-description block">{entry.description}</span></span></>;
             return <Button key={entry.label} asChild={Boolean(entry.to) && !locked} disabled={locked} variant="ghost"
               onClick={entry.to ? undefined : () => void logout()}
-              className="header-settings-shortcut h-auto w-full min-w-0 items-start justify-start gap-3 rounded-none border-l border-topbar-border px-3 py-2 text-topbar-foreground hover:bg-topbar-border hover:text-topbar-foreground">
+              className="header-settings-shortcut h-auto w-full min-w-0 items-start justify-start rounded-none text-topbar-foreground hover:bg-topbar-border hover:text-topbar-foreground">
               {entry.to && !locked ? <Link to={destination?.to ?? entry.to} preload="intent" onClick={onClose}>{content}</Link> : content}
             </Button>;
           })}
