@@ -39,3 +39,5 @@
 - [x] Fix Create Account and Forgot Password landscape layouts and verify phone, portrait tablet, landscape tablet and desktop without changing submission flows
 
 - [x] Complete and verify the demo Forgot Password code, reset-password and completion flow across devices
+
+- [ ] Complete the four-step demo signup flow and verify navigation, validation, code expiry and completion across devices
