@@ -6,6 +6,12 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useWideViewport } from "@/hooks/use-layout-mode";
 import { money } from "@/lib/demo-data";
+import {
+  amountToMoneyDigits,
+  moneyDigitsToAmount,
+  popMoneyDigit,
+  pushMoneyDigit,
+} from "@/lib/money-entry";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
@@ -41,13 +47,14 @@ export function GiftCardPaymentDialog({
   useEffect(() => {
     if (open) {
       setCardNumber("");
-      setAmount(due > 0 ? String(due) : "");
+      setAmount(amountToMoneyDigits(due));
       setActiveField("card");
     }
   }, [open, due]);
 
   const balance = cardNumber ? giftCardBalance(cardNumber) : null;
-  const entered = Number(amount || "0");
+  // Cash-register entry: `amount` holds cents digits, so 9 → $0.09.
+  const entered = moneyDigitsToAmount(amount);
   const known = cardNumber.length >= 8 && balance !== null;
   const applied = known ? Math.min(entered, balance) : 0;
   const canCharge = known && applied > 0;
@@ -62,18 +69,14 @@ export function GiftCardPaymentDialog({
       });
       return;
     }
-    setAmount((cur) => {
-      if (d === "." && cur.includes(".")) return cur;
-      const next = `${cur}${d}`;
-      return next.length > 9 ? cur : next;
-    });
+    setAmount((cur) => pushMoneyDigit(cur, d));
   };
 
   const backspace = () => {
     if (activeField === "card") {
       setCardNumber((cur) => cur.slice(0, -1));
     } else {
-      setAmount((cur) => cur.slice(0, -1));
+      setAmount((cur) => popMoneyDigit(cur));
     }
   };
 
@@ -153,10 +156,10 @@ export function GiftCardPaymentDialog({
         </div>
 
         <NumPad
+          moneyMode
           className={cn("min-h-0 flex-1", wide && "h-full self-stretch")}
           onDigit={type}
           onBackspace={backspace}
-          disableDecimal={activeField === "card"}
         />
       </div>
 
