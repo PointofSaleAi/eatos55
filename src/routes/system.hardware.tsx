@@ -8,6 +8,8 @@ import { hardware } from "@/lib/demo-data";
 export const Route = createFileRoute("/system/hardware")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Hardware - ${brand.appName} Handheld` },
       { name: "description", content: "Printers, card reader, cash drawer and display pairing." },
       { property: "og:title", content: `Hardware - ${brand.appName} Handheld` },

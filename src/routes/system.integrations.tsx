@@ -8,6 +8,8 @@ import { Card, SectionLabel, ToggleRow } from "@/components/pos/primitives";
 export const Route = createFileRoute("/system/integrations")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Integrations - ${brand.appName} Handheld` },
       { name: "description", content: "Connect delivery, accounting and loyalty partners." },
       { property: "og:title", content: `Integrations - ${brand.appName} Handheld` },

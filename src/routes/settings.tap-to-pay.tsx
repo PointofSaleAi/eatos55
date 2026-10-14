@@ -11,6 +11,8 @@ import { TTP_DEVICE_NOTE, useRequireTapToPayDevice } from "@/lib/device";
 export const Route = createFileRoute("/settings/tap-to-pay")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `${TTP} - ${brand.appName} payment settings` },
       {
         name: "description",

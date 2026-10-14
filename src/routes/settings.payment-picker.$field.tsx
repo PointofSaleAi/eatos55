@@ -11,6 +11,8 @@ import { TTP } from "@/components/pos/tap-to-pay";
 export const Route = createFileRoute("/settings/payment-picker/$field")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Choose an option - ${brand.appName} payment settings` },
       {
         name: "description",

@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 export const Route = createFileRoute("/system/help-center")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Help center - ${brand.appName} Handheld` },
       { name: "description", content: "Guides for tickets, payments, hardware and shift handover." },
       { property: "og:title", content: `Help center - ${brand.appName} Handheld` },

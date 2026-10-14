@@ -16,6 +16,8 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/system/customer-support")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Customer Support - ${brand.appName} Handheld` },
       {
         name: "description",

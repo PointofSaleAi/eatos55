@@ -8,6 +8,8 @@ import { releaseNotes } from "@/lib/demo-data";
 export const Route = createFileRoute("/tickets/whats-new")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `What is new - ${brand.appName} Handheld` },
       { name: "description", content: `Product updates shipped to the ${brand.appName} handheld app.` },
       { property: "og:title", content: `What is new - ${brand.appName} Handheld` },

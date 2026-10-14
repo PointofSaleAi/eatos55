@@ -13,6 +13,8 @@ import { TTP } from "@/components/pos/tap-to-pay";
 export const Route = createFileRoute("/tap-to-pay/education/$step")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `How to use ${TTP} - ${brand.appName} Point of Sale` },
       {
         name: "description",

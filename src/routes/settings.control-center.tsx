@@ -16,6 +16,8 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/control-center")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Control Center - ${brand.appName} Handheld settings` },
       {
         name: "description",

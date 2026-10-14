@@ -8,6 +8,8 @@ import { usePos } from "@/lib/pos-store";
 export const Route = createFileRoute("/settings/sales-summary")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Sales Summary Report - ${brand.appName} Handheld` },
       { name: "description", content: "Net sales, tickets and payment mix for the current day." },
       { property: "og:title", content: `Sales Summary Report - ${brand.appName} Handheld` },

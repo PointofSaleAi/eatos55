@@ -7,6 +7,8 @@ import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
 export const Route = createFileRoute("/settings/hardware")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Hardware - ${brand.appName} Handheld settings` },
       {
         name: "description",

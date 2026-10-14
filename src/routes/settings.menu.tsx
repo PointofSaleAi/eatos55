@@ -16,6 +16,8 @@ import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
 export const Route = createFileRoute("/settings/menu")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Menu - ${brand.appName} Handheld settings` },
       {
         name: "description",
