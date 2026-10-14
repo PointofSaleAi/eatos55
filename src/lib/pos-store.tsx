@@ -697,6 +697,11 @@ type Store = {
   addGiftCardLine: (number: string, amount: number) => void;
   changeQty: (id: string, delta: number) => void;
   removeLine: (id: string) => void;
+  /** Rewrites an existing cart line from the product window (never adds a copy). */
+  updateLine: (
+    id: string,
+    opts: { qty: number; price: number; notes?: string; modifiers?: string[]; discountPercent?: number },
+  ) => void;
   clearCart: () => void;
   /** Abandon the order in progress: cart, payments and table hold are cleared. */
   cancelOrder: () => void;
@@ -1660,6 +1665,17 @@ export function PosProvider({ children }: { children: ReactNode }) {
             .filter((l) => l.qty > 0),
         ),
       removeLine: (id) => setCart((list) => list.filter((l) => l.id !== id)),
+      updateLine: (id, opts) =>
+        setCart((list) =>
+          list.map((l) => {
+            if (l.id !== id) return l;
+            const next: CartLine = { id: l.id, name: l.name, price: opts.price, qty: Math.max(1, opts.qty) };
+            if (opts.notes) next.notes = opts.notes;
+            if (opts.modifiers?.length) next.modifiers = opts.modifiers;
+            if (opts.discountPercent) next.discountPercent = opts.discountPercent;
+            return next;
+          }),
+        ),
       clearCart: () => setCart([]),
       cancelOrder: () => {
         setDraftOwner(null);
