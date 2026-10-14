@@ -310,11 +310,11 @@ export function OrderOSBoard() {
             ))}
           </div>
           <div className="no-scrollbar min-h-0 flex-1 overflow-auto">
-            <div className="flex h-full gap-3 p-3 md:min-w-max md:px-4">
+            <div className="flex h-full gap-3 p-3 md:min-w-max md:px-4 lg:min-w-0">
               {cols.map((c) => (
                 <section
                   key={c.id}
-                  className={cn("flex min-h-0 w-full flex-col md:w-[230px] lg:flex-1 lg:min-w-[200px]", phoneCol === c.id ? "flex" : "hidden md:flex")}
+                  className={cn("flex min-h-0 w-full flex-col md:w-[230px] lg:w-auto lg:flex-1 lg:min-w-[180px]", phoneCol === c.id ? "flex" : "hidden md:flex")}
                 >
                   <ColumnHeader
                     label={c.label}
@@ -515,7 +515,7 @@ function ItemLines({ items, compact }: { items: OOItem[]; compact?: boolean }) {
             <span className="tabular-nums">{money(i.qty * i.price)}</span>
           </div>
           {i.mods.map((m) => (
-            <p key={m.name} className={cn("pl-4 text-fs-xs", m.removed ? "text-destructive line-through" : "text-muted-foreground")}>
+            <p key={m.name} className={cn("pl-4", compact ? "text-[11px]" : "text-fs-xs", m.removed ? "text-destructive line-through" : "text-muted-foreground")}>
               {m.removed ? "No " : ""}
               {m.name}
             </p>
