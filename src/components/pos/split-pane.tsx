@@ -172,12 +172,12 @@ export function SettingsNavList() {
               </ul>
             ),
           )
-        ) : (
+        ) : q ? (
           <div className="px-4 py-10 text-center">
             <p className="t-row font-bold text-foreground">No settings found</p>
             <p className="pt-1 text-fs-xs text-muted-foreground">Try a different search term.</p>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
