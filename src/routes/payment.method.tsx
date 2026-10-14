@@ -1026,6 +1026,7 @@ function PaymentMethod() {
         inputLabel={refConfig?.inputLabel ?? "Reference number"}
         placeholder={refConfig?.placeholder}
         numeric={refConfig?.numeric ?? true}
+        contactMode={refConfig?.contactMode}
         reasons={refConfig?.reasons}
         confirmLabel={refConfig?.confirmLabel}
         onClose={() => setRefConfig(null)}

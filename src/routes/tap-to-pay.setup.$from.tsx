@@ -496,6 +496,8 @@ function TapToPaySetup() {
               value={altAppleId}
               onChange={(e) => setAltAppleId(e.target.value)}
               placeholder="Email or phone number"
+              aria-label="Apple ID email or phone number"
+              aria-invalid={Boolean(altAppleId && phoneSignInError(altAppleId))}
               className="mt-5 h-ctl-lg w-full rounded-row border border-neutral-200 bg-transparent px-4 text-fs-base text-black placeholder:text-neutral-400"
             />
             <input
@@ -506,6 +508,7 @@ function TapToPaySetup() {
               placeholder="Password"
               className="mt-3 h-ctl-lg w-full rounded-row border border-neutral-200 bg-transparent px-4 text-fs-base text-black placeholder:text-neutral-400"
             />
+            {altAppleId && phoneSignInError(altAppleId) ? <p role="alert" className="mt-2 text-fs-xs text-destructive">{phoneSignInError(altAppleId)}</p> : null}
             <p className="mt-3 text-right text-fs-sm font-semibold text-[#0a84ff]">
               Forgot Apple ID or password?
             </p>
