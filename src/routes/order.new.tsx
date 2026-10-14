@@ -16,7 +16,7 @@ import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { useWideLayout } from "@/components/pos/shell";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { OrderPanel } from "@/components/pos/order-panel";
-import { itemNeedsSheet, liveMenu, menus, money, type CartLine, type MenuItem } from "@/lib/demo-data";
+import { itemNeedsSheet, liveMenu, menu as baseMenu, menus, money, type CartLine, type MenuItem } from "@/lib/demo-data";
 import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { toast } from "sonner";
@@ -134,7 +134,7 @@ function NewOrder() {
   const [sheetItem, setSheetItem] = useState<MenuItem | null>(null);
   const [editingLine, setEditingLine] = useState<CartLine | null>(null);
   const editCartLine = (line: CartLine) => {
-    const found = liveMenu.find((m) => line.id === m.id || line.id.startsWith(`${m.id}-`));
+    const found = [...baseMenu, ...liveMenu].find((m) => line.id === m.id || line.id.startsWith(`${m.id}-`));
     if (!found) return;
     setEditingLine(line);
     setSheetItem(found);
