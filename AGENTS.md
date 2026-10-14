@@ -21,3 +21,5 @@
 - Guest addresses retain both structured U.S. fields and a formatted compatibility string so Add Guest and service-order forms stay synchronized.
 - Every Tap to Pay surface (checkout, settings rows, reader list, home reminder, route guards) goes through `useTapToPayAvailable` / `useTapToPayTenderVisible` in `src/lib/device.ts`, which combine the iPhone check with the phone-layout check, so no screen can re-offer Tap to Pay on tablet or web.
 - Product-card names use width-constrained browser measurements and semantic typography steps, with emergency word wrapping rather than truncation, so long words cannot overflow when the product area resizes.
+
+- Public access routes own their responsive content widths; the shell must not constrain them to a shared narrow column, so account and recovery layouts can adapt independently without altering app chrome.

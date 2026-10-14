@@ -144,7 +144,6 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
   const appChrome = useAppChrome();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const path = pathname.replace(/\/+$/, "") || "/";
-  const isSignIn = path === "/";
   // Clock In is an opaque gate: top bar only, no rail / tabs / drawer.
   const clockGate = path === "/access/clock-in";
   const { wide } = useLayoutMode();
@@ -207,13 +206,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
                     ) : landscape ? (
                       <LandscapeContent>{children}</LandscapeContent>
                     ) : wideAccess ? (
-                      isSignIn ? (
-                        children
-                      ) : (
-                        <div className="mx-auto flex min-h-0 w-full max-w-[32rem] flex-1 flex-col">
-                          {children}
-                        </div>
-                      )
+                      children
                     ) : (
                       children
                     )}
