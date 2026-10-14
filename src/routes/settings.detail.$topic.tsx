@@ -513,7 +513,7 @@ function EditSheet({
   onSave,
   savedPhoneCountry,
 }: {
-  savedPhoneCountry?: PhoneCountry;
+  savedPhoneCountry?: PhoneCountry | undefined;
   target: EditTarget;
   onClose: () => void;
   onSave: (t: EditTarget, phoneCountry?: PhoneCountry) => void;
