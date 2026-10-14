@@ -7,6 +7,7 @@ import { PinPad } from "@/components/pos/pin-pad";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Checkbox } from "@/components/ui/checkbox";
 import { countries, restaurantTypes } from "@/lib/demo-data";
+import { formatPhoneFor, isValidPhoneFor, phoneCountryByName, phoneErrorFor } from "@/lib/phone";
 import { Wordmark } from "@/components/pos/brand";
 import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { cn } from "@/lib/utils";
