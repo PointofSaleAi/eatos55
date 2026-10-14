@@ -23,3 +23,5 @@
 - Product-card names use width-constrained browser measurements and semantic typography steps, with emergency word wrapping rather than truncation, so long words cannot overflow when the product area resizes.
 
 - Public access routes own their responsive content widths; the shell must not constrain them to a shared narrow column, so account and recovery layouts can adapt independently without altering app chrome.
+
+- Demo password recovery stays in ephemeral route-local step state and never persists passwords or claims real code delivery; this keeps the prototype separate from real authentication.
