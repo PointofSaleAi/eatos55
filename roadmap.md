@@ -41,3 +41,5 @@
 - [x] Complete and verify the demo Forgot Password code, reset-password and completion flow across devices
 
 - [x] Complete the four-step demo signup flow and verify navigation, validation, code expiry and completion across devices
+
+- [x] Apply country-aware phone validation to signup, recovery, guest/cart entry, settings, sign-in and payment contacts; test five countries across devices
