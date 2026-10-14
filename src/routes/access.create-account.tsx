@@ -110,7 +110,7 @@ function CreateAccount() {
   const verify = () => {
     if (Date.now() >= expiresAt) { setError("This code has expired. Select Resend Code to try again."); return; }
     if (code !== "1234") { setError("Incorrect code. Use the demo code 1234."); return; }
-    setError(""); setPin(""); setForm((f) => ({ ...f, password: "" })); setStep(4);
+    setError(""); setPin(""); setConfirmPin(""); setForm((f) => ({ ...f, password: "" })); setStep(5);
   };
   const progress = (
     <ol aria-label="Signup progress" className={cn(wide ? "mt-10 space-y-5" : "mb-7 grid grid-cols-4 gap-2")}>
@@ -145,7 +145,7 @@ function CreateAccount() {
                 <ArrowLeft className="size-6" />
               </Button>
             ) : null}
-            <h1 className="min-w-0 text-fs-xl font-extrabold text-foreground">{step === 0 ? "Create an Account" : step === 4 ? "Demo Signup Complete" : steps[step]}</h1>
+            <h1 className="min-w-0 text-fs-xl font-extrabold text-foreground">{step === 0 ? "Create an Account" : step === 5 ? "Demo Signup Complete" : steps[step]}</h1>
           </div>
           {!wide ? progress : null}
           {step === 0 ? (<>
