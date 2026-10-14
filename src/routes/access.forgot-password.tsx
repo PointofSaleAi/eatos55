@@ -1,3 +1,5 @@
+import { PhoneField } from "@/components/pos/phone-field";
+import { displayPhone, validatePhone, type PhoneCountry } from "@/lib/phone";
 import { createFileRoute, useNavigate, useRouter, useCanGoBack, Link } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { ChevronLeft, Eye, EyeOff, CheckCircle2 } from "lucide-react";
@@ -35,6 +37,7 @@ function ForgotPassword() {
   const [step, setStep] = useState<RecoveryStep>("contact");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [phoneCountry, setPhoneCountry] = useState<PhoneCountry>("US");
   const [channel, setChannel] = useState<"email" | "phone">("email");
   const [code, setCode] = useState("");
   const [expiresAt, setExpiresAt] = useState(0);
@@ -46,7 +49,7 @@ function ForgotPassword() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const both = Boolean(email.trim() && phone.trim());
-  const destination = channel === "email" ? email.trim() : phone.trim();
+  const destination = channel === "email" ? email.trim() : displayPhone(phone, phoneCountry);
 
   useEffect(() => {
     if (step !== "verify") return;
@@ -74,8 +77,9 @@ function ForgotPassword() {
     if (selected === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       setError("Enter a valid email address."); return;
     }
-    if (selected === "phone" && !/^\d{10}$/.test(phone.replace(/\D/g, ""))) {
-      setError("Enter a valid 10-digit U.S. mobile number."); return;
+    if (selected === "phone") {
+      const result = validatePhone(phone, phoneCountry, true);
+      if (!result.valid) { setError(result.error); return; }
     }
     setChannel(selected); setNotice(""); startCode(); setStep("verify");
   };
@@ -118,10 +122,7 @@ function ForgotPassword() {
                 <p className="py-4 text-center text-fs-sm font-bold text-muted-foreground">Or</p>
                 <div className="space-y-2">
                   <Label htmlFor="fp-phone" className="text-fs-sm font-extrabold">Mobile Number</Label>
-                  <div className="flex h-12 items-center overflow-hidden rounded-row border border-input bg-surface">
-                    <span className="flex h-full shrink-0 items-center gap-2 border-r border-input px-3 text-fs-sm font-bold text-foreground"><span aria-hidden>🇺🇸</span> +1</span>
-                    <input id="fp-phone" type="tel" autoComplete="tel-national" value={phone} onChange={(e) => { setPhone(e.target.value); setError(""); }} placeholder="(XXX) XXX-XXXX" inputMode="tel" className="h-full min-w-0 flex-1 bg-transparent px-3 text-fs-sm text-foreground outline-none placeholder:text-muted-foreground" />
-                  </div>
+                  <PhoneField label="Mobile Number" value={phone} onChange={(value) => { setPhone(value); setError(""); }} country={phoneCountry} onCountryChange={setPhoneCountry} required={!email.trim()} forceError={Boolean(error) && channel === "phone"} />
                 </div>
                 {both ? (
                   <fieldset className="mt-5 space-y-2 text-fs-sm text-foreground">

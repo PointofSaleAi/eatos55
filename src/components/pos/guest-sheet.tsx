@@ -1,3 +1,5 @@
+import { PhoneField } from "@/components/pos/phone-field";
+import { inferPhoneCountry, validatePhone } from "@/lib/phone";
 import {
   Bike,
   CalendarDays,
@@ -35,14 +37,6 @@ import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
 import { formatUsAddress, type UsAddress } from "@/lib/us-addresses";
 
-/** Format raw digits as (XXX) XXX-XXXX while typing. */
-export function formatPhone(raw: string) {
-  const d = raw.replace(/\D/g, "").slice(0, 10);
-  if (d.length <= 3) return d;
-  if (d.length <= 6) return `(${d.slice(0, 3)}) ${d.slice(3)}`;
-  return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
-}
-
 export const orderTypeIcons: Record<ServiceOrderType, typeof Utensils> = {
   "Dine In": Utensils,
   "Take Away": ShoppingBag,
@@ -77,6 +71,7 @@ export function GuestSheet({
   const [name, setName] = useState(guest.name);
   const [email, setEmail] = useState(guest.email ?? "");
   const [phone, setPhone] = useState(guest.phone);
+  const [phoneCountry, setPhoneCountry] = useState(inferPhoneCountry(guest.phone, guest.phoneCountry));
   const [party, setParty] = useState(guest.partySize);
   const [type, setType] = useState<ServiceOrderType>(initialType ?? orderType);
   const [address, setAddress] = useState<UsAddress>({
@@ -107,6 +102,7 @@ export function GuestSheet({
       setName(guest.name);
       setEmail(guest.email ?? "");
       setPhone(guest.phone);
+      setPhoneCountry(inferPhoneCountry(guest.phone, guest.phoneCountry));
       setParty(guest.partySize);
       setType(initialType ?? orderType);
       setAddress({
@@ -141,6 +137,7 @@ export function GuestSheet({
   const formattedAddress = formatUsAddress(address);
   const values: Record<string, string> = { name, phone, address: formattedAddress, scheduledAt };
   const missing = required.filter((f) => !values[f]?.trim());
+  const phoneResult = validatePhone(phone, phoneCountry, required.includes("phone"));
   const vehicleComplete = Boolean(vehicleType && vehicleColor);
   const colorHex = vehicleColors.find((c) => c.name === vehicleColor)?.hex ?? "#b6bcc2";
   const star = (f: string) => (required.includes(f as never) ? "*" : "");
@@ -194,23 +191,7 @@ export function GuestSheet({
             />
           </div>
 
-          <div
-            className={cn(
-              fieldRow,
-              required.includes("phone") && !phone ? "border-accent" : "border-border",
-            )}
-          >
-            <span className="shrink-0 text-fs-sm font-bold text-muted-foreground">+1</span>
-            <Phone className="size-4 shrink-0 text-muted-foreground" />
-            <input
-              value={phone}
-              onChange={(e) => setPhone(formatPhone(e.target.value))}
-              inputMode="tel"
-              placeholder={`(XXX) XXX-XXXX${star("phone")}`}
-              aria-label="Guest phone number"
-              className={fieldInput}
-            />
-          </div>
+          <PhoneField label="Guest phone number" value={phone} onChange={setPhone} country={phoneCountry} onCountryChange={setPhoneCountry} required={required.includes("phone")} />
 
           {showAddress ? <div className="sm:col-span-2"><AddressSearch value={address} onChange={setAddress} required={required.includes("address")} /></div> : null}
 
@@ -452,11 +433,13 @@ export function GuestSheet({
           </button>
           <button
             type="button"
-            disabled={missing.length > 0}
+            disabled={missing.length > 0 || !phoneResult.valid}
             onClick={() => {
+              if (!phoneResult.valid || missing.length > 0) return;
               setGuest({
                 name: name.trim(),
-                phone,
+                phone: phoneResult.phone,
+                phoneCountry,
                 partySize: party,
                 email: email.trim(),
                 notes,

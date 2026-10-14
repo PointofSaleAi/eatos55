@@ -3,7 +3,8 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { AddressSearch } from "@/components/pos/address-search";
-import { formatPhone } from "@/components/pos/guest-sheet";
+import { PhoneField } from "@/components/pos/phone-field";
+import { inferPhoneCountry, validatePhone } from "@/lib/phone";
 import { usePos } from "@/lib/pos-store";
 import { vehicleColors, vehicleTypes } from "@/lib/demo-data";
 import { formatUsAddress, type UsAddress } from "@/lib/us-addresses";
@@ -18,6 +19,7 @@ export function AddGuestForm({ onClose }: { onClose: () => void }) {
   const [lastName, setLastName] = useState(guest.lastName ?? nameParts.slice(1).join(" "));
   const [email, setEmail] = useState(guest.email ?? "");
   const [phone, setPhone] = useState(guest.phone);
+  const [phoneCountry, setPhoneCountry] = useState(inferPhoneCountry(guest.phone, guest.phoneCountry));
   const [customerSince, setCustomerSince] = useState(guest.customerSince ?? "");
   const [dateOfBirth, setDateOfBirth] = useState(guest.dateOfBirth ?? "");
   const [anniversary, setAnniversary] = useState(guest.anniversary ?? "");
@@ -35,7 +37,7 @@ export function AddGuestForm({ onClose }: { onClose: () => void }) {
   const [vehicleBrand, setVehicleBrand] = useState(guest.vehicle?.brand ?? "");
   const [plate, setPlate] = useState(guest.vehicle?.plate ?? "");
   const photoInput = useRef<HTMLInputElement>(null);
-  const valid = Boolean(firstName.trim() && lastName.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) && phone.replace(/\D/g, "").length === 10);
+  const valid = Boolean(firstName.trim() && lastName.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) && validatePhone(phone, phoneCountry, true).valid);
 
   const field = (label: string, value: string, change: (value: string) => void, type = "text", required = false) => (
     <label className="block min-w-0 space-y-1.5">
@@ -48,7 +50,7 @@ export function AddGuestForm({ onClose }: { onClose: () => void }) {
     <form aria-label="Add Guest" className="flex min-h-0 flex-1 flex-col overflow-hidden" onSubmit={(event) => {
       event.preventDefault();
       if (!valid) return;
-      setGuest({ firstName: firstName.trim(), middleName: middleName.trim(), lastName: lastName.trim(), name: [firstName, middleName, lastName].map((part) => part.trim()).filter(Boolean).join(" "), email: email.trim(), phone, customerSince, dateOfBirth, anniversary, address: formatUsAddress(address), addressStreet: address.street.trim(), addressUnit: address.unit.trim(), addressCity: address.city.trim(), addressState: address.state.trim(), addressZipCode: address.zipCode.trim(), photo, vehicle: vehicleOpen && (vehicleType || vehicleColor || vehicleBrand || plate) ? { type: vehicleType, color: vehicleColor, brand: vehicleBrand.trim(), plate: plate.trim() } : undefined });
+      setGuest({ firstName: firstName.trim(), middleName: middleName.trim(), lastName: lastName.trim(), name: [firstName, middleName, lastName].map((part) => part.trim()).filter(Boolean).join(" "), email: email.trim(), phone: validatePhone(phone, phoneCountry, true).phone, phoneCountry, customerSince, dateOfBirth, anniversary, address: formatUsAddress(address), addressStreet: address.street.trim(), addressUnit: address.unit.trim(), addressCity: address.city.trim(), addressState: address.state.trim(), addressZipCode: address.zipCode.trim(), photo, vehicle: vehicleOpen && (vehicleType || vehicleColor || vehicleBrand || plate) ? { type: vehicleType, color: vehicleColor, brand: vehicleBrand.trim(), plate: plate.trim() } : undefined });
       toast.success("Guest details saved");
       onClose();
     }}>
@@ -77,7 +79,7 @@ export function AddGuestForm({ onClose }: { onClose: () => void }) {
           {field("Middle Name", middleName, setMiddleName)}
           {field("Last Name", lastName, setLastName, "text", true)}
           {field("Email", email, setEmail, "email", true)}
-          {field("Phone Number", phone, (value) => setPhone(formatPhone(value)), "tel", true)}
+          <div className="col-span-2 min-w-0 space-y-1.5"><span className="text-fs-xs font-bold text-foreground">Phone Number <span className="text-destructive">*</span></span><PhoneField label="Phone Number" value={phone} onChange={setPhone} country={phoneCountry} onCountryChange={setPhoneCountry} required /></div>
           {field("Customer Since", customerSince, setCustomerSince, "date")}
           {field("Date of Birth", dateOfBirth, setDateOfBirth, "date")}
           {field("Anniversary", anniversary, setAnniversary, "date")}
