@@ -10,7 +10,6 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { ItemNotesField } from "@/components/pos/item-notes-field";
 import { PriceOverrideFlow } from "@/components/pos/price-override";
@@ -22,13 +21,7 @@ import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
-
-type SpeechRecognitionLike = {
-  lang: string;
-  onresult: ((e: { results: { transcript: string }[][] }) => void) | null;
-  onerror: (() => void) | null;
-  start: () => void;
-};
+import { useVoiceSearch } from "@/lib/voice-search";
 
 /**
  * Modifier/add-on option label. Price sits on its own second line by default;
@@ -188,26 +181,7 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
     onClose();
   }
 
-  const startVoiceSearch = () => {
-    const w = window as unknown as {
-      SpeechRecognition?: new () => SpeechRecognitionLike;
-      webkitSpeechRecognition?: new () => SpeechRecognitionLike;
-    };
-    const Ctor = w.SpeechRecognition ?? w.webkitSpeechRecognition;
-    if (!Ctor) {
-      toast.info("Voice search is not available on this device");
-      return;
-    }
-    const rec = new Ctor();
-    rec.lang = navigator.language || "en-US";
-    rec.onresult = (e) => {
-      const text = e.results[0]?.[0]?.transcript ?? "";
-      if (text) setSearch(text);
-    };
-    rec.onerror = () => toast.info("Could not hear anything, try again");
-    rec.start();
-    toast.info("Listening…");
-  };
+  const { listening, start: startVoiceSearch } = useVoiceSearch(setSearch);
 
   return (
     <>
@@ -409,7 +383,12 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                         type="button"
                         onClick={startVoiceSearch}
                         aria-label="Voice search"
-                        className="grid size-7 shrink-0 place-items-center rounded-pill text-muted-foreground hover:text-foreground"
+                        className={cn(
+                          "grid size-7 shrink-0 place-items-center rounded-pill transition-colors",
+                          listening
+                            ? "animate-pulse text-accent"
+                            : "text-muted-foreground hover:text-foreground",
+                        )}
                       >
                         <Mic className="size-4" />
                       </button>
