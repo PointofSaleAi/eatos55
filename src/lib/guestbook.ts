@@ -1,7 +1,7 @@
 import type { Ticket } from "@/lib/demo-data";
 import type { Guest } from "@/lib/pos-store";
 
-export type GuestRecord = { id: string; name: string; email?: string; phone?: string; address?: string; tickets: Ticket[] };
+export type GuestRecord = { id: string; name: string; email?: string | undefined; phone?: string | undefined; address?: string | undefined; tickets: Ticket[] };
 const normalize = (value: string) => value.trim().replace(/\s+/g, " ").toLowerCase();
 const named = (name: string) => Boolean(name.trim()) && !/^(guest(?:\s*\d+)?|bar tab|curb side|party of \d+|table\b.*)$/i.test(name.trim());
 
