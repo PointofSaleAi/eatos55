@@ -16,7 +16,7 @@ import { ItemNotesField } from "@/components/pos/item-notes-field";
 import { PriceOverrideFlow } from "@/components/pos/price-override";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { itemAddOnGroups, itemModifierGroups, money, type MenuItem } from "@/lib/demo-data";
+import { itemAddOnGroups, itemModifierGroups, money, type CartLine, type MenuItem } from "@/lib/demo-data";
 import { useAnnounce } from "@/components/pos/live-region";
 import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
@@ -75,9 +75,18 @@ const SORT_LABELS = {
  * Item / Add-Ons tabs with modifier groups, line discount and the ADD button.
  * Compact portrait-phone scale: pinned header + footer, single scroll area.
  */
-export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: () => void }) {
+export function ItemSheet({
+  item,
+  onClose,
+  editLine,
+}: {
+  item: MenuItem | null;
+  onClose: () => void;
+  /** When set, the window edits this cart line and Update replaces it. */
+  editLine?: CartLine | null;
+}) {
   useBackDismiss(!!item, dismiss);
-  const { addItem, settings } = usePos();
+  const { addItem, updateLine, settings } = usePos();
   const announce = useAnnounce();
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState(item?.price ?? 0);
@@ -99,10 +108,35 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
 
   useEffect(() => {
     if (!item) return;
+    setView("order");
+    if (editLine) {
+      const pool = [
+        ...itemModifierGroups(item, settings.productModifierRules),
+        ...itemAddOnGroups(item, settings.productModifierRules),
+      ];
+      const seeded: Record<string, number> = {};
+      for (const key of editLine.modifiers ?? []) {
+        const [g, o] = key.split(" · ");
+        const opt = pool.find((x) => x.name === g)?.options.find((x) => x.name === o);
+        seeded[key] = opt?.price ?? 0;
+      }
+      const modSum = Object.values(seeded).reduce((a, b) => a + b, 0);
+      setSelected(seeded);
+      setPrice(Math.round((editLine.price - modSum) * 100) / 100);
+      setQty(editLine.qty);
+      setNotes(editLine.notes ? editLine.notes.split(", ").filter(Boolean) : []);
+      setDiscount(
+        editLine.discountPercent
+          ? { name: `${editLine.discountPercent}% off`, percent: editLine.discountPercent }
+          : null,
+      );
+      setEditingPrice(false);
+      return;
+    }
     setPrice(item.openPrice ? 0 : item.price);
     setEditingPrice(Boolean(item.openPrice));
-    setView("order");
-  }, [item]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item, editLine]);
 
   const itemGroups = useMemo(
     () => (item ? itemModifierGroups(item, settings.productModifierRules) : []),
@@ -579,22 +613,29 @@ export function ItemSheet({ item, onClose }: { item: MenuItem | null; onClose: (
                   type="button"
                   disabled={openPriceMissing || requiredMissing.length > 0}
                   onClick={() => {
-                    addItem(item.id, {
+                    const line = {
                       qty,
                       price: price + modifierTotal,
                       ...(notes.length ? { notes: notes.join(", ") } : {}),
                       modifiers: Object.keys(selected),
                       ...(discount ? { discountPercent: discount.percent } : {}),
-                    });
+                    };
                     haptic("success");
-                    announce(`${item.name} added to the order`);
-                    toast.success(`${item.name} added`);
+                    if (editLine) {
+                      updateLine(editLine.id, line);
+                      announce(`${item.name} updated`);
+                      toast.success(`${item.name} updated`);
+                    } else {
+                      addItem(item.id, line);
+                      announce(`${item.name} added to the order`);
+                      toast.success(`${item.name} added`);
+                    }
                     reset();
                     onClose();
                   }}
                   className="h-ctl-lg flex-1 rounded-pill bg-primary text-fs-sm font-extrabold uppercase tracking-[0.06em] text-primary-foreground disabled:opacity-40"
                 >
-                  Add · {money(lineTotal)}
+                  {editLine ? "Update" : "Add"} · {money(lineTotal)}
                 </button>
                 </div>
               </div>
