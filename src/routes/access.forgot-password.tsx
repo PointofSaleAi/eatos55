@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { defaultPhoneCountry, formatPhoneFor, isValidPhoneFor, phoneErrorFor } from "@/lib/phone";
 
 type RecoveryStep = "contact" | "verify" | "password" | "complete";
 
@@ -74,8 +75,8 @@ function ForgotPassword() {
     if (selected === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       setError("Enter a valid email address."); return;
     }
-    if (selected === "phone" && !/^\d{10}$/.test(phone.replace(/\D/g, ""))) {
-      setError("Enter a valid 10-digit U.S. mobile number."); return;
+    if (selected === "phone" && !isValidPhoneFor(defaultPhoneCountry, phone)) {
+      setError(phoneErrorFor(defaultPhoneCountry)); return;
     }
     setChannel(selected); setNotice(""); startCode(); setStep("verify");
   };
@@ -120,7 +121,7 @@ function ForgotPassword() {
                   <Label htmlFor="fp-phone" className="text-fs-sm font-extrabold">Mobile Number</Label>
                   <div className="flex h-12 items-center overflow-hidden rounded-row border border-input bg-surface">
                     <span className="flex h-full shrink-0 items-center gap-2 border-r border-input px-3 text-fs-sm font-bold text-foreground"><span aria-hidden>🇺🇸</span> +1</span>
-                    <input id="fp-phone" type="tel" autoComplete="tel-national" value={phone} onChange={(e) => { setPhone(e.target.value); setError(""); }} placeholder="(XXX) XXX-XXXX" inputMode="tel" className="h-full min-w-0 flex-1 bg-transparent px-3 text-fs-sm text-foreground outline-none placeholder:text-muted-foreground" />
+                    <input id="fp-phone" type="tel" autoComplete="tel-national" value={phone} onChange={(e) => { setPhone(formatPhoneFor(defaultPhoneCountry, e.target.value)); setError(""); }} placeholder="(123) 456-7890" inputMode="tel" className="h-full min-w-0 flex-1 bg-transparent px-3 text-fs-sm text-foreground outline-none placeholder:text-muted-foreground" />
                   </div>
                 </div>
                 {both ? (

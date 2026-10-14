@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cashDenominations, money } from "@/lib/demo-data";
+import { formatPhone } from "@/components/pos/guest-sheet";
+import { defaultPhoneCountry, isValidPhoneFor } from "@/lib/phone";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
@@ -155,8 +157,8 @@ export function PaymentCompleteCard({
           </span>
           <input
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="Phone Number"
+            onChange={(e) => setPhone(formatPhone(e.target.value))}
+            placeholder="(123) 456-7890"
             inputMode="tel"
             aria-label="Phone number for receipt"
             className="h-ctl-lg min-w-0 flex-1 rounded-card border-2 border-border bg-surface px-3 text-fs-base font-bold text-foreground outline-none placeholder:text-muted-foreground"
@@ -178,7 +180,7 @@ export function PaymentCompleteCard({
         {choice === "sms" ? (
           <button
             type="button"
-            disabled={!phone.trim()}
+            disabled={!isValidPhoneFor(defaultPhoneCountry, phone)}
             onClick={() => send(`Receipt texted to ${phone.trim()}`)}
             className="h-ctl-lg shrink-0 rounded-card bg-shell px-8 text-fs-base font-extrabold uppercase tracking-[0.04em] text-shell-foreground disabled:opacity-40"
           >
