@@ -1,7 +1,7 @@
 import { ArrowRight, MessageSquarePlus, X } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import mayaMotion from "@/assets/maya-ai-animation-transparent.webp.asset.json";
+import mayaMotion from "@/assets/maya-ai-approved.webp.asset.json";
 import mayaLogo from "@/assets/maya-ai-logo.png.asset.json";
 import { formatMoney } from "@/lib/brand";
 import { floorTables, tableStateMeta } from "@/lib/floor-data";
@@ -21,7 +21,7 @@ export function AiMark({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "grid size-9 shrink-0 place-items-center overflow-hidden rounded-card",
+        "grid size-9 shrink-0 place-items-center overflow-hidden rounded-card bg-shell",
         className,
       )}
       aria-hidden
