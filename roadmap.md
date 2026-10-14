@@ -40,4 +40,4 @@
 
 - [x] Complete and verify the demo Forgot Password code, reset-password and completion flow across devices
 
-- [ ] Complete the four-step demo signup flow and verify navigation, validation, code expiry and completion across devices
+- [x] Complete the four-step demo signup flow and verify navigation, validation, code expiry and completion across devices
