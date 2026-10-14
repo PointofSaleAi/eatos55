@@ -697,9 +697,11 @@ html[data-layout="wide"] [role="dialog"].sheet-compact.inset-x-0.bottom-0 {
   100% { transform: translateX(300%); }
 }
 
-.header-settings-panel { transition: transform 220ms ease, opacity 220ms ease; letter-spacing: 0; }
-.header-settings-panel[data-open="true"] { animation: settings-reveal 220ms ease both; }
+.header-settings-panel { --settings-motion-duration: 280ms; --settings-motion-easing: cubic-bezier(0.22, 1, 0.36, 1); letter-spacing: 0; }
+.header-settings-panel[data-open="true"] { animation: settings-reveal var(--settings-motion-duration) var(--settings-motion-easing) both; }
+.header-settings-panel[data-open="false"] { pointer-events: none; animation: settings-collapse var(--settings-motion-duration) var(--settings-motion-easing) both; }
 @keyframes settings-reveal { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes settings-collapse { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-100%); opacity: 0; } }
 .header-settings-panel {
   --settings-title-size: 1.75rem;
   --settings-description-size: 1rem;
@@ -744,5 +746,5 @@ html[data-layout="wide"] [role="dialog"].sheet-compact.inset-x-0.bottom-0 {
   .header-settings-grid { grid-auto-rows: auto; row-gap: 2rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .header-settings-panel[data-open="true"] { animation: none; }
+  .header-settings-panel[data-open] { animation: none; }
 }

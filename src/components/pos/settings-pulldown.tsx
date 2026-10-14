@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { settingsGroups } from "@/lib/settings-destinations";
 import { usePos } from "@/lib/pos-store";
-import { cn } from "@/lib/utils";
 
 const shortcuts: { to?: string; label: string; description: string; icon: LucideIcon; manager?: boolean }[] = [
   { to: "/settings/general", label: "Restaurant", description: "View and manage your restaurant & owner information.", icon: LayoutGrid },
@@ -30,10 +29,30 @@ export function SettingsPullDown({ open, onClose }: { open: boolean; onClose: ()
   useBackDismiss(open, onClose);
   const [present, setPresent] = useState(open);
   const panelRef = useRef<HTMLDivElement>(null);
-  const dragY = useRef<number | null>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const gesture = useRef<{ x: number; y: number; eligible: boolean } | null>(null);
+  const suppressClickUntil = useRef(0);
+  const beginGesture = (x: number, y: number, handle: boolean) => {
+    const body = bodyRef.current;
+    const atBottom = !body || body.scrollHeight - body.clientHeight - body.scrollTop <= 2;
+    gesture.current = { x, y, eligible: handle || atBottom };
+  };
+  const finishGesture = (x: number, y: number) => {
+    const start = gesture.current;
+    gesture.current = null;
+    if (!start) return;
+    const dy = y - start.y;
+    const dx = x - start.x;
+    // A drag must never become a shortcut tap, even if it did not close.
+    if (Math.abs(dy) > 10 || Math.abs(dx) > 10) suppressClickUntil.current = Date.now() + 500;
+    if (start.eligible && dy <= -40 && Math.abs(dy) > Math.abs(dx) * 1.5) onClose();
+  };
   useEffect(() => {
     if (open) { setPresent(true); return; }
-    const timer = window.setTimeout(() => setPresent(false), 230);
+    gesture.current = null;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setPresent(false); return; }
+    // Fallback if an interrupted animation does not emit animationend.
+    const timer = window.setTimeout(() => setPresent(false), 400);
     return () => window.clearTimeout(timer);
   }, [open]);
   useEffect(() => {
@@ -64,9 +83,18 @@ export function SettingsPullDown({ open, onClose }: { open: boolean; onClose: ()
 
   return (
     <div ref={panelRef} tabIndex={-1} role="region" aria-label="Settings menu" aria-hidden={!open} data-open={open}
-      className={cn("header-settings-panel absolute inset-x-0 bottom-0 top-14 z-[35] flex flex-col bg-settings-overlay text-topbar-foreground outline-none", open ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-full opacity-0")}
+      inert={!open}
+      className="header-settings-panel absolute inset-x-0 bottom-0 top-14 z-[35] flex flex-col bg-settings-overlay text-topbar-foreground outline-none"
+      onAnimationEnd={(event) => { if (event.target === event.currentTarget && event.animationName === "settings-collapse" && !open) setPresent(false); }}
+      onClickCapture={(event) => { if (Date.now() < suppressClickUntil.current) { event.preventDefault(); event.stopPropagation(); } }}
       onClick={(event) => { if (!(event.target as HTMLElement).closest("a,button")) onClose(); }}>
-      <div className="header-settings-body no-scrollbar min-h-0 flex-1 overflow-y-auto">
+      <div ref={bodyRef} className="header-settings-body no-scrollbar min-h-0 flex-1 overflow-y-auto"
+        onTouchStart={(event) => { const touch = event.touches[0]; if (touch && event.touches.length === 1) beginGesture(touch.clientX, touch.clientY, false); else gesture.current = null; }}
+        onTouchEnd={(event) => { const touch = event.changedTouches[0]; if (touch) finishGesture(touch.clientX, touch.clientY); }}
+        onTouchCancel={() => { gesture.current = null; }}
+        onPointerDown={(event) => { if (event.pointerType !== "touch" && event.button === 0) beginGesture(event.clientX, event.clientY, false); }}
+        onPointerUp={(event) => { if (event.pointerType !== "touch") finishGesture(event.clientX, event.clientY); }}
+        onPointerCancel={() => { gesture.current = null; }}>
         <nav aria-label="Settings categories" className="header-settings-grid mx-auto w-full max-w-[90rem]">
           {shortcuts.map((entry) => {
             const destination = settingsGroups.flat().find((row) => row.to === entry.to);
@@ -83,9 +111,9 @@ export function SettingsPullDown({ open, onClose }: { open: boolean; onClose: ()
       <div className="flex shrink-0 justify-center pb-[var(--sab,0px)]">
         <Button variant="ghost" aria-label="Close settings panel" title="Close settings panel" className="h-11 w-24 touch-none rounded-none text-topbar-foreground hover:bg-topbar-border hover:text-topbar-foreground"
           onClick={onClose}
-          onPointerDown={(event) => { dragY.current = event.clientY; event.currentTarget.setPointerCapture(event.pointerId); }}
-          onPointerUp={(event) => { if (dragY.current !== null && event.clientY - dragY.current < -25) onClose(); dragY.current = null; }}
-          onPointerCancel={() => { dragY.current = null; }}><ChevronUp className="size-6" /></Button>
+          onPointerDown={(event) => { if (event.button !== 0) return; beginGesture(event.clientX, event.clientY, true); event.currentTarget.setPointerCapture(event.pointerId); }}
+          onPointerUp={(event) => finishGesture(event.clientX, event.clientY)}
+          onPointerCancel={() => { gesture.current = null; }}><ChevronUp className="size-6" /></Button>
       </div>
     </div>
   );
