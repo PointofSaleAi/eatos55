@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { cancelReasons, orderTotals, type OOItem, type OOrder, type OOStatus } from "@/lib/orderos-data";
-import { nextStatus, useOrderOS } from "@/lib/orderos-store";
+import { useOrderOS } from "@/lib/orderos-store";
 import { money } from "@/lib/demo-data";
 import { haptic } from "@/lib/haptics";
 import { cn } from "@/lib/utils";
@@ -119,14 +119,8 @@ export function OrderOSBoard() {
       toast.success(`Order #${o.number} moved to New Order`);
       setView("board");
     } else {
-      const next = nextStatus(o);
       os.advance(o.id);
-      const label = columns[channel].find((c) => c.id === next)?.label ?? next;
-      toast.success(`Order #${o.number} moved to ${label}`);
-      if (cols.some((c) => c.id === next)) setPhoneCol(next);
-      if (next === "completed") close();
-      else setReport(null);
-      return;
+      toast.success(`Order #${o.number}: ${actionLabel(o)}`);
     }
     close();
   };
@@ -352,6 +346,8 @@ export function OrderOSBoard() {
                             o={o}
                             now={now}
                             onOpen={() => (o.status === "new" ? setExpanded(o.id) : setSelected(o.id))}
+                            onAccept={() => doAccept(o)}
+                            onCancel={() => setCancelId(o.id)}
                           />
                         ),
                       )
@@ -457,7 +453,7 @@ function sourceTone(source: OOrder["source"]) {
   }
 }
 
-function OrderCard({ o, now, dim, onOpen }: { o: OOrder; now: number | null; dim?: boolean; onOpen: () => void }) {
+function OrderCard({ o, now, dim, onOpen, onAccept, onCancel }: { o: OOrder; now: number | null; dim?: boolean; onOpen: () => void; onAccept?: () => void; onCancel?: () => void }) {
   const t = useTimes(o, now);
   const count = o.items.reduce((s, i) => s + i.qty, 0);
   const meta =
@@ -523,6 +519,16 @@ function OrderCard({ o, now, dim, onOpen }: { o: OOrder; now: number | null; dim
           </div>
         )}
       </button>
+      {o.status === "new" && onAccept && onCancel && (
+        <div className="grid grid-cols-2 gap-2 border-t border-border p-2">
+          <button type="button" onClick={onCancel} className="min-h-ctl-sm rounded-pill bg-muted text-fs-xs font-bold text-destructive">
+            Cancel
+          </button>
+          <button type="button" onClick={onAccept} className="min-h-ctl-sm rounded-pill bg-primary text-fs-xs font-bold text-primary-foreground">
+            Accept
+          </button>
+        </div>
+      )}
     </div>
   );
 }

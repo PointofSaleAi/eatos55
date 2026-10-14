@@ -20,14 +20,6 @@ type Ctx = {
 
 const OrderOSContext = pinnedContext<Ctx | null>("eatos.orderos", null);
 
-/** One step forward in the order lifecycle; Dine In skips Ready/Delivery. */
-export function nextStatus(o: OOrder): OOrder["status"] {
-  if (o.status === "preparing") return o.channel === "dinein" ? "completed" : "ready";
-  if (o.status === "ready") return o.type === "Delivery" ? "delivery" : "completed";
-  if (o.status === "delivery") return "completed";
-  return o.status;
-}
-
 export function OrderOSProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<OOrder[]>(seedOrders);
   const [baseTime] = useState(() => Date.now());
@@ -49,7 +41,16 @@ export function OrderOSProvider({ children }: { children: ReactNode }) {
   const advance = useCallback(
     (id: string) =>
       patch(id, (o) => {
-        const next = nextStatus(o);
+        const next =
+          o.status === "preparing"
+            ? "ready"
+            : o.status === "ready"
+              ? o.type === "Delivery"
+                ? "delivery"
+                : "completed"
+              : o.status === "delivery"
+                ? "completed"
+                : o.status;
         return { ...o, status: next, readyOffset: o.status === "preparing" ? minsSinceBase() : o.readyOffset };
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
