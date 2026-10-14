@@ -33,14 +33,14 @@ import {
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/settings/detail/$topic")({
-  head: () => ({
+  head: ({ params }) => ({
     meta: [
-      { title: `Settings detail - ${brand.appName} Handheld` },
+      { title: `${settingsDetails[params.topic]?.title ?? "Settings"} - ${brand.appName} Handheld` },
       {
         name: "description",
         content: "Device, menu, payment, hardware and workforce settings detail on the handheld.",
       },
-      { property: "og:title", content: `Settings detail - ${brand.appName} Handheld` },
+      { property: "og:title", content: `${settingsDetails[params.topic]?.title ?? "Settings"} - ${brand.appName} Handheld` },
       {
         property: "og:description",
         content: "Device, menu, payment, hardware and workforce settings detail on the handheld.",

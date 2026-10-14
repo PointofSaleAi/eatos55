@@ -397,7 +397,7 @@ export function OrderPanel({ wide, ...optionsLayout }: { wide: boolean } & Optio
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="shrink-0 border-b border-border px-4 pb-2 pt-2">
-        <div className="grid w-full grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2 py-1">
+        <div className="grid w-full grid-cols-[minmax(0,0.8fr)_minmax(0,1.5fr)_auto] items-center gap-2 py-1">
           <input
             type="text"
             value={guestName}

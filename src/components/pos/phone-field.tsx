@@ -35,8 +35,8 @@ export function PhoneField({ value, onChange, country, onCountryChange, label = 
             if (!next) return;
             setTouched(Boolean(value)); onCountryChange?.(next.code);
             if (onCommit && validatePhone(value, next.code, required, mobile).valid) onCommit(value, next.code);
-          }} className={cn("shrink-0 rounded-l-row border-r border-input bg-surface px-1 text-fs-xs font-bold text-foreground outline-none", compact ? "h-8 w-[4.5rem]" : "h-11 w-[5.5rem]")}>
-            {phoneCountries.map((item) => <option key={item.code} value={item.code}>{item.code === country ? `${item.code} ${item.dial}` : `${item.name} (${item.dial})`}</option>)}
+          }} className={cn("shrink-0 rounded-l-row border-r border-input bg-surface px-1 text-fs-xs font-bold text-foreground outline-none", compact ? "h-8 w-14" : "h-11 w-[5.5rem]")}>
+            {phoneCountries.map((item) => <option key={item.code} value={item.code}>{item.code === country ? compact ? item.dial : `${item.code} ${item.dial}` : `${item.name} (${item.dial})`}</option>)}
           </select>
         )}
         <input id={id} type="tel" inputMode="tel" autoComplete="tel" aria-label={label} aria-required={required} aria-invalid={Boolean(error)} aria-describedby={error ? `${id}-error` : undefined} value={value} onChange={(event) => onChange(event.target.value)} placeholder={info.example} onBlur={() => {
