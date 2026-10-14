@@ -1,4 +1,4 @@
-import { Bell, Briefcase, FileText, Headset, Images, LifeBuoy, Mail, SlidersHorizontal, SmartphoneNfc, Tablet, UserRoundCog, Utensils, Wallet, Wifi, type LucideIcon } from "lucide-react";
+import { Bell, BookUser, Briefcase, FileText, Headset, Images, LifeBuoy, Mail, SlidersHorizontal, SmartphoneNfc, Tablet, UserRoundCog, Utensils, Wallet, Wifi, type LucideIcon } from "lucide-react";
 import type { TileColor } from "@/components/pos/settings-rows";
 
 type SettingsDestination = { to: string; label: string; icon: LucideIcon; color: TileColor; manager?: boolean };
@@ -7,6 +7,7 @@ type SettingsDestination = { to: string; label: string; icon: LucideIcon; color:
 export const settingsGroups: SettingsDestination[][] = [
   [
     { to: "/settings/general", label: "General", icon: UserRoundCog, color: "green" },
+    { to: "/settings/guestbook", label: "Guestbook", icon: BookUser, color: "slate" },
     { to: "/settings/login-screen", label: "Login Screen", icon: Images, color: "blue" },
     { to: "/settings/control-center", label: "Control Center", icon: SmartphoneNfc, color: "violet" },
     { to: "/settings/menu", label: "Menu", icon: Utensils, color: "orange" },

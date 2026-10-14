@@ -46,3 +46,5 @@
 - [x] Add voice dictation to both Settings search bars and shorten them; verify across phone, tablet and desktop
 
 - [x] orderOS end-to-end flow (board, detail, report issue, cancel, scheduled, prep/auto-accept/pause)
+- [ ] Match the recorded header settings panel with tap/drag and safe dismissal across devices
+- [ ] Add Guestbook directory, details and shared Settings shortcut; verify navigation and history
