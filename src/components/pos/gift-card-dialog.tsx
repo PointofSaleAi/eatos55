@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useWideViewport } from "@/hooks/use-layout-mode";
 import { money } from "@/lib/demo-data";
+import { moneyDigitsToAmount, popMoneyDigit, pushMoneyDigit } from "@/lib/money-entry";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
@@ -149,7 +150,7 @@ export function GiftCardDialog({
                   !amount && "text-muted-foreground/50",
                 )}
               >
-                {amount ? money(entered) : "$0.00"}
+                {money(entered)}
               </span>
             </span>
           </button>
@@ -167,10 +168,10 @@ export function GiftCardDialog({
         </div>
 
         <NumPad
+          moneyMode
           className={cn("min-h-0 flex-1", wide && "h-full self-stretch")}
           onDigit={type}
           onBackspace={backspace}
-          disableDecimal={activeField === "card"}
         />
       </div>
 
