@@ -58,20 +58,21 @@ function CreateAccount() {
   const canGoBack = useCanGoBack();
   const [step, setStep] = useState(0);
   const [pin, setPin] = useState("");
+  const [confirmPin, setConfirmPin] = useState("");
   const [channel, setChannel] = useState<"email" | "phone">("email");
   const [code, setCode] = useState("");
   const [expiresAt, setExpiresAt] = useState(0);
   const [remaining, setRemaining] = useState(300);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
-  const steps = ["Create Account", "Set PIN", "Confirmation", "OTP"];
+  const steps = ["Create Account", "Set PIN", "Confirm PIN", "Confirmation", "OTP"];
   const goBack = () => {
     setError(""); setNotice("");
-    if (step > 0) { setStep(step - 1); setCode(""); return; }
+    if (step > 0) { setStep(step - 1); setCode(""); setConfirmPin(""); return; }
     if (canGoBack) router.history.back(); else navigate({ to: "/" });
   };
   useEffect(() => {
-    if (step !== 3) return;
+    if (step !== 4) return;
     const update = () => setRemaining(Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000)));
     update();
     const timer = window.setInterval(update, 1000);
@@ -92,7 +93,11 @@ function CreateAccount() {
   const set = (k: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   const startCode = () => {
-    setError(""); setCode(""); setRemaining(300); setExpiresAt(Date.now() + 300000); setStep(3);
+    setError(""); setCode(""); setRemaining(300); setExpiresAt(Date.now() + 300000); setStep(4);
+  };
+  const confirmPinEntry = () => {
+    if (confirmPin !== pin) { setError("PINs don't match. Try again."); setConfirmPin(""); return; }
+    setError(""); setStep(3);
   };
   const validateAccount = () => {
     if (!form.first.trim() || !form.last.trim() || !form.restaurant.trim() || !form.country || !form.type) { setError("Complete all account and restaurant fields."); return; }
@@ -105,10 +110,10 @@ function CreateAccount() {
   const verify = () => {
     if (Date.now() >= expiresAt) { setError("This code has expired. Select Resend Code to try again."); return; }
     if (code !== "1234") { setError("Incorrect code. Use the demo code 1234."); return; }
-    setError(""); setPin(""); setForm((f) => ({ ...f, password: "" })); setStep(4);
+    setError(""); setPin(""); setConfirmPin(""); setForm((f) => ({ ...f, password: "" })); setStep(5);
   };
   const progress = (
-    <ol aria-label="Signup progress" className={cn(wide ? "mt-10 space-y-5" : "mb-7 grid grid-cols-4 gap-2")}>
+    <ol aria-label="Signup progress" className={cn(wide ? "mt-10 space-y-5" : "mb-7 grid grid-cols-5 gap-2")}>
       {steps.map((label, index) => (
         <li key={label} aria-current={step === index ? "step" : undefined} className={cn("flex min-w-0 items-center gap-3 text-fs-sm", wide ? "flex-row" : "flex-col text-center", index > step ? "text-muted-foreground" : "font-bold text-foreground")}>
           <span className="grid size-7 shrink-0 place-items-center rounded-pill border border-border">{index < step ? <Check className="size-4" /> : index + 1}</span>
@@ -140,7 +145,7 @@ function CreateAccount() {
                 <ArrowLeft className="size-6" />
               </Button>
             ) : null}
-            <h1 className="min-w-0 text-fs-xl font-extrabold text-foreground">{step === 0 ? "Create an Account" : step === 4 ? "Demo Signup Complete" : steps[step]}</h1>
+            <h1 className="min-w-0 text-fs-xl font-extrabold text-foreground">{step === 0 ? "Create an Account" : step === 5 ? "Demo Signup Complete" : steps[step]}</h1>
           </div>
           {!wide ? progress : null}
           {step === 0 ? (<>
@@ -282,6 +287,13 @@ function CreateAccount() {
                 </>
               ) : step === 2 ? (
                 <>
+                  <p className="mb-4 text-fs-sm text-muted-foreground">Re-enter your 4-digit PIN to confirm it.</p>
+                  <PinPad pin={confirmPin} onDigit={(digit) => { setError(""); setConfirmPin((value) => (value + digit).slice(0, 4)); }} onClear={() => setConfirmPin("")} onBackspace={() => setConfirmPin((value) => value.slice(0, -1))} className="h-[23rem] w-full" />
+                  {error ? <p role="alert" className="mt-4 text-fs-sm text-destructive">{error}</p> : null}
+                  <Button className="mt-6 h-12 w-full rounded-pill bg-accent font-bold text-accent-foreground hover:bg-accent/90" disabled={confirmPin.length !== 4} onClick={confirmPinEntry}>Continue</Button>
+                </>
+              ) : step === 3 ? (
+                <>
                   <p className="mb-6 text-fs-sm text-muted-foreground">Where do you want to send your confirmation code?</p>
                   <fieldset className="space-y-4">
                     <legend className="sr-only">Confirmation destination</legend>
@@ -294,7 +306,7 @@ function CreateAccount() {
                   </fieldset>
                   <Button className="mt-6 h-12 w-full rounded-pill bg-accent font-bold text-accent-foreground hover:bg-accent/90" onClick={startCode}>Send Code</Button>
                 </>
-              ) : step === 3 ? (
+              ) : step === 4 ? (
                 <form onSubmit={(e) => { e.preventDefault(); verify(); }}>
                   <p className="text-fs-sm text-muted-foreground">Enter the confirmation code for <span className="break-words font-bold text-foreground">{channel === "email" ? form.email : `${phoneCountryByName(form.country).dial} ${form.phone}`}</span>.</p>
                   <p className="mt-3 text-fs-sm text-muted-foreground">Demo code: <strong className="text-foreground">1234</strong>. No email or SMS is sent.</p>
@@ -313,7 +325,7 @@ function CreateAccount() {
                   <Button className="mt-6 h-12 w-full rounded-pill bg-accent font-bold text-accent-foreground hover:bg-accent/90" onClick={() => { signIn(); navigate({ to: "/access/clock-in" }); }}>Continue to Clock In</Button>
                 </>
               )}
-              {step < 4 ? <div className="mt-4 grid grid-cols-2 gap-3"><Button variant="outline" className="h-11 rounded-pill" onClick={goBack}>Back</Button><Button variant="ghost" className="h-11 rounded-pill" onClick={() => navigate({ to: "/" })}>Cancel</Button></div> : null}
+              {step < 5 ? <div className="mt-4 grid grid-cols-2 gap-3"><Button variant="outline" className="h-11 rounded-pill" onClick={goBack}>Back</Button><Button variant="ghost" className="h-11 rounded-pill" onClick={() => navigate({ to: "/" })}>Cancel</Button></div> : null}
             </div>
           )}
         </div>
