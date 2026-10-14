@@ -59,18 +59,31 @@ function useTimes(o: OOrder, now: number | null) {
 
 const actionLabel = (o: OOrder) =>
   o.status === "preparing"
-    ? "Make Order Ready"
+    ? o.channel === "dinein"
+      ? "Mark Served"
+      : "Make Order Ready"
     : o.status === "ready"
       ? o.type === "Delivery"
         ? "Out for Delivery"
-        : o.type === "Dine In"
-          ? "Mark Served"
-          : "Ready for Pick Up"
+        : "Ready for Pick Up"
       : o.status === "delivery"
         ? "Mark Delivered"
         : o.status === "scheduled"
           ? "Active Order"
           : null;
+
+const nextStatus = (o: OOrder): OOStatus =>
+  o.status === "preparing"
+    ? o.channel === "dinein"
+      ? "completed"
+      : "ready"
+    : o.status === "ready"
+      ? o.type === "Delivery"
+        ? "delivery"
+        : "completed"
+      : o.status === "delivery"
+        ? "completed"
+        : o.status;
 
 export function OrderOSBoard() {
   const os = useOrderOS();
@@ -109,8 +122,9 @@ export function OrderOSBoard() {
     haptic("light");
     os.accept(o.id, readyIn);
     setExpanded(null);
-    close();
-    toast.success(`Order #${o.number} accepted`);
+    setReport(null);
+    setPhoneCol("preparing");
+    toast.success(`Order #${o.number} moved to Preparing`);
   };
   const doAdvance = (o: OOrder) => {
     haptic("light");
@@ -118,11 +132,16 @@ export function OrderOSBoard() {
       os.activate(o.id);
       toast.success(`Order #${o.number} moved to New Order`);
       setView("board");
-    } else {
-      os.advance(o.id);
-      toast.success(`Order #${o.number}: ${actionLabel(o)}`);
+      setPhoneCol("new");
+      close();
+      return;
     }
-    close();
+    const next = nextStatus(o);
+    os.advance(o.id);
+    setPhoneCol(next);
+    setReport(null);
+    const label = columns[o.channel].find((c) => c.id === next)?.label ?? next;
+    toast.success(`Order #${o.number} moved to ${label}`);
   };
   const cancelOrder = os.orders.find((o) => o.id === cancelId) ?? null;
 

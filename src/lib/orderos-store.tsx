@@ -43,7 +43,9 @@ export function OrderOSProvider({ children }: { children: ReactNode }) {
       patch(id, (o) => {
         const next =
           o.status === "preparing"
-            ? "ready"
+            ? o.channel === "dinein"
+              ? "completed"
+              : "ready"
             : o.status === "ready"
               ? o.type === "Delivery"
                 ? "delivery"
