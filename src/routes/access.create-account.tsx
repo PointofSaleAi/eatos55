@@ -306,7 +306,7 @@ function CreateAccount() {
                   </fieldset>
                   <Button className="mt-6 h-12 w-full rounded-pill bg-accent font-bold text-accent-foreground hover:bg-accent/90" onClick={startCode}>Send Code</Button>
                 </>
-              ) : step === 3 ? (
+              ) : step === 4 ? (
                 <form onSubmit={(e) => { e.preventDefault(); verify(); }}>
                   <p className="text-fs-sm text-muted-foreground">Enter the confirmation code for <span className="break-words font-bold text-foreground">{channel === "email" ? form.email : `${phoneCountryByName(form.country).dial} ${form.phone}`}</span>.</p>
                   <p className="mt-3 text-fs-sm text-muted-foreground">Demo code: <strong className="text-foreground">1234</strong>. No email or SMS is sent.</p>
@@ -325,7 +325,7 @@ function CreateAccount() {
                   <Button className="mt-6 h-12 w-full rounded-pill bg-accent font-bold text-accent-foreground hover:bg-accent/90" onClick={() => { signIn(); navigate({ to: "/access/clock-in" }); }}>Continue to Clock In</Button>
                 </>
               )}
-              {step < 4 ? <div className="mt-4 grid grid-cols-2 gap-3"><Button variant="outline" className="h-11 rounded-pill" onClick={goBack}>Back</Button><Button variant="ghost" className="h-11 rounded-pill" onClick={() => navigate({ to: "/" })}>Cancel</Button></div> : null}
+              {step < 5 ? <div className="mt-4 grid grid-cols-2 gap-3"><Button variant="outline" className="h-11 rounded-pill" onClick={goBack}>Back</Button><Button variant="ghost" className="h-11 rounded-pill" onClick={() => navigate({ to: "/" })}>Cancel</Button></div> : null}
             </div>
           )}
         </div>
