@@ -17,8 +17,9 @@ export function CustomItemWorkspace({
 }) {
   const { addCustomItem } = usePos();
   const [name, setName] = useState("");
+  // Cash-register entry: `amount` holds cents digits, so 9 → $0.09.
   const [amount, setAmount] = useState("");
-  const price = Number(amount || "0");
+  const price = moneyDigitsToAmount(amount);
 
   const addLine = () => {
     if (price <= 0) return;
@@ -70,14 +71,8 @@ export function CustomItemWorkspace({
         <NumPad
           variant="order"
           className="w-full"
-          onDigit={(digit) =>
-            setAmount((current) => {
-              if (digit === "." && current.includes(".")) return current;
-              const next = `${current}${digit}`;
-              return next.length > 9 ? current : next;
-            })
-          }
-          onBackspace={() => setAmount((current) => current.slice(0, -1))}
+          onDigit={(digit) => setAmount((current) => pushMoneyDigit(current, digit))}
+          onBackspace={() => setAmount((current) => popMoneyDigit(current))}
           onPlus={addLine}
         />
       </div>
