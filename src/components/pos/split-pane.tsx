@@ -1,10 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ChevronRight, Inbox, Search, SlidersHorizontal, X } from "lucide-react";
+import { ChevronRight, Inbox, Mic, Search, SlidersHorizontal, X } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
 import { TicketsScreen } from "@/components/pos/tickets-screen";
 import { cn } from "@/lib/utils";
 import { settingsGroups } from "@/lib/settings-destinations";
 import { usePos } from "@/lib/pos-store";
+import { useVoiceSearch } from "@/lib/voice-search";
 
 /**
  * Two-pane layout for landscape tablet/web: list pane on the left, the routed
@@ -70,6 +71,7 @@ export function SettingsNavList() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [collapsed, setCollapsed] = useState(false);
   const [query, setQuery] = useState("");
+  const { listening, start: startVoice } = useVoiceSearch(setQuery);
   const q = query.trim().toLowerCase();
   const visibleGroups = useMemo(
     () =>
@@ -114,7 +116,7 @@ export function SettingsNavList() {
       </div>
       {!collapsed ? (
         <div className="shrink-0 border-b border-border px-3 pb-3 pt-3 lg:px-4">
-          <label className="flex min-h-ctl-lg items-center gap-2 rounded-pill border border-border bg-muted px-3">
+          <label className="flex min-h-ctl-md items-center gap-2 rounded-pill border border-border bg-muted px-3">
             <Search className="size-5 shrink-0 text-muted-foreground" />
             <input
               value={query}
@@ -126,6 +128,20 @@ export function SettingsNavList() {
               aria-label="Search settings"
               className="min-h-tap min-w-0 flex-1 bg-transparent text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
             />
+            <button
+              type="button"
+              onClick={startVoice}
+              aria-label="Search settings by voice"
+              aria-pressed={listening}
+              className={cn(
+                "grid size-7 tap-safe shrink-0 place-items-center rounded-pill transition-colors",
+                listening
+                  ? "animate-pulse text-accent"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <Mic className="size-4" />
+            </button>
             {query ? (
               <button
                 type="button"

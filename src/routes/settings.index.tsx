@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/pos/primitives";
 import { PinSheet } from "@/components/pos/pin-sheet";
 import { cn } from "@/lib/utils";
 import { SearchDock } from "@/components/pos/search-dock";
+import { useVoiceSearch } from "@/lib/voice-search";
 import { usePos } from "@/lib/pos-store";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 
@@ -47,6 +48,7 @@ function SettingsHub() {
   const confirmAction = useConfirm();
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
+  const { listening, start: startVoice } = useVoiceSearch(setQuery);
   const [pinOpen, setPinOpen] = useState(false);
   const wide = useWideLayout();
 
@@ -107,22 +109,40 @@ function SettingsHub() {
 
         </div>
 
-        <button
-          type="button"
-          onClick={() => setSearching(true)}
-          className="mt-4 flex min-h-ctl-lg w-full items-center gap-3 rounded-pill border border-border bg-surface px-4 text-left transition-colors hover:bg-muted"
-        >
-          <Search className="size-6 shrink-0 text-muted-foreground" />
-          <span
+        <div className="mt-4 flex min-h-ctl-md w-full items-center gap-2 rounded-pill border border-border bg-surface px-4 transition-colors hover:bg-muted">
+          <button
+            type="button"
+            onClick={() => setSearching(true)}
+            className="flex min-h-tap min-w-0 flex-1 items-center gap-3 text-left"
+          >
+            <Search className="size-6 shrink-0 text-muted-foreground" />
+            <span
+              className={cn(
+                "min-w-0 flex-1 truncate text-fs-sm",
+                query ? "text-foreground" : "text-muted-foreground",
+              )}
+            >
+              {query || "Search"}
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setSearching(true);
+              startVoice();
+            }}
+            aria-label="Search settings by voice"
+            aria-pressed={listening}
             className={cn(
-              "min-w-0 flex-1 truncate text-fs-sm",
-              query ? "text-foreground" : "text-muted-foreground",
+              "grid size-8 tap-safe shrink-0 place-items-center rounded-pill transition-colors",
+              listening
+                ? "animate-pulse text-accent"
+                : "text-muted-foreground hover:text-foreground",
             )}
           >
-            {query || "Search"}
-          </span>
-          <Mic className="size-6 shrink-0 text-muted-foreground" />
-        </button>
+            <Mic className="size-6" />
+          </button>
+        </div>
 
         <SearchDock
           open={searching}
@@ -130,6 +150,8 @@ function SettingsHub() {
           onChange={setQuery}
           onClose={() => setSearching(false)}
           placeholder="Search settings"
+          compact
+          voice={{ listening, onStart: startVoice }}
         />
 
         <GroupCard className="mt-6">
