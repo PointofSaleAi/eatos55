@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { phoneCountries, phoneCountry, validatePhone, type PhoneCountry } from "@/lib/phone";
 
@@ -18,6 +18,11 @@ export function PhoneField({ value, onChange, country, onCountryChange, label = 
 }) {
   const id = useId();
   const [touched, setTouched] = useState(false);
+  const previousCountry = useRef(country);
+  useEffect(() => {
+    if (previousCountry.current !== country && value.trim()) setTouched(true);
+    previousCountry.current = country;
+  }, [country, value]);
   const result = validatePhone(value, country, required, mobile);
   const error = (touched || forceError) && !result.valid ? result.error : "";
   const info = phoneCountry(country);

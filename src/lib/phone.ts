@@ -1,10 +1,10 @@
-import { parsePhoneNumberFromString, validatePhoneNumberLength, type CountryCode } from "libphonenumber-js/max";
+import { parsePhoneNumberFromString, validatePhoneNumberLength } from "libphonenumber-js/max";
 import { z } from "zod";
 
 export const phoneCountries = [
   { code: "US", name: "United States", dial: "+1", example: "(202) 555-0123" },
   { code: "CA", name: "Canada", dial: "+1", example: "(416) 555-0123" },
-  { code: "GB", name: "United Kingdom", dial: "+44", example: "07700 900123" },
+  { code: "GB", name: "United Kingdom", dial: "+44", example: "07712 345678" },
   { code: "AU", name: "Australia", dial: "+61", example: "0412 345 678" },
   { code: "IN", name: "India", dial: "+91", example: "98765 43210" },
 ] as const;
@@ -22,9 +22,9 @@ export function inferPhoneCountry(value: string, saved?: PhoneCountry): PhoneCou
 // Only normalize permitted punctuation, never turn letters/extensions into digits.
 function internationalInput(value: string, country: PhoneCountry) {
   const compact = value.replace(/[\s().-]/g, "");
+  if (country === "AU" && compact.startsWith("0011")) return `+${compact.slice(4)}`;
   if (compact.startsWith("00")) return `+${compact.slice(2)}`;
   if ((country === "US" || country === "CA") && compact.startsWith("011")) return `+${compact.slice(3)}`;
-  if (country === "AU" && compact.startsWith("0011")) return `+${compact.slice(4)}`;
   return compact;
 }
 export const phoneSchema = z.object({
