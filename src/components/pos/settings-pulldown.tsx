@@ -89,12 +89,13 @@ export function SettingsPullDown({ open, onClose }: { open: boolean; onClose: ()
       onClickCapture={(event) => { if (Date.now() < suppressClickUntil.current) { event.preventDefault(); event.stopPropagation(); } }}
       onClick={(event) => { if (!(event.target as HTMLElement).closest("a,button")) onClose(); }}>
       <div ref={bodyRef} className="header-settings-body no-scrollbar min-h-0 flex-1 overflow-y-auto"
+        onDragStart={(event) => event.preventDefault()}
         onTouchStart={(event) => { const touch = event.touches[0]; if (touch && event.touches.length === 1) beginGesture(touch.clientX, touch.clientY, false); else gesture.current = null; }}
         onTouchEnd={(event) => { const touch = event.changedTouches[0]; if (touch) finishGesture(touch.clientX, touch.clientY); }}
         onTouchCancel={() => { gesture.current = null; }}
         onPointerDown={(event) => { if (event.pointerType !== "touch" && event.button === 0) beginGesture(event.clientX, event.clientY, false); }}
         onPointerUp={(event) => { if (event.pointerType !== "touch") finishGesture(event.clientX, event.clientY); }}
-        onPointerCancel={() => { gesture.current = null; }}>
+        onPointerCancel={(event) => { if (event.pointerType !== "touch") gesture.current = null; }}>
         <nav aria-label="Settings categories" className="header-settings-grid mx-auto w-full max-w-[90rem]">
           {shortcuts.map((entry) => {
             const destination = settingsGroups.flat().find((row) => row.to === entry.to);
