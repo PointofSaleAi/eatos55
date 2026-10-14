@@ -91,6 +91,7 @@ type RefConfig = {
   inputLabel: string;
   placeholder?: string;
   numeric?: boolean;
+  contactMode?: "email-phone" | "card-phone";
   reasons?: string[];
   confirmLabel?: string;
   method: TenderMethod;
@@ -357,6 +358,7 @@ function PaymentMethod() {
               title: "Pay by Link",
               hint: "Send a secure payment link to the guest by email or SMS.",
               inputLabel: "Email or mobile number",
+              contactMode: "email-phone",
               placeholder: "e.g. 07700 900123",
               numeric: false,
               method: "other",
@@ -480,6 +482,7 @@ function PaymentMethod() {
               title: "Loyalty lookup",
               hint: "Scan the guest loyalty card, or key the card number or phone number.",
               inputLabel: "Card or phone number",
+              contactMode: "card-phone",
               placeholder: "e.g. 415 555 0132",
               numeric: true,
               method: "loyalty",

@@ -16,6 +16,7 @@ import {
 import { money } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 import { useRequireTapToPayDevice } from "@/lib/device";
+import { phoneSignInError } from "@/lib/phone";
 
 export const Route = createFileRoute("/tap-to-pay/setup/$from")({
   validateSearch: (search: Record<string, unknown>): SetupSearch =>
@@ -490,8 +491,7 @@ function TapToPaySetup() {
               This lets you use {TTP} with a different Apple account.
             </p>
             <input
-              type="email"
-              inputMode="email"
+              type="text"
               autoComplete="username"
               value={altAppleId}
               onChange={(e) => setAltAppleId(e.target.value)}
@@ -511,7 +511,9 @@ function TapToPaySetup() {
             </p>
             <button
               type="button"
+              disabled={Boolean(phoneSignInError(altAppleId))}
               onClick={() => {
+                if (phoneSignInError(altAppleId)) return;
                 setAppleIdSheet(false);
                 setTermsSheet(true);
               }}

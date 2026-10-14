@@ -6,6 +6,10 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { useWideViewport } from "@/hooks/use-layout-mode";
 import { money } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
+import { PhoneField } from "@/components/pos/phone-field";
+import { validatePhone, type PhoneCountry } from "@/lib/phone";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 
 const keys = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0"];
 
@@ -26,6 +30,7 @@ export function ReferenceTenderDialog({
   confirmLabel,
   onClose,
   onConfirm,
+  contactMode,
 }: {
   open: boolean;
   title: string;
@@ -39,16 +44,22 @@ export function ReferenceTenderDialog({
   confirmLabel?: string | undefined;
   onClose: () => void;
   onConfirm: (value: string) => void;
+  contactMode?: "email-phone" | "card-phone" | undefined;
 }) {
   const wide = useWideViewport();
   const [value, setValue] = useState("");
+  const [entryMode, setEntryMode] = useState<"other" | "phone">("other");
+  const [country, setCountry] = useState<PhoneCountry>("US");
   const { dragStyle, handleProps } = useSheetDrag(onClose);
 
   useEffect(() => {
-    if (open) setValue("");
+    if (open) { setValue(""); setEntryMode("other"); }
   }, [open]);
 
-  const ready = value.trim().length >= (numeric ? 3 : 2);
+  const phoneResult = validatePhone(value, country, true);
+  const ready = contactMode && entryMode === "phone" ? phoneResult.valid
+    : contactMode === "email-phone" ? z.string().trim().email().max(255).safeParse(value).success
+    : value.trim().length >= (numeric ? 3 : 2);
 
   const body = (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -76,7 +87,11 @@ export function ReferenceTenderDialog({
           </div>
         ) : null}
 
-        <label className="mt-3 block">
+        {contactMode ? <div className="mt-3 grid grid-cols-2 gap-2" role="group" aria-label="Lookup using">
+          <Button variant={entryMode === "other" ? "secondary" : "outline"} aria-pressed={entryMode === "other"} onClick={() => { setEntryMode("other"); setValue(""); }}>{contactMode === "email-phone" ? "Email" : "Card number"}</Button>
+          <Button variant={entryMode === "phone" ? "secondary" : "outline"} aria-pressed={entryMode === "phone"} onClick={() => { setEntryMode("phone"); setValue(""); }}>Mobile number</Button>
+        </div> : null}
+        {contactMode && entryMode === "phone" ? <PhoneField className="mt-3" label={inputLabel} value={value} onChange={setValue} country={country} onCountryChange={setCountry} required /> : <label className="mt-3 block">
           <span className="text-fs-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">
             {inputLabel}
           </span>
@@ -84,12 +99,13 @@ export function ReferenceTenderDialog({
             value={value}
             onChange={(e) => setValue(e.target.value)}
             inputMode={numeric ? "numeric" : "text"}
-            placeholder={placeholder}
+            placeholder={contactMode === "email-phone" ? "Email address" : placeholder}
+            aria-label={contactMode === "email-phone" ? "Email address for payment link" : inputLabel}
             className="mt-1 min-h-ctl-lg w-full rounded-row border border-border bg-background px-3 text-fs-base font-bold tabular-nums text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground focus:border-primary"
           />
-        </label>
+        </label>}
 
-        {numeric ? (
+        {numeric && entryMode !== "phone" ? (
           <div className="mx-auto mt-3 grid w-full max-w-sm grid-cols-3 gap-2">
             {keys.map((k) => (
               <button
@@ -128,7 +144,7 @@ export function ReferenceTenderDialog({
           <button
             type="button"
             disabled={!ready}
-            onClick={() => onConfirm(value.trim())}
+            onClick={() => { if (!ready) return; onConfirm(contactMode && entryMode === "phone" ? phoneResult.phone : value.trim()); }}
             className="h-ctl-lg w-full rounded-row bg-primary text-fs-base font-extrabold uppercase tracking-[0.06em] text-primary-foreground transition-colors disabled:opacity-40"
           >
             {confirmLabel ?? `Charge ${money(due)}`}
