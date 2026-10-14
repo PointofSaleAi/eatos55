@@ -113,7 +113,7 @@ function CreateAccount() {
     setError(""); setPin(""); setConfirmPin(""); setForm((f) => ({ ...f, password: "" })); setStep(5);
   };
   const progress = (
-    <ol aria-label="Signup progress" className={cn(wide ? "mt-10 space-y-5" : "mb-7 grid grid-cols-4 gap-2")}>
+    <ol aria-label="Signup progress" className={cn(wide ? "mt-10 space-y-5" : "mb-7 grid grid-cols-5 gap-2")}>
       {steps.map((label, index) => (
         <li key={label} aria-current={step === index ? "step" : undefined} className={cn("flex min-w-0 items-center gap-3 text-fs-sm", wide ? "flex-row" : "flex-col text-center", index > step ? "text-muted-foreground" : "font-bold text-foreground")}>
           <span className="grid size-7 shrink-0 place-items-center rounded-pill border border-border">{index < step ? <Check className="size-4" /> : index + 1}</span>
