@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { ClockPanel } from "@/components/pos/clock-panel";
 import { PinPad } from "@/components/pos/pin-pad";
+import { Wordmark } from "@/components/pos/brand";
 import {
   MoodDetailStep,
   MoodStep,
