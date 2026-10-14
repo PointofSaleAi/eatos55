@@ -58,20 +58,21 @@ function CreateAccount() {
   const canGoBack = useCanGoBack();
   const [step, setStep] = useState(0);
   const [pin, setPin] = useState("");
+  const [confirmPin, setConfirmPin] = useState("");
   const [channel, setChannel] = useState<"email" | "phone">("email");
   const [code, setCode] = useState("");
   const [expiresAt, setExpiresAt] = useState(0);
   const [remaining, setRemaining] = useState(300);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
-  const steps = ["Create Account", "Set PIN", "Confirmation", "OTP"];
+  const steps = ["Create Account", "Set PIN", "Confirm PIN", "Confirmation", "OTP"];
   const goBack = () => {
     setError(""); setNotice("");
-    if (step > 0) { setStep(step - 1); setCode(""); return; }
+    if (step > 0) { setStep(step - 1); setCode(""); setConfirmPin(""); return; }
     if (canGoBack) router.history.back(); else navigate({ to: "/" });
   };
   useEffect(() => {
-    if (step !== 3) return;
+    if (step !== 4) return;
     const update = () => setRemaining(Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000)));
     update();
     const timer = window.setInterval(update, 1000);
