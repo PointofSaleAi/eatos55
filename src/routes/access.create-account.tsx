@@ -96,7 +96,7 @@ function CreateAccount() {
   const validateAccount = () => {
     if (!form.first.trim() || !form.last.trim() || !form.restaurant.trim() || !form.country || !form.type) { setError("Complete all account and restaurant fields."); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) { setError("Enter a valid email address."); return; }
-    if (!/^\d{10}$/.test(form.phone.replace(/\D/g, ""))) { setError("Enter a valid 10-digit U.S. mobile number."); return; }
+    if (!isValidPhoneFor(phoneCountryByName(form.country), form.phone)) { setError(phoneErrorFor(phoneCountryByName(form.country))); return; }
     if (form.password.length < 8) { setError("Use at least 8 characters for your password."); return; }
     if (!agree) { setError("Accept the Seller Agreement and e-Sign Consent to continue."); return; }
     setError(""); setStep(1);
@@ -191,14 +191,14 @@ function CreateAccount() {
         <Field label="Phone Number">
           <div className="flex h-12 items-center">
             <span className="flex h-8 tap-safe shrink-0 items-center gap-2 border-r border-input px-3 text-fs-sm font-bold text-foreground">
-              <span aria-hidden>🇺🇸</span> +1
+              <span aria-hidden>{phoneCountryByName(form.country).flag}</span> {phoneCountryByName(form.country).dial}
             </span>
             <input
               className="h-full min-w-0 flex-1 bg-transparent px-3 text-fs-sm text-foreground outline-none placeholder:text-muted-foreground"
               inputMode="tel"
-              placeholder="(123) 456 7890"
+              placeholder={phoneCountryByName(form.country).placeholder}
               value={form.phone}
-              onChange={(e) => set("phone")(e.target.value)}
+              onChange={(e) => set("phone")(formatPhoneFor(phoneCountryByName(form.country), e.target.value))}
             />
           </div>
         </Field>
