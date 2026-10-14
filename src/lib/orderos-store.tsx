@@ -49,16 +49,7 @@ export function OrderOSProvider({ children }: { children: ReactNode }) {
   const advance = useCallback(
     (id: string) =>
       patch(id, (o) => {
-        const next =
-          o.status === "preparing"
-            ? "ready"
-            : o.status === "ready"
-              ? o.type === "Delivery"
-                ? "delivery"
-                : "completed"
-              : o.status === "delivery"
-                ? "completed"
-                : o.status;
+        const next = nextStatus(o);
         return { ...o, status: next, readyOffset: o.status === "preparing" ? minsSinceBase() : o.readyOffset };
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
