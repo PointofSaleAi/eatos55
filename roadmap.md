@@ -42,4 +42,4 @@
 
 - [x] Complete the four-step demo signup flow and verify navigation, validation, code expiry and completion across devices
 
-- [ ] Apply country-aware phone validation to signup, recovery, guest/cart entry, settings and sign-in; test five countries across devices
+- [x] Apply country-aware phone validation to signup, recovery, guest/cart entry, settings, sign-in and payment contacts; test five countries across devices
