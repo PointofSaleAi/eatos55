@@ -420,7 +420,37 @@ function ColumnHeader({ label, count, onSort }: { label: string; count: number; 
 }
 
 function waitTone(sec: number) {
-  return sec < 60 ? "bg-success text-success-foreground" : sec < 300 ? "bg-warning text-warning-foreground" : "bg-destructive text-destructive-foreground";
+  // Recording: fresh orders red, then blue, then green the longer they wait.
+  return sec < 60 ? "bg-tile-red text-white" : sec < 300 ? "bg-tile-blue text-white" : "bg-tile-green text-white";
+}
+
+function stripTone(status: OOrder["status"]) {
+  switch (status) {
+    case "preparing":
+    case "cancelled":
+      return "bg-tile-red text-white";
+    case "ready":
+      return "bg-tile-purple text-white";
+    case "delivery":
+      return "bg-tile-yellow text-foreground";
+    case "completed":
+      return "bg-tile-pink text-white";
+    default:
+      return "bg-muted text-foreground";
+  }
+}
+
+function sourceTone(source: OOrder["source"]) {
+  switch (source) {
+    case "Grubhub":
+      return "text-tile-orange";
+    case "Uber Eats":
+      return "text-tile-green";
+    case "DoorDash":
+      return "text-tile-red";
+    default:
+      return "opacity-80";
+  }
 }
 
 function OrderCard({ o, now, dim, onOpen, onAccept, onCancel }: { o: OOrder; now: number | null; dim?: boolean; onOpen: () => void; onAccept?: () => void; onCancel?: () => void }) {
