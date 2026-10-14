@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { NumPad } from "@/components/pos/numpad";
 import { money } from "@/lib/demo-data";
+import { moneyDigitsToAmount, popMoneyDigit, pushMoneyDigit } from "@/lib/money-entry";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
@@ -26,8 +27,9 @@ export function TipSheet({
     .map((p) => Number.parseFloat(p.replace("%", "").trim()))
     .filter((n) => Number.isFinite(n) && n > 0);
 
+  // Cash-register entry: `custom` holds cents digits, so 9 → $0.09.
   const amount = custom
-    ? Math.round(Number.parseFloat(custom || "0") * 100) / 100
+    ? moneyDigitsToAmount(custom)
     : preset != null
       ? Math.round(base * (preset / 100) * 100) / 100
       : 0;
@@ -81,17 +83,18 @@ export function TipSheet({
         {settings.customTip === "Allowed" ? <div className="mt-3 flex min-h-ctl-lg items-center justify-between rounded-card border border-border bg-surface px-4">
           <span className="text-fs-sm font-bold text-muted-foreground">Custom tip</span>
           <span className="text-fs-xl font-extrabold text-foreground">
-            {custom ? `$${custom}` : money(amount)}
+            {money(amount)}
           </span>
         </div> : null}
 
         {settings.customTip === "Allowed" ? <NumPad
+          moneyMode
           className="mt-3"
           onDigit={(d) => {
             setPreset(null);
-            setCustom((v) => (v + d).replace(/^0+(?=\d)/, "").slice(0, 7));
+            setCustom((v) => pushMoneyDigit(v, d));
           }}
-          onBackspace={() => setCustom((v) => v.slice(0, -1))}
+          onBackspace={() => setCustom((v) => popMoneyDigit(v))}
         /> : null}
 
         <div className="mt-3 flex gap-2">

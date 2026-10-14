@@ -6,6 +6,12 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useWideViewport } from "@/hooks/use-layout-mode";
 import { cashDenominations, money } from "@/lib/demo-data";
+import {
+  amountToMoneyDigits,
+  moneyDigitsToAmount,
+  popMoneyDigit,
+  pushMoneyDigit,
+} from "@/lib/money-entry";
 import { cn } from "@/lib/utils";
 
 type NoteCounts = Record<number, number>;
@@ -39,36 +45,30 @@ export function AmountEntryPanel({
   wide?: boolean;
   className?: string;
 }) {
-  const [amount, setAmount] = useState(initialAmount);
+  // Cash-register entry: `amount` holds cents digits, so 9 → $0.09, 99 → $0.99.
+  const [amount, setAmount] = useState(() => amountToMoneyDigits(Number(initialAmount || "0")));
   const [notes, setNotes] = useState<NoteCounts>({});
-  const entered = Number(amount || "0");
+  const entered = moneyDigitsToAmount(amount);
   const change = round(entered - due);
   const short = entered > 0 && entered < due;
   const counted = cashDenominations.filter((d) => (notes[d] ?? 0) > 0);
 
   const type = (d: string) => {
     setNotes({});
-    setAmount((cur) => {
-      if (d === "." && cur.includes(".")) return cur;
-      const next = `${cur}${d}`;
-      return next.length > 9 ? cur : next;
-    });
+    setAmount((cur) => pushMoneyDigit(cur, d));
   };
 
   const bumpNote = (d: number, delta: number) => {
     setNotes((cur) => {
       const next = { ...cur, [d]: Math.max(0, (cur[d] ?? 0) + delta) };
-      setAmount(() => {
-        const total = notesTotal(next);
-        return total > 0 ? String(total) : "";
-      });
+      setAmount(() => amountToMoneyDigits(notesTotal(next)));
       return next;
     });
   };
 
   const quick = (value: number) => {
     setNotes({});
-    setAmount(String(round(value)));
+    setAmount(amountToMoneyDigits(round(value)));
   };
 
   const summary = (
@@ -175,9 +175,10 @@ export function AmountEntryPanel({
 
   const pad = (
     <NumPad
+      moneyMode
       className={cn("min-h-0 flex-1", wide && "h-full self-stretch")}
       onDigit={type}
-      onBackspace={() => setAmount((cur) => cur.slice(0, -1))}
+      onBackspace={() => setAmount((cur) => popMoneyDigit(cur))}
     />
   );
 

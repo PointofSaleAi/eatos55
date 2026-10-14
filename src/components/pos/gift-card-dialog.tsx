@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useWideViewport } from "@/hooks/use-layout-mode";
 import { money } from "@/lib/demo-data";
+import { moneyDigitsToAmount, popMoneyDigit, pushMoneyDigit } from "@/lib/money-entry";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
@@ -44,7 +45,8 @@ export function GiftCardDialog({
   }, [open]);
 
   const balance = cardNumber ? giftCardBalance(cardNumber) : null;
-  const entered = Number(amount || "0");
+  // Cash-register entry: `amount` holds cents digits, so 9 → $0.09.
+  const entered = moneyDigitsToAmount(amount);
   const cardReady = cardNumber.length >= 8;
   const isNewCard = cardReady && balance === null;
   const canCharge = cardReady && entered > 0;
@@ -61,18 +63,14 @@ export function GiftCardDialog({
       });
       return;
     }
-    setAmount((cur) => {
-      if (d === "." && cur.includes(".")) return cur;
-      const next = `${cur}${d}`;
-      return next.length > 9 ? cur : next;
-    });
+    setAmount((cur) => pushMoneyDigit(cur, d));
   };
 
   const backspace = () => {
     if (activeField === "card") {
       setCardNumber((cur) => cur.slice(0, -1));
     } else {
-      setAmount((cur) => cur.slice(0, -1));
+      setAmount((cur) => popMoneyDigit(cur));
     }
   };
 
@@ -152,7 +150,7 @@ export function GiftCardDialog({
                   !amount && "text-muted-foreground/50",
                 )}
               >
-                {amount ? money(entered) : "$0.00"}
+                {money(entered)}
               </span>
             </span>
           </button>
@@ -170,10 +168,10 @@ export function GiftCardDialog({
         </div>
 
         <NumPad
+          moneyMode
           className={cn("min-h-0 flex-1", wide && "h-full self-stretch")}
           onDigit={type}
           onBackspace={backspace}
-          disableDecimal={activeField === "card"}
         />
       </div>
 

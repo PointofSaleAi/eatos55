@@ -43,6 +43,7 @@ export function NumPad({
   onPlus,
   variant = "plain",
   disableDecimal,
+  moneyMode = false,
   className,
 }: {
   onDigit: (d: string) => void;
@@ -51,6 +52,11 @@ export function NumPad({
   variant?: "plain" | "order";
   /** Greys out the "." key — used when the pad targets a digits-only field. */
   disableDecimal?: boolean;
+  /**
+   * Cash-register amount entry: the bottom row becomes 0 / 00 / backspace
+   * (no decimal key) because digits fill from the cents upward.
+   */
+  moneyMode?: boolean;
   className?: string;
 }) {
   const digits = ["7", "8", "9", "4", "5", "6", "1", "2", "3"];
@@ -115,8 +121,17 @@ export function NumPad({
           {d}
         </Key>
       ))}
-      <Key onPress={() => onDigit(".")} disabled={disableDecimal ?? false}>.</Key>
-      <Key onPress={() => onDigit("0")}>0</Key>
+      {moneyMode ? (
+        <>
+          <Key onPress={() => onDigit("0")}>0</Key>
+          <Key onPress={() => onDigit("00")}>00</Key>
+        </>
+      ) : (
+        <>
+          <Key onPress={() => onDigit(".")} disabled={disableDecimal ?? false}>.</Key>
+          <Key onPress={() => onDigit("0")}>0</Key>
+        </>
+      )}
       <Key onPress={onBackspace} label="Backspace">
         <Delete className="size-7" />
       </Key>
