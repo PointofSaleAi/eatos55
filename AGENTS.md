@@ -29,3 +29,4 @@
 - Voice dictation in any search field goes through `useVoiceSearch` in `src/lib/voice-search.ts`, so every mic shares one listening state, the same notices, and never submits or overwrites text when nothing is heard.
 - orderOS owns its own order lifecycle in `src/lib/orderos-store.tsx` and never routes to Tickets; its board, detail and issue flows stay in-page so status changes persist across navigation.
 - Network Servers uses a dedicated connection screen with merged shared demo preferences; sync, offline numbering and edgeOS controls never perform real network operations or alter order numbering.
+- Hardware printer topics share dedicated screens and merged demo printer preferences; configuration is separate from checkout and receipt execution, and detection/test actions never claim live hardware results.

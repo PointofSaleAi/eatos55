@@ -35,6 +35,7 @@ import { TimedPricing } from "@/components/pos/timed-pricing";
 import { WorkforceEmployees } from "@/components/pos/workforce-employees";
 import { AboutSettings } from "@/components/pos/about-settings";
 import { ServerConnection } from "@/components/pos/server-connection";
+import { Printers, PrinterSettings } from "@/components/pos/printer-settings";
 import { LegalDocViewer, docTopics } from "@/components/pos/legal-doc-viewer";
 
 export const Route = createFileRoute("/settings/detail/$topic")({
@@ -82,6 +83,9 @@ function SettingsDetail() {
   if (topic === "employee") return <WorkforceEmployees />;
   if (topic === "about") return <AboutSettings />;
   if (topic === "servers") return <ServerConnection />;
+  if (topic === "printer") return <Printers />;
+  if (topic === "paired-printers") return <PrinterSettings paired />;
+  if (topic === "printer-advanced") return <PrinterSettings />;
   if (docTopics[topic]) return <LegalDocViewer topic={topic} />;
 
   if (!screen) {
