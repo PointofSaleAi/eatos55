@@ -65,7 +65,7 @@ function TicketDetail() {
   const payments = ticket.payments ?? [];
   const paid = payments.reduce((s, p) => s + p.amount, 0);
   const paymentsSection = closed ? <ClosedPaymentRows ticket={ticket} onRefund={() => setRefundOpen(true)} /> : payments.length ? (
-    <div className={cn("overflow-hidden", landscape ? "mt-3 border-t border-border" : "mt-3 rounded-card border border-border bg-surface")}>
+    <div className={cn("overflow-hidden", landscape ? "shrink-0 border-t border-border bg-surface" : "mt-3 rounded-card border border-border bg-surface")}>
       <Button variant="ghost" onClick={() => setPaidOpen((v) => !v)} aria-expanded={paidOpen}
         className="h-auto min-h-row w-full justify-start gap-3 whitespace-normal px-3 py-3 text-left">
         <span className="min-w-0 flex-1">
@@ -121,8 +121,8 @@ function TicketDetail() {
                 </div>
               </li>)}
             </ul>
-            {paymentsSection}
           </div>
+          {paymentsSection}
           <div data-ticket-cart-totals className="shrink-0 border-t border-border bg-surface px-3 pt-1.5">
             <dl className="text-fs-sm">
               <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground"><dt>Sub Total</dt><dd className="tabular-nums">{money(subTotal)}</dd></div>
@@ -200,6 +200,7 @@ function TicketDetail() {
           ))}
         </Card>
 
+        {paymentsSection}
         <Card className="mt-3 px-4 py-3">
           <Row label="Sub Total" value={money(subTotal)} />
           <Row label={brand.taxLabel} value={money(tax)} />
@@ -210,52 +211,6 @@ function TicketDetail() {
           </div>
         </Card>
 
-        {closed ? <ClosedPaymentRows ticket={ticket} onRefund={() => setRefundOpen(true)} /> : payments.length ? (
-          <Card className="mt-3 overflow-hidden">
-            <button
-              type="button"
-              onClick={() => setPaidOpen((v) => !v)}
-              aria-expanded={paidOpen}
-              className="flex min-h-row w-full items-center gap-3 px-4 py-3 text-left"
-            >
-              <span className="min-w-0 flex-1">
-                <span className="block t-row text-foreground">Paid</span>
-                <span className="block t-caption text-muted-foreground">
-                  {payments[payments.length - 1]?.at} · {money(paid)}
-                </span>
-              </span>
-              <ChevronDown
-                className={cn(
-                  "size-5 shrink-0 text-muted-foreground transition-transform",
-                  paidOpen && "rotate-180",
-                )}
-              />
-            </button>
-            {paidOpen ? (
-              <div className="border-t border-border">
-                <div className="grid grid-cols-3 gap-2 px-4 py-2">
-                  <span className="t-caption uppercase text-muted-foreground">Transaction no.</span>
-                  <span className="t-caption uppercase text-muted-foreground">Method</span>
-                  <span className="t-caption text-right uppercase text-muted-foreground">
-                    Amount
-                  </span>
-                </div>
-                {payments.map((p) => (
-                  <div
-                    key={`${p.no}-${p.method}`}
-                    className="grid grid-cols-3 gap-2 border-t border-border px-4 py-3"
-                  >
-                    <span className="truncate text-fs-sm font-bold text-foreground">{p.no}</span>
-                    <span className="truncate text-fs-sm text-foreground">{p.method}</span>
-                    <span className="text-right text-fs-sm font-extrabold text-foreground">
-                      {money(p.amount)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-          </Card>
-        ) : null}
       </ScreenBody>
       </>}
 
