@@ -2,7 +2,6 @@ import { ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, GroupLabel, IconValueRow, settingsRowClass } from "@/components/pos/settings-rows";
-import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
 const softwareRows: [string, string][] = [
@@ -29,7 +28,6 @@ function openTermsRow(row: { label: string; url?: string }) {
 }
 
 export function AboutSettings() {
-  const { settings } = usePos();
 
   const deviceRows: [string, string][] = [
     ["Device Name", "Point of Sale"],
