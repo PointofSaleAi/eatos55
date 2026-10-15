@@ -8,6 +8,7 @@ import { setHapticsEnabled } from "@/lib/haptics";
 import { referenceSchedules, type RestaurantSchedule } from "@/lib/restaurant-schedules";
 import { referenceTimedPricing, type TimedPricingRule } from "@/lib/timed-pricing";
 import { referenceTaxes, type TaxRule } from "@/lib/tax-settings";
+import { referenceDiscounts, type DiscountRule } from "@/lib/discount-settings";
 import { defaultDevicePreferences, type DevicePreferences } from "@/lib/device-settings";
 import { defaultPeripheralPreferences, type PeripheralPreferences } from "@/lib/peripheral-settings";
 import { defaultPrinterPreferences, type PrinterPreferences } from "@/lib/printer-settings";
@@ -394,6 +395,7 @@ export type AppSettings = {
   restaurantSchedules: RestaurantSchedule[];
   timedPricingRules: TimedPricingRule[];
   taxRules: TaxRule[];
+  discountRules: DiscountRule[];
   discounts: SettingsListItem[];
   serviceCharges: SettingsListItem[];
   timedPricing: SettingsListItem[];
@@ -570,6 +572,7 @@ const defaultSettings: AppSettings = {
   restaurantSchedules: referenceSchedules,
   timedPricingRules: referenceTimedPricing,
   taxRules: referenceTaxes,
+  discountRules: referenceDiscounts,
   discounts: [
     { id: "d1", name: "Staff Meal", detail: "50% · whole order" },
     { id: "d2", name: "Happy Hour", detail: "20% · drinks" },

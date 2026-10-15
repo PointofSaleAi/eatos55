@@ -18,7 +18,7 @@ function ErrorLine({ text }: { text: string }) {
   return <p role="alert" className="mt-1 flex items-center gap-1.5 t-caption text-destructive"><AlertCircle className="size-3.5 shrink-0" />{text}</p>;
 }
 
-function Picker({ title, options, selected, onChange, onClose }: { title: string; options: string[]; selected: string[]; onChange: (next: string[]) => void; onClose: () => void }) {
+export function Picker({ title, options, selected, onChange, onClose }: { title: string; options: string[]; selected: string[]; onChange: (next: string[]) => void; onClose: () => void }) {
   const [query, setQuery] = useState("");
   const shown = options.filter(o => o.toLowerCase().includes(query.trim().toLowerCase()));
   const allSelected = shown.length > 0 && shown.every(o => selected.includes(o));
