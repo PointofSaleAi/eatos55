@@ -54,3 +54,5 @@
 - [x] Smooth settings drawer collapse and upward swipe dismissal; verify arrows, scrolling and gestures across devices
 
 - [x] Replace pink hover/highlight with the shared grey across settings rows, menus, selects and toggles; verified phone, tablet, desktop
+
+- [x] Remove the dividers splitting the Auto End of Day, Print Employee Data and Send Daily Reports rows from their own descriptions
