@@ -3,7 +3,6 @@ import { brand, isTenderVisible, tenderLabel } from "@/lib/brand";
 import {
   BadgeDollarSign,
   Banknote,
-  BedDouble,
   Bike,
   Building2,
   CalendarClock,
@@ -24,6 +23,7 @@ import {
   Utensils,
   Wallet,
 } from "lucide-react";
+import { RoomServiceIcon } from "@/components/pos/icons/room-service-icon";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AmountEntry } from "@/components/pos/amount-entry";
@@ -521,7 +521,7 @@ function PaymentMethod() {
         {
           id: "room",
           label: "Rooms",
-          icon: BedDouble,
+          icon: RoomServiceIcon,
           kind: "room" as const,
           run: () => setRoomOpen(true),
         },
