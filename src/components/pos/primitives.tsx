@@ -264,9 +264,9 @@ export function TicketCard({ ticket, onClick, landscape = false }: { ticket: Tic
             aria-label={`Open order ${orderNo} - ${orderTypeLabel}${tableLabel ? `, table ${tableLabel}` : ""}`}
             title={`Order ${orderNo} · Check ${ticket.checkNumber ?? orderNo}`}
             onClick={onClick}
-            className="h-auto min-h-16 w-12 shrink-0 flex-col gap-0.5 rounded-row border border-border bg-muted px-1 py-2"
+            className="h-auto min-h-16 w-16 shrink-0 flex-col gap-0.5 rounded-row border border-border bg-muted px-1 py-2"
           >
-            <span className="text-fs-lg font-bold tabular-nums text-foreground">{orderNo}</span>
+            <span className="max-w-full truncate t-row tabular-nums text-foreground">{orderNo}</span>
             <span className="max-w-full truncate t-caption tabular-nums text-muted-foreground">{ticket.checkNumber ?? orderNo}</span>
           </Button>
           <Button
@@ -274,16 +274,16 @@ export function TicketCard({ ticket, onClick, landscape = false }: { ticket: Tic
             aria-label={`Expand order ${orderNo} details`}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="grid h-auto min-w-0 grid-cols-[minmax(0,1fr)_minmax(4rem,0.4fr)_auto] items-center gap-x-3 whitespace-normal rounded-row px-0 py-1 text-left"
+            className="grid h-auto min-w-0 grid-cols-[minmax(0,1fr)_minmax(4rem,0.4fr)_7.5rem] items-center gap-x-2 whitespace-normal rounded-row px-0 py-1 text-left"
           >
             <span data-ticket-guest className="block min-w-0">
-              <span className="block truncate t-row text-foreground" title={`${ticket.label}${tableLabel ? ` · T${tableLabel}` : ""}`}>
-                {ticket.label}{tableLabel ? ` · T${tableLabel}` : ""}
+              <span className="block truncate t-row text-foreground" title={`${ticket.label}${tableLabel ? ` · ${tableLabel}` : ""}`}>
+                {ticket.label}{tableLabel ? ` · ${tableLabel}` : ""}
               </span>
               <span className="flex min-w-0 flex-wrap items-center gap-x-1 gap-y-0.5 t-caption text-muted-foreground">
                 <OrderTypeIcon className="size-3 shrink-0" aria-hidden />
                 <span>{tableLabel ? `Party of ${ticket.seats}` : orderTypeLabel}, {ticket.arrivedAt}</span>
-                <span className="whitespace-nowrap tabular-nums">| {timer} Hrs</span>
+                <span className="whitespace-nowrap tabular-nums">| {timer}</span>
               </span>
               <span className="block truncate t-caption font-semibold text-foreground" title={ticket.revenueCenter ?? "Main dining"}>
                 {ticket.revenueCenter ?? "Main dining"}
