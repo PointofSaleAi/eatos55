@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Add reference Hardware Control and Guest Facing Display screens under Control Center; verify navigation and saved switches across devices
 - [x] Add all reference Device Settings options under Control Center instead of General; verified choices, saved toggles and appearance on phone, tablet and desktop
 - [x] Match Timed Pricing reference list and add/edit form; verify selections, copying times and saved edits on all devices
 - [x] Timed Pricing archive: left-swipe reveals Archive/Restore, archive toggle view, editor Archive button; verified on desktop and phone

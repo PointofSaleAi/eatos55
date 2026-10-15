@@ -21,12 +21,12 @@ export const Route = createFileRoute("/settings/control-center")({
       { title: `Control Center - ${brand.appName} Handheld settings` },
       {
         name: "description",
-        content: "Device settings, hardware control and the scheduled app restart time.",
+        content: "Device settings, hardware control, guest facing display and the scheduled app restart time.",
       },
       { property: "og:title", content: `Control Center - ${brand.appName} Handheld settings` },
       {
         property: "og:description",
-        content: "Device settings, hardware control and the scheduled app restart time.",
+        content: "Device settings, hardware control, guest facing display and the scheduled app restart time.",
       },
     ],
   }),
@@ -44,7 +44,8 @@ function ControlCenter() {
       <ScreenBody className="py-2">
         <GroupCard>
           <IconNavRow title="Device Settings" to="/settings/device-settings" />
-          <IconNavRow title="Hardware Control" to="/settings/hardware" />
+          <IconNavRow title="Hardware Control" to="/settings/hardware-control" />
+          <IconNavRow title="Guest Facing Display" to="/settings/guest-facing-display" />
         </GroupCard>
 
         <GroupLabel>App Restart</GroupLabel>
