@@ -24,7 +24,6 @@ import {
   CircleDollarSign,
   ClipboardList,
   DollarSign,
-  MessageSquareText,
   Users,
   Wallet,
 
@@ -370,14 +369,6 @@ export function TicketsScreen({
                 {activeFacetCount ? <span className={dot}>{activeFacetCount}</span> : null}
               </button>
             )}
-            <button
-              type="button"
-              aria-label="Messages"
-              onClick={() => announce("No new messages")}
-              className={roundIcon}
-            >
-              <MessageSquareText className="size-4" />
-            </button>
             <button
               type="button"
               aria-label="Search tickets"
