@@ -32,6 +32,7 @@ import { Button } from "@/components/ui/button";
 import { RestaurantInformation } from "@/components/pos/restaurant-information";
 import { ScheduleInformation } from "@/components/pos/schedule-information";
 import { TimedPricing } from "@/components/pos/timed-pricing";
+import { AboutSettings } from "@/components/pos/about-settings";
 
 export const Route = createFileRoute("/settings/detail/$topic")({
   head: ({ params }) => ({
@@ -75,6 +76,7 @@ function SettingsDetail() {
   if (topic === "restaurant-information") return <RestaurantInformation />;
   if (topic === "schedule-info") return <ScheduleInformation />;
   if (topic === "timed-pricing") return <TimedPricing />;
+  if (topic === "about") return <AboutSettings />;
 
   if (!screen) {
     return (
