@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Lock } from "lucide-react";
 import { useCallback, useState } from "react";
-import { EMark } from "@/components/pos/brand";
+import { EMark, Wordmark } from "@/components/pos/brand";
 import { formatVersionLabel } from "@/lib/demo-data";
 import { railPrimary } from "@/lib/nav-destinations";
 import { usePos } from "@/lib/pos-store";
@@ -136,7 +136,11 @@ export function NavRail() {
           aria-label="About this app"
           className="flex flex-col items-center gap-1 rounded-card py-2 transition-colors hover:bg-shell-foreground/10"
         >
-          <EMark className={cn("text-shell-foreground", expanded ? "size-6" : "size-5")} />
+          {expanded ? (
+            <Wordmark invert className="h-auto w-28" />
+          ) : (
+            <EMark className="size-5 text-shell-foreground" />
+          )}
           <span className="text-center text-[0.5625rem] font-bold leading-tight text-shell-foreground/60">
             {formatVersionLabel(settings.appVersion)}
           </span>
