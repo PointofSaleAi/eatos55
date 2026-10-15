@@ -30,3 +30,4 @@
 - orderOS owns its own order lifecycle in `src/lib/orderos-store.tsx` and never routes to Tickets; its board, detail and issue flows stay in-page so status changes persist across navigation.
 - Network Servers uses a dedicated connection screen with merged shared demo preferences; sync, offline numbering and edgeOS controls never perform real network operations or alter order numbering.
 - Hardware printer topics share dedicated screens and merged demo printer preferences; configuration is separate from checkout and receipt execution, and detection/test actions never claim live hardware results.
+- Hardware Emulators uses shared flat demo switches with a cancel-only lab notice; it never changes peripheral execution or payment processing.

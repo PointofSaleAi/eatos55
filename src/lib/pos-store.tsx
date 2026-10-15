@@ -380,6 +380,8 @@ export type AppSettings = {
   readerFirmware: string;
   printerEmulator: boolean;
   readerEmulator: boolean;
+  cashDrawerEmulator: boolean;
+  scannerEmulator: boolean;
 
   // Collections
   restaurantSchedules: RestaurantSchedule[];
@@ -549,8 +551,10 @@ const defaultSettings: AppSettings = {
   paperWidth: "80 mm",
   contactless: true,
   readerFirmware: "2.14.0",
-  printerEmulator: true,
-  readerEmulator: true,
+  printerEmulator: false,
+  readerEmulator: false,
+  cashDrawerEmulator: false,
+  scannerEmulator: false,
 
   restaurantSchedules: referenceSchedules,
   timedPricingRules: referenceTimedPricing,

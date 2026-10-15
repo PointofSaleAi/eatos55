@@ -376,11 +376,6 @@ export const settingsDetails: Record<string, DetailScreen> = {
     title: "Hardware Emulators",
     backLabel: "Hardware",
     icon: CreditCard,
-    rows: [
-      { kind: "toggle", label: "Printer Emulator", field: "printerEmulator" },
-      { kind: "toggle", label: "Reader Emulator", field: "readerEmulator" },
-    ],
-    note: "Emulators are enabled for demo mode.",
   },
   servers: {
     title: "Server Connection",
