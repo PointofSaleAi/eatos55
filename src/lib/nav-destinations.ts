@@ -7,7 +7,6 @@ import {
   CreditCard,
   FileText,
   Headset,
-  LayoutGrid,
   Receipt,
   Settings as SettingsIcon,
   Sofa,
@@ -59,12 +58,11 @@ export const navGroups: NavGroup[] = [
 ];
 
 /**
- * Rail destinations in the order used by the reference app: the dashboard (menu
- * grid) first, then new order, floor plan, tickets, rooms and the order status
- * board.
+ * Rail destinations in the order used by the reference app: new order first,
+ * then floor plan, tickets, rooms and the order status board. The Dashboard
+ * opens from the venue/profile tile at the top of the rail instead.
  */
 export const railPrimary: NavLink[] = [
-  { to: "/order/menu", label: "Dashboard", icon: LayoutGrid },
   { to: "/order/new", label: "New Order", icon: FilePlus2 },
 
   { to: "/floor", label: "Table Order", icon: Sofa },

@@ -27,6 +27,20 @@ export function NavRail() {
   // Always starts collapsed: expansion is a per-visit choice, never remembered.
   const toggle = useCallback(() => setExpanded((v) => !v), []);
 
+  // Horizontal drag on empty rail space collapses (left) or expands (right).
+  // The release is tracked on window so a drag ending outside the rail still counts.
+  const onRailPointerDown = useCallback((e: React.PointerEvent) => {
+    if ((e.target as HTMLElement).closest("a,button")) return;
+    const startX = e.clientX;
+    const onUp = (ev: PointerEvent) => {
+      window.removeEventListener("pointerup", onUp);
+      const dx = ev.clientX - startX;
+      if (dx <= -40) setExpanded(false);
+      else if (dx >= 40) setExpanded(true);
+    };
+    window.addEventListener("pointerup", onUp);
+  }, []);
+
   const venue = (settings.restaurantName.split("·")[0] ?? "").trim();
   const venueInitials =
     venue
@@ -43,6 +57,7 @@ export function NavRail() {
       onClick={(e) => {
         if (e.target === e.currentTarget) toggle();
       }}
+      onPointerDown={onRailPointerDown}
       className={cn(
         "my-2 ml-2 hidden shrink-0 flex-col rounded-2xl border border-shell-foreground/10 bg-shell pt-2 pb-[calc(0.5rem+var(--sab,0px))] transition-[width] duration-200 md:flex",
         expanded ? "w-60" : "w-[4.25rem]",
@@ -76,17 +91,21 @@ export function NavRail() {
         </Link>
       </div>
 
-      {/* Venue / revenue center */}
+      {/* Venue / revenue center: opens the Dashboard */}
       <div className={cn("flex items-center gap-2 px-2 pt-1", expanded ? "" : "justify-center")}>
-        <button
-          type="button"
-          onClick={toggle}
+        <Link
+          to="/order/menu"
           title={venue}
-          aria-label={expanded ? "Collapse navigation" : "Expand navigation"}
-          className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full bg-shell-foreground/15 ring-1 ring-shell-foreground/20 text-fs-sm font-extrabold uppercase text-shell-foreground"
+          aria-label="Dashboard"
+          className={cn(
+            "grid size-11 shrink-0 place-items-center overflow-hidden rounded-full bg-shell-foreground/15 ring-1 text-fs-sm font-extrabold uppercase text-shell-foreground transition-colors",
+            isActive("/order/menu")
+              ? "bg-shell-foreground/25 ring-2 ring-shell-foreground/60"
+              : "ring-shell-foreground/20 hover:bg-shell-foreground/25",
+          )}
         >
           {venueInitials}
-        </button>
+        </Link>
         {expanded ? (
           <span className="min-w-0 flex-1">
             <span className="block truncate text-fs-sm font-extrabold text-shell-foreground">
