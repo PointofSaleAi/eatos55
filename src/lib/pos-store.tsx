@@ -11,6 +11,7 @@ import { defaultDevicePreferences, type DevicePreferences } from "@/lib/device-s
 import { defaultPeripheralPreferences, type PeripheralPreferences } from "@/lib/peripheral-settings";
 import { defaultPrinterPreferences, type PrinterPreferences } from "@/lib/printer-settings";
 import { defaultHardwareConnections, type HardwareConnections } from "@/lib/hardware-connections";
+import { defaultSalesPreferences, type SalesPreferences } from "@/lib/sales-settings";
 import { defaultServerConnection, migrateServerConnection, type ServerConnectionPreferences } from "@/lib/server-connection";
 import { migrateWorkforceEmployee, referenceEmployees, type WorkforceEmployee } from "@/lib/workforce-employees";
 import { isResumablePath, readResume, resumeKey, writeResume } from "@/lib/resume";
@@ -250,6 +251,7 @@ export type TapToPayState =
   | "ineligible";
 
 export type AppSettings = {
+  salesPreferences: SalesPreferences;
   hardwareConnections: HardwareConnections;
   printerPreferences: PrinterPreferences;
   serverConnection: ServerConnectionPreferences;
@@ -413,6 +415,7 @@ const defaultLoginSlides: LoginSlide[] = [
 ];
 
 const defaultSettings: AppSettings = {
+  salesPreferences: defaultSalesPreferences,
   hardwareConnections: defaultHardwareConnections,
   printerPreferences: defaultPrinterPreferences,
   serverConnection: defaultServerConnection,
@@ -1013,6 +1016,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setSettings((s) => ({
           ...s,
           ...saved,
+          salesPreferences: { ...defaultSalesPreferences, ...saved.salesPreferences },
           hardwareConnections: { ...defaultHardwareConnections, ...saved.hardwareConnections },
           printerPreferences: { ...defaultPrinterPreferences, ...saved.printerPreferences },
           serverConnection: migrateServerConnection(saved.serverConnection),

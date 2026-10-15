@@ -13,7 +13,7 @@ export const settingsGroups: SettingsDestination[][] = [
     { to: "/settings/menu", label: "Menu", icon: Utensils, color: "orange" },
     { to: "/settings/payments", label: "Payments", icon: Wallet, color: "indigo" },
     { to: "/settings/workforce", label: "Workforce", icon: Briefcase, color: "purple" },
-    { to: "/settings/reports", label: "Reports", icon: FileText, color: "slate" },
+    { to: "/settings/reports", label: "Sales", icon: FileText, color: "slate" },
     { to: "/settings/more", label: "Advanced", icon: SlidersHorizontal, color: "slate", manager: true },
   ],
   [
