@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Match the employee form to the Apple-style reference; editing, phone selection, save and return verified on phone, tablet and desktop
 - [x] Add employee list subtext, swipe archive, visible saved additions and employee-detail return; verified desktop, tablet and phone
 - [x] Simplify Workforce and add reference employee list, add/edit employee fields and reversible archive; verified phone, tablet and desktop
 - [x] Add reference Hardware Control and Guest Facing Display screens under Control Center; verified navigation, all switches and persistence on phone, tablet and desktop

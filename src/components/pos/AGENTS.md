@@ -10,3 +10,5 @@
 - Control Center's Device Settings, Hardware Control and Guest Facing Display have dedicated routes with merged demo defaults; switches do not change hardware, payments or auth, and App Theme uses the appearance hook.
 - Customer Support is the only support destination in the shared settings navigation; both the Contact Us and Help Center screens are reached from inside it and return there on back, so support never appears as separate left-nav entries.
 - Workforce employee records use dedicated shared demo settings with reversible swipe archive flags and inline-editor back dismissal; saving clears list filters so the saved record is visible. PIN input is transient and never used for authentication, and hardware enrollment and payroll access are not simulated as real operations.
+
+- Employee editors use scoped grouped-row styling with borderless inline values and a separate phone editor; shared settings controls remain unchanged to avoid restyling other destinations.
