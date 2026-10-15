@@ -30,6 +30,7 @@ import { SwipeRow } from "@/components/pos/swipe-row";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 import { useAnnounce } from "@/components/pos/live-region";
 import { usePullToRefresh } from "@/hooks/use-pull-to-refresh";
+import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
@@ -142,6 +143,7 @@ export function TicketsScreen({
   pane?: boolean;
 }) {
   const navigate = useNavigate();
+  const landscape = useLandscapeWide();
   const tableParam = (useSearch({ strict: false }) as { table?: string }).table;
   const tableMembers = tableParam ? tableParam.split(",").filter(Boolean) : [];
   const {
@@ -609,6 +611,7 @@ export function TicketsScreen({
               >
                 <TicketCard
                   ticket={t}
+                  landscape={pane && landscape}
                   onClick={() => {
                     openTicket(t.id);
                     navigate({

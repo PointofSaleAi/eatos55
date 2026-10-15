@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { settingsGroups } from "@/lib/settings-destinations";
 import { usePos } from "@/lib/pos-store";
 import { useVoiceSearch } from "@/lib/voice-search";
+import { useLandscapeWide } from "@/hooks/use-layout-mode";
 
 /**
  * Two-pane layout for landscape tablet/web: list pane on the left, the routed
@@ -231,11 +232,13 @@ export function useSectionPane(): {
 } | null {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const p = pathname.replace(/\/+$/, "") || "/";
+  const landscape = useLandscapeWide();
 
   if (p === "/tickets" || p.startsWith("/tickets/")) {
     // The list pane keeps its own scroll; detail routes render on the right.
     return {
       list: <TicketsScreen pane />,
+      ...(landscape ? { listClassName: "w-[60%] lg:w-[60%]" } : {}),
       ...(p === "/tickets"
         ? {
             replaceChildren: (
