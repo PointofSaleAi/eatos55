@@ -90,3 +90,4 @@
 - [x] Rebuild the Tickets header (title left; round Filter/Messages/Search icons right) with the expanding round-icon filter row including date, sort and close; verified phone, tablet and desktop
 - [x] Remove the Messages icon from the Tickets header so only Filter and Search remain; verified the filter row still opens and closes on phone, tablet and desktop
 - [x] After-close ticket flow: Completed state, swipe/tap Refund, reason codes, refunded display
+- [x] Move the ticket Paid dropdown to the bottom directly above the totals summary on phone, tablet and desktop; verified expansion keeps the summary pinned

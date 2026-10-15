@@ -15,3 +15,4 @@
 
 - Employee editors use scoped grouped-row styling with borderless inline values and a separate phone editor; shared settings controls remain unchanged to avoid restyling other destinations.
 - Closing a paid ticket keeps it listed as Completed; refunds are demo-only, recorded once per ticket via refundTicket, and shown as struck-through items plus REFUNDED/REFUND payment rows (src/components/pos/ticket-refund.tsx).
+- Ticket payment rows (the Paid dropdown, or closed/refunded rows) always sit directly above the totals summary on every layout — outside the scrolling item list in landscape and before the summary card in portrait — so one shared paymentsSection drives both, and expansion grows upward without moving the pinned summary.
