@@ -24,7 +24,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { RoomServiceIcon } from "@/components/pos/icons/room-service-icon";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type ComponentType, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AmountEntry } from "@/components/pos/amount-entry";
 import { PaymentCompleteDialog } from "@/components/pos/payment-complete-dialog";
@@ -76,7 +76,7 @@ export const Route = createFileRoute("/payment/method")({
 type Tender = {
   id: string;
   label: string;
-  icon: typeof CreditCard;
+  icon: ComponentType<{ className?: string }>;
   /** Surfaces that open their own step instead of charging straight away. */
   kind?: "room" | "split" | "route" | "dialog";
   /** Shown under the label when the tender is unavailable. */
