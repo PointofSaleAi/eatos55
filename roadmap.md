@@ -80,3 +80,4 @@
 - [x] Clear every remaining LCROS mention from page content (employee demo emails) and apply the rename without a reload; verified phone, tablet and desktop
 - [x] Replace the cart's "Not started" with a live ARRIVED AT clock that freezes when the first item lands; verified cart header, table chip and Custom Item guest line on phone, tablet and desktop
 - [x] Stop the cart header from clipping Guest Name and Mobile Number: name and phone keep their minimum widths and the ARRIVED AT clock wraps to its own line when narrow; verified no clipping and inline saving on desktop, tablet and phone
+- [x] Keep the cart header on one line at every size (no wrap), switch the label to sentence case "Arrived at", and shorten the name hint to "Guest" so the phone format hint and clock stay fully visible; verified one line, no clipping and inline saving on phone, tablet and desktop
