@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useNavDrawer } from "@/lib/nav-drawer-context";
 import { usePos } from "@/lib/pos-store";
+import { ProfileCard } from "@/components/pos/profile-card";
 
 import { cn } from "@/lib/utils";
 
@@ -98,20 +99,28 @@ export function AccountInfo() {
         >
           {initials}
         </Button>
-        <span className="hidden truncate text-[0.875rem] font-bold text-topbar-foreground lg:inline">
-          {session.name.split(" ")[0]}
-        </span>
-        <span className="whitespace-nowrap text-[0.6875rem] font-extrabold uppercase text-topbar-muted">
-          {session.role}
-        </span>
-        <span aria-hidden className="hidden h-5 w-px bg-topbar-border md:block" />
-        <span
-          title={`Clocked in at ${settings.clockedInAt}`}
-          className="hidden items-center gap-1.5 whitespace-nowrap text-[0.8125rem] font-semibold text-topbar-foreground md:flex"
-        >
-          <Timer className="size-4" />
-          {service} ({settings.clockedInAt})
-        </span>
+        <ProfileCard>
+          <button
+            type="button"
+            aria-label="Open profile"
+            className="flex min-w-0 items-center gap-2 rounded-pill px-1 py-1 hover:bg-topbar-foreground/15"
+          >
+            <span className="hidden truncate text-[0.875rem] font-bold text-topbar-foreground lg:inline">
+              {session.name.split(" ")[0]}
+            </span>
+            <span className="whitespace-nowrap text-[0.6875rem] font-extrabold uppercase text-topbar-muted">
+              {session.role}
+            </span>
+            <span aria-hidden className="hidden h-5 w-px bg-topbar-border md:block" />
+            <span
+              title={`Clocked in at ${settings.clockedInAt}`}
+              className="hidden items-center gap-1.5 whitespace-nowrap text-[0.8125rem] font-semibold text-topbar-foreground md:flex"
+            >
+              <Timer className="size-4" />
+              {service} ({settings.clockedInAt})
+            </span>
+          </button>
+        </ProfileCard>
       </div>
     </div>
   );
