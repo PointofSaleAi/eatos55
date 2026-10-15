@@ -76,10 +76,10 @@ function CustomerSupport() {
             onClick={() => toast.success("Chat request sent · an agent will join shortly")}
           />
           <IconNavRow
-            title="Contact Us"
+            title="Help Center"
             icon={MessageCircleMore}
             color="grey"
-            to="/system/contact-us"
+            to="/system/help-center"
           />
           <IconValueRow
             title="Live Pin"

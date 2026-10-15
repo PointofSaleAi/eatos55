@@ -1,4 +1,4 @@
-import { Bell, BookUser, Briefcase, FileText, Headset, Images, LifeBuoy, Mail, SlidersHorizontal, SmartphoneNfc, Tablet, UserRoundCog, Utensils, Wallet, Wifi, type LucideIcon } from "lucide-react";
+import { Bell, BookUser, Briefcase, FileText, Headset, Images, SlidersHorizontal, SmartphoneNfc, Tablet, UserRoundCog, Utensils, Wallet, Wifi, type LucideIcon } from "lucide-react";
 import type { TileColor } from "@/components/pos/settings-rows";
 
 type SettingsDestination = { to: string; label: string; icon: LucideIcon; color: TileColor; manager?: boolean };
