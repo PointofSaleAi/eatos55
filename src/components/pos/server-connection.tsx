@@ -36,7 +36,7 @@ export function ServerConnection() {
       <span className="min-w-0 t-section text-muted-foreground">{label}</span>
       <Switch aria-label={label} checked={preferences[key]} disabled={!canManageSettings}
         className="data-[state=checked]:bg-gate-success data-[state=unchecked]:bg-destructive"
-        onCheckedChange={(checked) => save({ [key]: checked })} />
+        onCheckedChange={(checked) => save(key === "cloudEnabled" && !checked ? { cloudEnabled: false, edgeEnabled: true } : { [key]: checked })} />
     </div>
   );
   const row = (label: string, value: string, options: { editor?: Editor; disabled?: boolean; verified?: boolean; refresh?: boolean } = {}) => (
@@ -79,7 +79,7 @@ export function ServerConnection() {
         {row("Last Order Number", "6", { refresh: true, disabled: !preferences.edgeEnabled })}
         {row("Cloud Server Address", preferences.cloudAddress, { verified: true, disabled: !preferences.edgeEnabled })}
       </GroupCard>
-      {syncButtons(preferences.edgeEnabled && preferences.cloudEnabled, true)}
+      {syncButtons(preferences.edgeEnabled, true)}
       {!canManageSettings && <Caption>Only managers can change these settings.</Caption>}
       <div className="h-6" />
     </ScreenBody>
