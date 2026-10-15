@@ -32,6 +32,7 @@ import { Button } from "@/components/ui/button";
 import { RestaurantInformation } from "@/components/pos/restaurant-information";
 import { ScheduleInformation } from "@/components/pos/schedule-information";
 import { TimedPricing } from "@/components/pos/timed-pricing";
+import { WorkforceEmployees } from "@/components/pos/workforce-employees";
 import { AboutSettings } from "@/components/pos/about-settings";
 import { LegalDocViewer, docTopics } from "@/components/pos/legal-doc-viewer";
 
@@ -77,6 +78,7 @@ function SettingsDetail() {
   if (topic === "restaurant-information") return <RestaurantInformation />;
   if (topic === "schedule-info") return <ScheduleInformation />;
   if (topic === "timed-pricing") return <TimedPricing />;
+  if (topic === "employee") return <WorkforceEmployees />;
   if (topic === "about") return <AboutSettings />;
   if (docTopics[topic]) return <LegalDocViewer topic={topic} />;
 
