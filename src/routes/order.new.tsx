@@ -278,7 +278,7 @@ function NewOrder() {
       type="button"
       onClick={() => chooseCategory(entry.id)}
       className={cn(
-        "flex h-9 shrink-0 items-center justify-center rounded-pill px-3 text-center text-[0.6875rem] font-extrabold uppercase leading-[1.05] tracking-tight transition-colors",
+        "flex h-9 shrink-0 items-center justify-center rounded-pill px-3 text-center text-[0.8125rem] font-extrabold uppercase leading-[1.05] tracking-tight transition-colors",
         entry.id === activeCategory
           ? "bg-primary text-primary-foreground hover:bg-primary/90"
           : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -373,7 +373,7 @@ function NewOrder() {
                 type="button"
                 onClick={() => setSubcategory(entry)}
                 className={cn(
-                  "flex h-10 shrink-0 items-center justify-center rounded-card px-3 text-center text-[0.6875rem] font-extrabold uppercase leading-none tracking-tight transition-colors",
+                  "flex h-10 shrink-0 items-center justify-center rounded-card px-3 text-center text-[0.75rem] font-extrabold uppercase leading-none tracking-tight transition-colors",
                   entry === subcategory
                     ? "bg-accent text-accent-foreground hover:bg-accent/90"
                     : "bg-muted text-muted-foreground hover:bg-secondary",
