@@ -20,6 +20,13 @@ import {
   ReceiptText,
   RefreshCcwDot,
   X,
+  Check,
+  CircleDollarSign,
+  ClipboardList,
+  DollarSign,
+  MessageSquareText,
+  Users,
+  Wallet,
 
 } from "lucide-react";
 import { useState } from "react";
@@ -134,6 +141,33 @@ const filterFacets = [
   options: readonly string[];
 }[];
 
+const statusChips: { id: Tab; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "open", label: "Open" },
+  { id: "closed", label: "Paid" },
+  { id: "unpaid", label: "Unpaid" },
+];
+
+const facetById = Object.fromEntries(filterFacets.map((f) => [f.id, f])) as Record<
+  (typeof filterFacets)[number]["id"],
+  (typeof filterFacets)[number]
+>;
+const trayIcons = {
+  payment: DollarSign,
+  employee: Users,
+  "order-type": ClipboardList,
+  revenue: CircleDollarSign,
+} as const;
+/** Order matches the recording: $ · (calendar) · people · clipboard · coin. */
+const trayFacets = (["payment", "employee", "order-type", "revenue"] as const).map((id) => ({
+  ...facetById[id],
+  icon: trayIcons[id],
+}));
+const roundIcon =
+  "relative grid size-8 shrink-0 place-items-center rounded-pill bg-muted text-foreground transition-colors hover:bg-secondary";
+const dot =
+  "absolute -right-0.5 -top-0.5 grid size-3.5 place-items-center rounded-pill bg-foreground text-[0.5rem] font-bold text-background";
+
 export function TicketsScreen({
   initialOverlay = "none",
   pane = false,
@@ -172,6 +206,7 @@ export function TicketsScreen({
   const [tab, setTab] = useState<Tab>("all");
   const [overlay, setOverlay] = useState<TicketsOverlay>(initialOverlay);
   const [openFacet, setOpenFacet] = useState<string | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [rangeOpen, setRangeOpen] = useState(false);
   const [draft, setDraft] = useState<DateRange | undefined>({
     from: parseIso(ticketRange.start),
@@ -237,39 +272,119 @@ export function TicketsScreen({
       {/* Title + controls */}
       <div className="shrink-0 bg-surface px-2 pt-1.5">
         <div className="flex items-center gap-1">
-
-          <h1 className="min-w-0 flex-1 truncate text-fs-lg font-extrabold text-foreground">
+          <h1 className="shrink-0 truncate text-fs-lg font-extrabold text-foreground">
             Tickets
           </h1>
-          <div className="flex shrink-0 items-center">
+          <div className="no-scrollbar flex min-w-0 flex-1 items-center justify-end gap-1 overflow-x-auto">
+            {filtersOpen ? (
+              <>
+                {trayFacets.map((f) => {
+                  const Icon = f.icon;
+                  const selected = filters[f.key] as string[];
+                  return (
+                    <Popover key={f.id}>
+                      <PopoverTrigger asChild>
+                        <button
+                          type="button"
+                          aria-label={f.label}
+                          title={f.label}
+                          className={roundIcon}
+                        >
+                          <Icon className="size-4" />
+                          {selected.length ? <span className={dot}>{selected.length}</span> : null}
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent align="start" className="w-56 p-1.5">
+                        <p className="px-2 pb-1 pt-1 text-fs-xs font-semibold text-muted-foreground">
+                          {f.label}
+                        </p>
+                        {f.options.map((opt) => {
+                          const on = selected.includes(opt);
+                          return (
+                            <button
+                              key={opt}
+                              type="button"
+                              aria-pressed={on}
+                              onClick={() =>
+                                setFilters((prev) => ({
+                                  ...prev,
+                                  [f.key]: on
+                                    ? selected.filter((s) => s !== opt)
+                                    : [...selected, opt],
+                                }))
+                              }
+                              className={cn(
+                                "flex w-full items-center gap-2 rounded-row px-2 py-2 text-left text-fs-sm text-foreground transition-colors hover:bg-muted",
+                                on && "bg-muted font-bold",
+                              )}
+                            >
+                              <span className="min-w-0 flex-1 truncate">{opt}</span>
+                              {on ? <Check className="size-4 shrink-0" aria-hidden /> : null}
+                            </button>
+                          );
+                        })}
+                      </PopoverContent>
+                    </Popover>
+                  );
+                })}
+                <button
+                  type="button"
+                  aria-label={`Choose period, ${dateLabel}`}
+                  title={dateLabel}
+                  onClick={() => {
+                    setDraft({ from: parseIso(ticketRange.start), to: parseIso(ticketRange.end) });
+                    setRangeOpen(true);
+                  }}
+                  className={roundIcon}
+                >
+                  <Calendar className="size-4" />
+                  {!isDefaultPeriod ? <span className={dot}>1</span> : null}
+                </button>
+                <button
+                  type="button"
+                  aria-label="Sort tickets"
+                  title="Sort"
+                  onClick={() => setOverlay((o) => (o === "sort" ? "none" : "sort"))}
+                  className={roundIcon}
+                >
+                  <Wallet className="size-4" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Close filters"
+                  onClick={() => setFiltersOpen(false)}
+                  className={roundIcon}
+                >
+                  <X className="size-4" />
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                aria-label="Filter tickets"
+                aria-expanded={false}
+                onClick={() => setFiltersOpen(true)}
+                className={roundIcon}
+              >
+                <Settings2 className="size-4" />
+                {activeFacetCount ? <span className={dot}>{activeFacetCount}</span> : null}
+              </button>
+            )}
+            <button
+              type="button"
+              aria-label="Messages"
+              onClick={() => announce("No new messages")}
+              className={roundIcon}
+            >
+              <MessageSquareText className="size-4" />
+            </button>
             <button
               type="button"
               aria-label="Search tickets"
               onClick={() => setOverlay((o) => (o === "search" ? "none" : "search"))}
-              className="grid size-9 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
+              className={roundIcon}
             >
-              <Search className="size-5" />
-            </button>
-            <button
-              type="button"
-              aria-label="Sort tickets"
-              onClick={() => setOverlay((o) => (o === "sort" ? "none" : "sort"))}
-              className="grid size-9 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
-            >
-              <ListFilter className="size-5" />
-            </button>
-            <button
-              type="button"
-              aria-label="Filter tickets"
-              onClick={() => setOverlay("filter")}
-              className="relative grid size-9 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
-            >
-              <Settings2 className="size-5" />
-              {activeFacetCount ? (
-                <span className="absolute right-1 top-1 grid size-4 place-items-center rounded-pill bg-accent text-[0.625rem] font-bold text-accent-foreground">
-                  {activeFacetCount}
-                </span>
-              ) : null}
+              <Search className="size-4" />
             </button>
           </div>
         </div>
@@ -309,141 +424,6 @@ export function TicketsScreen({
           </div>
         ) : null}
 
-        {/* Date stepper + facet icons */}
-        <div className="flex flex-col items-center gap-1 pt-0.5 md:flex-row md:justify-center md:gap-3">
-          <div className="flex shrink-0 items-center">
-            <button
-              type="button"
-              aria-label="Previous period"
-              onClick={() => shiftTicketDate(-1)}
-              className="grid size-9 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
-            >
-              <ChevronLeft className="size-4" />
-            </button>
-            <button
-              type="button"
-              aria-label="Choose period"
-              onClick={() => {
-                setDraft({ from: parseIso(ticketRange.start), to: parseIso(ticketRange.end) });
-                setRangeOpen(true);
-              }}
-              className="flex shrink-0 items-center gap-1.5 rounded-pill px-2 py-2 transition-colors hover:bg-muted"
-            >
-              <Calendar className="size-4 shrink-0 text-muted-foreground" />
-              <span className="whitespace-nowrap text-fs-sm font-extrabold text-foreground">
-                {dateLabel}
-              </span>
-              <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
-            </button>
-
-            <button
-              type="button"
-              aria-label="Next period"
-              onClick={() => shiftTicketDate(1)}
-              className="grid size-9 shrink-0 place-items-center rounded-pill text-foreground transition-colors hover:bg-muted"
-            >
-              <ChevronRight className="size-4" />
-            </button>
-          </div>
-
-          <div className="no-scrollbar flex max-w-full items-center gap-1.5 overflow-x-auto pb-0.5">
-            {filterFacets.map((f) => {
-              const Icon = f.icon;
-              const selected = filters[f.key] as string[];
-              const active = selected.length > 0;
-              return (
-                <Popover key={f.id}>
-                  <PopoverTrigger asChild>
-                    <button
-                      type="button"
-                      aria-label={f.label}
-                      title={f.label}
-                      className={cn(
-                        "relative grid size-10 shrink-0 place-items-center rounded-row border transition-colors",
-                        active
-                          ? "border-accent bg-accent/10 text-accent"
-                          : "border-border text-foreground hover:bg-muted",
-                      )}
-                    >
-                      <Icon className="size-5" />
-                      {active ? (
-                        <span className="absolute -right-0.5 -top-0.5 grid size-4 place-items-center rounded-pill bg-accent text-[0.5625rem] font-bold text-accent-foreground">
-                          {selected.length}
-                        </span>
-                      ) : null}
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    align="center"
-                    className="w-[min(18rem,calc(100vw-1.5rem))] p-3"
-                  >
-                    <p className="pb-2 text-fs-sm font-extrabold text-foreground">{f.label}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {f.options.map((opt) => {
-                        const on = selected.includes(opt);
-                        return (
-                          <button
-                            key={opt}
-                            type="button"
-                            onClick={() =>
-                              setFilters((prev) => ({
-                                ...prev,
-                                [f.key]: on
-                                  ? selected.filter((s) => s !== opt)
-                                  : [...selected, opt],
-                              }))
-                            }
-                            className={cn(
-                              "min-h-ctl-sm rounded-pill px-3 text-fs-xs font-bold transition-colors",
-                              on
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted text-muted-foreground hover:bg-secondary",
-                            )}
-                          >
-                            {opt}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {active ? (
-                      <button
-                        type="button"
-                        onClick={() => setFilters((prev) => ({ ...prev, [f.key]: [] }))}
-                        className="mt-3 min-h-ctl-sm w-full rounded-pill border border-border text-fs-xs font-bold text-foreground"
-                      >
-                        Clear {f.label}
-                      </button>
-                    ) : null}
-                  </PopoverContent>
-                </Popover>
-              );
-            })}
-            <button
-              type="button"
-              aria-label="My tickets"
-              title="My tickets"
-              aria-pressed={filters.mineOnly}
-              onClick={() => setFilters((prev) => ({ ...prev, mineOnly: !prev.mineOnly }))}
-              className={cn(
-                "grid size-10 shrink-0 place-items-center rounded-row border transition-colors",
-                filters.mineOnly
-                  ? "border-accent bg-accent/10 text-accent"
-                  : "border-border text-foreground hover:bg-muted",
-              )}
-            >
-              <User className="size-5" />
-            </button>
-            <button
-              type="button"
-              aria-label="Sync tickets"
-              title="Sync"
-              onClick={() => announce("Tickets refreshed")}
-              className="grid size-10 shrink-0 place-items-center rounded-row border border-border text-foreground transition-colors hover:bg-muted"
-            >
-              <RefreshCcwDot className="size-5" />
-            </button>
-          </div>
-        </div>
 
         {overlay === "search" ? (
           <div className="px-2 pt-1.5">
@@ -533,24 +513,42 @@ export function TicketsScreen({
 
 
 
-        {/* Status chips + amount due */}
+        {/* Status chips */}
         <div className="flex items-center gap-2 border-b border-border pb-2 pt-1.5">
           <div className="no-scrollbar flex min-w-0 flex-1 gap-2 overflow-x-auto">
-            {tabs.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setTab(t.id)}
-                className={cn(
-                  "min-h-ctl-sm shrink-0 rounded-pill px-3 text-fs-xs font-bold transition-colors",
-                  tab === t.id
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-secondary",
-                )}
-              >
-                {t.label}
-              </button>
-            ))}
+            {statusChips.map((t) => {
+              const count =
+                t.id === "all"
+                  ? tableList.length
+                  : t.id === "closed"
+                    ? tableList.filter((x) => x.status === "paid").length
+                    : tableList.filter((x) => x.status !== "paid").length;
+              const on = tab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => setTab(t.id)}
+                  className={cn(
+                    "flex h-7 shrink-0 items-center gap-1.5 rounded-pill pl-3 pr-1 text-[0.8125rem] font-semibold leading-none transition-colors",
+                    on
+                      ? "bg-foreground text-background"
+                      : "bg-muted text-foreground hover:bg-secondary",
+                  )}
+                >
+                  {t.label}
+                  <span
+                    className={cn(
+                      "grid h-5 min-w-5 place-items-center rounded-pill px-1 text-[0.6875rem] font-bold",
+                      on ? "bg-background text-foreground" : "bg-background/60 text-foreground",
+                    )}
+                  >
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
