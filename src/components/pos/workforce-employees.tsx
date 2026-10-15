@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { Archive, ArrowDownAZ, ArrowUpAZ, ChevronRight, Pencil, Plus, Search, UserRound } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Archive, ArrowDownAZ, ArrowUpAZ, Check, ChevronRight, Pencil, Plus, Search, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, GroupLabel, settingsRowClass } from "@/components/pos/settings-rows";
@@ -10,8 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { usePos } from "@/lib/pos-store";
 import { revenueCenters } from "@/lib/demo-data";
-import { formatPhoneFor, isValidPhoneFor, phoneCountries, phoneCountryByName, phoneErrorFor } from "@/lib/phone";
-import { employeeRoles, newWorkforceEmployee, referenceEmployees, type WorkforceEmployee } from "@/lib/workforce-employees";
+import { formatPhoneFor, phoneCountries, phoneCountryByName } from "@/lib/phone";
+import { employeeErrorFor, employeeNoticeFor, employeeRoles, newWorkforceEmployee, referenceEmployees, type WorkforceEmployee } from "@/lib/workforce-employees";
 
 const employeeFormRow = "relative flex min-h-12 w-full items-center gap-2 px-3 py-1 text-left after:absolute after:inset-x-3 after:bottom-0 after:border-b after:border-border last:after:hidden";
 const employeeFormGroup = "rounded-lg! border-0 shadow-none!";
@@ -33,23 +33,43 @@ export function WorkforceEmployees() {
   const swipe = useRef<{ id: string; x: number; y: number; horizontal: boolean } | null>(null);
   const suppressClickUntil = useRef(0);
   const [error, setError] = useState("");
+  const [saved, setSaved] = useState(false);
+  const savedTimer = useRef(0);
+  const listRef = useRef(employees);
   const [pinOpen, setPinOpen] = useState(false);
   const [pin, setPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
   const [pinError, setPinError] = useState("");
   const [phoneEdit, setPhoneEdit] = useState<{ country: string; phone: string } | null>(null);
-  const patch = (values: Partial<WorkforceEmployee>) => setDraft(current => current ? { ...current, ...values } : current);
-  const closeDraft = () => { setDraft(null); setError(""); setPin(""); setConfirmPin(""); };
-  const save = () => {
-    if (!draft || !canManageSettings) return;
-    if (!draft.firstName.trim() || !draft.lastName.trim() || !draft.role || !draft.jobType) { setError("Enter first name, last name, job role and job type."); return; }
-    if (draft.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(draft.email)) { setError("Enter a valid email address."); return; }
-    if (draft.phone && !isValidPhoneFor(phoneCountryByName(draft.country), draft.phone)) { setError(phoneErrorFor(phoneCountryByName(draft.country))); return; }
-    if (draft.employeeId && employees.some(employee => employee.id !== draft.id && employee.employeeId === draft.employeeId)) { setError("Employee ID is already in use."); return; }
-    const next = { ...draft, firstName: draft.firstName.trim(), lastName: draft.lastName.trim(), email: draft.email.trim(), employeeId: draft.employeeId.trim() };
-    updateSettings({ workforceEmployees: employees.some(employee => employee.id === next.id) ? employees.map(employee => employee.id === next.id ? next : employee) : [...employees, next] });
-    setArchived(next.archived); setQuery(""); setRole("all"); setDate(""); setRevealedId(null); closeDraft(); toast.success("Employee saved");
+  useEffect(() => { listRef.current = employees; }, [employees]);
+  useEffect(() => () => window.clearTimeout(savedTimer.current), []);
+  const isNewDraft = !!draft && !employees.some(employee => employee.id === draft.id);
+  const commit = (next: WorkforceEmployee) => {
+    const clean: WorkforceEmployee = { ...next, firstName: next.firstName.trim(), lastName: next.lastName.trim(), email: next.email.trim(), employeeId: next.employeeId.trim() };
+    const base = listRef.current;
+    const exists = base.some(employee => employee.id === clean.id);
+    const list = exists ? base.map(employee => employee.id === clean.id ? clean : employee) : [...base, clean];
+    listRef.current = list;
+    updateSettings({ workforceEmployees: list });
+    if (!exists) { setArchived(false); setQuery(""); setRole("all"); setDate(""); }
+    setSaved(true);
+    window.clearTimeout(savedTimer.current);
+    savedTimer.current = window.setTimeout(() => setSaved(false), 1600);
   };
+  const patch = (values: Partial<WorkforceEmployee>) => {
+    if (!draft || !canManageSettings) return;
+    const next = { ...draft, ...values };
+    setDraft(next);
+    if (!employeeErrorFor(next, employees, isNewDraft)) commit(next);
+  };
+  const closeDraft = () => { setDraft(null); setError(""); setPin(""); setConfirmPin(""); };
+  useEffect(() => {
+    if (!draft) { setError(""); return; }
+    const message = employeeErrorFor(draft, employees, !employees.some(employee => employee.id === draft.id)) || employeeNoticeFor(draft);
+    if (!message) { setError(""); return; }
+    const timer = window.setTimeout(() => setError(message), 600);
+    return () => window.clearTimeout(timer);
+  }, [draft, employees]);
   const textRow = (label: string, field: "firstName" | "lastName" | "email" | "employeeId", placeholder: string) => draft && <div className={employeeFormRow}><label htmlFor={`employee-${field}`} className="min-w-0 flex-1 t-row font-normal">{label}</label><Input id={`employee-${field}`} type={field === "email" ? "email" : "text"} className={employeeFormInput} placeholder={placeholder} maxLength={100} value={draft[field]} disabled={!canManageSettings} onChange={event => patch({ [field]: event.target.value })} /><ChevronRight aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" /></div>;
   const selectRow = (label: string, field: "role" | "revenueCentre" | "jobType", options: string[]) => draft && <div className={employeeFormRow}><label htmlFor={`employee-${field}`} className="min-w-0 flex-1 t-row font-normal">{label}</label><Select value={draft[field]} disabled={!canManageSettings} onValueChange={value => patch({ [field]: value })}><SelectTrigger id={`employee-${field}`} className={employeeFormSelect}><SelectValue placeholder="Choose" /><span aria-hidden="true"><ChevronRight className="size-4 shrink-0" /></span></SelectTrigger><SelectContent>{options.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></div>;
   const toggleRow = (label: string, field: "dashboardAccess" | "payroll") => draft && <div className={employeeFormRow}><span className="min-w-0 flex-1 t-row font-normal">{label}</span><Switch aria-label={label} checked={draft[field]} disabled={!canManageSettings} onCheckedChange={checked => patch({ [field]: checked })} /></div>;
@@ -68,9 +88,12 @@ export function WorkforceEmployees() {
         </GroupCard>
         <div className="mt-4"><GroupLabel>Payroll Details</GroupLabel></div><GroupCard className={employeeFormGroup}>{toggleRow("Payroll", "payroll")}{selectRow("Job Type *", "jobType", ["Full Time", "Part Time", "Casual", "Contract"] )}</GroupCard><Caption>Manage payroll by specifying employee pay type, rates, and roles.</Caption>
         {error && <p role="alert" className="mt-4 t-caption text-destructive">{error}</p>}
-        <div className="mt-6 flex flex-wrap justify-end gap-2">{canManageSettings && employees.some(employee => employee.id === draft.id) && <Button variant="outline" onClick={() => setArchiveTarget(draft)}><Archive />{draft.archived ? "Restore" : "Archive"}</Button>}<Button variant="outline" onClick={closeDraft}>Cancel</Button><Button disabled={!canManageSettings} onClick={save}>Save</Button></div>
+        <div className="mt-6 flex min-h-9 flex-wrap items-center justify-between gap-3">
+          {canManageSettings && employees.some(employee => employee.id === draft.id) ? <Button variant="outline" onClick={() => setArchiveTarget(draft)}><Archive />{draft.archived ? "Restore" : "Archive"}</Button> : <span aria-hidden="true" />}
+          <span aria-live="polite" className="inline-flex items-center gap-1.5 t-caption text-muted-foreground">{saved ? <><Check className="size-3.5" aria-hidden="true" />Saved</> : "Changes save automatically"}</span>
+        </div>
       </> : <>
-        <div className="mb-5 flex items-center gap-3"><p className="min-w-0 flex-1 t-caption text-muted-foreground">Individuals employed by a company, contributing to its operations and collectively forming the organisation's human resources.</p><Button size="icon" variant={archived ? "default" : "outline"} aria-label={archived ? "Show active employees" : "Show archived employees"} title={archived ? "Active employees" : "Archived employees"} onClick={() => { setArchived(value => !value); setRevealedId(null); }}><Archive /></Button><Button size="icon" aria-label="Add new employee" title="Add New Employee" disabled={!canManageSettings} onClick={() => { setError(""); setRevealedId(null); setDraft({ ...newWorkforceEmployee(), id: crypto.randomUUID(), addedOn: new Date().toLocaleDateString("en-CA") }); }}><Plus /></Button></div>
+        <div className="mb-5 flex items-center gap-3"><p className="min-w-0 flex-1 t-caption text-muted-foreground">Individuals employed by a company, contributing to its operations and collectively forming the organisation's human resources.</p><Button size="icon" variant={archived ? "default" : "outline"} aria-label={archived ? "Show active employees" : "Show archived employees"} title={archived ? "Active employees" : "Archived employees"} onClick={() => { setArchived(value => !value); setRevealedId(null); }}><Archive /></Button><Button size="icon" aria-label="Add new employee" title="Add New Employee" disabled={!canManageSettings} onClick={() => { setError(""); setSaved(false); setRevealedId(null); setDraft({ ...newWorkforceEmployee(), id: crypto.randomUUID(), addedOn: new Date().toLocaleDateString("en-CA") }); }}><Plus /></Button></div>
         {searchOpen && <Input aria-label="Search employees" placeholder="Search employees" className="mb-4" value={query} onChange={event => setQuery(event.target.value)} />}
         <div className="mb-4 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.5rem] gap-2"><Select value={role} onValueChange={setRole}><SelectTrigger aria-label="Job Roles" className="w-full min-w-0"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Job Roles</SelectItem>{employeeRoles.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select><Input aria-label="Employees as of date" type="date" className="min-w-0" value={date} onChange={event => setDate(event.target.value)} /><Button variant="outline" size="icon" aria-label={descending ? "Sort employees ascending" : "Sort employees descending"} title="Sort employees" onClick={() => setDescending(value => !value)}>{descending ? <ArrowUpAZ /> : <ArrowDownAZ />}</Button></div>
         <GroupCard>{filtered.map(employee => <div key={employee.id} className="relative overflow-hidden border-b border-border last:border-b-0">
@@ -91,7 +114,7 @@ export function WorkforceEmployees() {
             onPointerUp={() => { if (swipe.current?.horizontal) suppressClickUntil.current = Date.now() + 500; swipe.current = null; }}
             onPointerCancel={() => { swipe.current = null; }}
             onKeyDown={event => { if (event.key === "ArrowLeft" && canManageSettings) { event.preventDefault(); setRevealedId(employee.id); } else if (event.key === "Escape" || event.key === "ArrowRight") setRevealedId(null); }}
-            onClick={() => { if (Date.now() < suppressClickUntil.current) return; if (revealedId) { setRevealedId(null); return; } setDraft({ ...employee }); setError(""); }}><span className="grid size-9 shrink-0 place-items-center rounded-full bg-foreground font-bold text-background">{employee.firstName.slice(0, 1)}</span><span className="min-w-0 flex-1 text-left"><span className="block break-words t-row font-semibold">{employee.firstName} {employee.lastName}</span><span className="block t-caption text-muted-foreground">{employee.role}</span><span className="mt-1 block break-all t-caption text-muted-foreground lg:hidden">{employee.phone && `${phoneCountryByName(employee.country).dial}${employee.phone}`} {employee.email}</span></span><span className="hidden min-w-0 max-w-[45%] break-all text-right t-caption text-muted-foreground lg:block">{employee.phone && <span className="block">{phoneCountryByName(employee.country).dial}{employee.phone}</span>}{employee.email}</span><ChevronRight className="size-4 shrink-0 text-muted-foreground" /></Button></div>)}{!filtered.length && <p className="px-4 py-8 text-center t-row text-muted-foreground">No {archived ? "archived " : ""}employees found</p>}</GroupCard>
+            onClick={() => { if (Date.now() < suppressClickUntil.current) return; if (revealedId) { setRevealedId(null); return; } setDraft({ ...employee }); setError(""); setSaved(false); }}><span className="grid size-9 shrink-0 place-items-center rounded-full bg-foreground font-bold text-background">{employee.firstName.slice(0, 1)}</span><span className="min-w-0 flex-1 text-left"><span className="block break-words t-row font-semibold">{employee.firstName} {employee.lastName}</span><span className="block t-caption text-muted-foreground">{employee.role}</span><span className="mt-1 block break-all t-caption text-muted-foreground lg:hidden">{employee.phone && `${phoneCountryByName(employee.country).dial}${employee.phone}`} {employee.email}</span></span><span className="hidden min-w-0 max-w-[45%] break-all text-right t-caption text-muted-foreground lg:block">{employee.phone && <span className="block">{phoneCountryByName(employee.country).dial}{employee.phone}</span>}{employee.email}</span><ChevronRight className="size-4 shrink-0 text-muted-foreground" /></Button></div>)}{!filtered.length && <p className="px-4 py-8 text-center t-row text-muted-foreground">No {archived ? "archived " : ""}employees found</p>}</GroupCard>
       </>}
       {!canManageSettings && <Caption>Only managers can change employees.</Caption>}
     </ScreenBody>
