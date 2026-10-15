@@ -63,11 +63,11 @@ export const navGroups: NavGroup[] = [
  * opens from the venue/profile tile at the top of the rail instead.
  */
 export const railPrimary: NavLink[] = [
-  { to: "/order/new", label: "New Order", icon: FilePlus2 },
+  { to: "/order/new", label: "New Order", icon: NewOrderIcon },
 
-  { to: "/floor", label: "Table Order", icon: Sofa },
+  { to: "/floor", label: "Table Order", icon: TableOrderIcon },
   { to: "/rooms", label: "Rooms", icon: BedDouble },
-  { to: "/tickets", label: "Tickets", icon: Receipt },
+  { to: "/tickets", label: "Tickets", icon: TicketsIcon },
   { to: "/board", label: "orderOS", icon: OrderOSIcon },
 ];
 
