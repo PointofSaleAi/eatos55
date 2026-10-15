@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
-import { Bug, FileUp, MessageCircleMore, MessageSquare, RotateCw, Triangle } from "lucide-react";
+import { Bug, FileUp, Mail, MessageCircleMore, MessageSquare, RotateCw, Triangle } from "lucide-react";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import {
@@ -75,6 +75,7 @@ function CustomerSupport() {
             color="blue"
             onClick={() => toast.success("Chat request sent · an agent will join shortly")}
           />
+          <IconNavRow title="Contact Us" icon={Mail} color="slate" to="/system/contact-us" />
           <IconNavRow
             title="Help Center"
             icon={MessageCircleMore}

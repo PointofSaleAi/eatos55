@@ -53,6 +53,7 @@ import { Route as SettingsSalesSummaryRouteImport } from './routes/settings.sale
 import { Route as SettingsTapToPayRouteImport } from './routes/settings.tap-to-pay'
 import { Route as SettingsWorkforceRouteImport } from './routes/settings.workforce'
 import { Route as SystemIndexRouteImport } from './routes/system.index'
+import { Route as SystemContactUsRouteImport } from './routes/system.contact-us'
 import { Route as SystemCustomerSupportRouteImport } from './routes/system.customer-support'
 import { Route as SystemHardwareRouteImport } from './routes/system.hardware'
 import { Route as SystemHelpCenterRouteImport } from './routes/system.help-center'
@@ -300,6 +301,11 @@ const SystemIndexRoute = SystemIndexRouteImport.update({
   path: '/system/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SystemContactUsRoute = SystemContactUsRouteImport.update({
+  id: '/system/contact-us',
+  path: '/system/contact-us',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SystemCustomerSupportRoute = SystemCustomerSupportRouteImport.update({
   id: '/system/customer-support',
   path: '/system/customer-support',
@@ -466,6 +472,7 @@ export interface FileRoutesByFullPath {
   '/settings/sales-summary': typeof SettingsSalesSummaryRoute
   '/settings/tap-to-pay': typeof SettingsTapToPayRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
+  '/system/contact-us': typeof SystemContactUsRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
   '/system/hardware': typeof SystemHardwareRoute
   '/system/help-center': typeof SystemHelpCenterRoute
@@ -537,6 +544,7 @@ export interface FileRoutesByTo {
   '/settings/sales-summary': typeof SettingsSalesSummaryRoute
   '/settings/tap-to-pay': typeof SettingsTapToPayRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
+  '/system/contact-us': typeof SystemContactUsRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
   '/system/hardware': typeof SystemHardwareRoute
   '/system/help-center': typeof SystemHelpCenterRoute
@@ -609,6 +617,7 @@ export interface FileRoutesById {
   '/settings/sales-summary': typeof SettingsSalesSummaryRoute
   '/settings/tap-to-pay': typeof SettingsTapToPayRoute
   '/settings/workforce': typeof SettingsWorkforceRoute
+  '/system/contact-us': typeof SystemContactUsRoute
   '/system/customer-support': typeof SystemCustomerSupportRoute
   '/system/hardware': typeof SystemHardwareRoute
   '/system/help-center': typeof SystemHelpCenterRoute
@@ -682,6 +691,7 @@ export interface FileRouteTypes {
     | '/settings/sales-summary'
     | '/settings/tap-to-pay'
     | '/settings/workforce'
+    | '/system/contact-us'
     | '/system/customer-support'
     | '/system/hardware'
     | '/system/help-center'
@@ -753,6 +763,7 @@ export interface FileRouteTypes {
     | '/settings/sales-summary'
     | '/settings/tap-to-pay'
     | '/settings/workforce'
+    | '/system/contact-us'
     | '/system/customer-support'
     | '/system/hardware'
     | '/system/help-center'
@@ -824,6 +835,7 @@ export interface FileRouteTypes {
     | '/settings/sales-summary'
     | '/settings/tap-to-pay'
     | '/settings/workforce'
+    | '/system/contact-us'
     | '/system/customer-support'
     | '/system/hardware'
     | '/system/help-center'
@@ -896,6 +908,7 @@ export interface RootRouteChildren {
   SettingsSalesSummaryRoute: typeof SettingsSalesSummaryRoute
   SettingsTapToPayRoute: typeof SettingsTapToPayRoute
   SettingsWorkforceRoute: typeof SettingsWorkforceRoute
+  SystemContactUsRoute: typeof SystemContactUsRoute
   SystemCustomerSupportRoute: typeof SystemCustomerSupportRoute
   SystemHardwareRoute: typeof SystemHardwareRoute
   SystemHelpCenterRoute: typeof SystemHelpCenterRoute
@@ -1239,6 +1252,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SystemIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/system/contact-us': {
+      id: '/system/contact-us'
+      path: '/system/contact-us'
+      fullPath: '/system/contact-us'
+      preLoaderRoute: typeof SystemContactUsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/system/customer-support': {
       id: '/system/customer-support'
       path: '/system/customer-support'
@@ -1466,6 +1486,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsSalesSummaryRoute: SettingsSalesSummaryRoute,
   SettingsTapToPayRoute: SettingsTapToPayRoute,
   SettingsWorkforceRoute: SettingsWorkforceRoute,
+  SystemContactUsRoute: SystemContactUsRoute,
   SystemCustomerSupportRoute: SystemCustomerSupportRoute,
   SystemHardwareRoute: SystemHardwareRoute,
   SystemHelpCenterRoute: SystemHelpCenterRoute,
