@@ -98,6 +98,8 @@ export type Ticket = {
   /** Guest-facing order number, up to 5 digits. */
   orderNo?: number;
   guestEmail?: string;
+  /** Guest phone as typed on the order, e.g. "(415) 555-0132". */
+  guestPhone?: string;
   notes?: string;
   vehicle?: { type: string; color: string; brand?: string; plate?: string };
   /** Room number the charge was posted to, for room-charge tickets. */

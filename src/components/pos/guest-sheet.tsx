@@ -230,11 +230,14 @@ export function GuestSheet({
                   className={cn("flex w-full flex-col items-start rounded-row px-3 py-2 text-left transition-colors hover:bg-muted", i === active && "bg-muted")}
                 >
                   <span className="break-words text-fs-sm font-bold text-foreground">{g.name}</span>
-                  {g.email || g.phone ? (
-                    <span className="break-all text-fs-xs text-muted-foreground">
-                      {[g.email, g.phone].filter(Boolean).join(" · ")}
-                    </span>
-                  ) : null}
+                  <span className="mt-0.5 flex w-full min-w-0 items-center gap-1.5 text-fs-xs text-muted-foreground">
+                    <Mail className="size-3 shrink-0" aria-hidden />
+                    <span className="break-all">{g.email || "No email on file"}</span>
+                  </span>
+                  <span className="mt-0.5 flex w-full items-center gap-1.5 text-fs-xs text-muted-foreground">
+                    <Phone className="size-3 shrink-0" aria-hidden />
+                    <span>{g.phone || "No phone on file"}</span>
+                  </span>
                 </button>
               )) : (
                 <p className="px-3 py-2 text-fs-xs text-muted-foreground">No guest found — continue typing to add manually</p>
