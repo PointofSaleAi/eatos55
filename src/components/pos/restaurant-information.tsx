@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { GroupCard, GroupLabel, Caption } from "@/components/pos/settings-rows";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Wordmark } from "@/components/pos/brand";
+import { restaurantTypes } from "@/lib/demo-data";
 
 type Field = "restaurantName" | "restaurantType" | "restaurantEmail" | "restaurantPhone";
 
@@ -49,7 +50,7 @@ export function RestaurantInformation() {
   };
 
   const row = (field: Field, label: string) => (
-    <Button key={field} variant="ghost" disabled={!canManageSettings} onClick={() => open(field, label)} className="h-auto min-h-row w-full justify-start gap-3 rounded-none border-b border-border px-4 py-3 text-left last:border-b-0">
+    <Button key={field} variant="ghost" disabled={!canManageSettings} onClick={() => open(field, label)} className="h-auto min-h-row w-full justify-start gap-3 whitespace-normal rounded-none border-b border-border px-4 py-3 text-left hover:bg-muted hover:text-foreground last:border-b-0">
       <span className="shrink-0 t-row">{label}</span>
       <span className="min-w-0 flex-1 break-words text-right t-value text-muted-foreground">{settings[field] || "Not set"}</span>
       {canManageSettings ? <ChevronRight className="size-4 shrink-0 text-muted-foreground" /> : null}
@@ -112,7 +113,7 @@ export function RestaurantInformation() {
         <DialogHeader><DialogTitle>{editing?.label}</DialogTitle></DialogHeader>
         <form onSubmit={e => { e.preventDefault(); save(); }} className="space-y-4">
           {editing?.field === "restaurantPhone" ? <Select value={phoneCountry} onValueChange={v => { setPhoneCountry(v); setDraft(""); setError(""); }}><SelectTrigger aria-label="Phone country"><SelectValue /></SelectTrigger><SelectContent>{phoneCountries.map(c => <SelectItem key={c.name} value={c.name}>{c.flag} {c.name} {c.dial}</SelectItem>)}</SelectContent></Select> : null}
-          <Input autoFocus aria-label={editing?.label ?? "Value"} type={editing?.field === "restaurantEmail" ? "email" : editing?.field === "restaurantPhone" ? "tel" : "text"} value={draft} onChange={e => { setError(""); setDraft(editing?.field === "restaurantPhone" ? formatPhoneFor(phoneCountryByName(phoneCountry), e.target.value) : e.target.value); }} />
+          {editing?.field === "restaurantType" ? <Select value={draft} onValueChange={v => { setDraft(v); setError(""); }}><SelectTrigger aria-label="Type"><SelectValue placeholder="Select type" /></SelectTrigger><SelectContent>{["Casual Dining", ...restaurantTypes].map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent></Select> : <Input autoFocus aria-label={editing?.label ?? "Value"} type={editing?.field === "restaurantEmail" ? "email" : editing?.field === "restaurantPhone" ? "tel" : "text"} value={draft} onChange={e => { setError(""); setDraft(editing?.field === "restaurantPhone" ? formatPhoneFor(phoneCountryByName(phoneCountry), e.target.value) : e.target.value); }} />}
           {error ? <p role="alert" className="text-fs-sm text-destructive">{error}</p> : null}
           <div className="flex justify-end gap-2"><Button type="button" variant="outline" onClick={() => setEditing(null)}>Cancel</Button><Button type="submit">Save</Button></div>
         </form>
