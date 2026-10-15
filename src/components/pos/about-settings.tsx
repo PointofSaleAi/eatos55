@@ -1,5 +1,5 @@
+import { useNavigate } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
-import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, GroupLabel, IconValueRow, settingsRowClass } from "@/components/pos/settings-rows";
 import { cn } from "@/lib/utils";
@@ -11,23 +11,14 @@ const softwareRows: [string, string][] = [
   ["Build Date", "BD 13.10.26"],
 ];
 
-const termsRows: { label: string; url?: string }[] = [
-  { label: "Privacy Policy", url: "https://www.eatos.com/privacy-policy" },
-  { label: "Legal Terms", url: "https://www.eatos.com/terms-and-conditions" },
-  { label: "Report Fraud" },
+const termsRows: { label: string; topic?: string }[] = [
+  { label: "Privacy Policy", topic: "doc-privacy-policy" },
+  { label: "Legal Terms", topic: "doc-legal-terms" },
+  { label: "Report Fraud", topic: "doc-report-fraud" },
 ];
 
-function openTermsRow(row: { label: string; url?: string }) {
-  if (row.url) {
-    window.open(row.url, "_blank", "noopener,noreferrer");
-    return;
-  }
-  toast.info(`${row.label} opens in the full app.`, {
-    description: "This demo does not include the linked document.",
-  });
-}
-
 export function AboutSettings() {
+  const navigate = useNavigate();
 
   const deviceRows: [string, string][] = [
     ["Device Name", "Point of Sale"],
@@ -62,7 +53,10 @@ export function AboutSettings() {
             <button
               key={row.label}
               type="button"
-              onClick={() => openTermsRow(row)}
+              onClick={() =>
+                row.topic &&
+                navigate({ to: "/settings/detail/$topic", params: { topic: row.topic } })
+              }
               className={cn(settingsRowClass, "transition-colors hover:bg-muted")}
             >
               <span className="min-w-0 flex-1 truncate t-row text-foreground">{row.label}</span>
