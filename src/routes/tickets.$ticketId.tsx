@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { ChevronDown, Printer, Trash2, Utensils, Users, Grid2x2, ShoppingBag, Bike } from "lucide-react";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { brand } from "@/lib/brand";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/pos/confirm-sheet";
@@ -39,6 +39,7 @@ function TicketDetail() {
   const [tipOpen, setTipOpen] = useState(false);
   const [paidOpen, setPaidOpen] = useState(false);
   const landscape = useLandscapeWide();
+  const Footer = landscape ? Fragment : ScreenFooter;
 
   if (!ticket) {
     return (
@@ -264,7 +265,7 @@ function TicketDetail() {
       </>}
 
       <div data-ticket-cart-actions={landscape ? "true" : undefined} className={landscape ? "shrink-0 bg-surface px-3 pb-2 pt-1.5" : "contents"}>
-      <ScreenFooter>
+      <Footer>
         {ticket.roomCharge ? (
           <RoomTicketActions ticket={ticket} />
         ) : (
@@ -280,7 +281,7 @@ function TicketDetail() {
           <Button
             variant="outline"
             aria-label="Print receipt"
-            className={cn("h-12 w-12 shrink-0", landscape ? "rounded-row" : "rounded-pill")}
+            className={cn("h-12 shrink-0", landscape ? "w-12 rounded-row" : "w-14 rounded-pill")}
             onClick={() => toast.success("Receipt sent to the printer")}
           >
             <Printer className="size-5" />
@@ -301,7 +302,7 @@ function TicketDetail() {
               <Button
                 variant="outline"
                 aria-label="Cancel order"
-                className={cn("h-12 w-12 shrink-0 border-destructive/40 text-destructive", landscape ? "rounded-row" : "rounded-pill")}
+                className={cn("h-12 shrink-0 border-destructive/40 text-destructive", landscape ? "w-12 rounded-row" : "w-14 rounded-pill")}
                 onClick={() => {
                   void (async () => {
                     const ok = await confirm({
@@ -333,7 +334,7 @@ function TicketDetail() {
         </div>
         </div>
         )}
-      </ScreenFooter>
+      </Footer>
       </div>
 
 
