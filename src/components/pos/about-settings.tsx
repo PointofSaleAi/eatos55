@@ -6,10 +6,10 @@ import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 
 const softwareRows: [string, string][] = [
-  ["Software Name", "lcrOS Point of Sale"],
-  ["App Version", "5.1.1004+1004"],
+  ["Software Name", "eatOS Point of Sale"],
+  ["App Version", "5.100.35 (+1013)"],
   ["Flutter Version", "FL 3.47.4"],
-  ["Build Date", "BD 09.10.26"],
+  ["Build Date", "BD 13.10.26"],
 ];
 
 const termsRows: { label: string; url?: string }[] = [
@@ -32,7 +32,7 @@ export function AboutSettings() {
   const { settings } = usePos();
 
   const deviceRows: [string, string][] = [
-    ["Device Name", settings.deviceName || "LCROS-ee3a"],
+    ["Device Name", "Point of Sale"],
     ["OS Name", "iPadOS"],
     ["OS Version", "26.5"],
     ["Model Name", "iPad"],
