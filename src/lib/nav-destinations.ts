@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import {
+  ConciergeBell,
   Gauge,
   ClipboardList,
   CreditCard,
@@ -10,7 +11,6 @@ import {
   Sofa,
 } from "lucide-react";
 import { OrderOSIcon } from "@/components/pos/icons/orderos-icon";
-import { RoomServiceIcon } from "@/components/pos/icons/room-service-icon";
 import { NewOrderIcon, TableOrderIcon, TicketsIcon } from "@/components/pos/icons/rail-icons";
 
 /** Rail/drawer icon: any component that takes a className (Lucide or custom SVG). */
@@ -35,7 +35,7 @@ export const navGroups: NavGroup[] = [
     title: "Service",
     links: [
       { to: "/floor", label: "Table Order", icon: Sofa },
-      { to: "/rooms", label: "Rooms", icon: RoomServiceIcon },
+      { to: "/rooms", label: "Rooms", icon: ConciergeBell },
       { to: "/tickets", label: "Tickets", icon: Receipt },
       { to: "/board", label: "orderOS", icon: OrderOSIcon },
     ],
@@ -65,7 +65,7 @@ export const railPrimary: NavLink[] = [
   { to: "/order/new", label: "New Order", icon: NewOrderIcon },
 
   { to: "/floor", label: "Table Order", icon: TableOrderIcon },
-  { to: "/rooms", label: "Rooms", icon: RoomServiceIcon },
+  { to: "/rooms", label: "Rooms", icon: ConciergeBell },
   { to: "/tickets", label: "Tickets", icon: TicketsIcon },
   { to: "/board", label: "orderOS", icon: OrderOSIcon },
 ];

@@ -6,6 +6,7 @@ import {
   Bike,
   Building2,
   CalendarClock,
+  ConciergeBell,
   CreditCard,
   Link2,
   Nfc,
@@ -23,7 +24,6 @@ import {
   Utensils,
   Wallet,
 } from "lucide-react";
-import { RoomServiceIcon } from "@/components/pos/icons/room-service-icon";
 import { type ComponentType, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AmountEntry } from "@/components/pos/amount-entry";
