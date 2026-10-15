@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { haptic } from "@/lib/haptics";
 import { modeOrderType, money, statusMeta, type Ticket } from "@/lib/demo-data";
@@ -236,7 +237,7 @@ function orderTypeIcon(label: string) {
   return Utensils;
 }
 
-export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () => void }) {
+export function TicketCard({ ticket, onClick, landscape = false }: { ticket: Ticket; onClick: () => void; landscape?: boolean }) {
   const { tableGroupLabel } = usePos();
   const meta = roomChargeLabel(ticket) ?? statusMeta[ticket.status];
   const timer = useTicketTimer(ticket.arrivedMinutesAgo);
@@ -256,6 +257,53 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
 
   return (
     <div className="@container w-full overflow-hidden rounded-card border border-border bg-surface">
+      {landscape ? (
+        <div data-ticket-landscape className="grid grid-cols-[auto_minmax(0,1fr)] items-stretch gap-2 px-2 py-2">
+          <Button
+            variant="ghost"
+            aria-label={`Open order ${orderNo} - ${orderTypeLabel}${tableLabel ? `, table ${tableLabel}` : ""}`}
+            title={`Order ${orderNo} · Check ${ticket.checkNumber ?? orderNo}`}
+            onClick={onClick}
+            className="h-auto min-h-16 w-16 shrink-0 flex-col gap-0.5 rounded-row border border-border bg-muted px-1 py-2"
+          >
+            <span className="max-w-full truncate t-row tabular-nums text-foreground">{orderNo}</span>
+            <span className="max-w-full truncate t-caption tabular-nums text-muted-foreground">{ticket.checkNumber ?? orderNo}</span>
+          </Button>
+          <Button
+            variant="ghost"
+            aria-label={`Expand order ${orderNo} details`}
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+            className="grid h-auto min-w-0 grid-cols-[minmax(0,1fr)_minmax(4rem,0.4fr)_7.5rem] items-center gap-x-2 whitespace-normal rounded-row px-0 py-1 text-left"
+          >
+            <span data-ticket-guest className="block min-w-0">
+              <span className="block truncate t-row text-foreground" title={`${ticket.label}${tableLabel ? ` · ${tableLabel}` : ""}`}>
+                {ticket.label}{tableLabel ? ` · ${tableLabel}` : ""}
+              </span>
+              <span className="flex min-w-0 flex-wrap items-center gap-x-1 gap-y-0.5 t-caption text-muted-foreground">
+                <OrderTypeIcon className="size-3 shrink-0" aria-hidden />
+                <span>{tableLabel ? `Party of ${ticket.seats}` : orderTypeLabel}, {ticket.arrivedAt}</span>
+                <span className="whitespace-nowrap tabular-nums">| {timer}</span>
+              </span>
+              <span className="block truncate t-caption font-semibold text-foreground" title={ticket.revenueCenter ?? "Main dining"}>
+                {ticket.revenueCenter ?? "Main dining"}
+              </span>
+            </span>
+            <span data-ticket-employee className="block min-w-0 t-caption text-muted-foreground">
+              <span className="block truncate" title={ticket.server}>{ticket.server}</span>
+              <span className="block break-words">{ticket.paymentType ?? (ticket.status === "paid" ? "Card" : "Unpaid")}</span>
+            </span>
+            <span data-ticket-amount className="block min-w-0 max-w-32 text-right">
+              <span className="flex items-center justify-end gap-1">
+                <span className={cn("t-badge uppercase", meta.tone)}>{meta.label}</span>
+                <ChevronDown className={cn("size-3 shrink-0 text-muted-foreground transition-transform", open && "rotate-180")} aria-hidden />
+              </span>
+              <span className="block whitespace-nowrap t-row tabular-nums text-foreground">{money(ticket.total)}</span>
+              <span className="block whitespace-nowrap t-caption tabular-nums text-muted-foreground">{money(ticket.tips ?? 0)}</span>
+            </span>
+          </Button>
+        </div>
+      ) : (
       <div className="flex items-center gap-2 px-2 py-1.5">
         <button
           type="button"
@@ -316,9 +364,7 @@ export function TicketCard({ ticket, onClick }: { ticket: Ticket; onClick: () =>
           </span>
         </button>
       </div>
-
-
-
+      )}
       {open ? (
         <div className="border-t border-border px-3 py-3">
           <div className="grid grid-cols-2 gap-x-3 gap-y-2 @[30rem]:grid-cols-4 @[46rem]:grid-cols-6">
