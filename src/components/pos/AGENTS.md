@@ -18,3 +18,7 @@
 - Ticket payment rows (the Paid dropdown, or closed/refunded rows) always sit directly above the totals summary on every layout — outside the scrolling item list in landscape and before the summary card in portrait — so one shared paymentsSection drives both, and expansion grows upward without moving the pinned summary.
 - Left-rail icons (src/components/pos/icons/) are inline SVG components using fill/stroke currentColor — never PNG images or CSS masks — so every icon dims, hovers and highlights through the same paint path as the Lucide icons and the orderOS mark. New Order, Table Order and Tickets keep their reference artwork shapes (traced paths); only color treatment is shared, never the drawing style.
 - Landscape Tickets opens with the first ticket of the current list selected: the list pane replaces the route with that ticket's detail (never openTicket, so an in-progress order draft is never overwritten), keeping the route as the single selection source; phone and portrait keep the plain list.
+
+- New Order keeps a 24rem minimum cart width on wide layouts so guest name, mobile and arrival stay on one line; widen rather than shorten labels.
+- Landscape ticket detail mirrors New Order using selected-ticket data and existing handlers, never the mutable order draft, to preserve behavior.
+- Settings > Payments > Taxes is a dedicated screen (`tax-settings.tsx`) with tax rules in shared demo settings; rules never change cart or checkout totals.
