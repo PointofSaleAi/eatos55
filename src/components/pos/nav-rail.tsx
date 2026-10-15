@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Lock } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { EMark, Wordmark } from "@/components/pos/brand";
 import { formatVersionLabel } from "@/lib/demo-data";
 import { railPrimary } from "@/lib/nav-destinations";
