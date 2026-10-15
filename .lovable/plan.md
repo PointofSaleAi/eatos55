@@ -18,7 +18,7 @@ The cart header row wraps ARRIVED AT onto a second line. Measured at the user's 
 2. Reduce the minimum widths so all three always fit on one line:
    - Guest Name: `min-w-[4.5rem]` (72px) — still shows the full "Guest Name" placeholder.
    - Mobile Number: `min-w-[6.5rem]` (104px) — still shows "(XXX) XXX-XXXX" fully at `text-fs-xs`.
-3. Keep ARRIVED AT `shrink-0 whitespace-nowrap`.
+3. Keep the clock `shrink-0 whitespace-nowrap`, and drop the all-caps label: it reads `Arrived at 4:34 PM` (sentence case) instead of `ARRIVED AT 4:34 PM`, in all three places it appears (cart header, table chip, Custom Item guest line). Lowercase also trims a few px of width, which helps the row fit.
 4. With `flex-1` on both inputs they share leftover space; on the narrowest realistic panel (~351px) the total is 72 + 104 + 137 + 16 ≈ 329px, so one line holds. If a panel is somehow narrower, the inputs compress (text ellipsis is NOT added — placeholders still render, inputs keep their behaviour).
 
 No change to inline-editing behaviour (save on blur/Enter), fonts, or the live-clock rule. The table chip's ARRIVED AT (line ~455) and the Custom Item guest line are unaffected — they already render on their own lines by design.
