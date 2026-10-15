@@ -67,8 +67,8 @@ export function RestaurantInformation() {
   return <>
     <SubHeader title="Restaurant Information" backLabel="General" />
     <ScreenBody>
-      <div className="mx-auto w-full max-w-3xl">
-        <div className="flex justify-center py-6"><Wordmark className="h-20 max-w-full" /></div>
+      <div className="w-full">
+        <div className="flex justify-center py-6"><div className="grid size-32 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-surface p-5"><Wordmark className="h-auto w-full" /></div></div>
         <GroupCard>{row("restaurantName", "Name")}{row("restaurantType", "Type")}</GroupCard>
         <GroupCard className="mt-6">{row("restaurantEmail", "Email Address")}{row("restaurantPhone", "Phone Number")}</GroupCard>
         <GroupLabel>Description</GroupLabel>

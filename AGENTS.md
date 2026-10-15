@@ -33,3 +33,4 @@
 - The header settings panel uses a focused shortcut map resolved against shared settings destinations; guestbook derives read-only identities from existing POS data without fabricating contacts or combining distinct known email identities.
 - Settings drawer dismissal retains the panel through its exit animation; body swipe closing is allowed only at the scroll boundary and suppresses subsequent clicks, so scrolling and gestures cannot activate shortcuts.
 - Restaurant Information uses a dedicated form backed by shared demo settings, keeping structured address fields synchronized with its address summary and contact validation consistent with shared country helpers.
+- Restaurant operating hours use shared demo settings with native time inputs and presentation-only 12-hour formatting, so edits persist without changing order or reporting logic.
