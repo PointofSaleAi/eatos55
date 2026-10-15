@@ -9,7 +9,7 @@ function StrokeIcon({
   viewBox = "0 0 24 24",
   children,
 }: {
-  className?: string;
+  className?: string | undefined;
   viewBox?: string;
   children: React.ReactNode;
 }) {
