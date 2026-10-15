@@ -69,6 +69,8 @@ import { Route as TicketsSortRouteImport } from './routes/tickets.sort'
 import { Route as TicketsWhatsNewRouteImport } from './routes/tickets.whats-new'
 import { Route as PaymentTenderKindRouteImport } from './routes/payment.tender.$kind'
 import { Route as SettingsDetailTopicRouteImport } from './routes/settings.detail.$topic'
+import { Route as SettingsEndOfDayIndexRouteImport } from './routes/settings.end-of-day.index'
+import { Route as SettingsEndOfDayStartRouteImport } from './routes/settings.end-of-day.start'
 import { Route as SettingsHardwareIntegrationsRouteImport } from './routes/settings.hardware.integrations'
 import { Route as SettingsPaymentPickerFieldRouteImport } from './routes/settings.payment-picker.$field'
 import { Route as SystemArticleSlugRouteImport } from './routes/system.article.$slug'
@@ -375,6 +377,16 @@ const SettingsDetailTopicRoute = SettingsDetailTopicRouteImport.update({
   path: '/settings/detail/$topic',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsEndOfDayIndexRoute = SettingsEndOfDayIndexRouteImport.update({
+  id: '/settings/end-of-day/',
+  path: '/settings/end-of-day/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsEndOfDayStartRoute = SettingsEndOfDayStartRouteImport.update({
+  id: '/settings/end-of-day/start',
+  path: '/settings/end-of-day/start',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsHardwareIntegrationsRoute =
   SettingsHardwareIntegrationsRouteImport.update({
     id: '/integrations',
@@ -464,11 +476,13 @@ export interface FileRoutesByFullPath {
   '/tickets/': typeof TicketsIndexRoute
   '/payment/tender/$kind': typeof PaymentTenderKindRoute
   '/settings/detail/$topic': typeof SettingsDetailTopicRoute
+  '/settings/end-of-day/start': typeof SettingsEndOfDayStartRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
   '/settings/payment-picker/$field': typeof SettingsPaymentPickerFieldRoute
   '/system/article/$slug': typeof SystemArticleSlugRoute
   '/tap-to-pay/education/$step': typeof TapToPayEducationStepRoute
   '/tap-to-pay/setup/$from': typeof TapToPaySetupFromRoute
+  '/settings/end-of-day/': typeof SettingsEndOfDayIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -531,11 +545,13 @@ export interface FileRoutesByTo {
   '/tickets': typeof TicketsIndexRoute
   '/payment/tender/$kind': typeof PaymentTenderKindRoute
   '/settings/detail/$topic': typeof SettingsDetailTopicRoute
+  '/settings/end-of-day/start': typeof SettingsEndOfDayStartRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
   '/settings/payment-picker/$field': typeof SettingsPaymentPickerFieldRoute
   '/system/article/$slug': typeof SystemArticleSlugRoute
   '/tap-to-pay/education/$step': typeof TapToPayEducationStepRoute
   '/tap-to-pay/setup/$from': typeof TapToPaySetupFromRoute
+  '/settings/end-of-day': typeof SettingsEndOfDayIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -599,11 +615,13 @@ export interface FileRoutesById {
   '/tickets/': typeof TicketsIndexRoute
   '/payment/tender/$kind': typeof PaymentTenderKindRoute
   '/settings/detail/$topic': typeof SettingsDetailTopicRoute
+  '/settings/end-of-day/start': typeof SettingsEndOfDayStartRoute
   '/settings/hardware/integrations': typeof SettingsHardwareIntegrationsRoute
   '/settings/payment-picker/$field': typeof SettingsPaymentPickerFieldRoute
   '/system/article/$slug': typeof SystemArticleSlugRoute
   '/tap-to-pay/education/$step': typeof TapToPayEducationStepRoute
   '/tap-to-pay/setup/$from': typeof TapToPaySetupFromRoute
+  '/settings/end-of-day/': typeof SettingsEndOfDayIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -668,11 +686,13 @@ export interface FileRouteTypes {
     | '/tickets/'
     | '/payment/tender/$kind'
     | '/settings/detail/$topic'
+    | '/settings/end-of-day/start'
     | '/settings/hardware/integrations'
     | '/settings/payment-picker/$field'
     | '/system/article/$slug'
     | '/tap-to-pay/education/$step'
     | '/tap-to-pay/setup/$from'
+    | '/settings/end-of-day/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -735,11 +755,13 @@ export interface FileRouteTypes {
     | '/tickets'
     | '/payment/tender/$kind'
     | '/settings/detail/$topic'
+    | '/settings/end-of-day/start'
     | '/settings/hardware/integrations'
     | '/settings/payment-picker/$field'
     | '/system/article/$slug'
     | '/tap-to-pay/education/$step'
     | '/tap-to-pay/setup/$from'
+    | '/settings/end-of-day'
   id:
     | '__root__'
     | '/'
@@ -802,11 +824,13 @@ export interface FileRouteTypes {
     | '/tickets/'
     | '/payment/tender/$kind'
     | '/settings/detail/$topic'
+    | '/settings/end-of-day/start'
     | '/settings/hardware/integrations'
     | '/settings/payment-picker/$field'
     | '/system/article/$slug'
     | '/tap-to-pay/education/$step'
     | '/tap-to-pay/setup/$from'
+    | '/settings/end-of-day/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -870,10 +894,12 @@ export interface RootRouteChildren {
   TicketsIndexRoute: typeof TicketsIndexRoute
   PaymentTenderKindRoute: typeof PaymentTenderKindRoute
   SettingsDetailTopicRoute: typeof SettingsDetailTopicRoute
+  SettingsEndOfDayStartRoute: typeof SettingsEndOfDayStartRoute
   SettingsPaymentPickerFieldRoute: typeof SettingsPaymentPickerFieldRoute
   SystemArticleSlugRoute: typeof SystemArticleSlugRoute
   TapToPayEducationStepRoute: typeof TapToPayEducationStepRoute
   TapToPaySetupFromRoute: typeof TapToPaySetupFromRoute
+  SettingsEndOfDayIndexRoute: typeof SettingsEndOfDayIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1298,6 +1324,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsDetailTopicRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/end-of-day/': {
+      id: '/settings/end-of-day/'
+      path: '/settings/end-of-day'
+      fullPath: '/settings/end-of-day/'
+      preLoaderRoute: typeof SettingsEndOfDayIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/end-of-day/start': {
+      id: '/settings/end-of-day/start'
+      path: '/settings/end-of-day/start'
+      fullPath: '/settings/end-of-day/start'
+      preLoaderRoute: typeof SettingsEndOfDayStartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/hardware/integrations': {
       id: '/settings/hardware/integrations'
       path: '/integrations'
@@ -1408,10 +1448,12 @@ const rootRouteChildren: RootRouteChildren = {
   TicketsIndexRoute: TicketsIndexRoute,
   PaymentTenderKindRoute: PaymentTenderKindRoute,
   SettingsDetailTopicRoute: SettingsDetailTopicRoute,
+  SettingsEndOfDayStartRoute: SettingsEndOfDayStartRoute,
   SettingsPaymentPickerFieldRoute: SettingsPaymentPickerFieldRoute,
   SystemArticleSlugRoute: SystemArticleSlugRoute,
   TapToPayEducationStepRoute: TapToPayEducationStepRoute,
   TapToPaySetupFromRoute: TapToPaySetupFromRoute,
+  SettingsEndOfDayIndexRoute: SettingsEndOfDayIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
