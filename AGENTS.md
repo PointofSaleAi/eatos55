@@ -36,3 +36,4 @@
 - Restaurant operating hours use shared demo settings with native time inputs and presentation-only 12-hour formatting, so edits persist without changing order or reporting logic.
 - End of Day settings use shared demo settings and a separate start-checklist route; closing is explicitly a demo confirmation, never an implicit ticket, staff, drawer or reporting mutation.
 - Schedule Information uses a dedicated editor and shared demo settings with per-day times and a reversible archive flag; row swipes reveal actions without opening the editor or archiving on dismissal, and never change employee shifts or ordering logic.
+- Timed Pricing uses dedicated structured demo settings for date ranges, source, centre and daily times, separate from legacy price rules; editing these reference screens never changes checkout prices.
