@@ -12,6 +12,8 @@ import {
   IconValueRow,
 } from "@/components/pos/settings-rows";
 import { usePos } from "@/lib/pos-store";
+import { useState } from "react";
+import { SupportChat } from "@/components/pos/support-chat";
 
 export const Route = createFileRoute("/system/customer-support")({
   head: () => ({
@@ -40,6 +42,7 @@ function randomPin() {
 
 function CustomerSupport() {
   const { settings, updateSettings } = usePos();
+  const [chatOpen, setChatOpen] = useState(false);
 
   return (
     <>
@@ -73,7 +76,7 @@ function CustomerSupport() {
             title="Chat"
             icon={MessageSquare}
             color="blue"
-            onClick={() => toast.success("Chat request sent · an agent will join shortly")}
+            onClick={() => setChatOpen(true)}
           />
           <IconNavRow title="Contact Us" icon={Mail} color="slate" to="/system/contact-us" />
           <IconNavRow
@@ -112,6 +115,7 @@ function CustomerSupport() {
           />
         </GroupCard>
       </ScreenBody>
+      <SupportChat open={chatOpen} onClose={() => setChatOpen(false)} />
     </>
   );
 }

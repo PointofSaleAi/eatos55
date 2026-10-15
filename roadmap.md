@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Open the official support chat box from Chat and the live support website inside Contact Us; verify all three layouts
 - [x] Add reference Card Reader and Cash Drawer connection lists, selection, detection notices and drawer addition; verified phone, tablet and desktop
 - [x] Match Hardware Emulators reference options; verified four switches, lab dismissal and saved settings across phone, tablet and desktop
 - [x] Remove Hardware Integrations and add reference Printers, Paired Printers and Advanced Settings; verified navigation, 16 switches, copies, selections, cancel and saved values across phone, tablet and desktop
