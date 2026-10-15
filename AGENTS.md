@@ -33,3 +33,4 @@
 - Hardware Emulators uses shared flat demo switches with a cancel-only lab notice; it never changes peripheral execution or payment processing.
 - Card Reader and Cash Drawer share screenshot-based device lists and separate demo connection preferences; selection and drawer additions never connect hardware or change payment and cash-drawer execution.
 - Customer Support embeds the official Crisp support chat with its public website identifier and the official support site in Contact Us; no simulated delivery or agent responses replace the hosted service.
+- Sales retains the published /settings/reports URL and uses separate shared demo filter preferences; changing these controls never changes transactions or claims a live report or print operation.

@@ -12,7 +12,7 @@ const shortcuts: { to?: string; label: string; description: string; icon: Lucide
   { to: "/settings/menu", label: "Menu", description: "View and manage your restaurant menu, categories, default modifiers, modifiers, add-ons, products, group.", icon: Utensils },
   { to: "/settings/payments", label: "Payment", description: "View and manage your accepted payment types, taxes, discounts, gratuity, service charge, card reader, card management, reports.", icon: CircleDollarSign },
   { to: "/settings/workforce", label: "Workforce", description: "View and manage your team and their schedules.", icon: Users },
-  { to: "/settings/reports", label: "Reports", description: "View your daily performance data.", icon: ChartNoAxesColumn },
+  { to: "/settings/reports", label: "Sales", description: "View your daily sales data.", icon: ChartNoAxesColumn },
   { to: "/settings/more", label: "Advanced", description: "View and manage your advanced point of sale features.", icon: SlidersHorizontal, manager: true },
   { to: "/settings/guestbook", label: "Guestbook", description: "Guest contact information and order history.", icon: BookUser },
   { to: "/system/customer-support", label: "Support", description: "View support personnel information.", icon: Headset },
