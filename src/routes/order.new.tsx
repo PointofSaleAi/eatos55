@@ -527,7 +527,7 @@ function NewOrder() {
           showCart ? "" : "hidden",
           wide
             ? moreOpen && docked
-              ? "w-[21rem] shrink-0 border-l border-border bg-surface lg:w-[23.5rem]"
+              ? "w-[21rem] shrink-0 border-l border-border bg-surface lg:w-[24rem]"
               : "w-[24rem] shrink-0 border-l border-border bg-surface 2xl:w-[26rem]"
             : "min-w-0 flex-1 bg-surface",
 
