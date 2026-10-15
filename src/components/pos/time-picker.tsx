@@ -14,7 +14,7 @@ function parseTime(value: string): { hour: number; minute: number; period: numbe
   if (!match) return { hour: 11, minute: 30, period: 0 };
   const hour = ((Number(match[1]) - 1) % 12 + 12) % 12;
   const minute = Math.min(59, Math.max(0, Number(match[2])));
-  const period = match[3].toUpperCase() === "PM" ? 1 : 0;
+  const period = match[3]?.toUpperCase() === "PM" ? 1 : 0;
   return { hour, minute, period };
 }
 
