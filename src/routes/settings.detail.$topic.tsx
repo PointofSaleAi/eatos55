@@ -37,6 +37,7 @@ import { AboutSettings } from "@/components/pos/about-settings";
 import { ServerConnection } from "@/components/pos/server-connection";
 import { Printers, PrinterSettings } from "@/components/pos/printer-settings";
 import { HardwareEmulators } from "@/components/pos/hardware-emulators";
+import { HardwareConnectionsScreen } from "@/components/pos/hardware-connections";
 import { LegalDocViewer, docTopics } from "@/components/pos/legal-doc-viewer";
 
 export const Route = createFileRoute("/settings/detail/$topic")({
@@ -88,6 +89,8 @@ function SettingsDetail() {
   if (topic === "paired-printers") return <PrinterSettings paired />;
   if (topic === "printer-advanced") return <PrinterSettings />;
   if (topic === "hardware-emulators") return <HardwareEmulators />;
+  if (topic === "card-reader") return <HardwareConnectionsScreen />;
+  if (topic === "cash-drawer") return <HardwareConnectionsScreen drawer />;
   if (docTopics[topic]) return <LegalDocViewer topic={topic} />;
 
   if (!screen) {

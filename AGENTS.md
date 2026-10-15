@@ -31,3 +31,4 @@
 - Network Servers uses a dedicated connection screen with merged shared demo preferences; sync, offline numbering and edgeOS controls never perform real network operations or alter order numbering.
 - Hardware printer topics share dedicated screens and merged demo printer preferences; configuration is separate from checkout and receipt execution, and detection/test actions never claim live hardware results.
 - Hardware Emulators uses shared flat demo switches with a cancel-only lab notice; it never changes peripheral execution or payment processing.
+- Card Reader and Cash Drawer share screenshot-based device lists and separate demo connection preferences; selection and drawer additions never connect hardware or change payment and cash-drawer execution.

@@ -10,6 +10,7 @@ import { referenceTimedPricing, type TimedPricingRule } from "@/lib/timed-pricin
 import { defaultDevicePreferences, type DevicePreferences } from "@/lib/device-settings";
 import { defaultPeripheralPreferences, type PeripheralPreferences } from "@/lib/peripheral-settings";
 import { defaultPrinterPreferences, type PrinterPreferences } from "@/lib/printer-settings";
+import { defaultHardwareConnections, type HardwareConnections } from "@/lib/hardware-connections";
 import { defaultServerConnection, migrateServerConnection, type ServerConnectionPreferences } from "@/lib/server-connection";
 import { migrateWorkforceEmployee, referenceEmployees, type WorkforceEmployee } from "@/lib/workforce-employees";
 import { isResumablePath, readResume, resumeKey, writeResume } from "@/lib/resume";
@@ -249,6 +250,7 @@ export type TapToPayState =
   | "ineligible";
 
 export type AppSettings = {
+  hardwareConnections: HardwareConnections;
   printerPreferences: PrinterPreferences;
   serverConnection: ServerConnectionPreferences;
   workforceEmployees: WorkforceEmployee[];
@@ -411,6 +413,7 @@ const defaultLoginSlides: LoginSlide[] = [
 ];
 
 const defaultSettings: AppSettings = {
+  hardwareConnections: defaultHardwareConnections,
   printerPreferences: defaultPrinterPreferences,
   serverConnection: defaultServerConnection,
   workforceEmployees: referenceEmployees,
@@ -1010,6 +1013,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setSettings((s) => ({
           ...s,
           ...saved,
+          hardwareConnections: { ...defaultHardwareConnections, ...saved.hardwareConnections },
           printerPreferences: { ...defaultPrinterPreferences, ...saved.printerPreferences },
           serverConnection: migrateServerConnection(saved.serverConnection),
           workforceEmployees: (saved.workforceEmployees ?? referenceEmployees).map(migrateWorkforceEmployee),
