@@ -12,6 +12,10 @@ function errorPage(message: string) {
   return `<!doctype html><html><body data-doc-error="1" style="font-family:system-ui;padding:24px;color:#333"><p>${message}</p></body></html>`;
 }
 
+function debugPage(message: string, detail: string) {
+  return `<!doctype html><html><body data-doc-error="1" style="font-family:system-ui;padding:24px;color:#333"><p>${message}</p><pre>${detail}</pre></body></html>`;
+}
+
 export const Route = createFileRoute("/api/public/eatos-doc/$")({
   server: {
     handlers: {
@@ -55,8 +59,8 @@ export const Route = createFileRoute("/api/public/eatos-doc/$")({
               "x-frame-options": "SAMEORIGIN",
             },
           });
-        } catch {
-          return new Response(errorPage("This document could not be loaded right now."), {
+        } catch (e) {
+          return new Response(debugPage("This document could not be loaded right now.", String(e)), {
             status: 502,
             headers: { "content-type": "text/html; charset=utf-8" },
           });
