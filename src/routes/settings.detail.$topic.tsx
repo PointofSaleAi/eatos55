@@ -32,6 +32,7 @@ import { Button } from "@/components/ui/button";
 import { RestaurantInformation } from "@/components/pos/restaurant-information";
 import { ScheduleInformation } from "@/components/pos/schedule-information";
 import { TimedPricing } from "@/components/pos/timed-pricing";
+import { AboutSettings } from "@/components/pos/about-settings";
 
 export const Route = createFileRoute("/settings/detail/$topic")({
   head: ({ params }) => ({
@@ -39,12 +40,12 @@ export const Route = createFileRoute("/settings/detail/$topic")({
       { title: `${settingsDetails[params.topic]?.title ?? "Settings detail"} - ${brand.appName} Handheld` },
       {
         name: "description",
-        content: params.topic === "timed-pricing" ? "Manage timed pricing names, revenue centres, ordering sources, date ranges and daily times." : params.topic === "schedule-info" ? "Manage restaurant schedules, daily operating times and archived schedules." : params.topic === "restaurant-information" ? "Restaurant name, type, contact information, description and address settings." : params.topic === "restaurant-settings" ? "Daily restaurant operating hours, start time, end time and day boundaries." : "Device, menu, payment, hardware and workforce settings detail on the handheld.",
+        content: params.topic === "about" ? "Software, device and terms information for this handheld." : params.topic === "timed-pricing" ? "Manage timed pricing names, revenue centres, ordering sources, date ranges and daily times." : params.topic === "schedule-info" ? "Manage restaurant schedules, daily operating times and archived schedules." : params.topic === "restaurant-information" ? "Restaurant name, type, contact information, description and address settings." : params.topic === "restaurant-settings" ? "Daily restaurant operating hours, start time, end time and day boundaries." : "Device, menu, payment, hardware and workforce settings detail on the handheld.",
       },
       { property: "og:title", content: `${settingsDetails[params.topic]?.title ?? "Settings detail"} - ${brand.appName} Handheld` },
       {
         property: "og:description",
-        content: params.topic === "timed-pricing" ? "Manage timed pricing names, revenue centres, ordering sources, date ranges and daily times." : params.topic === "schedule-info" ? "Manage restaurant schedules, daily operating times and archived schedules." : params.topic === "restaurant-information" ? "Restaurant name, type, contact information, description and address settings." : params.topic === "restaurant-settings" ? "Daily restaurant operating hours, start time, end time and day boundaries." : "Device, menu, payment, hardware and workforce settings detail on the handheld.",
+        content: params.topic === "about" ? "Software, device and terms information for this handheld." : params.topic === "timed-pricing" ? "Manage timed pricing names, revenue centres, ordering sources, date ranges and daily times." : params.topic === "schedule-info" ? "Manage restaurant schedules, daily operating times and archived schedules." : params.topic === "restaurant-information" ? "Restaurant name, type, contact information, description and address settings." : params.topic === "restaurant-settings" ? "Daily restaurant operating hours, start time, end time and day boundaries." : "Device, menu, payment, hardware and workforce settings detail on the handheld.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -75,6 +76,7 @@ function SettingsDetail() {
   if (topic === "restaurant-information") return <RestaurantInformation />;
   if (topic === "schedule-info") return <ScheduleInformation />;
   if (topic === "timed-pricing") return <TimedPricing />;
+  if (topic === "about") return <AboutSettings />;
 
   if (!screen) {
     return (
