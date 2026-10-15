@@ -70,7 +70,6 @@ export function TicketsIcon({ className }: { className?: string }) {
       <rect x="7.5" y="3" width="13.5" height="8" rx="1.5" />
       <rect x="3" y="9" width="13.5" height="10" rx="1.5" />
       <circle cx="9.75" cy="14" r="3" />
-      <path d="M9.75 12.2v3.6" />
     </svg>
   );
 }
