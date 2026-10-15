@@ -71,7 +71,6 @@ export function TicketsIcon({ className }: { className?: string }) {
       <rect x="3" y="9" width="13.5" height="10" rx="1.5" />
       <circle cx="9.75" cy="14" r="3" />
       <path d="M9.75 12.2v3.6" />
-      <path d="M11 13.1c-.4-.6-2.5-.7-2.5.3 0 1.1 2.5.5 2.5 1.5 0 1-2.1.9-2.5.2" />
     </svg>
   );
 }
