@@ -422,9 +422,9 @@ export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boole
             }}
             placeholder="(XXX) XXX-XXXX"
             aria-label="Guest mobile number"
-            className="h-8 min-w-0 rounded-row border border-transparent bg-transparent px-1 text-fs-xs font-bold text-muted-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-border focus:bg-muted focus:text-foreground"
+            className="h-8 min-w-[8.5rem] flex-1 rounded-row border border-transparent bg-transparent px-1 text-fs-xs font-bold text-muted-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-border focus:bg-muted focus:text-foreground"
           />
-          <span className="whitespace-nowrap text-fs-xs font-bold text-muted-foreground">
+          <span className="shrink-0 whitespace-nowrap text-fs-xs font-bold text-muted-foreground">
             ARRIVED AT {arrivedAt || liveTime}
           </span>
         </div>
