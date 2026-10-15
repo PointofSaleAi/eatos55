@@ -1,3 +1,5 @@
+import { isValidPhoneFor, phoneCountryByName, phoneErrorFor } from "@/lib/phone";
+
 export type WorkforceEmployee = {
   id: string;
   firstName: string;
@@ -22,6 +24,23 @@ export const newWorkforceEmployee = (): WorkforceEmployee => ({
   employeeId: "", role: "", revenueCentre: "", dashboardAccess: false, pinConfigured: false,
   payroll: false, jobType: "", archived: false, addedOn: "",
 });
+
+/** Issues that stop a record from being saved automatically. */
+export const employeeErrorFor = (employee: WorkforceEmployee, others: WorkforceEmployee[], isNew = false): string => {
+  if (!employee.firstName.trim() || !employee.lastName.trim()) return "Enter first name and last name.";
+  if (isNew && (!employee.role || !employee.jobType)) return "Select job role and job type.";
+  const employeeId = employee.employeeId.trim();
+  if (employeeId && others.some(other => other.id !== employee.id && other.employeeId.trim() === employeeId)) return "Employee ID is already in use.";
+  return "";
+};
+
+/** Format warnings that are shown while the value is still saved. */
+export const employeeNoticeFor = (employee: WorkforceEmployee): string => {
+  const email = employee.email.trim();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Enter a valid email address.";
+  if (employee.phone && !isValidPhoneFor(phoneCountryByName(employee.country), employee.phone)) return phoneErrorFor(phoneCountryByName(employee.country));
+  return "";
+};
 
 export const referenceEmployees: WorkforceEmployee[] = [
   ["Abhishek", "Test", "Manager", "", ""],
