@@ -255,6 +255,17 @@ export type AppSettings = {
   restaurantStartTime: string;
   restaurantEndTime: string;
   restaurantDayBoundary: string;
+  eodReminder: boolean;
+  eodReminderTime: string;
+  eodTasks: boolean;
+  eodAutoTime: string;
+  eodClockOut: boolean;
+  eodCloseDrawer: boolean;
+  eodPrintReport: boolean;
+  eodPrintEmployees: boolean;
+  eodClosePaid: boolean;
+  eodCancelUnpaid: boolean;
+  eodRecipients: string[];
   taxId: string;
   timezone: string;
   currency: string;
@@ -454,6 +465,17 @@ const defaultSettings: AppSettings = {
   darkKds: true,
   hapticFeedback: true,
   deviceName: "aurora 22",
+  eodReminder: true,
+  eodReminderTime: "08:45",
+  eodTasks: true,
+  eodAutoTime: "12:38",
+  eodClockOut: true,
+  eodCloseDrawer: true,
+  eodPrintReport: true,
+  eodPrintEmployees: true,
+  eodClosePaid: true,
+  eodCancelUnpaid: true,
+  eodRecipients: ["e1", "e2", "e3", "e4"],
   deviceService: "Table Service",
   orderTypePlacement: "Order screen",
   roomService: false,

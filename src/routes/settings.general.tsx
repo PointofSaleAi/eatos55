@@ -127,7 +127,7 @@ function GeneralSettings() {
             title="End Of Day"
             icon={BarChart3}
             color="orange"
-            to="/settings/sales-summary"
+            to="/settings/end-of-day"
           />
           <IconNavRow
             title="Schedule Info"
