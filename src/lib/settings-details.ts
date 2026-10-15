@@ -341,20 +341,15 @@ export const settingsDetails: Record<string, DetailScreen> = {
 
   // Hardware / Network
   printer: {
-    title: "Printer",
+    title: "Printers",
     backLabel: "Hardware",
     icon: Printer,
-    rows: [
-      { kind: "text", label: "Kitchen Printer", field: "printerName" },
-      { kind: "text", label: "Connection", field: "printerConnection" },
-      {
-        kind: "choice",
-        label: "Paper Width",
-        field: "paperWidth",
-        options: ["58 mm", "80 mm"],
-      },
-      { kind: "toggle", label: "Printer Emulator", field: "printerEmulator" },
-    ],
+  },
+  "paired-printers": {
+    title: "Paired Printers", backLabel: "Printers", icon: Printer,
+  },
+  "printer-advanced": {
+    title: "Advanced Settings", backLabel: "Printers", icon: Printer,
   },
   "card-reader": {
     title: "Card Reader",
