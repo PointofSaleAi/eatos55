@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
+import { formatVersionLabel } from "@/lib/demo-data";
 import {
   ArrowLeftRight,
   Timer,
@@ -222,7 +223,7 @@ export function AccountActions() {
               </span>
               <div className="min-w-0">
                 <p className="text-fs-sm font-extrabold text-foreground">
-                  {brand.appName} ver {settings.appVersion}
+                  {brand.appName} ver {formatVersionLabel(settings.appVersion)}
                 </p>
                 <p className="text-fs-xs text-muted-foreground">{brand.appName} Point Of Sale Inc.</p>
               </div>

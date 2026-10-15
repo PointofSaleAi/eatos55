@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Lock } from "lucide-react";
 import { useCallback, useState } from "react";
 import { EMark } from "@/components/pos/brand";
+import { formatVersionLabel } from "@/lib/demo-data";
 import { railPrimary } from "@/lib/nav-destinations";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
@@ -137,9 +138,7 @@ export function NavRail() {
         >
           <EMark className={cn("text-shell-foreground", expanded ? "size-6" : "size-5")} />
           <span className="text-center text-[0.5625rem] font-bold leading-tight text-shell-foreground/60">
-            Ver {settings.appVersion}
-            <br />
-            FL 3.44.2
+            {formatVersionLabel(settings.appVersion)}
           </span>
         </Link>
       </div>
