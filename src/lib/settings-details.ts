@@ -39,7 +39,7 @@ import { menus } from "@/lib/demo-data";
 export type DetailRow =
   /** Comes from Back Office - read-only for everyone. */
   | { kind: "readonly"; label: string; value?: string }
-  | { kind: "toggle"; label: string; field: keyof AppSettings }
+  | { kind: "toggle"; label: string; field: keyof AppSettings; disabled?: boolean }
   | { kind: "choice"; label: string; field: keyof AppSettings; options: string[] }
   | { kind: "text"; label: string; field: keyof AppSettings }
   | { kind: "tender-tips"; label: string }
@@ -259,7 +259,8 @@ export const settingsDetails: Record<string, DetailScreen> = {
     backLabel: "Payments",
     icon: HandCoins,
     rows: [
-      { kind: "toggle", label: "Ask For Tip", field: "askForTip" },
+      { kind: "toggle", label: "Ask For Tip", field: "askForTip", disabled: true },
+      { kind: "toggle", label: "Print On Receipt", field: "printTipOnReceipt" },
       {
         kind: "choice",
         label: "When to ask",

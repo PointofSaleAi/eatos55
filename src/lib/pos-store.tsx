@@ -287,6 +287,8 @@ export type AppSettings = {
   currency: string;
   autoPrintReceipts: boolean;
   askForTip: boolean;
+  /** Print the gratuity line on receipts. */
+  printTipOnReceipt: boolean;
   /** Whether gratuity is chosen before tender or after an approval. */
   tipTiming: "Before payment" | "After approval";
   /** Direct tenders that may prompt for gratuity. Delivery and split are excluded. */
@@ -440,6 +442,7 @@ const defaultSettings: AppSettings = {
   currency: brand.currency,
   autoPrintReceipts: true,
   askForTip: true,
+  printTipOnReceipt: true,
   tipTiming: "After approval",
   tipTenders: {
     cash: false,
