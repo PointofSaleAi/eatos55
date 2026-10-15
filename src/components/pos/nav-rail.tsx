@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Lock } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { EMark, Wordmark } from "@/components/pos/brand";
 import { formatVersionLabel } from "@/lib/demo-data";
 import { railPrimary } from "@/lib/nav-destinations";
@@ -26,6 +26,23 @@ export function NavRail() {
 
   // Always starts collapsed: expansion is a per-visit choice, never remembered.
   const toggle = useCallback(() => setExpanded((v) => !v), []);
+
+  // Horizontal drag on empty rail space collapses (left) or expands (right).
+  const dragX = useRef<number | null>(null);
+  const onRailPointerDown = useCallback((e: React.PointerEvent) => {
+    if ((e.target as HTMLElement).closest("a,button")) return;
+    dragX.current = e.clientX;
+  }, []);
+  const onRailPointerUp = useCallback(
+    (e: React.PointerEvent) => {
+      if (dragX.current == null) return;
+      const dx = e.clientX - dragX.current;
+      dragX.current = null;
+      if (dx <= -40) setExpanded(false);
+      else if (dx >= 40) setExpanded(true);
+    },
+    [],
+  );
 
   const venue = (settings.restaurantName.split("·")[0] ?? "").trim();
   const venueInitials =
