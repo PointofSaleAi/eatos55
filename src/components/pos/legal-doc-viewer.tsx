@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 
 /**
  * Legal documents (Privacy Policy, Legal Terms, Report Fraud) shown inside the
- * right settings pane. The pages are fetched through the same-origin
- * `/api/public/eatos-doc/$` proxy because eatos.com blocks direct embedding.
+ * right settings pane. The pages are embedded from local copies under
+ * /docs/ (eatos.com blocks direct embedding), styled by eatos.com's own
+ * stylesheets loaded through the injected <base> tag.
  */
 export const docTopics: Record<string, { title: string; slug: string }> = {
   "doc-privacy-policy": { title: "Privacy Policy", slug: "privacy-policy" },
