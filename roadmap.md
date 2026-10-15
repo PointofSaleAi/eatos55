@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Simplify Workforce and add reference employee list, add/edit employee fields and reversible archive; verified phone, tablet and desktop
 - [x] Add reference Hardware Control and Guest Facing Display screens under Control Center; verified navigation, all switches and persistence on phone, tablet and desktop
 - [x] Add all reference Device Settings options under Control Center instead of General; verified choices, saved toggles and appearance on phone, tablet and desktop
 - [x] Match Timed Pricing reference list and add/edit form; verify selections, copying times and saved edits on all devices

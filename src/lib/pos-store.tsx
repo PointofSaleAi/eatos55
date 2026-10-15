@@ -9,6 +9,7 @@ import { referenceSchedules, type RestaurantSchedule } from "@/lib/restaurant-sc
 import { referenceTimedPricing, type TimedPricingRule } from "@/lib/timed-pricing";
 import { defaultDevicePreferences, type DevicePreferences } from "@/lib/device-settings";
 import { defaultPeripheralPreferences, type PeripheralPreferences } from "@/lib/peripheral-settings";
+import { referenceEmployees, type WorkforceEmployee } from "@/lib/workforce-employees";
 import { isResumablePath, readResume, resumeKey, writeResume } from "@/lib/resume";
 import {
   DEFAULT_TICKET_DATE,
@@ -246,6 +247,7 @@ export type TapToPayState =
   | "ineligible";
 
 export type AppSettings = {
+  workforceEmployees: WorkforceEmployee[];
   devicePreferences: DevicePreferences;
   peripheralPreferences: PeripheralPreferences;
   restaurantName: string;
@@ -403,6 +405,7 @@ const defaultLoginSlides: LoginSlide[] = [
 ];
 
 const defaultSettings: AppSettings = {
+  workforceEmployees: referenceEmployees,
   devicePreferences: defaultDevicePreferences,
   peripheralPreferences: defaultPeripheralPreferences,
   restaurantName: `${brand.appName} Kitchen · Downtown`,

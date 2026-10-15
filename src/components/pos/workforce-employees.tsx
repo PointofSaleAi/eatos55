@@ -1,0 +1,74 @@
+import { useState } from "react";
+import { Archive, ArrowDownAZ, ArrowUpAZ, ChevronRight, Pencil, Plus, Search, UserRound } from "lucide-react";
+import { toast } from "sonner";
+import { ScreenBody, SubHeader } from "@/components/pos/shell";
+import { Caption, GroupCard, GroupLabel, settingsRowClass } from "@/components/pos/settings-rows";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { usePos } from "@/lib/pos-store";
+import { revenueCenters } from "@/lib/demo-data";
+import { formatPhoneFor, isValidPhoneFor, phoneCountries, phoneCountryByName, phoneErrorFor } from "@/lib/phone";
+import { employeeRoles, newWorkforceEmployee, referenceEmployees, type WorkforceEmployee } from "@/lib/workforce-employees";
+
+export function WorkforceEmployees() {
+  const { settings, updateSettings, canManageSettings } = usePos();
+  const employees = settings.workforceEmployees ?? referenceEmployees;
+  const [draft, setDraft] = useState<WorkforceEmployee | null>(null);
+  const [query, setQuery] = useState("");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [role, setRole] = useState("all");
+  const [date, setDate] = useState("");
+  const [descending, setDescending] = useState(false);
+  const [archived, setArchived] = useState(false);
+  const [archiveTarget, setArchiveTarget] = useState<WorkforceEmployee | null>(null);
+  const [error, setError] = useState("");
+  const [pinOpen, setPinOpen] = useState(false);
+  const [pin, setPin] = useState("");
+  const [confirmPin, setConfirmPin] = useState("");
+  const [pinError, setPinError] = useState("");
+  const patch = (values: Partial<WorkforceEmployee>) => setDraft(current => current ? { ...current, ...values } : current);
+  const closeDraft = () => { setDraft(null); setError(""); setPin(""); setConfirmPin(""); };
+  const save = () => {
+    if (!draft || !canManageSettings) return;
+    if (!draft.firstName.trim() || !draft.lastName.trim() || !draft.role || !draft.jobType) { setError("Enter first name, last name, job role and job type."); return; }
+    if (draft.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(draft.email)) { setError("Enter a valid email address."); return; }
+    if (draft.phone && !isValidPhoneFor(phoneCountryByName(draft.country), draft.phone)) { setError(phoneErrorFor(phoneCountryByName(draft.country))); return; }
+    if (draft.employeeId && employees.some(employee => employee.id !== draft.id && employee.employeeId === draft.employeeId)) { setError("Employee ID is already in use."); return; }
+    const next = { ...draft, firstName: draft.firstName.trim(), lastName: draft.lastName.trim(), email: draft.email.trim(), employeeId: draft.employeeId.trim() };
+    updateSettings({ workforceEmployees: employees.some(employee => employee.id === next.id) ? employees.map(employee => employee.id === next.id ? next : employee) : [...employees, next] });
+    setArchived(next.archived); closeDraft(); toast.success("Employee saved");
+  };
+  const textRow = (label: string, field: "firstName" | "lastName" | "email" | "employeeId", placeholder: string) => draft && <div className={settingsRowClass}><label htmlFor={`employee-${field}`} className="min-w-0 flex-1 t-row">{label}</label><Input id={`employee-${field}`} type={field === "email" ? "email" : "text"} className="w-[48%] min-w-0 t-value" placeholder={placeholder} maxLength={100} value={draft[field]} disabled={!canManageSettings} onChange={event => patch({ [field]: event.target.value })} /></div>;
+  const selectRow = (label: string, field: "role" | "revenueCentre" | "jobType", options: string[]) => draft && <div className={settingsRowClass}><label htmlFor={`employee-${field}`} className="min-w-0 flex-1 t-row">{label}</label><Select value={draft[field]} disabled={!canManageSettings} onValueChange={value => patch({ [field]: value })}><SelectTrigger id={`employee-${field}`} className="w-[48%] min-w-0 t-value"><SelectValue placeholder="Choose" /></SelectTrigger><SelectContent>{options.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></div>;
+  const toggleRow = (label: string, field: "dashboardAccess" | "payroll") => draft && <div className={settingsRowClass}><span className="min-w-0 flex-1 t-row">{label}</span><Switch aria-label={label} checked={draft[field]} disabled={!canManageSettings} onCheckedChange={checked => patch({ [field]: checked })} /></div>;
+  const filtered = employees.filter(employee => employee.archived === archived && (role === "all" || employee.role === role) && (!date || !employee.addedOn || employee.addedOn <= date) && `${employee.firstName} ${employee.lastName} ${employee.email} ${employee.phone}`.toLowerCase().includes(query.toLowerCase())).sort((a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`) * (descending ? -1 : 1));
+  return <>
+    <SubHeader title={draft ? employees.some(employee => employee.id === draft.id) ? "Employee Information" : "Add New Employee" : archived ? "Archived Employees" : "Employees"} backLabel="Workforce" backTo="/settings/workforce" right={!draft ? <Button size="icon" variant="ghost" aria-label="Search employees" title="Search employees" onClick={() => setSearchOpen(value => !value)}><Search /></Button> : undefined} />
+    <ScreenBody className="py-4">
+      {draft ? <>
+        <div className="mb-6 flex justify-center"><div className="relative grid size-24 place-items-center rounded-full bg-muted text-muted-foreground"><UserRound className="size-12" /><Button size="icon" variant="outline" className="absolute bottom-0 right-0 size-8 rounded-full" aria-label="Edit employee photo" title="Edit employee photo" disabled={!canManageSettings} onClick={() => toast.info("Employee photo uploads are not available in this demo.")}><Pencil className="size-4" /></Button></div></div>
+        <GroupCard>{textRow("First Name", "firstName", "Required")}{textRow("Last Name", "lastName", "Required")}</GroupCard>
+        <GroupCard className="mt-6">{textRow("Email", "email", "Optional")}<div className={settingsRowClass}><label htmlFor="employee-phone" className="min-w-0 flex-1 t-row">Phone Number</label><div className="flex w-[48%] min-w-0 flex-col gap-2"><Select value={draft.country} disabled={!canManageSettings} onValueChange={value => patch({ country: value, phone: "" })}><SelectTrigger aria-label="Phone country" className="w-full min-w-0"><SelectValue /></SelectTrigger><SelectContent>{phoneCountries.map(country => <SelectItem key={country.name} value={country.name}>{country.name} {country.dial}</SelectItem>)}</SelectContent></Select><Input id="employee-phone" type="tel" className="min-w-0 t-value" placeholder="Optional" value={formatPhoneFor(phoneCountryByName(draft.country), draft.phone)} disabled={!canManageSettings} onChange={event => patch({ phone: formatPhoneFor(phoneCountryByName(draft.country), event.target.value).replace(/\D/g, "") })} /></div></div></GroupCard>
+        <GroupLabel>Employee Information</GroupLabel><GroupCard>
+          {toggleRow("Dashboard Access", "dashboardAccess")}{textRow("Employee Id", "employeeId", "Optional")}{selectRow("Job Role", "role", employeeRoles)}{selectRow("Revenue centre", "revenueCentre", revenueCenters)}
+          <Button variant="ghost" className={`${settingsRowClass} h-auto justify-start rounded-none whitespace-normal`} disabled={!canManageSettings} onClick={() => { setPin(""); setConfirmPin(""); setPinError(""); setPinOpen(true); }}><span className="min-w-0 flex-1 t-row">Create New Pin</span><span className="t-value text-muted-foreground">{draft.pinConfigured ? "PIN Set" : "Set PIN"}</span><ChevronRight className="size-4" /></Button>
+          <Button variant="ghost" className={`${settingsRowClass} h-auto justify-start rounded-none whitespace-normal`} disabled={!canManageSettings} onClick={() => toast.info("Fingerprint enrollment requires a supported connected device and is not available in this demo.")}><span className="min-w-0 flex-1 t-row">Add Fingerprint</span><ChevronRight className="size-4" /></Button>
+        </GroupCard>
+        <GroupLabel>Payroll Details</GroupLabel><GroupCard>{toggleRow("Payroll", "payroll")}{selectRow("Job Type *", "jobType", ["Full Time", "Part Time", "Casual", "Contract"] )}</GroupCard><Caption>Manage payroll by specifying employee pay type, rates, and roles.</Caption>
+        {error && <p role="alert" className="mt-4 t-caption text-destructive">{error}</p>}
+        <div className="mt-6 flex flex-wrap justify-end gap-2">{canManageSettings && employees.some(employee => employee.id === draft.id) && <Button variant="outline" onClick={() => setArchiveTarget(draft)}><Archive />{draft.archived ? "Restore" : "Archive"}</Button>}<Button variant="outline" onClick={closeDraft}>Cancel</Button><Button disabled={!canManageSettings} onClick={save}>Save</Button></div>
+      </> : <>
+        <div className="mb-5 flex justify-end gap-2"><Button size="icon" variant={archived ? "default" : "outline"} aria-label={archived ? "Show active employees" : "Show archived employees"} title={archived ? "Active employees" : "Archived employees"} onClick={() => setArchived(value => !value)}><Archive /></Button><Button size="icon" aria-label="Add new employee" title="Add New Employee" disabled={!canManageSettings} onClick={() => { setError(""); setDraft({ ...newWorkforceEmployee(), id: crypto.randomUUID(), addedOn: new Date().toLocaleDateString("en-CA") }); }}><Plus /></Button></div>
+        {searchOpen && <Input aria-label="Search employees" placeholder="Search employees" className="mb-4" value={query} onChange={event => setQuery(event.target.value)} />}
+        <div className="mb-4 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.5rem] gap-2"><Select value={role} onValueChange={setRole}><SelectTrigger aria-label="Job Roles" className="w-full min-w-0"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Job Roles</SelectItem>{employeeRoles.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select><Input aria-label="Employees as of date" type="date" className="min-w-0" value={date} onChange={event => setDate(event.target.value)} /><Button variant="outline" size="icon" aria-label={descending ? "Sort employees ascending" : "Sort employees descending"} title="Sort employees" onClick={() => setDescending(value => !value)}>{descending ? <ArrowUpAZ /> : <ArrowDownAZ />}</Button></div>
+        <GroupCard>{filtered.map(employee => <Button key={employee.id} variant="ghost" aria-label={`Open ${employee.firstName} ${employee.lastName}`} className={`${settingsRowClass} h-auto justify-start rounded-none whitespace-normal`} onClick={() => { setDraft({ ...employee }); setError(""); }}><span className="grid size-9 shrink-0 place-items-center rounded-full bg-foreground font-bold text-background">{employee.firstName.slice(0, 1)}</span><span className="min-w-0 flex-1 text-left"><span className="block break-words t-row font-semibold">{employee.firstName} {employee.lastName}</span><span className="block t-caption text-muted-foreground">{employee.role}</span><span className="mt-1 block break-all t-caption text-muted-foreground lg:hidden">{employee.phone && `${phoneCountryByName(employee.country).dial}${employee.phone}`} {employee.email}</span></span><span className="hidden min-w-0 max-w-[45%] break-all text-right t-caption text-muted-foreground lg:block">{employee.phone && <span className="block">{phoneCountryByName(employee.country).dial}{employee.phone}</span>}{employee.email}</span><ChevronRight className="size-4 shrink-0 text-muted-foreground" /></Button>)}{!filtered.length && <p className="px-4 py-8 text-center t-row text-muted-foreground">No {archived ? "archived " : ""}employees found</p>}</GroupCard>
+      </>}
+      {!canManageSettings && <Caption>Only managers can change employees.</Caption>}
+    </ScreenBody>
+    <Dialog open={!!archiveTarget} onOpenChange={open => { if (!open) setArchiveTarget(null); }}><DialogContent><DialogTitle>{archiveTarget?.archived ? "Restore Employee" : "Archive Employee"}</DialogTitle><DialogDescription>{archiveTarget?.firstName} {archiveTarget?.lastName}</DialogDescription><div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setArchiveTarget(null)}>Cancel</Button><Button onClick={() => { if (!archiveTarget || !canManageSettings) return; updateSettings({ workforceEmployees: employees.map(employee => employee.id === archiveTarget.id ? { ...employee, archived: !employee.archived } : employee) }); setArchiveTarget(null); closeDraft(); toast.success(archiveTarget.archived ? "Employee restored" : "Employee archived"); }}>{archiveTarget?.archived ? "Restore" : "Archive"}</Button></div></DialogContent></Dialog>
+    <Dialog open={pinOpen} onOpenChange={open => { setPinOpen(open); if (!open) { setPin(""); setConfirmPin(""); } }}><DialogContent><DialogTitle>Create New Pin</DialogTitle><DialogDescription>Demo setup only. This PIN will not be stored or used for employee login.</DialogDescription><Input aria-label="New PIN" type="password" inputMode="numeric" maxLength={4} value={pin} onChange={event => setPin(event.target.value.replace(/\D/g, ""))} placeholder="New PIN" /><Input aria-label="Confirm PIN" type="password" inputMode="numeric" maxLength={4} value={confirmPin} onChange={event => setConfirmPin(event.target.value.replace(/\D/g, ""))} placeholder="Confirm PIN" />{pinError && <p role="alert" className="t-caption text-destructive">{pinError}</p>}<div className="flex justify-end gap-2"><Button variant="outline" onClick={() => { setPinOpen(false); setPin(""); setConfirmPin(""); }}>Cancel</Button><Button disabled={!canManageSettings} onClick={() => { if (pin.length !== 4 || pin !== confirmPin) { setPinError("Enter matching four-digit PINs."); return; } patch({ pinConfigured: true }); setPinOpen(false); setPin(""); setConfirmPin(""); }}>Set PIN</Button></div></DialogContent></Dialog>
+  </>;
+}
