@@ -19,7 +19,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { haptic } from "@/lib/haptics";
-import { modeOrderType, money, statusMeta, type Ticket } from "@/lib/demo-data";
+import { modeOrderType, money, statusMeta, ticketStatusMeta, type Ticket } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 
 export function SectionLabel({ children }: { children: ReactNode }) {
@@ -239,7 +239,7 @@ function orderTypeIcon(label: string) {
 
 export function TicketCard({ ticket, onClick, landscape = false, selected = false }: { ticket: Ticket; onClick: () => void; landscape?: boolean; selected?: boolean }) {
   const { tableGroupLabel } = usePos();
-  const meta = roomChargeLabel(ticket) ?? statusMeta[ticket.status];
+  const meta = roomChargeLabel(ticket) ?? ticketStatusMeta(ticket);
   const timer = useTicketTimer(ticket.arrivedMinutesAgo);
   const [open, setOpen] = useState(false);
   const dateLabel = new Date(`${ticket.date}T12:00:00`).toLocaleDateString(brand.locale, {

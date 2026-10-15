@@ -688,6 +688,10 @@ type Store = {
   addTip: (id: string, amount: number) => void;
   transferTickets: (ids: string[], server: string) => void;
   closeTickets: (ids: string[]) => void;
+  /** Close a paid check: it stays in the list as Completed. */
+  closeTicket: (id: string) => void;
+  /** Record a demo refund against a closed check. */
+  refundTicket: (id: string, reason: string) => void;
 
   mode: MenuMode;
   setMode: (m: MenuMode) => void;
@@ -1368,6 +1372,24 @@ export function PosProvider({ children }: { children: ReactNode }) {
           list.map((t) =>
             ids.includes(t.id)
               ? { ...t, transferOrigin: t.transferOrigin ?? t.server, server }
+              : t,
+          ),
+        ),
+      closeTicket: (id) =>
+        setTickets((list) => list.map((t) => (t.id === id ? { ...t, closed: true } : t))),
+      refundTicket: (id, reason) =>
+        setTickets((list) =>
+          list.map((t) =>
+            t.id === id && !t.refund
+              ? {
+                  ...t,
+                  closed: true,
+                  refund: {
+                    reason,
+                    amount: t.total,
+                    at: new Date().toLocaleString("en-US", { day: "2-digit", month: "2-digit", year: "numeric", hour: "numeric", minute: "2-digit" }),
+                  },
+                }
               : t,
           ),
         ),

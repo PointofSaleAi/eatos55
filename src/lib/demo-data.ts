@@ -84,6 +84,8 @@ export type Ticket = {
   transferOrigin?: string;
   /** Paid check closed out by its server. */
   closed?: boolean;
+  /** Demo refund recorded after the check was closed (no money moves). */
+  refund?: { reason: string; at: string; amount: number };
   /** Check number printed on the guest copy. */
   checkNumber?: number;
   /** Tips recorded against the ticket. */
@@ -446,6 +448,13 @@ export const statusMeta: Record<TicketStatus, { label: string; tone: string }> =
   paid: { label: "Paid", tone: "text-success" },
   ready: { label: "READY", tone: "text-success" },
 };
+
+/** Status label that also reflects closed (Completed) and refunded checks. */
+export function ticketStatusMeta(t: Ticket): { label: string; tone: string } {
+  if (t.refund) return { label: "Refunded", tone: "text-destructive" };
+  if (t.closed && t.status === "paid") return { label: "Completed", tone: "text-success" };
+  return statusMeta[t.status];
+}
 
 /** Stage shown on a paid check that is still open at clock-out. */
 export const stageMeta: Record<NonNullable<Ticket["stage"]>, { label: string; tone: string }> = {
