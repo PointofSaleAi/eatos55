@@ -28,7 +28,7 @@ import {
   Wallet,
 
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 import { EmptyState, TicketCard } from "@/components/pos/primitives";
@@ -231,6 +231,21 @@ export function TicketsScreen({
       : tab === "closed"
         ? tableList.filter((t) => t.status === "paid")
         : tableList;
+
+  const firstTicketId = list[0]?.id;
+
+  // In the landscape split the right pane always shows a ticket, so the first
+  // one in the current list is selected as soon as the module opens. Only the
+  // route changes - the order draft is left untouched.
+  useEffect(() => {
+    if (!pane || !landscape || selectedTicketId || !firstTicketId) return;
+    void navigate({
+      to: "/tickets/$ticketId",
+      params: { ticketId: firstTicketId },
+      search: tableParam ? { table: tableParam } : {},
+      replace: true,
+    });
+  }, [pane, landscape, selectedTicketId, firstTicketId, navigate, tableParam]);
 
   const dateLabel = rangeLabel(ticketRange, DEFAULT_TICKET_DATE);
   const isDefaultPeriod =
