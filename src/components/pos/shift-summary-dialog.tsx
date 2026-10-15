@@ -167,7 +167,18 @@ export function ShiftSummaryDialog({ open, onOpenChange }: { open: boolean; onOp
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex h-[100dvh] max-h-[100dvh] w-full max-w-full flex-col gap-0 overflow-hidden rounded-none p-0 sm:h-auto sm:max-h-[90dvh] sm:max-w-3xl sm:rounded-xl">
         <div className="overflow-y-auto p-5 sm:p-6">
-          <DialogTitle className="text-[1.125rem] font-extrabold uppercase tracking-wide">Shift Summary</DialogTitle>
+          <div className="flex items-center justify-between gap-3">
+            <DialogTitle className="text-[1.125rem] font-extrabold uppercase tracking-wide">Shift Summary</DialogTitle>
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label="Print shift summary"
+              className="size-10 shrink-0"
+              onClick={() => toast.success("Shift summary sent to printer (demo)")}
+            >
+              <Printer className="size-5" />
+            </Button>
+          </div>
 
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <Popover
@@ -220,15 +231,6 @@ export function ShiftSummaryDialog({ open, onOpenChange }: { open: boolean; onOp
               <span className="tabular-nums">{filters.start} - {filters.end}</span>
             </button>
 
-            <Button
-              variant="outline"
-              size="icon"
-              aria-label="Print shift summary"
-              className="ml-auto size-10"
-              onClick={() => toast.success("Shift summary sent to printer (demo)")}
-            >
-              <Printer className="size-5" />
-            </Button>
           </div>
 
           <div className="mt-3 flex flex-wrap items-center gap-3">
