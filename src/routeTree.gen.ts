@@ -76,6 +76,7 @@ import { Route as SettingsPaymentPickerFieldRouteImport } from './routes/setting
 import { Route as SystemArticleSlugRouteImport } from './routes/system.article.$slug'
 import { Route as TapToPayEducationStepRouteImport } from './routes/tap-to-pay.education.$step'
 import { Route as TapToPaySetupFromRouteImport } from './routes/tap-to-pay.setup.$from'
+import { Route as ApiPublicEatosDocSplatRouteImport } from './routes/api/public/eatos-doc/$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -414,6 +415,11 @@ const TapToPaySetupFromRoute = TapToPaySetupFromRouteImport.update({
   path: '/tap-to-pay/setup/$from',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicEatosDocSplatRoute = ApiPublicEatosDocSplatRouteImport.update({
+  id: '/api/public/eatos-doc/$',
+  path: '/api/public/eatos-doc/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -483,6 +489,7 @@ export interface FileRoutesByFullPath {
   '/tap-to-pay/education/$step': typeof TapToPayEducationStepRoute
   '/tap-to-pay/setup/$from': typeof TapToPaySetupFromRoute
   '/settings/end-of-day/': typeof SettingsEndOfDayIndexRoute
+  '/api/public/eatos-doc/$': typeof ApiPublicEatosDocSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -552,6 +559,7 @@ export interface FileRoutesByTo {
   '/tap-to-pay/education/$step': typeof TapToPayEducationStepRoute
   '/tap-to-pay/setup/$from': typeof TapToPaySetupFromRoute
   '/settings/end-of-day': typeof SettingsEndOfDayIndexRoute
+  '/api/public/eatos-doc/$': typeof ApiPublicEatosDocSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -622,6 +630,7 @@ export interface FileRoutesById {
   '/tap-to-pay/education/$step': typeof TapToPayEducationStepRoute
   '/tap-to-pay/setup/$from': typeof TapToPaySetupFromRoute
   '/settings/end-of-day/': typeof SettingsEndOfDayIndexRoute
+  '/api/public/eatos-doc/$': typeof ApiPublicEatosDocSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -693,6 +702,7 @@ export interface FileRouteTypes {
     | '/tap-to-pay/education/$step'
     | '/tap-to-pay/setup/$from'
     | '/settings/end-of-day/'
+    | '/api/public/eatos-doc/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -762,6 +772,7 @@ export interface FileRouteTypes {
     | '/tap-to-pay/education/$step'
     | '/tap-to-pay/setup/$from'
     | '/settings/end-of-day'
+    | '/api/public/eatos-doc/$'
   id:
     | '__root__'
     | '/'
@@ -831,6 +842,7 @@ export interface FileRouteTypes {
     | '/tap-to-pay/education/$step'
     | '/tap-to-pay/setup/$from'
     | '/settings/end-of-day/'
+    | '/api/public/eatos-doc/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -900,6 +912,7 @@ export interface RootRouteChildren {
   TapToPayEducationStepRoute: typeof TapToPayEducationStepRoute
   TapToPaySetupFromRoute: typeof TapToPaySetupFromRoute
   SettingsEndOfDayIndexRoute: typeof SettingsEndOfDayIndexRoute
+  ApiPublicEatosDocSplatRoute: typeof ApiPublicEatosDocSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1373,6 +1386,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TapToPaySetupFromRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/eatos-doc/$': {
+      id: '/api/public/eatos-doc/$'
+      path: '/api/public/eatos-doc/$'
+      fullPath: '/api/public/eatos-doc/$'
+      preLoaderRoute: typeof ApiPublicEatosDocSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1454,6 +1474,7 @@ const rootRouteChildren: RootRouteChildren = {
   TapToPayEducationStepRoute: TapToPayEducationStepRoute,
   TapToPaySetupFromRoute: TapToPaySetupFromRoute,
   SettingsEndOfDayIndexRoute: SettingsEndOfDayIndexRoute,
+  ApiPublicEatosDocSplatRoute: ApiPublicEatosDocSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
