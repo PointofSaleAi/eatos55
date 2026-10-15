@@ -60,6 +60,8 @@ export function NavRail() {
       onClick={(e) => {
         if (e.target === e.currentTarget) toggle();
       }}
+      onPointerDown={onRailPointerDown}
+      onPointerUp={onRailPointerUp}
       className={cn(
         "my-2 ml-2 hidden shrink-0 flex-col rounded-2xl border border-shell-foreground/10 bg-shell pt-2 pb-[calc(0.5rem+var(--sab,0px))] transition-[width] duration-200 md:flex",
         expanded ? "w-60" : "w-[4.25rem]",
@@ -93,17 +95,21 @@ export function NavRail() {
         </Link>
       </div>
 
-      {/* Venue / revenue center */}
+      {/* Venue / revenue center: opens the Dashboard */}
       <div className={cn("flex items-center gap-2 px-2 pt-1", expanded ? "" : "justify-center")}>
-        <button
-          type="button"
-          onClick={toggle}
+        <Link
+          to="/order/menu"
           title={venue}
-          aria-label={expanded ? "Collapse navigation" : "Expand navigation"}
-          className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full bg-shell-foreground/15 ring-1 ring-shell-foreground/20 text-fs-sm font-extrabold uppercase text-shell-foreground"
+          aria-label="Dashboard"
+          className={cn(
+            "grid size-11 shrink-0 place-items-center overflow-hidden rounded-full bg-shell-foreground/15 ring-1 text-fs-sm font-extrabold uppercase text-shell-foreground transition-colors",
+            isActive("/order/menu")
+              ? "bg-shell-foreground/25 ring-2 ring-shell-foreground/60"
+              : "ring-shell-foreground/20 hover:bg-shell-foreground/25",
+          )}
         >
           {venueInitials}
-        </button>
+        </Link>
         {expanded ? (
           <span className="min-w-0 flex-1">
             <span className="block truncate text-fs-sm font-extrabold text-shell-foreground">
