@@ -1,5 +1,5 @@
 # Roadmap
-- [ ] Remove the duplicated guest-count/status and order-type/table/revenue-centre rows from the landscape Tickets cart header; verify on phone, portrait tablet, landscape tablet and desktop
+- [x] Remove the duplicated guest-count/status and order-type/table/revenue-centre rows from the landscape Tickets cart header; verified on desktop, wide, landscape tablet, portrait tablet and phone
 - [x] Landscape Tickets: removed expansion/status arrow, added route-driven grey selection, and matched the full New Order receipt structure; verified landscape sizes, expanded rail, payment details, tip save, payment handoff, cancel/void dismissal and phone expansion/rotation
 - [x] Restructure landscape Tickets cards into reference-aligned badge, guest, employee/payment and status/amount columns; verified landscape sizes, expanded rail, ticket opening, expansion and swipe cancellation; portrait and phone unchanged
 - [x] Guest search suggestions show name, email and phone on one line, with sample contacts for guests that have none; verified phone, tablet and desktop
