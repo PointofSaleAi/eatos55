@@ -89,3 +89,4 @@
 - [x] Restore the full "Guest Name" hint and hold the header on one line by widening the New Order cart column (24rem, 24rem with the options rail docked) and easing the arrival-time size; verified one line, no clipping and inline saving on phone, portrait/landscape tablet and desktop
 - [x] Rebuild the Tickets header (title left; round Filter/Messages/Search icons right) with the expanding round-icon filter row including date, sort and close; verified phone, tablet and desktop
 - [x] Remove the Messages icon from the Tickets header so only Filter and Search remain; verified the filter row still opens and closes on phone, tablet and desktop
+- [x] After-close ticket flow: Completed state, swipe/tap Refund, reason codes, refunded display
