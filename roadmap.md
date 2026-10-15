@@ -70,3 +70,4 @@
 - [x] Keep Contact Us inside Customer Support (row + screen with back to Customer Support); verified phone, tablet and desktop
 
 - [x] Remove Save/Cancel from the employee editor and auto-save details as they are typed; verified phone, tablet and desktop
+- [x] Rename Server Connection device values to eatOS and make Cloud server off turn edgeOS on automatically; verified phone, tablet and desktop
