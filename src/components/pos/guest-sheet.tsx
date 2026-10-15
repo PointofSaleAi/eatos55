@@ -20,6 +20,7 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
+import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { AddressSearch } from "@/components/pos/address-search";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
