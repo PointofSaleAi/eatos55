@@ -17,7 +17,8 @@ import {
   Utensils,
   Warehouse,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { guestDirectory, type GuestRecord } from "@/lib/guestbook";
 import { toast } from "sonner";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { OrderTypeStrip } from "@/components/pos/order-type-strip";
@@ -73,7 +74,10 @@ export function GuestSheet({
   onClose: () => void;
   initialType?: ServiceOrderType | undefined;
 }) {
-  const { guest, setGuest, orderType, setOrderType } = usePos();
+  const { guest, setGuest, orderType, setOrderType, tickets } = usePos();
+  const [suggestOpen, setSuggestOpen] = useState(false);
+  const [active, setActive] = useState(0);
+  const directory = useMemo(() => guestDirectory(tickets, guest), [tickets, guest]);
   const [name, setName] = useState(guest.name);
   const [email, setEmail] = useState(guest.email ?? "");
   const [phone, setPhone] = useState(guest.phone);
@@ -144,6 +148,25 @@ export function GuestSheet({
   const vehicleComplete = Boolean(vehicleType && vehicleColor);
   const colorHex = vehicleColors.find((c) => c.name === vehicleColor)?.hex ?? "#b6bcc2";
   const star = (f: string) => (required.includes(f as never) ? "*" : "");
+  const query = name.trim().toLowerCase();
+  const digits = query.replace(/\D/g, "");
+  const suggestions = query
+    ? directory
+        .filter((g) =>
+          g.name.toLowerCase().includes(query) ||
+          g.email?.toLowerCase().includes(query) ||
+          (digits.length >= 3 && g.phone?.replace(/\D/g, "").includes(digits)),
+        )
+        .slice(0, 6)
+    : [];
+  const showSuggest = suggestOpen && Boolean(query);
+  const pickGuest = (g: GuestRecord) => {
+    setName(g.name);
+    if (g.email) setEmail(g.email);
+    if (g.phone) setPhone(g.phone);
+    if (g.address) setAddress({ street: g.address, unit: "", city: "", state: "", zipCode: "" });
+    setSuggestOpen(false);
+  };
 
   return (
     <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
@@ -164,16 +187,60 @@ export function GuestSheet({
 
         <div className="min-h-0 flex-1 overflow-y-auto pb-2">
         <div className="grid gap-2 px-4 sm:grid-cols-2">
-          <div className={cn(fieldRow, "sm:col-span-2")}>
+          <div className="sm:col-span-2">
+          <div className={fieldRow}>
             <User className="size-4 shrink-0 text-muted-foreground" />
             <input
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                setSuggestOpen(Boolean(e.target.value.trim()));
+                setActive(0);
+              }}
+              onFocus={() => setSuggestOpen(Boolean(name.trim()))}
+              onBlur={() => setTimeout(() => setSuggestOpen(false), 150)}
+              onKeyDown={(e) => {
+                if (!showSuggest) return;
+                if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); setSuggestOpen(false); }
+                else if (e.key === "ArrowDown") { e.preventDefault(); setActive((i) => Math.min(i + 1, suggestions.length - 1)); }
+                else if (e.key === "ArrowUp") { e.preventDefault(); setActive((i) => Math.max(i - 1, 0)); }
+                else if (e.key === "Enter" && suggestions[active]) { e.preventDefault(); pickGuest(suggestions[active]!); }
+              }}
+              role="combobox"
+              aria-expanded={showSuggest}
+              aria-autocomplete="list"
+              autoComplete="off"
               placeholder={`Guest Name - Table Number - Order Name${star("name")}`}
               aria-label="Guest name, table number or order name"
               className={fieldInput}
             />
             <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+          </div>
+          {showSuggest ? (
+            <div role="listbox" aria-label="Guest suggestions" className="mt-1 max-h-72 overflow-y-auto rounded-row border border-border bg-popover p-1 shadow-sm">
+              {suggestions.length ? suggestions.map((g, i) => (
+                <button
+                  key={g.id}
+                  type="button"
+                  role="option"
+                  aria-selected={i === active}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onMouseEnter={() => setActive(i)}
+                  onClick={() => pickGuest(g)}
+                  className={cn("flex w-full flex-col items-start rounded-row px-3 py-2 text-left transition-colors hover:bg-muted", i === active && "bg-muted")}
+                >
+                  <span className="break-words text-fs-sm font-bold text-foreground">{g.name}</span>
+                  {g.email || g.phone ? (
+                    <span className="break-all text-fs-xs text-muted-foreground">
+                      {[g.email, g.phone].filter(Boolean).join(" · ")}
+                    </span>
+                  ) : null}
+                </button>
+              )) : (
+                <p className="px-3 py-2 text-fs-xs text-muted-foreground">No guest found — continue typing to add manually</p>
+              )}
+            </div>
+          ) : null}
           </div>
 
           <div className={fieldRow}>
