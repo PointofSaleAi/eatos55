@@ -64,7 +64,7 @@ export function LegalDocViewer({ topic }: { topic: string }) {
           <iframe
             ref={frameRef}
             title={doc.title}
-            src={`/api/public/eatos-doc/${doc.slug}`}
+            src={`/docs/${doc.slug}.html`}
             onLoad={handleLoad}
             sandbox="allow-same-origin"
             className="min-h-0 w-full flex-1 border-0 bg-white"
