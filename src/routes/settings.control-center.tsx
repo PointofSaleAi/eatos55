@@ -43,7 +43,7 @@ function ControlCenter() {
       <SubHeader title="Control Center" />
       <ScreenBody className="py-2">
         <GroupCard>
-          <IconNavRow title="Device Settings" to="/settings/general" />
+          <IconNavRow title="Device Settings" to="/settings/device-settings" />
           <IconNavRow title="Hardware Control" to="/settings/hardware" />
         </GroupCard>
 
@@ -63,7 +63,8 @@ function ControlCenter() {
             color="slate"
             chevron
             onClick={() => {
-              const next = times[(times.indexOf(settings.restartTime) + 1) % times.length]!;
+              const next = times[(times.indexOf(settings.restartTime) + 1) % times.length];
+              if (!next) return;
               updateSettings({ restartTime: next });
               toast.success(`Restart time set to ${next}`);
             }}
