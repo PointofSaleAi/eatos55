@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { usePos } from "@/lib/pos-store";
+import { useLiveTime } from "@/lib/use-live-time";
 
 /**
  * Tappable guest identity block: name, phone and current order type.
@@ -7,6 +8,7 @@ import { usePos } from "@/lib/pos-store";
  */
 export function GuestBlock({ onEdit }: { onEdit: () => void }) {
   const { guest, arrivedAt, activeTable, tableGroupLabel } = usePos();
+  const liveTime = useLiveTime();
   // A merged party prints its combined name ("T1 + T2") wherever the table shows.
   const tableName = tableGroupLabel(activeTable);
   return (
@@ -22,7 +24,7 @@ export function GuestBlock({ onEdit }: { onEdit: () => void }) {
         </span>
         <span className="flex min-w-0 items-baseline gap-1 text-fs-xs font-semibold text-muted-foreground">
           <span className="truncate">{guest.phone || "(XXX) XXX-XXXX"}</span>
-          <span className="shrink-0">· {arrivedAt ? `Arrived ${arrivedAt}` : "Not started"}</span>
+          <span className="shrink-0">· ARRIVED AT {arrivedAt || liveTime}</span>
         </span>
       </span>
       <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />

@@ -1705,11 +1705,13 @@ export function PosProvider({ children }: { children: ReactNode }) {
           return [...list, created];
         });
       },
-      addCustomItem: (name, price) =>
+      addCustomItem: (name, price) => {
+        setArrivedAt((a) => a || formatTime());
         setCart((list) => [
           ...list,
           { id: `custom-${Date.now()}`, name, price, qty: 1, custom: true },
-        ]),
+        ]);
+      },
       giftCardBalance: (number) => giftCardBalances[number] ?? null,
       loadGiftCard: (number, amount) =>
         setGiftCardBalances((map) => ({
@@ -1819,6 +1821,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
       mergeTicket: (id) => {
         const ticket = tickets.find((t) => t.id === id);
         if (!ticket) return;
+        setArrivedAt((a) => a || formatTime());
         setCart((list) => {
           const next = list.map((l) => ({ ...l }));
           for (const line of ticket.lines) {

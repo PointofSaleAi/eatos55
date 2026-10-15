@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
+import { useLiveTime } from "@/lib/use-live-time";
 import { money, type CartLine, type ServiceOrderType } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
@@ -332,6 +333,7 @@ function HeaderAction({
 /** Running order area shared by phone, tablet and desktop layouts. */
 export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boolean } & OptionsLayout) {
   const navigate = useNavigate();
+  const liveTime = useLiveTime();
   const {
     guest,
     setGuest,
@@ -423,7 +425,7 @@ export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boole
             className="h-8 min-w-0 rounded-row border border-transparent bg-transparent px-1 text-fs-xs font-bold text-muted-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-border focus:bg-muted focus:text-foreground"
           />
           <span className="whitespace-nowrap text-fs-xs font-bold text-muted-foreground">
-            {arrivedAt ? `Arrived ${arrivedAt}` : "Not started"}
+            ARRIVED AT {arrivedAt || liveTime}
           </span>
         </div>
 
@@ -450,7 +452,7 @@ export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boole
                 <Grid2x2 className="size-3.5" aria-hidden />
                 <span className="max-w-16 truncate">{tableGroupLabel(activeTable) ?? activeTable}</span>
                 <Footprints className="size-3.5" aria-hidden />
-                {arrivedAt || "--"}
+                {arrivedAt || liveTime}
               </span>
             ) : null}
           </div>
