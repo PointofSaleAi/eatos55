@@ -11,6 +11,7 @@ import {
 } from "@/lib/demo-data";
 
 const softwareRows: [string, string][] = [
+  ["Software Name", "eatOS Point of Sale"],
   ["App Version", APP_BUILD_VERSION],
   ["Flutter Version", APP_FLUTTER_VERSION],
   ["Build Date", APP_BUILD_DATE],
