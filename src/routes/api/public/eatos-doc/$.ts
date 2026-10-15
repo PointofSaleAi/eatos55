@@ -37,7 +37,7 @@ export const Route = createFileRoute("/api/public/eatos-doc/$")({
             },
           });
           if (!upstream.ok) {
-            return new Response(errorPage("This document could not be loaded right now."), {
+            return new Response(debugPage("This document could not be loaded right now.", `upstream status ${upstream.status}`), {
               status: 502,
               headers: { "content-type": "text/html; charset=utf-8" },
             });
