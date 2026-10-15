@@ -355,22 +355,11 @@ export const settingsDetails: Record<string, DetailScreen> = {
     title: "Card Reader",
     backLabel: "Hardware",
     icon: Tablet,
-    rows: [
-      ro("Built-in Reader", "Ready"),
-      { kind: "toggle", label: "Contactless", field: "contactless" },
-      { kind: "toggle", label: "Reader Emulator", field: "readerEmulator" },
-      ro("Firmware", "2.14.0"),
-    ],
   },
   "cash-drawer": {
     title: "Cash Drawer",
     backLabel: "Hardware",
     icon: Inbox,
-    rows: [
-      { kind: "text", label: "Paired Drawer", field: "cashDrawerAssigned" },
-      { kind: "toggle", label: "Open Drawer On Sale", field: "openDrawerOnSale" },
-      { kind: "toggle", label: "Blind Close", field: "blindClose" },
-    ],
   },
   "hardware-emulators": {
     title: "Hardware Emulators",
