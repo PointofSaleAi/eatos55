@@ -407,7 +407,7 @@ export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boole
             }}
             placeholder={tableGroupLabel(activeTable) || "Guest"}
             aria-label="Guest name"
-            className="h-8 min-w-[4.5rem] flex-1 rounded-row border border-transparent bg-transparent px-1 text-fs-sm font-extrabold text-foreground outline-none transition-colors placeholder:text-foreground focus:border-border focus:bg-muted"
+            className="h-8 min-w-[3.5rem] flex-1 rounded-row border border-transparent bg-transparent px-1 text-fs-sm font-extrabold text-foreground outline-none transition-colors placeholder:text-foreground focus:border-border focus:bg-muted"
           />
           <input
             type="tel"
@@ -422,7 +422,7 @@ export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boole
             }}
             placeholder="(XXX) XXX-XXXX"
             aria-label="Guest mobile number"
-            className="h-8 min-w-[6.5rem] flex-1 rounded-row border border-transparent bg-transparent px-1 text-fs-xs font-bold text-muted-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-border focus:bg-muted focus:text-foreground"
+            className="h-8 min-w-[7.25rem] flex-1 rounded-row border border-transparent bg-transparent px-1 text-fs-xs font-bold text-muted-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-border focus:bg-muted focus:text-foreground"
           />
           <span className="shrink-0 whitespace-nowrap text-fs-xs font-bold text-muted-foreground">
             Arrived at {arrivedAt || liveTime}
