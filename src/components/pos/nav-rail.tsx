@@ -123,9 +123,14 @@ export function NavRail() {
         onClick={(e) => {
           if (e.target === e.currentTarget) toggle();
         }}
-        className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-2"
+        className="no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto px-2"
       >
-        <ul className="flex flex-col gap-3.5">
+        <ul
+          onClick={(e) => {
+            if (e.target === e.currentTarget) toggle();
+          }}
+          className="flex min-h-full flex-1 flex-col justify-evenly gap-3.5"
+        >
           {railPrimary.map((l) => (
             <li key={l.to}>
               <Link
