@@ -9,6 +9,7 @@ import { referenceSchedules, type RestaurantSchedule } from "@/lib/restaurant-sc
 import { referenceTimedPricing, type TimedPricingRule } from "@/lib/timed-pricing";
 import { defaultDevicePreferences, type DevicePreferences } from "@/lib/device-settings";
 import { defaultPeripheralPreferences, type PeripheralPreferences } from "@/lib/peripheral-settings";
+import { defaultPrinterPreferences, type PrinterPreferences } from "@/lib/printer-settings";
 import { defaultServerConnection, migrateServerConnection, type ServerConnectionPreferences } from "@/lib/server-connection";
 import { migrateWorkforceEmployee, referenceEmployees, type WorkforceEmployee } from "@/lib/workforce-employees";
 import { isResumablePath, readResume, resumeKey, writeResume } from "@/lib/resume";
@@ -248,6 +249,7 @@ export type TapToPayState =
   | "ineligible";
 
 export type AppSettings = {
+  printerPreferences: PrinterPreferences;
   serverConnection: ServerConnectionPreferences;
   workforceEmployees: WorkforceEmployee[];
   devicePreferences: DevicePreferences;
@@ -407,6 +409,7 @@ const defaultLoginSlides: LoginSlide[] = [
 ];
 
 const defaultSettings: AppSettings = {
+  printerPreferences: defaultPrinterPreferences,
   serverConnection: defaultServerConnection,
   workforceEmployees: referenceEmployees,
   devicePreferences: defaultDevicePreferences,
@@ -1003,6 +1006,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setSettings((s) => ({
           ...s,
           ...saved,
+          printerPreferences: { ...defaultPrinterPreferences, ...saved.printerPreferences },
           serverConnection: migrateServerConnection(saved.serverConnection),
           workforceEmployees: (saved.workforceEmployees ?? referenceEmployees).map(migrateWorkforceEmployee),
           peripheralPreferences: { ...defaultPeripheralPreferences, ...saved.peripheralPreferences },

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
-import { CreditCard, Inbox, Printer, ScanLine, Tablet } from "lucide-react";
+import { CreditCard, Inbox, Printer, Tablet } from "lucide-react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, IconNavRow } from "@/components/pos/settings-rows";
 
@@ -36,12 +36,6 @@ function HardwareSettings() {
         <GroupCard>
           <IconNavRow title="Printer" icon={Printer} color="magenta" topic="printer" />
           <IconNavRow title="Card Reader" icon={Tablet} color="violet" topic="card-reader" />
-          <IconNavRow
-            title="Integrations"
-            icon={ScanLine}
-            color="yellow"
-            to="/settings/hardware/integrations"
-          />
           <IconNavRow title="Cash Drawer" icon={Inbox} color="yellow" topic="cash-drawer" />
           <IconNavRow
             title="Hardware Emulators"

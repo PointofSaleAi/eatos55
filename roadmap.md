@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Remove Hardware Integrations and add reference Printers, Paired Printers and Advanced Settings; verified navigation, 16 switches, copies, selections, cancel and saved values across phone, tablet and desktop
 - [x] Add screenshot-matched Server Connection options under Network → Servers; verified saved demo controls, sync notice and return navigation on phone, tablet and desktop
 - [x] Match the employee form to the Apple-style reference; editing, phone selection, save and return verified on phone, tablet and desktop
 - [x] Add employee list subtext, swipe archive, visible saved additions and employee-detail return; verified desktop, tablet and phone
