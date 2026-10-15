@@ -1,4 +1,6 @@
 # Roadmap
+- [x] Contact Us opens the live official support website inside POS; verified phone, tablet and desktop with no new tabs
+- [ ] Chat opens the official support box on all layouts, but live content verification is blocked: the hosted Crisp embed remains on its loading spinner in the test browser
 - [x] Add reference Card Reader and Cash Drawer connection lists, selection, detection notices and drawer addition; verified phone, tablet and desktop
 - [x] Match Hardware Emulators reference options; verified four switches, lab dismissal and saved settings across phone, tablet and desktop
 - [x] Remove Hardware Integrations and add reference Printers, Paired Printers and Advanced Settings; verified navigation, 16 switches, copies, selections, cancel and saved values across phone, tablet and desktop
