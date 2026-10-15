@@ -12,7 +12,21 @@ const softwareRows: [string, string][] = [
   ["Build Date", "BD 09.10.26"],
 ];
 
-const termsRows = ["Privacy Policy", "Legal Terms", "Report Fraud"];
+const termsRows: { label: string; url?: string }[] = [
+  { label: "Privacy Policy", url: "https://www.eatos.com/privacy-policy" },
+  { label: "Legal Terms", url: "https://www.eatos.com/terms-and-conditions" },
+  { label: "Report Fraud" },
+];
+
+function openTermsRow(row: { label: string; url?: string }) {
+  if (row.url) {
+    window.open(row.url, "_blank", "noopener,noreferrer");
+    return;
+  }
+  toast.info(`${row.label} opens in the full app.`, {
+    description: "This demo does not include the linked document.",
+  });
+}
 
 export function AboutSettings() {
   const { settings } = usePos();
@@ -46,18 +60,14 @@ export function AboutSettings() {
 
         <GroupLabel>Terms & Policies</GroupLabel>
         <GroupCard>
-          {termsRows.map((label) => (
+          {termsRows.map((row) => (
             <button
-              key={label}
+              key={row.label}
               type="button"
-              onClick={() =>
-                toast.info(`${label} opens in the full app.`, {
-                  description: "This demo does not include the linked document.",
-                })
-              }
+              onClick={() => openTermsRow(row)}
               className={cn(settingsRowClass, "transition-colors hover:bg-muted")}
             >
-              <span className="min-w-0 flex-1 truncate t-row text-foreground">{label}</span>
+              <span className="min-w-0 flex-1 truncate t-row text-foreground">{row.label}</span>
               <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
             </button>
           ))}
