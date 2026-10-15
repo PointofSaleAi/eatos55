@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Archive, ArchiveRestore, ChevronRight, Copy, Plus, Search, CheckSquare } from "lucide-react";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
@@ -23,6 +23,9 @@ export function ScheduleInformation() {
   const [copyTargets, setCopyTargets] = useState<number[]>([]);
   const [dayQuery, setDayQuery] = useState("");
   const [archiveTarget, setArchiveTarget] = useState<RestaurantSchedule | null>(null);
+  const [revealedId, setRevealedId] = useState<string | null>(null);
+  const swipe = useRef<{ id: string; x: number; y: number; horizontal: boolean } | null>(null);
+  const suppressClickUntil = useRef(0);
   const saveCollection = (next: RestaurantSchedule[]) => updateSettings({ restaurantSchedules: next });
   const openDraft = (schedule: RestaurantSchedule) => { setDraft({ ...schedule, days: schedule.days.map(day => ({ ...day })) }); setError(""); };
   const updateDay = (index: number, patch: Partial<ScheduleDay>) => setDraft(current => current ? { ...current, days: current.days.map((day, i) => i === index ? { ...day, ...patch } : day) } : current);
@@ -39,7 +42,7 @@ export function ScheduleInformation() {
   const visible = schedules.filter(schedule => schedule.archived === archived && schedule.name.toLowerCase().includes(query.trim().toLowerCase()));
   const daysLabel = (schedule: RestaurantSchedule) => schedule.days.flatMap((day, index) => day.enabled ? [scheduleDays[index]?.slice(0, 3)] : []).join(", ") || "—";
   return <>
-    <SubHeader title={draft ? schedules.some(schedule => schedule.id === draft.id) ? "Edit Schedule" : "Add Schedule" : "Schedule Information"} backLabel="General" backTo="/settings/general" right={draft ? <Button variant="ghost" onClick={() => { setDraft(null); setError(""); }}>Back</Button> : <Button variant="ghost" size="icon" aria-label="Search schedules" title="Search schedules" onClick={() => setSearchOpen(open => !open)}><Search /></Button>} />
+    <SubHeader title={draft ? schedules.some(schedule => schedule.id === draft.id) ? "Edit Schedule" : "Add Schedule" : "Schedule Information"} backLabel="General" backTo="/settings/general" right={draft ? undefined : <Button variant="ghost" size="icon" aria-label="Search schedules" title="Search schedules" onClick={() => setSearchOpen(open => !open)}><Search /></Button>} />
     <ScreenBody className="py-4">
       {draft ? <>
         <GroupCard>
@@ -66,10 +69,29 @@ export function ScheduleInformation() {
         {searchOpen && <div className="relative mb-4"><Search className="absolute left-3 top-3 size-4 text-muted-foreground" /><Input autoFocus aria-label="Search schedules" placeholder="Search" value={query} onChange={event => setQuery(event.target.value)} className="pl-10" /></div>}
         <GroupCard>
           <div className="hidden grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_1rem] gap-3 border-b border-border px-4 py-4 t-caption font-bold sm:grid"><span>Name</span><span>Start Date</span><span>End Date</span><span className="text-right">Days</span><span /></div>
-          {visible.map(schedule => <Button key={schedule.id} variant="ghost" className="grid h-auto w-full grid-cols-[minmax(0,1fr)_1rem] gap-3 rounded-none border-b border-border bg-muted/30 px-4 py-4 text-left whitespace-normal last:border-b-0 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_1rem]" onClick={() => openDraft(schedule)}>
+          {visible.map(schedule => <div key={schedule.id} className="relative overflow-hidden border-b border-border last:border-b-0">
+            {canManageSettings && revealedId === schedule.id && <Button variant="ghost" className="absolute inset-y-0 right-0 h-full w-24 flex-col gap-1 rounded-none bg-muted text-foreground" aria-label={`${schedule.archived ? "Restore" : "Archive"} ${schedule.name}`} onClick={() => setArchiveTarget(schedule)}>{schedule.archived ? <ArchiveRestore className="size-5" /> : <Archive className="size-5" />}<span className="t-caption">{schedule.archived ? "Restore" : "Archive"}</span></Button>}
+            <Button variant="ghost" aria-expanded={revealedId === schedule.id} className={`relative grid h-auto w-full touch-pan-y grid-cols-[minmax(0,1fr)_1rem] gap-3 rounded-none bg-surface px-4 py-4 text-left whitespace-normal transition-transform duration-200 motion-reduce:transition-none sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_1rem] ${revealedId === schedule.id ? "-translate-x-24" : "translate-x-0"}`}
+              onPointerDown={event => { if (!canManageSettings || (event.pointerType === "mouse" && event.button !== 0)) return; swipe.current = { id: schedule.id, x: event.clientX, y: event.clientY, horizontal: false }; }}
+              onPointerMove={event => {
+                const start = swipe.current;
+                if (!start || start.id !== schedule.id) return;
+                const dx = event.clientX - start.x; const dy = event.clientY - start.y;
+                if (!start.horizontal && Math.abs(dy) > 12 && Math.abs(dy) > Math.abs(dx)) { swipe.current = null; return; }
+                if (Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                  start.horizontal = true; suppressClickUntil.current = Date.now() + 500;
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                  if (dx < -40) setRevealedId(schedule.id);
+                  else if (dx > 40) setRevealedId(null);
+                }
+              }}
+              onPointerUp={() => { if (swipe.current?.horizontal) suppressClickUntil.current = Date.now() + 500; swipe.current = null; }}
+              onPointerCancel={() => { swipe.current = null; }}
+              onKeyDown={event => { if (event.key === "ArrowLeft" && canManageSettings) { event.preventDefault(); setRevealedId(schedule.id); } else if (event.key === "Escape" || event.key === "ArrowRight") setRevealedId(null); }}
+              onClick={() => { if (Date.now() < suppressClickUntil.current) return; if (revealedId) { setRevealedId(null); return; } openDraft(schedule); }}>
             <span className="min-w-0 break-words t-row">{schedule.name}<span className="mt-1 block t-caption text-muted-foreground sm:hidden">{dateLabel(schedule.startDate)} – {dateLabel(schedule.endDate)}<span className="mt-1 block">{daysLabel(schedule)}</span></span></span>
             <span className="hidden t-caption sm:block">{dateLabel(schedule.startDate)}</span><span className="hidden t-caption sm:block">{dateLabel(schedule.endDate)}</span><span className="hidden min-w-0 break-words text-right t-caption sm:block">{daysLabel(schedule)}</span><ChevronRight className="size-4 text-muted-foreground" />
-          </Button>)}
+          </Button></div>)}
           {!visible.length && <p className="px-4 py-8 text-center t-row text-muted-foreground">{query ? "No schedules found" : archived ? "No archived schedules" : "No schedules"}</p>}
         </GroupCard>
       </>}
