@@ -66,9 +66,12 @@ export function TimedPricing() {
           </div>; })}
         </GroupCard>
         {error && <p role="alert" className="mt-4 t-caption text-destructive">{error}</p>}
-        <div className="mt-6 flex justify-end gap-2"><Button variant="outline" onClick={() => { setDraft(null); setError(""); }}>Cancel</Button><Button onClick={save} disabled={!canManageSettings}>Save</Button></div>
+        <div className="mt-6 flex flex-wrap justify-end gap-2">
+          {rules.some(rule => rule.id === draft.id) && canManageSettings && <Button variant="outline" onClick={() => setArchiveTarget(draft)}>{draft.archived ? <ArchiveRestore /> : <Archive />}{draft.archived ? "Restore" : "Archive"}</Button>}
+          <Button variant="outline" onClick={() => { setDraft(null); setError(""); }}>Cancel</Button><Button onClick={save} disabled={!canManageSettings}>Save</Button>
+        </div>
       </> : <>
-        <div className="mb-5 flex items-center gap-3"><p className="min-w-0 flex-1 t-caption text-muted-foreground">Setup timed pricing for your restaurant based on demand and requirements</p><Button size="icon" aria-label="Add timed pricing" title="Add Timed Pricing" disabled={!canManageSettings} onClick={() => open({ id: `timed-${crypto.randomUUID()}`, name: "", revenueCentre: "", orderingSource: "", startDate: "", endDate: "", days: newTimedPricingDays() })}><Plus /></Button></div>
+        <div className="mb-5 flex items-center gap-3"><div className="min-w-0 flex-1"><p className="t-caption text-muted-foreground">Setup timed pricing for your restaurant based on demand and requirements</p>{archived && <p className="mt-2 t-row font-bold">Archived Timed Pricing</p>}</div><Button variant={archived ? "default" : "outline"} size="icon" aria-label={archived ? "Show active timed pricing" : "Show archived timed pricing"} title={archived ? "Show active timed pricing" : "Archive"} onClick={() => setArchived(value => !value)}><Archive /></Button><Button size="icon" aria-label="Add timed pricing" title="Add Timed Pricing" disabled={!canManageSettings} onClick={() => open({ id: `timed-${crypto.randomUUID()}`, name: "", revenueCentre: "", orderingSource: "", startDate: "", endDate: "", archived: false, days: newTimedPricingDays() })}><Plus /></Button></div>
         {searchOpen && <Input autoFocus className="mb-4" aria-label="Search timed pricing" placeholder="Search" value={query} onChange={event => setQuery(event.target.value)} />}
         <GroupCard>
           <div className="hidden grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_1rem] gap-3 border-b border-border px-4 py-4 t-caption font-bold sm:grid"><span>Timed Pricing Name</span><span>Start Date</span><span>End Date</span><span className="text-right">Days</span><span /></div>
