@@ -35,5 +35,3 @@
 - Customer Support embeds the official Crisp support chat with its public website identifier and the official support site in Contact Us; no simulated delivery or agent responses replace the hosted service.
 - Sales retains the published /settings/reports URL and uses separate shared demo filter preferences; changing these controls never changes transactions or claims a live report or print operation.
 - Wall-clock labels shown while the app runs come from `useLiveTime` in `src/lib/use-live-time.ts` (mount-gated, minute-aligned), so every screen that displays the current time shares one ticking source rather than its own interval.
-- New Order keeps a 24rem minimum cart width on wide layouts so guest name, mobile and arrival stay on one line; widen rather than shorten labels.
-- Landscape ticket detail mirrors New Order using selected-ticket data and existing handlers, never the mutable order draft, to preserve behavior.
