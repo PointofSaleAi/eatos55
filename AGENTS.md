@@ -37,3 +37,4 @@
 - Wall-clock labels shown while the app runs come from `useLiveTime` in `src/lib/use-live-time.ts` (mount-gated, minute-aligned), so every screen that displays the current time shares one ticking source rather than its own interval.
 - New Order keeps a 24rem minimum cart width on wide layouts so guest name, mobile and arrival stay on one line; widen rather than shorten labels.
 - Landscape ticket detail mirrors New Order using selected-ticket data and existing handlers, never the mutable order draft, to preserve behavior.
+- Settings > Payments > Taxes is a dedicated screen (`tax-settings.tsx`) with tax rules in shared demo settings; rules never change cart or checkout totals.

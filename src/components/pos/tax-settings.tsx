@@ -78,12 +78,12 @@ export function TaxSettings() {
         <div className={cn(settingsRowClass, "flex-wrap")}>
           <label htmlFor="tax-name" className="t-row">Name</label>
           <Input id="tax-name" placeholder="Required" maxLength={60} disabled={!canManageSettings} value={draft.name} onBlur={() => setTouched(true)} onChange={e => update({ name: e.target.value })} className="min-w-0 flex-1 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" />
-          <div className="basis-full"><ErrorLine text={show("name")} /></div>
+          {show("name") && <div className="basis-full"><ErrorLine text={show("name")} /></div>}
         </div>
         <div className={cn(settingsRowClass, "flex-wrap")}>
           <label htmlFor="tax-amount" className="t-row">Amount</label>
           <div className="flex min-w-0 flex-1 items-center justify-end gap-1"><Input id="tax-amount" inputMode="decimal" placeholder="0.00" disabled={!canManageSettings} value={draft.amount} onBlur={() => setTouched(true)} onChange={e => update({ amount: e.target.value.replace(/[^\d.]/g, "") })} className="w-28 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" /><span className="t-value text-muted-foreground">%</span></div>
-          <div className="basis-full"><ErrorLine text={show("amount")} /></div>
+          {show("amount") && <div className="basis-full"><ErrorLine text={show("amount")} /></div>}
         </div>
         <div className={cn(settingsRowClass, "flex-wrap")}>
           <span className="t-row">Type</span>
@@ -91,7 +91,7 @@ export function TaxSettings() {
             <PopoverTrigger asChild><button type="button" disabled={!canManageSettings} className="ml-auto flex items-center gap-1 rounded-md px-2 py-1 t-value text-muted-foreground hover:bg-muted">{draft.type || "Choose"}<ChevronRight className="size-4" /></button></PopoverTrigger>
             <PopoverContent align="end" className="w-40 p-1">{(["Exclusive", "Inclusive"] as TaxType[]).map(t => <button key={t} type="button" onClick={() => { setTouched(true); update({ type: t }); setTypeOpen(false); }} className={cn("flex w-full items-center justify-between rounded-sm px-3 py-2 text-left t-row hover:bg-muted", draft.type === t && "font-semibold")}>{t}</button>)}</PopoverContent>
           </Popover>
-          <div className="basis-full"><ErrorLine text={show("type")} /></div>
+          {show("type") && <div className="basis-full"><ErrorLine text={show("type")} /></div>}
         </div>
         {summaryRow("Applicable To", draft.applicableTo, () => setPicker("to"))}
       </GroupCard>
