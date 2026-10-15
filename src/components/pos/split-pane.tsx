@@ -67,7 +67,7 @@ export function isSettingsTopLevel(pathname: string) {
  * the nav rail: the choice is per visit and never remembered.
  */
 export function SettingsNavList() {
-  const { canManageSettings } = usePos();
+  const { canManageSettings, session, settings } = usePos();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [collapsed, setCollapsed] = useState(false);
   const [query, setQuery] = useState("");
@@ -156,6 +156,27 @@ export function SettingsNavList() {
         </div>
       ) : null}
       <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto p-2 lg:p-3">
+        {!collapsed ? (
+          <div className="mb-3 overflow-hidden rounded-row border border-border bg-background">
+            <div className="flex items-center gap-3 px-3 py-3">
+              <span className="grid size-11 shrink-0 place-items-center rounded-pill bg-muted text-fs-sm font-extrabold text-foreground">
+                {session.name
+                  .split(" ")
+                  .map((p) => p[0])
+                  .join("")}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-fs-base font-extrabold text-foreground">{session.name}</p>
+                <p className="truncate text-fs-xs text-muted-foreground">{session.role}</p>
+              </div>
+            </div>
+            <div className="border-t border-border px-3 py-2.5">
+              <p className="text-fs-xs text-muted-foreground">
+                Clocked in at {settings.clockedInAt}
+              </p>
+            </div>
+          </div>
+        ) : null}
         {anyMatches ? (
           visibleGroups.map((group, i) =>
             group.length === 0 ? null : (
