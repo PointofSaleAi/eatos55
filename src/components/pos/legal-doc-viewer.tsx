@@ -17,6 +17,7 @@ export const docTopics: Record<string, { title: string; slug: string }> = {
 
 export function LegalDocViewer({ topic }: { topic: string }) {
   const doc = docTopics[topic];
+  if (!doc) return null;
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
