@@ -23,7 +23,5 @@ export const settingsGroups: SettingsDestination[][] = [
   [
     { to: "/settings/notifications", label: "Notifications", icon: Bell, color: "grey" },
     { to: "/system/customer-support", label: "Customer Support", icon: Headset, color: "red" },
-    { to: "/system/contact-us", label: "Contact Us", icon: Mail, color: "blue" },
-    { to: "/system/help-center", label: "Help Center", icon: LifeBuoy, color: "sky" },
   ],
 ];
