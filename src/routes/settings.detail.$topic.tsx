@@ -33,6 +33,7 @@ import { RestaurantInformation } from "@/components/pos/restaurant-information";
 import { ScheduleInformation } from "@/components/pos/schedule-information";
 import { TimedPricing } from "@/components/pos/timed-pricing";
 import { TaxSettings } from "@/components/pos/tax-settings";
+import { DiscountSettings } from "@/components/pos/discount-settings";
 import { WorkforceEmployees } from "@/components/pos/workforce-employees";
 import { AboutSettings } from "@/components/pos/about-settings";
 import { ServerConnection } from "@/components/pos/server-connection";
@@ -84,6 +85,7 @@ function SettingsDetail() {
   if (topic === "schedule-info") return <ScheduleInformation />;
   if (topic === "timed-pricing") return <TimedPricing />;
   if (topic === "taxes") return <TaxSettings />;
+  if (topic === "discounts") return <DiscountSettings />;
   if (topic === "employee") return <WorkforceEmployees />;
   if (topic === "about") return <AboutSettings />;
   if (topic === "servers") return <ServerConnection />;
