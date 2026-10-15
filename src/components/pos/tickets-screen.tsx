@@ -531,7 +531,7 @@ export function TicketsScreen({
                   aria-pressed={on}
                   onClick={() => setTab(t.id)}
                   className={cn(
-                    "flex min-h-ctl-sm shrink-0 items-center gap-1.5 rounded-pill pl-3 pr-1.5 text-fs-xs font-bold transition-colors",
+                    "flex h-7 shrink-0 items-center gap-1.5 rounded-pill pl-3 pr-1 text-[0.8125rem] font-semibold leading-none transition-colors",
                     on
                       ? "bg-foreground text-background"
                       : "bg-muted text-foreground hover:bg-secondary",
@@ -540,7 +540,7 @@ export function TicketsScreen({
                   {t.label}
                   <span
                     className={cn(
-                      "grid min-w-5 place-items-center rounded-pill px-1 text-[0.625rem] font-extrabold",
+                      "grid h-5 min-w-5 place-items-center rounded-pill px-1 text-[0.6875rem] font-bold",
                       on ? "bg-background text-foreground" : "bg-background/60 text-foreground",
                     )}
                   >
