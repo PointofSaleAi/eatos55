@@ -1,5 +1,6 @@
 # Roadmap
 - [x] Match Timed Pricing reference list and add/edit form; verify selections, copying times and saved edits on all devices
+- [x] Timed Pricing archive: left-swipe reveals Archive/Restore, archive toggle view, editor Archive button; verified on desktop and phone
 - [x] Remove the marked schedule editor Back button and verify swipe-left archive across phone, tablet and desktop
 - [x] Update Schedule Info with reference entries, add/edit, copy daily times and archive/restore; verify across devices
 - [x] Add screenshot-matched End of Day settings and Start End of Day checklist; verify all device sizes

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { CheckSquare, ChevronRight, Copy, Plus, Search } from "lucide-react";
+import { useRef, useState } from "react";
+import { Archive, ArchiveRestore, CheckSquare, ChevronRight, Copy, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, settingsRowClass } from "@/components/pos/settings-rows";
@@ -24,6 +24,12 @@ export function TimedPricing() {
   const [copyFrom, setCopyFrom] = useState<number | null>(null);
   const [copyTargets, setCopyTargets] = useState<number[]>([]);
   const [dayQuery, setDayQuery] = useState("");
+  const [archived, setArchived] = useState(false);
+  const [archiveTarget, setArchiveTarget] = useState<TimedPricingRule | null>(null);
+  const [revealedId, setRevealedId] = useState<string | null>(null);
+  const swipe = useRef<{ id: string; x: number; y: number; horizontal: boolean } | null>(null);
+  const suppressClickUntil = useRef(0);
+  const saveCollection = (next: TimedPricingRule[]) => { setRevealedId(null); updateSettings({ timedPricingRules: next }); };
   const open = (rule: TimedPricingRule) => { setDraft({ ...rule, days: rule.days.map(day => ({ ...day })) }); setError(""); };
   const updateDay = (index: number, patch: Partial<ScheduleDay>) => setDraft(current => current ? { ...current, days: current.days.map((day, i) => i === index ? { ...day, ...patch } : day) } : current);
   const save = () => {
@@ -60,14 +66,38 @@ export function TimedPricing() {
           </div>; })}
         </GroupCard>
         {error && <p role="alert" className="mt-4 t-caption text-destructive">{error}</p>}
-        <div className="mt-6 flex justify-end gap-2"><Button variant="outline" onClick={() => { setDraft(null); setError(""); }}>Cancel</Button><Button onClick={save} disabled={!canManageSettings}>Save</Button></div>
+        <div className="mt-6 flex flex-wrap justify-end gap-2">
+          {rules.some(rule => rule.id === draft.id) && canManageSettings && <Button variant="outline" onClick={() => setArchiveTarget(draft)}>{draft.archived ? <ArchiveRestore /> : <Archive />}{draft.archived ? "Restore" : "Archive"}</Button>}
+          <Button variant="outline" onClick={() => { setDraft(null); setError(""); }}>Cancel</Button><Button onClick={save} disabled={!canManageSettings}>Save</Button>
+        </div>
       </> : <>
-        <div className="mb-5 flex items-center gap-3"><p className="min-w-0 flex-1 t-caption text-muted-foreground">Setup timed pricing for your restaurant based on demand and requirements</p><Button size="icon" aria-label="Add timed pricing" title="Add Timed Pricing" disabled={!canManageSettings} onClick={() => open({ id: `timed-${crypto.randomUUID()}`, name: "", revenueCentre: "", orderingSource: "", startDate: "", endDate: "", days: newTimedPricingDays() })}><Plus /></Button></div>
+        <div className="mb-5 flex items-center gap-3"><div className="min-w-0 flex-1"><p className="t-caption text-muted-foreground">Setup timed pricing for your restaurant based on demand and requirements</p>{archived && <p className="mt-2 t-row font-bold">Archived Timed Pricing</p>}</div><Button variant={archived ? "default" : "outline"} size="icon" aria-label={archived ? "Show active timed pricing" : "Show archived timed pricing"} title={archived ? "Show active timed pricing" : "Archive"} onClick={() => setArchived(value => !value)}><Archive /></Button><Button size="icon" aria-label="Add timed pricing" title="Add Timed Pricing" disabled={!canManageSettings} onClick={() => open({ id: `timed-${crypto.randomUUID()}`, name: "", revenueCentre: "", orderingSource: "", startDate: "", endDate: "", archived: false, days: newTimedPricingDays() })}><Plus /></Button></div>
         {searchOpen && <Input autoFocus className="mb-4" aria-label="Search timed pricing" placeholder="Search" value={query} onChange={event => setQuery(event.target.value)} />}
         <GroupCard>
           <div className="hidden grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_1rem] gap-3 border-b border-border px-4 py-4 t-caption font-bold sm:grid"><span>Timed Pricing Name</span><span>Start Date</span><span>End Date</span><span className="text-right">Days</span><span /></div>
-          {rules.filter(rule => rule.name.toLowerCase().includes(query.trim().toLowerCase())).map(rule => { const days = timedPricingDays.flatMap(i => rule.days[i]?.enabled ? [scheduleDays[i]?.slice(0, 3)] : []).join(", ") || "—"; return <Button key={rule.id} variant="ghost" className="grid h-auto w-full grid-cols-[minmax(0,1fr)_1rem] gap-3 rounded-none border-b border-border bg-muted/30 px-4 py-4 text-left whitespace-normal last:border-b-0 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_1rem]" onClick={() => open(rule)}><span className="min-w-0 break-words t-row">{rule.name}<span className="mt-1 block t-caption text-muted-foreground sm:hidden">{dateLabel(rule.startDate)} – {dateLabel(rule.endDate)}<span className="mt-1 block">{days}</span></span></span><span className="hidden t-caption sm:block">{dateLabel(rule.startDate)}</span><span className="hidden t-caption sm:block">{dateLabel(rule.endDate)}</span><span className="hidden min-w-0 break-words text-right t-caption sm:block">{days}</span><ChevronRight className="size-4 text-muted-foreground" /></Button>; })}
-          {!rules.some(rule => rule.name.toLowerCase().includes(query.trim().toLowerCase())) && <p className="px-4 py-8 text-center t-row text-muted-foreground">No timed pricing found</p>}
+          {rules.filter(rule => rule.archived === archived && rule.name.toLowerCase().includes(query.trim().toLowerCase())).map(rule => { const days = timedPricingDays.flatMap(i => rule.days[i]?.enabled ? [scheduleDays[i]?.slice(0, 3)] : []).join(", ") || "—"; return <div key={rule.id} className="relative overflow-hidden border-b border-border last:border-b-0">
+            {canManageSettings && revealedId === rule.id && <Button variant="ghost" className="absolute inset-y-0 right-0 h-full w-24 flex-col gap-1 rounded-none bg-muted text-foreground" aria-label={`${rule.archived ? "Restore" : "Archive"} ${rule.name}`} onClick={() => setArchiveTarget(rule)}>{rule.archived ? <ArchiveRestore className="size-5" /> : <Archive className="size-5" />}<span className="t-caption">{rule.archived ? "Restore" : "Archive"}</span></Button>}
+            <Button variant="ghost" aria-expanded={revealedId === rule.id} className={`relative grid h-auto w-full touch-pan-y grid-cols-[minmax(0,1fr)_1rem] gap-3 rounded-none bg-muted/30 px-4 py-4 text-left whitespace-normal transition-transform duration-200 motion-reduce:transition-none sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_1rem] ${revealedId === rule.id ? "-translate-x-24" : "translate-x-0"}`}
+              onPointerDown={event => { if (!canManageSettings || (event.pointerType === "mouse" && event.button !== 0)) return; swipe.current = { id: rule.id, x: event.clientX, y: event.clientY, horizontal: false }; }}
+              onPointerMove={event => {
+                const start = swipe.current;
+                if (!start || start.id !== rule.id) return;
+                const dx = event.clientX - start.x; const dy = event.clientY - start.y;
+                if (!start.horizontal && Math.abs(dy) > 12 && Math.abs(dy) > Math.abs(dx)) { swipe.current = null; return; }
+                if (Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                  start.horizontal = true; suppressClickUntil.current = Date.now() + 500;
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                  if (dx < -40) setRevealedId(rule.id);
+                  else if (dx > 40) setRevealedId(null);
+                }
+              }}
+              onPointerUp={() => { if (swipe.current?.horizontal) suppressClickUntil.current = Date.now() + 500; swipe.current = null; }}
+              onPointerCancel={() => { swipe.current = null; }}
+              onKeyDown={event => { if (event.key === "ArrowLeft" && canManageSettings) { event.preventDefault(); setRevealedId(rule.id); } else if (event.key === "Escape" || event.key === "ArrowRight") setRevealedId(null); }}
+              onClick={() => { if (Date.now() < suppressClickUntil.current) return; if (revealedId) { setRevealedId(null); return; } open(rule); }}>
+            <span className="min-w-0 break-words t-row">{rule.name}<span className="mt-1 block t-caption text-muted-foreground sm:hidden">{dateLabel(rule.startDate)} – {dateLabel(rule.endDate)}<span className="mt-1 block">{days}</span></span></span><span className="hidden t-caption sm:block">{dateLabel(rule.startDate)}</span><span className="hidden t-caption sm:block">{dateLabel(rule.endDate)}</span><span className="hidden min-w-0 break-words text-right t-caption sm:block">{days}</span><ChevronRight className="size-4 text-muted-foreground" />
+          </Button></div>; })}
+          {!rules.some(rule => rule.archived === archived && rule.name.toLowerCase().includes(query.trim().toLowerCase())) && <p className="px-4 py-8 text-center t-row text-muted-foreground">{query ? "No timed pricing found" : archived ? "No archived timed pricing" : "No timed pricing"}</p>}
         </GroupCard>
       </>}
       {!canManageSettings && <Caption>Only managers can change these settings.</Caption>}
@@ -76,5 +106,6 @@ export function TimedPricing() {
       {timedPricingDays.map(index => index !== copyFrom && scheduleDays[index]?.toLowerCase().includes(dayQuery.toLowerCase()) ? <label key={index} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 t-row"><span>{scheduleDays[index]}</span><Checkbox aria-label={`Copy to ${scheduleDays[index]}`} checked={copyTargets.includes(index)} onCheckedChange={checked => setCopyTargets(values => checked ? [...values, index] : values.filter(i => i !== index))} /></label> : null)}
       <div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setCopyFrom(null)}>Cancel</Button><Button disabled={!copyTargets.length} onClick={() => { const source = copyFrom !== null ? draft?.days[copyFrom] : undefined; if (!draft || !source) return; setDraft({ ...draft, days: draft.days.map((day, i) => copyTargets.includes(i) ? { ...source, enabled: true } : day) }); setCopyFrom(null); }}>Apply</Button></div>
     </DialogContent></Dialog>
+    <Dialog open={archiveTarget !== null} onOpenChange={value => { if (!value) setArchiveTarget(null); }}><DialogContent className="w-[calc(100%-2rem)] rounded-lg"><DialogTitle>{archiveTarget?.archived ? "Restore Timed Pricing" : "Archive Timed Pricing"}</DialogTitle><DialogDescription>{archiveTarget?.name}</DialogDescription><div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setArchiveTarget(null)}>Cancel</Button><Button onClick={() => { if (!archiveTarget || !canManageSettings) return; saveCollection(rules.map(rule => rule.id === archiveTarget.id ? { ...rule, archived: !rule.archived } : rule)); setArchived(!archiveTarget.archived); setArchiveTarget(null); setDraft(null); toast.success(archiveTarget.archived ? "Timed pricing restored" : "Timed pricing archived"); }}>{archiveTarget?.archived ? "Restore" : "Archive"}</Button></div></DialogContent></Dialog>
   </>;
 }
