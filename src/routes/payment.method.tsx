@@ -6,6 +6,7 @@ import {
   Bike,
   Building2,
   CalendarClock,
+  ConciergeBell,
   CreditCard,
   Link2,
   Nfc,
@@ -23,8 +24,7 @@ import {
   Utensils,
   Wallet,
 } from "lucide-react";
-import { RoomServiceIcon } from "@/components/pos/icons/room-service-icon";
-import { type ComponentType, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AmountEntry } from "@/components/pos/amount-entry";
 import { PaymentCompleteDialog } from "@/components/pos/payment-complete-dialog";
@@ -76,7 +76,7 @@ export const Route = createFileRoute("/payment/method")({
 type Tender = {
   id: string;
   label: string;
-  icon: ComponentType<{ className?: string }>;
+  icon: typeof CreditCard;
   /** Surfaces that open their own step instead of charging straight away. */
   kind?: "room" | "split" | "route" | "dialog";
   /** Shown under the label when the tender is unavailable. */
@@ -521,7 +521,7 @@ function PaymentMethod() {
         {
           id: "room",
           label: "Rooms",
-          icon: RoomServiceIcon,
+          icon: ConciergeBell,
           kind: "room" as const,
           run: () => setRoomOpen(true),
         },
