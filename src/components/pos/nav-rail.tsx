@@ -28,21 +28,18 @@ export function NavRail() {
   const toggle = useCallback(() => setExpanded((v) => !v), []);
 
   // Horizontal drag on empty rail space collapses (left) or expands (right).
-  const dragX = useRef<number | null>(null);
+  // The release is tracked on window so a drag ending outside the rail still counts.
   const onRailPointerDown = useCallback((e: React.PointerEvent) => {
     if ((e.target as HTMLElement).closest("a,button")) return;
-    dragX.current = e.clientX;
-  }, []);
-  const onRailPointerUp = useCallback(
-    (e: React.PointerEvent) => {
-      if (dragX.current == null) return;
-      const dx = e.clientX - dragX.current;
-      dragX.current = null;
+    const startX = e.clientX;
+    const onUp = (ev: PointerEvent) => {
+      window.removeEventListener("pointerup", onUp);
+      const dx = ev.clientX - startX;
       if (dx <= -40) setExpanded(false);
       else if (dx >= 40) setExpanded(true);
-    },
-    [],
-  );
+    };
+    window.addEventListener("pointerup", onUp);
+  }, []);
 
   const venue = (settings.restaurantName.split("·")[0] ?? "").trim();
   const venueInitials =
