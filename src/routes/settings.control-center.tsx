@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { Clock, RotateCw } from "lucide-react";
@@ -11,6 +12,9 @@ import {
   IconToggleRow,
   IconValueRow,
 } from "@/components/pos/settings-rows";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { WheelTimePicker } from "@/components/pos/time-picker";
 import { usePos } from "@/lib/pos-store";
 
 export const Route = createFileRoute("/settings/control-center")({
@@ -33,10 +37,10 @@ export const Route = createFileRoute("/settings/control-center")({
   component: ControlCenter,
 });
 
-const times = ["12:30 AM", "02:30 AM", "02:30 PM", "04:30 PM", "11:30 PM"];
-
 function ControlCenter() {
   const { settings, updateSettings } = usePos();
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [draft, setDraft] = useState(settings.restartTime);
 
   return (
     <>
@@ -64,10 +68,8 @@ function ControlCenter() {
             color="slate"
             chevron
             onClick={() => {
-              const next = times[(times.indexOf(settings.restartTime) + 1) % times.length];
-              if (!next) return;
-              updateSettings({ restartTime: next });
-              toast.success(`Restart time set to ${next}`);
+              setDraft(settings.restartTime);
+              setPickerOpen(true);
             }}
           />
         </GroupCard>
@@ -79,6 +81,26 @@ function ControlCenter() {
           interrupt active orders or other operations.
         </Caption>
       </ScreenBody>
+
+      <Dialog open={pickerOpen} onOpenChange={(open) => { if (!open) setPickerOpen(false); }}>
+        <DialogContent className="max-w-sm rounded-lg p-5">
+          <DialogTitle>Choose Time</DialogTitle>
+          <DialogDescription>Scroll to pick the app restart time.</DialogDescription>
+          <WheelTimePicker value={draft} onChange={setDraft} />
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setPickerOpen(false)}>Cancel</Button>
+            <Button
+              onClick={() => {
+                updateSettings({ restartTime: draft });
+                toast.success(`Restart time set to ${draft}`);
+                setPickerOpen(false);
+              }}
+            >
+              Set Time
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
