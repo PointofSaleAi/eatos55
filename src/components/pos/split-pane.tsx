@@ -67,7 +67,7 @@ export function isSettingsTopLevel(pathname: string) {
  * the nav rail: the choice is per visit and never remembered.
  */
 export function SettingsNavList() {
-  const { canManageSettings } = usePos();
+  const { canManageSettings, session, settings } = usePos();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [collapsed, setCollapsed] = useState(false);
   const [query, setQuery] = useState("");
