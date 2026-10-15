@@ -26,7 +26,7 @@ export function ScheduleInformation() {
   const [revealedId, setRevealedId] = useState<string | null>(null);
   const swipe = useRef<{ id: string; x: number; y: number; horizontal: boolean } | null>(null);
   const suppressClickUntil = useRef(0);
-  const saveCollection = (next: RestaurantSchedule[]) => updateSettings({ restaurantSchedules: next });
+  const saveCollection = (next: RestaurantSchedule[]) => { setRevealedId(null); updateSettings({ restaurantSchedules: next }); };
   const openDraft = (schedule: RestaurantSchedule) => { setDraft({ ...schedule, days: schedule.days.map(day => ({ ...day })) }); setError(""); };
   const updateDay = (index: number, patch: Partial<ScheduleDay>) => setDraft(current => current ? { ...current, days: current.days.map((day, i) => i === index ? { ...day, ...patch } : day) } : current);
   const save = () => {
