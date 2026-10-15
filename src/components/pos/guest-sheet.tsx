@@ -20,6 +20,7 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
+import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { AddressSearch } from "@/components/pos/address-search";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
@@ -153,18 +154,12 @@ export function GuestSheet({
       >
         <SheetGrabber handleProps={handleProps} />
 
-        {/* The type is picked in the order area; show it once here for context. */}
-        <SheetHeader className="flex-row shrink-0 items-center gap-2 px-4 pb-1.5 pt-3 text-left">
-          <SheetTitle className="min-w-0 flex-1 text-fs-base font-extrabold text-foreground">
+        {/* All order types are tappable here so the type can change without leaving the sheet. */}
+        <SheetHeader className="shrink-0 gap-1.5 px-4 pb-1.5 pt-3 text-left">
+          <SheetTitle className="text-fs-base font-extrabold text-foreground">
             Guest Information
           </SheetTitle>
-          <span className="flex min-h-tap shrink-0 items-center gap-1.5 rounded-row border-2 border-foreground bg-secondary px-3 text-fs-xs font-extrabold uppercase tracking-[0.04em] text-foreground">
-            {(() => {
-              const Icon = orderTypeIcons[type];
-              return <Icon className="size-4" aria-hidden />;
-            })()}
-            {serviceOrderTypeLabels[type]}
-          </span>
+          <OrderTypeStrip value={type} onSelect={setType} />
         </SheetHeader>
 
         <div className="min-h-0 flex-1 overflow-y-auto pb-2">
