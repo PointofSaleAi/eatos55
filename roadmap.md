@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Add every restaurant information option from the two reference screenshots and verify editing across devices
 - [x] Replace the four-square Menu page content with the shared Dashboard and verify across devices
 - [x] Rename the four-square Menu rail item to Dashboard and remove the separate Dashboard left-nav entry
 

@@ -246,6 +246,12 @@ export type AppSettings = {
   restaurantAddress: string;
   restaurantCity: string;
   restaurantPhone: string;
+  restaurantType: string;
+  restaurantEmail: string;
+  restaurantDescription: string;
+  restaurantAddress2: string;
+  restaurantPostCode: string;
+  restaurantCountry: string;
   taxId: string;
   timezone: string;
   currency: string;
@@ -379,6 +385,12 @@ const defaultSettings: AppSettings = {
   restaurantAddress: brand.venue.address,
   restaurantCity: brand.venue.city,
   restaurantPhone: brand.venue.phone,
+  restaurantType: "",
+  restaurantEmail: "",
+  restaurantDescription: "",
+  restaurantAddress2: "",
+  restaurantPostCode: "",
+  restaurantCountry: brand.venue.phone.startsWith("+44") ? "United Kingdom" : "United States",
   taxId: brand.venue.taxId,
   timezone: brand.venue.timezone,
   currency: brand.currency,
