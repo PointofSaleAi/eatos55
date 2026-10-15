@@ -12,7 +12,21 @@ const softwareRows: [string, string][] = [
   ["Build Date", "BD 09.10.26"],
 ];
 
-const termsRows = ["Privacy Policy", "Legal Terms", "Report Fraud"];
+const termsRows: { label: string; url?: string }[] = [
+  { label: "Privacy Policy", url: "https://www.eatos.com/privacy-policy" },
+  { label: "Legal Terms", url: "https://www.eatos.com/terms-and-conditions" },
+  { label: "Report Fraud" },
+];
+
+function openTermsRow(row: { label: string; url?: string }) {
+  if (row.url) {
+    window.open(row.url, "_blank", "noopener,noreferrer");
+    return;
+  }
+  toast.info(`${row.label} opens in the full app.`, {
+    description: "This demo does not include the linked document.",
+  });
+}
 
 export function AboutSettings() {
   const { settings } = usePos();
