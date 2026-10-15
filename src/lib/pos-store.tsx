@@ -252,6 +252,9 @@ export type AppSettings = {
   restaurantAddress2: string;
   restaurantPostCode: string;
   restaurantCountry: string;
+  restaurantStartTime: string;
+  restaurantEndTime: string;
+  restaurantDayBoundary: string;
   taxId: string;
   timezone: string;
   currency: string;
@@ -391,6 +394,9 @@ const defaultSettings: AppSettings = {
   restaurantAddress2: "",
   restaurantPostCode: "",
   restaurantCountry: brand.venue.phone.startsWith("+44") ? "United Kingdom" : "United States",
+  restaurantStartTime: "00:00",
+  restaurantEndTime: "23:59",
+  restaurantDayBoundary: "Same Day",
   taxId: brand.venue.taxId,
   timezone: brand.venue.timezone,
   currency: brand.currency,

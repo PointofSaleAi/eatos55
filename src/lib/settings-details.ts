@@ -56,6 +56,7 @@ export type DetailScreen = {
   /** Shown when a collection is empty. */
   empty?: string;
   note?: string;
+  groupLabel?: string;
 };
 
 const ro = (label: string, value?: string): DetailRow =>
@@ -101,28 +102,11 @@ export const settingsDetails: Record<string, DetailScreen> = {
     title: "Restaurant Settings",
     backLabel: "General",
     icon: SettingsIcon,
+    groupLabel: "Daily Operating Hours",
     rows: [
-      {
-        kind: "choice",
-        label: "Service Mode",
-        field: "deviceService",
-        options: ["Table Service", "Quick Service"],
-      },
-      {
-        kind: "choice",
-        label: "Order Type",
-        field: "orderTypePlacement",
-        options: ["Order screen", "Charge screen", "Both", "Off"],
-      },
-      { kind: "toggle", label: "Auto-print Receipts", field: "autoPrintReceipts" },
-      { kind: "toggle", label: "Ask For Tip", field: "askForTip" },
-      {
-        kind: "choice",
-        label: "Cash Rounding",
-        field: "cashRounding",
-        options: ["Nearest cent", "Nearest 5 cents", "Nearest dollar"],
-      },
-      { kind: "toggle", label: "Require Manager Void", field: "requireManagerVoid" },
+      { kind: "text", label: "Start Time", field: "restaurantStartTime" },
+      { kind: "text", label: "End Time", field: "restaurantEndTime" },
+      { kind: "choice", label: "Day and Week Start / end", field: "restaurantDayBoundary", options: ["Same Day", "Next Day"] },
     ],
   },
   language: {

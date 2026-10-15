@@ -37,12 +37,12 @@ export const Route = createFileRoute("/settings/detail/$topic")({
       { title: `${settingsDetails[params.topic]?.title ?? "Settings detail"} - ${brand.appName} Handheld` },
       {
         name: "description",
-        content: params.topic === "restaurant-information" ? "Restaurant name, type, contact information, description and address settings." : "Device, menu, payment, hardware and workforce settings detail on the handheld.",
+        content: params.topic === "restaurant-information" ? "Restaurant name, type, contact information, description and address settings." : params.topic === "restaurant-settings" ? "Daily restaurant operating hours, start time, end time and day boundaries." : "Device, menu, payment, hardware and workforce settings detail on the handheld.",
       },
       { property: "og:title", content: `${settingsDetails[params.topic]?.title ?? "Settings detail"} - ${brand.appName} Handheld` },
       {
         property: "og:description",
-        content: params.topic === "restaurant-information" ? "Restaurant name, type, contact information, description and address settings." : "Device, menu, payment, hardware and workforce settings detail on the handheld.",
+        content: params.topic === "restaurant-information" ? "Restaurant name, type, contact information, description and address settings." : params.topic === "restaurant-settings" ? "Daily restaurant operating hours, start time, end time and day boundaries." : "Device, menu, payment, hardware and workforce settings detail on the handheld.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -89,6 +89,13 @@ function SettingsDetail() {
   const fieldRows = rows.filter((r) => r.kind !== "list" && r.kind !== "product-modifiers");
   const productModifierRows = rows.filter((r) => r.kind === "product-modifiers");
   const str = (field: keyof AppSettings) => String(settings[field] ?? "");
+  const displayValue = (field: keyof AppSettings) => {
+    const value = str(field);
+    if (field !== "restaurantStartTime" && field !== "restaurantEndTime") return value;
+    const [hour, minute] = value.split(":");
+    const h = Number(hour);
+    return `${h % 12 || 12}:${minute} ${h < 12 ? "AM" : "PM"}`;
+  };
   const bool = (field: keyof AppSettings) => Boolean(settings[field]);
   const list = (field: keyof AppSettings) => (settings[field] as SettingsListItem[]) ?? [];
   const tipTenderIds: TenderId[] = [
@@ -136,6 +143,7 @@ function SettingsDetail() {
           </p>
         ) : null}
 
+        {screen.groupLabel ? <GroupLabel>{screen.groupLabel}</GroupLabel> : null}
         {fieldRows.length ? (
           <GroupCard>
             {fieldRows.map((row) => {
@@ -195,7 +203,8 @@ function SettingsDetail() {
                   <IconValueRow
                     key={row.label}
                     title={row.label}
-                    value={str(row.field)}
+                    value={displayValue(row.field)}
+                    chevron={topic === "restaurant-settings" && canManageSettings}
                     {...(canManageSettings
                       ? {
                           onClick: () =>
@@ -230,12 +239,12 @@ function SettingsDetail() {
                     <span className="shrink-0 truncate t-value text-muted-foreground">
                       {str(row.field)}
                     </span>
-                    <ChevronDown
+                    {topic === "restaurant-settings" ? <ChevronRight className={cn("size-4 shrink-0 text-muted-foreground transition-transform", open && "rotate-90")} /> : <ChevronDown
                       className={cn(
                         "size-4 shrink-0 text-muted-foreground transition-transform",
                         open && "rotate-180",
                       )}
-                    />
+                    />}
                   </button>
                   {open ? (
                     <div className="bg-muted/40">
@@ -543,6 +552,7 @@ function EditSheet({
           {draft.type === "text" ? (
             <input
               autoFocus
+              type={draft.field === "restaurantStartTime" || draft.field === "restaurantEndTime" ? "time" : "text"}
               value={draft.value}
               onChange={(e) => setDraft({ ...draft, value: e.target.value })}
               className="min-h-ctl-md w-full rounded-card border border-border bg-background px-3 text-fs-sm text-foreground"
