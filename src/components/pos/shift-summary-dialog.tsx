@@ -22,7 +22,7 @@ function toMinutes(stamp: string): number | null {
   const m = /(\d{1,2}):(\d{2})\s*(AM|PM)/i.exec(stamp);
   if (!m) return null;
   let h = Number(m[1]) % 12;
-  if (m[3].toUpperCase() === "PM") h += 12;
+  if (m[3]?.toUpperCase() === "PM") h += 12;
   return h * 60 + Number(m[2]);
 }
 
