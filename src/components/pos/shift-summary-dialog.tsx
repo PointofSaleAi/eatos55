@@ -190,7 +190,7 @@ export function ShiftSummaryDialog({ open, onOpenChange }: { open: boolean; onOp
                     {draftRange?.from ? dmy(draftRange.from) : "Start Date"} – {draftRange?.to ? dmy(draftRange.to) : "End Date"}
                   </p>
                 </div>
-                <Calendar mode="range" selected={draftRange} onSelect={setDraftRange} defaultMonth={filters.range.from} className="pointer-events-auto p-3" />
+                <Calendar mode="range" selected={draftRange} onSelect={setDraftRange} defaultMonth={filters.range.from ?? today} className="pointer-events-auto p-3" />
                 <div className="flex justify-end gap-2 border-t border-border p-2">
                   <Button variant="ghost" size="sm" onClick={() => setDateOpen(false)}>Cancel</Button>
                   <Button
