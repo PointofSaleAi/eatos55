@@ -9,6 +9,7 @@ import { referenceSchedules, type RestaurantSchedule } from "@/lib/restaurant-sc
 import { referenceTimedPricing, type TimedPricingRule } from "@/lib/timed-pricing";
 import { defaultDevicePreferences, type DevicePreferences } from "@/lib/device-settings";
 import { defaultPeripheralPreferences, type PeripheralPreferences } from "@/lib/peripheral-settings";
+import { defaultServerConnection, type ServerConnectionPreferences } from "@/lib/server-connection";
 import { referenceEmployees, type WorkforceEmployee } from "@/lib/workforce-employees";
 import { isResumablePath, readResume, resumeKey, writeResume } from "@/lib/resume";
 import {
@@ -247,6 +248,7 @@ export type TapToPayState =
   | "ineligible";
 
 export type AppSettings = {
+  serverConnection: ServerConnectionPreferences;
   workforceEmployees: WorkforceEmployee[];
   devicePreferences: DevicePreferences;
   peripheralPreferences: PeripheralPreferences;
@@ -405,6 +407,7 @@ const defaultLoginSlides: LoginSlide[] = [
 ];
 
 const defaultSettings: AppSettings = {
+  serverConnection: defaultServerConnection,
   workforceEmployees: referenceEmployees,
   devicePreferences: defaultDevicePreferences,
   peripheralPreferences: defaultPeripheralPreferences,
@@ -1000,6 +1003,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setSettings((s) => ({
           ...s,
           ...saved,
+          serverConnection: { ...defaultServerConnection, ...saved.serverConnection },
           peripheralPreferences: { ...defaultPeripheralPreferences, ...saved.peripheralPreferences },
           devicePreferences: {
             ...defaultDevicePreferences,

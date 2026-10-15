@@ -34,6 +34,7 @@ import { ScheduleInformation } from "@/components/pos/schedule-information";
 import { TimedPricing } from "@/components/pos/timed-pricing";
 import { WorkforceEmployees } from "@/components/pos/workforce-employees";
 import { AboutSettings } from "@/components/pos/about-settings";
+import { ServerConnection } from "@/components/pos/server-connection";
 import { LegalDocViewer, docTopics } from "@/components/pos/legal-doc-viewer";
 
 export const Route = createFileRoute("/settings/detail/$topic")({
@@ -80,6 +81,7 @@ function SettingsDetail() {
   if (topic === "timed-pricing") return <TimedPricing />;
   if (topic === "employee") return <WorkforceEmployees />;
   if (topic === "about") return <AboutSettings />;
+  if (topic === "servers") return <ServerConnection />;
   if (docTopics[topic]) return <LegalDocViewer topic={topic} />;
 
   if (!screen) {
