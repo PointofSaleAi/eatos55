@@ -59,15 +59,15 @@ export const navGroups: NavGroup[] = [
 
 /**
  * Rail destinations in the order used by the reference app: new order first,
- * then floor plan, tickets, rooms and the order status board. The Dashboard
+ * then floor plan, rooms, tickets and the order status board. The Dashboard
  * opens from the venue/profile tile at the top of the rail instead.
  */
 export const railPrimary: NavLink[] = [
   { to: "/order/new", label: "New Order", icon: FilePlus2 },
 
   { to: "/floor", label: "Table Order", icon: Sofa },
-  { to: "/tickets", label: "Tickets", icon: Receipt },
   { to: "/rooms", label: "Rooms", icon: BedDouble },
+  { to: "/tickets", label: "Tickets", icon: Receipt },
   { to: "/board", label: "orderOS", icon: OrderOSIcon },
 ];
 
