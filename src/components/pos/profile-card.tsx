@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { EMark } from "@/components/pos/brand";
@@ -7,7 +8,8 @@ import { usePos } from "@/lib/pos-store";
 
 /** Header profile bar → profile card with shift summary and log out. */
 export function ProfileCard({ children }: { children: ReactNode }) {
-  const { session, settings } = usePos();
+  const { session, settings, signOut } = usePos();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [summary, setSummary] = useState(false);
   const m = /^(\d{1,2}:\d{2})\s*(AM|PM)?/i.exec(settings.clockedInAt);
@@ -28,11 +30,17 @@ export function ProfileCard({ children }: { children: ReactNode }) {
           </div>
           <div className="mt-4 overflow-hidden rounded-lg border border-border">
             <div className="py-3 text-center">
-              <p className="text-[1.375rem] font-extrabold tabular-nums">
-                {m?.[1] ?? settings.clockedInAt}
-                {m?.[2] && <span className="ml-1 text-[0.75rem] font-semibold">{m[2].toUpperCase()}</span>}
-              </p>
-              <p className="text-[0.875rem] text-muted-foreground">Clock In</p>
+              {session.clockedIn ? (
+                <>
+                  <p className="text-[1.375rem] font-extrabold tabular-nums">
+                    {m?.[1] ?? settings.clockedInAt}
+                    {m?.[2] && <span className="ml-1 text-[0.75rem] font-semibold">{m[2].toUpperCase()}</span>}
+                  </p>
+                  <p className="text-[0.875rem] text-muted-foreground">Clock In</p>
+                </>
+              ) : (
+                <p className="py-2 text-[1.125rem] font-extrabold">Not clocked in</p>
+              )}
             </div>
             <Button
               className="h-12 w-full rounded-none text-[0.9375rem] font-bold"
@@ -48,7 +56,8 @@ export function ProfileCard({ children }: { children: ReactNode }) {
               className="h-12 w-full rounded-none text-[0.9375rem] font-bold uppercase"
               onClick={() => {
                 setOpen(false);
-                window.dispatchEvent(new CustomEvent("pos:switch-user"));
+                signOut();
+                void navigate({ to: "/", replace: true });
               }}
             >
               Log Out
