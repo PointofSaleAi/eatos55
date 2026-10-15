@@ -238,7 +238,7 @@ export function useSectionPane(): {
     // The list pane keeps its own scroll; detail routes render on the right.
     return {
       list: <TicketsScreen pane />,
-      ...(landscape ? { listClassName: "w-[60%] lg:w-[60%]" } : {}),
+      ...(landscape ? { listClassName: "w-[60%] max-w-[calc(100%-24rem)] lg:w-[60%]" } : {}),
       ...(p === "/tickets"
         ? {
             replaceChildren: (

@@ -1,4 +1,4 @@
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useNavigate, useSearch, useRouterState } from "@tanstack/react-router";
 import { money } from "@/lib/demo-data";
 import { rooms as allRooms } from "@/lib/floor-data";
 const roomNames = new Set(allRooms.map((r) => r.name));
@@ -144,6 +144,7 @@ export function TicketsScreen({
 }) {
   const navigate = useNavigate();
   const landscape = useLandscapeWide();
+  const selectedTicketId = useRouterState({ select: (state) => state.location.pathname.match(/^\/tickets\/([^/]+)$/)?.[1] });
   const tableParam = (useSearch({ strict: false }) as { table?: string }).table;
   const tableMembers = tableParam ? tableParam.split(",").filter(Boolean) : [];
   const {
@@ -612,6 +613,7 @@ export function TicketsScreen({
                 <TicketCard
                   ticket={t}
                   landscape={pane && landscape}
+                  selected={selectedTicketId === t.id}
                   onClick={() => {
                     openTicket(t.id);
                     navigate({

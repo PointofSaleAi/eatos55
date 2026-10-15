@@ -237,7 +237,7 @@ function orderTypeIcon(label: string) {
   return Utensils;
 }
 
-export function TicketCard({ ticket, onClick, landscape = false }: { ticket: Ticket; onClick: () => void; landscape?: boolean }) {
+export function TicketCard({ ticket, onClick, landscape = false, selected = false }: { ticket: Ticket; onClick: () => void; landscape?: boolean; selected?: boolean }) {
   const { tableGroupLabel } = usePos();
   const meta = roomChargeLabel(ticket) ?? statusMeta[ticket.status];
   const timer = useTicketTimer(ticket.arrivedMinutesAgo);
@@ -256,7 +256,7 @@ export function TicketCard({ ticket, onClick, landscape = false }: { ticket: Tic
 
 
   return (
-    <div className="@container w-full overflow-hidden rounded-card border border-border bg-surface">
+    <div data-ticket-selected={landscape && selected ? "true" : undefined} className={cn("@container w-full overflow-hidden rounded-card border", landscape && selected ? "border-foreground/40 bg-muted" : "border-border bg-surface")}>
       {landscape ? (
         <div data-ticket-landscape className="grid grid-cols-[auto_minmax(0,1fr)] items-stretch gap-2 px-2 py-2">
           <Button
@@ -271,9 +271,9 @@ export function TicketCard({ ticket, onClick, landscape = false }: { ticket: Tic
           </Button>
           <Button
             variant="ghost"
-            aria-label={`Expand order ${orderNo} details`}
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
+            aria-label={`View order ${orderNo} details`}
+            aria-current={selected ? "true" : undefined}
+            onClick={onClick}
             className="grid h-auto min-w-0 grid-cols-[minmax(0,1fr)_minmax(4rem,0.4fr)_7.5rem] items-center gap-x-2 whitespace-normal rounded-row px-0 py-1 text-left"
           >
             <span data-ticket-guest className="block min-w-0">
@@ -296,7 +296,6 @@ export function TicketCard({ ticket, onClick, landscape = false }: { ticket: Tic
             <span data-ticket-amount className="block min-w-0 max-w-32 text-right">
               <span className="flex items-center justify-end gap-1">
                 <span className={cn("t-badge uppercase", meta.tone)}>{meta.label}</span>
-                <ChevronDown className={cn("size-3 shrink-0 text-muted-foreground transition-transform", open && "rotate-180")} aria-hidden />
               </span>
               <span className="block whitespace-nowrap t-row tabular-nums text-foreground">{money(ticket.total)}</span>
               <span className="block whitespace-nowrap t-caption tabular-nums text-muted-foreground">{money(ticket.tips ?? 0)}</span>
@@ -365,7 +364,7 @@ export function TicketCard({ ticket, onClick, landscape = false }: { ticket: Tic
         </button>
       </div>
       )}
-      {open ? (
+      {open && !landscape ? (
         <div className="border-t border-border px-3 py-3">
           <div className="grid grid-cols-2 gap-x-3 gap-y-2 @[30rem]:grid-cols-4 @[46rem]:grid-cols-6">
             <Cell label="Check" value={String(ticket.checkNumber ?? orderNo)} />

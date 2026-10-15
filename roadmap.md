@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Landscape Tickets: remove expansion/status arrow, highlight selected card, and match the full New Order cart structure while preserving ticket actions
 - [x] Restructure landscape Tickets cards into reference-aligned badge, guest, employee/payment and status/amount columns; verified landscape sizes, expanded rail, ticket opening, expansion and swipe cancellation; portrait and phone unchanged
 - [x] Guest search suggestions show name, email and phone on one line, with sample contacts for guests that have none; verified phone, tablet and desktop
 - [x] Guest search results show name, email and phone with no clipping; verified phone, tablet and desktop
