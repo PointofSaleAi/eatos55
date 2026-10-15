@@ -29,19 +29,20 @@ import {
   type ModifierRuleMode,
 } from "@/lib/demo-data";
 import { Button } from "@/components/ui/button";
+import { RestaurantInformation } from "@/components/pos/restaurant-information";
 
 export const Route = createFileRoute("/settings/detail/$topic")({
-  head: () => ({
+  head: ({ params }) => ({
     meta: [
-      { title: `Settings detail - ${brand.appName} Handheld` },
+      { title: `${settingsDetails[params.topic]?.title ?? "Settings detail"} - ${brand.appName} Handheld` },
       {
         name: "description",
-        content: "Device, menu, payment, hardware and workforce settings detail on the handheld.",
+        content: params.topic === "restaurant-information" ? "Restaurant name, type, contact information, description and address settings." : "Device, menu, payment, hardware and workforce settings detail on the handheld.",
       },
-      { property: "og:title", content: `Settings detail - ${brand.appName} Handheld` },
+      { property: "og:title", content: `${settingsDetails[params.topic]?.title ?? "Settings detail"} - ${brand.appName} Handheld` },
       {
         property: "og:description",
-        content: "Device, menu, payment, hardware and workforce settings detail on the handheld.",
+        content: params.topic === "restaurant-information" ? "Restaurant name, type, contact information, description and address settings." : "Device, menu, payment, hardware and workforce settings detail on the handheld.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -68,6 +69,8 @@ function SettingsDetail() {
   const [edit, setEdit] = useState<EditTarget | null>(null);
   const [modifierProduct, setModifierProduct] = useState<MenuItem | null>(null);
   const screen = settingsDetails[topic];
+
+  if (topic === "restaurant-information") return <RestaurantInformation />;
 
   if (!screen) {
     return (
