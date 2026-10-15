@@ -51,7 +51,7 @@ export function ServerConnection() {
   );
   const syncButtons = (enabled: boolean, edge = false) => <div className="mt-4 grid grid-cols-2 gap-3">
     {["MANUAL SYNC", "FORCE SYNC"].map((label, index) => <Button key={label} variant={index === 0 ? "default" : "outline"}
-      disabled={!enabled || !canManageSettings} className="h-16 flex-col gap-0 px-2 whitespace-normal text-fs-base font-bold"
+      disabled={!enabled || !canManageSettings} className={cn("h-16 flex-col gap-0 px-2 whitespace-normal text-fs-base font-bold", index === 0 ? "text-primary-foreground" : "text-foreground")}
       onClick={() => toast.info(`Demo only: ${label.toLowerCase()} does not connect to a server.`)}>
       {label}{edge && <span className="text-fs-xs font-medium">CLOUD SERVER</span>}
     </Button>)}
