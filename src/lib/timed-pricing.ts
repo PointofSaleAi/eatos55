@@ -1,6 +1,6 @@
 import { scheduleDays, type ScheduleDay } from "@/lib/restaurant-schedules";
 
-export type TimedPricingRule = { id: string; name: string; revenueCentre: string; orderingSource: string; startDate: string; endDate: string; days: ScheduleDay[] };
+export type TimedPricingRule = { id: string; name: string; revenueCentre: string; orderingSource: string; startDate: string; endDate: string; archived: boolean; days: ScheduleDay[] };
 export const timedPricingDays = [1, 2, 3, 4, 5, 6, 0];
 export const newTimedPricingDays = (): ScheduleDay[] => scheduleDays.map(() => ({ enabled: false, start: "00:00", end: "23:59" }));
 // Reference dates and day selections only; centres and sources were not supplied.
