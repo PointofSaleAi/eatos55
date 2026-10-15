@@ -87,3 +87,5 @@
 - [x] Stop the cart header from clipping Guest Name and Mobile Number: name and phone keep their minimum widths and the ARRIVED AT clock wraps to its own line when narrow; verified no clipping and inline saving on desktop, tablet and phone
 - [x] Keep the cart header on one line at every size (no wrap), switch the label to sentence case "Arrived at", and shorten the name hint to "Guest" so the phone format hint and clock stay fully visible; verified one line, no clipping and inline saving on phone, tablet and desktop
 - [x] Restore the full "Guest Name" hint and hold the header on one line by widening the New Order cart column (24rem, 24rem with the options rail docked) and easing the arrival-time size; verified one line, no clipping and inline saving on phone, portrait/landscape tablet and desktop
+- [x] Rebuild the Tickets header (title left; round Filter/Messages/Search icons right) with the expanding round-icon filter row including date, sort and close; verified phone, tablet and desktop
+- [x] Remove the Messages icon from the Tickets header so only Filter and Search remain; verified the filter row still opens and closes on phone, tablet and desktop
