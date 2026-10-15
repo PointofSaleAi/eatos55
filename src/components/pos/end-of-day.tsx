@@ -23,15 +23,16 @@ export function EndOfDaySettings() {
     ["eodPrintReport", "Print EOD Receipt Report"], ["eodPrintEmployees", "Print Employee Data"],
     ["eodClosePaid", "Close Paid Orders"], ["eodCancelUnpaid", "Cancel Unpaid Tickets"],
   ];
-  const toggle = (field: ToggleField, label: string, disabled = false) => (
-    <div className={settingsRowClass} key={field}>
+  const rowBare = settingsRowClass.replace(" border-b border-border", "");
+  const toggle = (field: ToggleField, label: string, disabled = false, noBorder = false) => (
+    <div className={noBorder ? rowBare : settingsRowClass} key={field}>
       <span className="min-w-0 flex-1 t-row">{label}</span>
       <Switch checked={settings[field]} disabled={!canManageSettings || disabled} aria-label={label}
         onCheckedChange={(value) => updateSettings({ [field]: value } as Partial<AppSettings>)} />
     </div>
   );
-  const time = (field: "eodReminderTime" | "eodAutoTime", label: string, disabled: boolean) => (
-    <div className={settingsRowClass}>
+  const time = (field: "eodReminderTime" | "eodAutoTime", label: string, disabled: boolean, noBorder = false) => (
+    <div className={noBorder ? rowBare : settingsRowClass}>
       <label htmlFor={field} className="min-w-0 flex-1 t-row">{label}</label>
       <input id={field} aria-label={label} type="time" value={settings[field]}
         disabled={!canManageSettings || disabled}
@@ -54,10 +55,10 @@ export function EndOfDaySettings() {
       <GroupLabel>Automatic Tasks</GroupLabel>
       <GroupCard>
         {toggle("eodTasks", "End of Day Tasks")}
-        {time("eodAutoTime", "Auto End of Day", !settings.eodTasks)}
+        {time("eodAutoTime", "Auto End of Day", !settings.eodTasks, true)}
         <p className="border-b border-border px-4 pb-3 t-caption text-muted-foreground">Auto end-of-day task triggers 10 minutes after setting a reminder by default.</p>
-        {tasks.map(([field, label]) => <div key={field} className="border-b border-border">{toggle(field, label, !settings.eodTasks)}{field === "eodPrintEmployees" && <p className="px-4 pb-3 t-caption text-muted-foreground">Enable to print employee data on sales summary report</p>}</div>)}
-        <Button variant="ghost" className={`${settingsRowClass} h-auto justify-start rounded-none whitespace-normal`} disabled={!canManageSettings || !settings.eodTasks}
+        {tasks.map(([field, label]) => <div key={field} className="border-b border-border">{toggle(field, label, !settings.eodTasks, field === "eodPrintEmployees")}{field === "eodPrintEmployees" && <p className="px-4 pb-3 t-caption text-muted-foreground">Enable to print employee data on sales summary report</p>}</div>)}
+        <Button variant="ghost" className={`${rowBare} h-auto justify-start rounded-none whitespace-normal`} disabled={!canManageSettings || !settings.eodTasks}
           onClick={() => { setDraftRecipients(settings.eodRecipients); setPicker("recipients"); }}>
           <span className="min-w-0 flex-1 t-row">Send Daily Reports</span><span className="shrink-0 t-value text-muted-foreground">{settings.eodRecipients.length} Employees</span><ChevronRight />
         </Button>
