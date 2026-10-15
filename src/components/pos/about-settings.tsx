@@ -4,11 +4,16 @@ import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, GroupLabel, IconValueRow, settingsRowClass } from "@/components/pos/settings-rows";
 import { cn } from "@/lib/utils";
 
+import {
+  APP_BUILD_DATE,
+  APP_BUILD_VERSION,
+  APP_FLUTTER_VERSION,
+} from "@/lib/demo-data";
+
 const softwareRows: [string, string][] = [
-  ["Software Name", "eatOS Point of Sale"],
-  ["App Version", "5.100.35 (+1013)"],
-  ["Flutter Version", "FL 3.47.4"],
-  ["Build Date", "BD 13.10.26"],
+  ["App Version", APP_BUILD_VERSION],
+  ["Flutter Version", APP_FLUTTER_VERSION],
+  ["Build Date", APP_BUILD_DATE],
 ];
 
 const termsRows: { label: string; topic?: string }[] = [
