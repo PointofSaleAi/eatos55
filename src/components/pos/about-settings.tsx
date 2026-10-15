@@ -60,18 +60,14 @@ export function AboutSettings() {
 
         <GroupLabel>Terms & Policies</GroupLabel>
         <GroupCard>
-          {termsRows.map((label) => (
+          {termsRows.map((row) => (
             <button
-              key={label}
+              key={row.label}
               type="button"
-              onClick={() =>
-                toast.info(`${label} opens in the full app.`, {
-                  description: "This demo does not include the linked document.",
-                })
-              }
+              onClick={() => openTermsRow(row)}
               className={cn(settingsRowClass, "transition-colors hover:bg-muted")}
             >
-              <span className="min-w-0 flex-1 truncate t-row text-foreground">{label}</span>
+              <span className="min-w-0 flex-1 truncate t-row text-foreground">{row.label}</span>
               <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
             </button>
           ))}
