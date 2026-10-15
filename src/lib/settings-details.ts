@@ -388,7 +388,7 @@ export const settingsDetails: Record<string, DetailScreen> = {
     note: "Emulators are enabled for demo mode.",
   },
   servers: {
-    title: "Servers",
+    title: "Server Connection",
     backLabel: "Network",
     icon: Server,
     rows: [
