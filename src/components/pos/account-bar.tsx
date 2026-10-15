@@ -113,11 +113,11 @@ export function AccountInfo() {
             </span>
             <span aria-hidden className="hidden h-5 w-px bg-topbar-border md:block" />
             <span
-              title={`Clocked in at ${settings.clockedInAt}`}
+              title={session.clockedIn ? `Clocked in at ${settings.clockedInAt}` : "Not clocked in"}
               className="hidden items-center gap-1.5 whitespace-nowrap text-[0.8125rem] font-semibold text-topbar-foreground md:flex"
             >
               <Timer className="size-4" />
-              {service} ({settings.clockedInAt})
+              {session.clockedIn ? `${service} (${settings.clockedInAt})` : "Not clocked in"}
             </span>
           </button>
         </ProfileCard>
