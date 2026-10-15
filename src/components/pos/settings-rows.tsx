@@ -288,10 +288,11 @@ export function IconToggleChipRow({
 export function IconToggleRow({
   checked,
   onChange,
+  disabled,
   ...rest
-}: RowShellProps & { checked: boolean; onChange: (v: boolean) => void }) {
+}: RowShellProps & { checked: boolean; onChange: (v: boolean) => void; disabled?: boolean }) {
   return (
-    <div className={rowBase}>
+    <div className={cn(rowBase, disabled && "pointer-events-none opacity-60")}>
       <RowInner
         {...rest}
         right={
@@ -299,6 +300,7 @@ export function IconToggleRow({
             <Switch
               checked={checked}
               onCheckedChange={onChange}
+              disabled={disabled ?? false}
               aria-label={rest.title}
               className="tap-safe shrink-0"
             />

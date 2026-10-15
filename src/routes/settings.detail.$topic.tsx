@@ -214,6 +214,7 @@ function SettingsDetail() {
                     key={row.label}
                     title={row.label}
                     checked={bool(row.field)}
+                    disabled={row.disabled ?? false}
                     onChange={(v) => updateSettings({ [row.field]: v } as Partial<AppSettings>)}
                   />
                 );
