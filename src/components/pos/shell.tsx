@@ -32,6 +32,7 @@ import { useGlobalKeyboardAware } from "@/hooks/use-keyboard-inset";
 import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 import { NavDrawerContext } from "@/lib/nav-drawer-context";
 import { pinnedContext } from "@/lib/pinned-context";
@@ -292,11 +293,13 @@ export function SubHeader({
   title,
   backLabel,
   backTo,
+  onBack,
   right,
 }: {
   title: string;
   backLabel?: string | undefined;
   backTo?: string | undefined;
+  onBack?: (() => void) | undefined;
   right?: ReactNode;
 }) {
   const canGoBack = useCanGoBack();
@@ -305,13 +308,15 @@ export function SubHeader({
   // No chevron when the sidebar already exposes this screen, or when there is
   // genuinely nowhere to go back to.
   const sidebarReachable = wide && isSettingsTopLevel(pathname);
-  const showBack = !sidebarReachable && (canGoBack || Boolean(backTo));
+  const showBack = Boolean(onBack) || (!sidebarReachable && (canGoBack || Boolean(backTo)));
 
   return (
     <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <div className="flex min-w-0 items-center gap-2">
-          {showBack ? (
+          {onBack ? (
+            <Button variant="ghost" size="icon" aria-label={backLabel ? `Back to ${backLabel}` : "Go back"} title={backLabel ? `Back to ${backLabel}` : "Go back"} onClick={onBack}><ChevronLeft className="size-5" /></Button>
+          ) : showBack ? (
             <BackButton
               fallbackTo={backTo}
               label={backLabel ? `Back to ${backLabel}` : "Go back"}

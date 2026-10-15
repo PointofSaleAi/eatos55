@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 - Subdirectories may carry their own `AGENTS.md`; read the nearest one before changing files there.
+- SubHeader accepts an optional local back callback for inline editors so returning to a list does not leave the current settings destination.
 - Keep root error boundaries typed with TanStack Router's `ErrorComponentProps` because router upgrades expose boundary errors as `unknown`.
 - Dashboard and the four-square Menu destination render the same shared shift overview; the header chevron owns the settings menu, and settings destinations are shared by the hub, header and sidebar.
 - Shared DialogContent and SheetContent never render outside-corner X controls; use their outside-dismissal callbacks, and give custom overlays cancel-only dismissal so closing cannot commit an action.
