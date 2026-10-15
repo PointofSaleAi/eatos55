@@ -52,3 +52,5 @@
 - [x] Match the recorded header settings panel with tap/drag and safe dismissal across devices
 - [x] Add Guestbook directory, details and shared Settings shortcut; verify navigation and history
 - [x] Smooth settings drawer collapse and upward swipe dismissal; verify arrows, scrolling and gestures across devices
+
+- [x] Replace pink hover/highlight with the shared grey across settings rows, menus, selects and toggles; verified phone, tablet, desktop
