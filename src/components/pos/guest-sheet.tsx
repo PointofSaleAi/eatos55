@@ -17,7 +17,8 @@ import {
   Utensils,
   Warehouse,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { guestDirectory, type GuestRecord } from "@/lib/guestbook";
 import { toast } from "sonner";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { OrderTypeStrip } from "@/components/pos/order-type-strip";
