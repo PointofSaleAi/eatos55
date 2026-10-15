@@ -3,7 +3,6 @@ import {
   BedDouble,
   Gauge,
   ClipboardList,
-  FilePlus2,
   CreditCard,
   FileText,
   Headset,
@@ -13,6 +12,7 @@ import {
 
 } from "lucide-react";
 import { OrderOSIcon } from "@/components/pos/icons/orderos-icon";
+import { NewOrderIcon, TableOrderIcon, TicketsIcon } from "@/components/pos/icons/rail-icons";
 
 /** Rail/drawer icon: any component that takes a className (Lucide or custom SVG). */
 export type NavIcon = ComponentType<{ className?: string }>;
