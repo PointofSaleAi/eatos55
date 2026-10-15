@@ -78,3 +78,4 @@
 - [x] Remove Save/Cancel from the employee editor and auto-save details as they are typed; verified phone, tablet and desktop
 - [x] Rename Server Connection device values to eatOS and make Cloud server off turn edgeOS on automatically; verified phone, tablet and desktop
 - [x] Clear every remaining LCROS mention from page content (employee demo emails) and apply the rename without a reload; verified phone, tablet and desktop
+- [x] Replace the cart's "Not started" with a live ARRIVED AT clock that freezes when the first item lands; verified cart header, table chip and Custom Item guest line on phone, tablet and desktop
