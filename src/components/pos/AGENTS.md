@@ -1,6 +1,6 @@
 # Settings screens (also `src/routes/settings.*`)
 
-- Tickets opts into non-expanding reference-style cards only in wide landscape split panes; route-driven selection and a minimum cart width preserve readable columns without changing default cards or portrait widths.
+- Tickets opts into non-expanding reference-style cards only in wide landscape split panes; route-driven selection and a minimum cart width preserve readable columns without changing default cards or portrait widths. The landscape detail header must not repeat what the selected card already shows (guests, order type, table, revenue centre, status), so it carries only guest, phone, arrival time, order/check numbers, server and room or note lines.
 
 - The header settings panel uses a focused shortcut map resolved against shared settings destinations; guestbook derives read-only identities from existing POS data without fabricating contacts or combining distinct known email identities.
 - Settings drawer dismissal retains the panel through its exit animation; body swipe closing is allowed only at the scroll boundary and suppresses subsequent clicks, so scrolling and gestures cannot activate shortcuts.

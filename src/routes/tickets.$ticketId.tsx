@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
-import { ChevronDown, Printer, Trash2, Utensils, Users, Grid2x2, ShoppingBag, Bike } from "lucide-react";
+import { ChevronDown, Printer, Trash2 } from "lucide-react";
 import { Fragment, useState } from "react";
 import { brand } from "@/lib/brand";
 import { toast } from "sonner";
@@ -60,8 +60,6 @@ function TicketDetail() {
   const subTotal = Math.round((gross - tax) * 100) / 100;
   const payments = ticket.payments ?? [];
   const paid = payments.reduce((s, p) => s + p.amount, 0);
-  const orderType = ticket.orderType ?? modeOrderType(ticket.mode);
-  const TypeIcon = ticket.mode === "delivery" ? Bike : ticket.mode === "takeaway" ? ShoppingBag : Utensils;
   const paymentsSection = payments.length ? (
     <div className={cn("overflow-hidden", landscape ? "mt-3 border-t border-border" : "mt-3 rounded-card border border-border bg-surface")}>
       <Button variant="ghost" onClick={() => setPaidOpen((v) => !v)} aria-expanded={paidOpen}
@@ -94,15 +92,6 @@ function TicketDetail() {
               <span className="min-w-0 flex-1 truncate text-fs-sm font-extrabold text-foreground" title={ticket.label}>{ticket.label}</span>
               {ticket.guestPhone ? <span className="shrink-0 text-fs-xs font-bold text-muted-foreground">{ticket.guestPhone}</span> : null}
               <span className="shrink-0 whitespace-nowrap text-fs-xs font-bold text-muted-foreground">Arrived at {ticket.arrivedAt}</span>
-            </div>
-            <div className="mt-1.5 flex items-center justify-between gap-2">
-              <span className="flex items-center gap-1.5 text-fs-xs font-bold text-muted-foreground"><Users className="size-3.5" />{ticket.seats} guest{ticket.seats > 1 ? "s" : ""}</span>
-              <span className={cn("t-badge uppercase", meta.tone)}>{meta.label}</span>
-            </div>
-            <div className="no-scrollbar mt-2 flex items-center gap-2 overflow-x-auto">
-              <span className="flex min-h-ctl-md shrink-0 items-center gap-1.5 rounded-row border-2 border-foreground bg-surface px-2.5 text-fs-xs font-extrabold uppercase text-foreground"><TypeIcon className="size-4" />{orderType}</span>
-              {ticket.table ? <span className="flex shrink-0 items-center gap-1.5 rounded-pill bg-foreground px-2.5 py-1 text-fs-xs font-extrabold text-background"><Grid2x2 className="size-3.5" />{ticket.table}</span> : null}
-              <span className="shrink-0 text-fs-xs font-bold text-muted-foreground">{ticket.revenueCenter ?? "Main dining"}</span>
             </div>
             <div className="mt-1.5 flex items-center justify-between gap-2 text-fs-xs font-bold uppercase text-muted-foreground">
               <span className="shrink-0">Order# {ticket.orderNo ?? ticket.number} · Check {ticket.checkNumber ?? ticket.number}</span>
