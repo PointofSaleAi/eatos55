@@ -24,7 +24,7 @@ export function GuestBlock({ onEdit }: { onEdit: () => void }) {
         </span>
         <span className="flex min-w-0 items-baseline gap-1 text-fs-xs font-semibold text-muted-foreground">
           <span className="truncate">{guest.phone || "(XXX) XXX-XXXX"}</span>
-          <span className="shrink-0">· ARRIVED AT {arrivedAt || liveTime}</span>
+          <span className="shrink-0">· Arrived at {arrivedAt || liveTime}</span>
         </span>
       </span>
       <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
