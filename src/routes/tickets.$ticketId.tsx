@@ -7,9 +7,10 @@ import { useConfirm } from "@/components/pos/confirm-sheet";
 import { ScreenBody, ScreenFooter, ScreenHeader } from "@/components/pos/shell";
 import { Card } from "@/components/pos/primitives";
 import { TipSheet } from "@/components/pos/tip-sheet";
+import { ClosedPaymentRows, RefundReasonDialog } from "@/components/pos/ticket-refund";
 import { RoomTicketActions, roomChargeLabel, roomProofLabel } from "@/components/pos/room-ticket-actions";
 import { Button } from "@/components/ui/button";
-import { TAX_RATE, modeOrderType, money, statusMeta } from "@/lib/demo-data";
+import { TAX_RATE, modeOrderType, money, ticketStatusMeta } from "@/lib/demo-data";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 import { useLandscapeWide } from "@/hooks/use-layout-mode";
@@ -33,11 +34,12 @@ export const Route = createFileRoute("/tickets/$ticketId")({
 function TicketDetail() {
   const { ticketId } = useParams({ from: "/tickets/$ticketId" });
   const navigate = useNavigate();
-  const { tickets, session, openTicket, setTicketStatus, addTip, cancelTicket } = usePos();
+  const { tickets, session, openTicket, addTip, cancelTicket, closeTicket, refundTicket } = usePos();
   const confirm = useConfirm();
   const ticket = tickets.find((t) => t.id === ticketId);
   const [tipOpen, setTipOpen] = useState(false);
   const [paidOpen, setPaidOpen] = useState(false);
+  const [refundOpen, setRefundOpen] = useState(false);
   const landscape = useLandscapeWide();
   const Footer = landscape ? Fragment : ScreenFooter;
 
@@ -54,13 +56,15 @@ function TicketDetail() {
     );
   }
 
-  const meta = roomChargeLabel(ticket) ?? statusMeta[ticket.status];
+  const meta = roomChargeLabel(ticket) ?? ticketStatusMeta(ticket);
+  const closed = !!ticket.closed && ticket.status === "paid";
+  const refund = ticket.refund;
   const gross = ticket.lines.reduce((s, l) => s + l.price * l.qty, 0);
   const tax = Math.round(gross * TAX_RATE * 100) / 100;
   const subTotal = Math.round((gross - tax) * 100) / 100;
   const payments = ticket.payments ?? [];
   const paid = payments.reduce((s, p) => s + p.amount, 0);
-  const paymentsSection = payments.length ? (
+  const paymentsSection = closed ? <ClosedPaymentRows ticket={ticket} onRefund={() => setRefundOpen(true)} /> : payments.length ? (
     <div className={cn("overflow-hidden", landscape ? "mt-3 border-t border-border" : "mt-3 rounded-card border border-border bg-surface")}>
       <Button variant="ghost" onClick={() => setPaidOpen((v) => !v)} aria-expanded={paidOpen}
         className="h-auto min-h-row w-full justify-start gap-3 whitespace-normal px-3 py-3 text-left">
@@ -107,9 +111,10 @@ function TicketDetail() {
                   <span className="grid size-6 shrink-0 place-items-center rounded-md bg-muted text-fs-xs font-extrabold tabular-nums text-foreground">{l.qty}</span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline gap-2">
-                      <span className="min-w-0 flex-1 break-words text-fs-sm font-bold leading-snug text-foreground">{l.name}</span>
-                      <span className="shrink-0 text-fs-sm font-bold tabular-nums text-foreground">{money(l.price * l.qty)}</span>
+                      <span className={cn("min-w-0 flex-1 break-words text-fs-sm font-bold leading-snug", refund ? "text-destructive line-through" : "text-foreground")}>{l.name}</span>
+                      <span className={cn("shrink-0 text-fs-sm font-bold tabular-nums", refund ? "text-destructive line-through" : "text-foreground")}>{money(l.price * l.qty)}</span>
                     </div>
+                    {refund ? <p className="text-fs-xs leading-snug text-muted-foreground"><span className="font-extrabold text-destructive">└ REFUND</span> · {refund.reason}</p> : null}
                     {l.modifiers?.length ? <p className="break-words text-fs-xs font-bold uppercase leading-snug text-tile-blue">{l.modifiers.join(", ")}</p> : null}
                     {l.notes ? <p className="break-words text-fs-xs italic leading-snug text-muted-foreground">{l.notes}</p> : null}
                   </div>
@@ -171,13 +176,14 @@ function TicketDetail() {
                 <span className="shrink-0 text-fs-sm font-extrabold text-muted-foreground">
                   {l.qty.toFixed(1)}
                 </span>
-                <span className="min-w-0 flex-1 text-fs-sm font-bold text-foreground">
+                <span className={cn("min-w-0 flex-1 text-fs-sm font-bold", refund ? "text-destructive line-through" : "text-foreground")}>
                   {l.name}
                 </span>
-                <span className="shrink-0 text-fs-sm font-extrabold text-foreground">
+                <span className={cn("shrink-0 text-fs-sm font-extrabold", refund ? "text-destructive line-through" : "text-foreground")}>
                   {money(l.price * l.qty)}
                 </span>
               </div>
+              {refund ? <p className="mt-1 pl-8 text-fs-xs text-muted-foreground"><span className="font-extrabold text-destructive">└ REFUND</span> · {refund.reason}</p> : null}
               {l.modifiers?.length ? (
                 <ul className="mt-1 pl-8">
                   {l.modifiers.map((m) => (
@@ -204,7 +210,7 @@ function TicketDetail() {
           </div>
         </Card>
 
-        {payments.length ? (
+        {closed ? <ClosedPaymentRows ticket={ticket} onRefund={() => setRefundOpen(true)} /> : payments.length ? (
           <Card className="mt-3 overflow-hidden">
             <button
               type="button"
@@ -255,7 +261,15 @@ function TicketDetail() {
 
       <div data-ticket-cart-actions={landscape ? "true" : undefined} className={landscape ? "shrink-0 bg-surface px-3 pb-2 pt-1.5" : "contents"}>
       <Footer>
-        {ticket.roomCharge ? (
+        {closed ? (
+          <Button
+            variant="outline"
+            className={cn("h-12 w-full gap-2 font-extrabold uppercase", landscape ? "rounded-row" : "rounded-pill tracking-[0.08em]")}
+            onClick={() => toast.success("Receipt sent to the printer")}
+          >
+            <Printer className="size-5" /> Print receipt
+          </Button>
+        ) : ticket.roomCharge ? (
           <RoomTicketActions ticket={ticket} />
         ) : (
         <div className={landscape ? "grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2" : undefined}>
@@ -279,9 +293,8 @@ function TicketDetail() {
             <Button
               className={cn("h-12 flex-1 bg-primary font-extrabold uppercase text-primary-foreground", landscape ? "rounded-row" : "rounded-pill tracking-[0.08em]")}
               onClick={() => {
-                setTicketStatus(ticket.id, "ready");
-                toast.success("Ticket closed");
-                navigate({ to: "/tickets" });
+                closeTicket(ticket.id);
+                toast.success("Order closed successfully");
               }}
             >
               Close
@@ -327,6 +340,14 @@ function TicketDetail() {
       </div>
 
 
+      <RefundReasonDialog
+        open={refundOpen}
+        onOpenChange={setRefundOpen}
+        onDone={(reason) => {
+          refundTicket(ticket.id, reason);
+          toast.success(`Refund of ${money(ticket.total)} recorded`, { description: "Demo only - no money moved and no printer is connected." });
+        }}
+      />
       <TipSheet
         open={tipOpen}
         onOpenChange={setTipOpen}
