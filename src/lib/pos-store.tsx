@@ -535,8 +535,8 @@ const defaultSettings: AppSettings = {
   printerEmulator: true,
   readerEmulator: true,
 
+  restaurantSchedules: referenceSchedules,
   discounts: [
- 
     { id: "d1", name: "Staff Meal", detail: "50% · whole order" },
     { id: "d2", name: "Happy Hour", detail: "20% · drinks" },
     { id: "d3", name: "Manager Comp", detail: "100% · whole order" },

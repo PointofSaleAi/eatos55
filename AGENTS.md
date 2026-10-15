@@ -35,3 +35,4 @@
 - Restaurant Information uses a dedicated form backed by shared demo settings, keeping structured address fields synchronized with its address summary and contact validation consistent with shared country helpers.
 - Restaurant operating hours use shared demo settings with native time inputs and presentation-only 12-hour formatting, so edits persist without changing order or reporting logic.
 - End of Day settings use shared demo settings and a separate start-checklist route; closing is explicitly a demo confirmation, never an implicit ticket, staff, drawer or reporting mutation.
+- Schedule Information uses a dedicated editor and shared demo settings with per-day times and a reversible archive flag; it never changes employee shifts or ordering logic.
