@@ -59,7 +59,7 @@ export function NavRail() {
       }}
       onPointerDown={onRailPointerDown}
       className={cn(
-        "my-2 ml-2 hidden shrink-0 flex-col rounded-2xl border border-shell-foreground/10 bg-shell pt-2 pb-[calc(0.5rem+var(--sab,0px))] transition-[width] duration-200 md:flex",
+        "my-2 ml-2 hidden shrink-0 flex-col gap-3.5 rounded-2xl border border-shell-foreground/10 bg-shell pt-2 pb-[calc(0.5rem+var(--sab,0px))] transition-[width] duration-200 md:flex",
         expanded ? "w-60" : "w-[4.25rem]",
       )}
     >
@@ -79,7 +79,7 @@ export function NavRail() {
       </button>
 
       {/* Lock the terminal */}
-      <div className={cn("flex px-2 pt-1", expanded ? "" : "justify-center")}>
+      <div className={cn("flex px-2", expanded ? "" : "justify-center")}>
         <Link
           to="/access/clock-in"
           title="Lock terminal"
@@ -92,7 +92,7 @@ export function NavRail() {
       </div>
 
       {/* Venue / revenue center: opens the Dashboard */}
-      <div className={cn("flex items-center gap-2 px-2 pt-1", expanded ? "" : "justify-center")}>
+      <div className={cn("flex items-center gap-2 px-2", expanded ? "" : "justify-center")}>
         <Link
           to="/order/menu"
           title={venue}
@@ -123,7 +123,7 @@ export function NavRail() {
         onClick={(e) => {
           if (e.target === e.currentTarget) toggle();
         }}
-        className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-2 pt-4"
+        className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-2"
       >
         <ul className="flex flex-col gap-3.5">
           {railPrimary.map((l) => (
@@ -149,7 +149,7 @@ export function NavRail() {
       </div>
 
       {/* Brand + version */}
-      <div className="shrink-0 px-3 pt-2">
+      <div className="shrink-0 px-3">
         <Link
           to="/settings"
           aria-label="About this app"
