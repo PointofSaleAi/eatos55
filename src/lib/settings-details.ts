@@ -171,6 +171,7 @@ export const settingsDetails: Record<string, DetailScreen> = {
       ro("App Version", "5.200.27 (+11350)"),
       ro("Framework", "3.44.2"),
       ro("Build Date", "15.10.26"),
+      ro("Device", "aurora 22"),
       ro("Platform", "Handheld"),
     ],
   },
