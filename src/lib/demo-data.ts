@@ -98,6 +98,8 @@ export type Ticket = {
   /** Guest-facing order number, up to 5 digits. */
   orderNo?: number;
   guestEmail?: string;
+  /** Guest phone as typed on the order, e.g. "(415) 555-0132". */
+  guestPhone?: string;
   notes?: string;
   vehicle?: { type: string; color: string; brand?: string; plate?: string };
   /** Room number the charge was posted to, for room-charge tickets. */
@@ -292,6 +294,7 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1047", orderNo: 10247, table: "T1", number: 5, label: "John D.", seats: 2,
+    guestEmail: "john.doe@eatos.com", guestPhone: "(415) 555-0132",
     total: 28.5, date: DEFAULT_TICKET_DATE, arrivedAt: "5:08 PM", arrivedMinutesAgo: 37,
     status: "paid", mode: "dine-in", lines: [custom(28.5)], server: "Elizer Cruz",
     checkNumber: 1047, stage: "ready", tips: 0, revenueCenter: "Main dining", paymentType: "Card",
@@ -299,6 +302,7 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1048", orderNo: 10248, number: 6, label: "Amy S.", seats: 1,
+    guestEmail: "amy.silva@eatos.com", guestPhone: "(415) 555-0148",
     total: 15, date: DEFAULT_TICKET_DATE, arrivedAt: "5:12 PM", arrivedMinutesAgo: 33,
     status: "paid", mode: "takeaway", lines: [custom(15)], server: "Elizer Cruz",
     checkNumber: 1048, stage: "served", tips: 0, revenueCenter: "Counter pickup", paymentType: "Card",
@@ -306,6 +310,7 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1049", orderNo: 10249, number: 7, label: "Mark T.", seats: 1,
+    guestEmail: "mark.tan@eatos.com", guestPhone: "(212) 555-0119",
     total: 55.2, date: DEFAULT_TICKET_DATE, arrivedAt: "5:16 PM", arrivedMinutesAgo: 29,
     status: "paid", mode: "delivery", lines: [custom(55.2)], server: "Elizer Cruz",
     checkNumber: 1049, stage: "waiting", tips: 0, revenueCenter: "Counter pickup", paymentType: "Card",
@@ -313,6 +318,7 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1050", orderNo: 10250, table: "EW19374", number: 8, label: "Rachel G.", seats: 3,
+    guestEmail: "rachel.g@eatos.com", guestPhone: "(312) 555-0164",
     total: 78.9, date: DEFAULT_TICKET_DATE, arrivedAt: "5:20 PM", arrivedMinutesAgo: 25,
     status: "paid", mode: "dine-in", lines: [custom(78.9)], server: "Elizer Cruz",
     checkNumber: 1050, stage: "served", tips: 0, revenueCenter: "Main dining", paymentType: "Card",
@@ -320,6 +326,7 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1051", orderNo: 10251, number: 9, label: "Steve P.", seats: 1,
+    guestEmail: "steve.p@eatos.com", guestPhone: "(646) 555-0177",
     total: 22.4, date: DEFAULT_TICKET_DATE, arrivedAt: "5:24 PM", arrivedMinutesAgo: 21,
     status: "paid", mode: "takeaway", lines: [custom(22.4)], server: "Elizer Cruz",
     checkNumber: 1051, stage: "ready", tips: 0, revenueCenter: "Patio", paymentType: "Cash",
@@ -327,6 +334,7 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1052", orderNo: 10252, number: 10, label: "Nina L.", seats: 1,
+    guestEmail: "nina.l@eatos.com", guestPhone: "(503) 555-0126",
     total: 45, date: DEFAULT_TICKET_DATE, arrivedAt: "5:27 PM", arrivedMinutesAgo: 18,
     status: "paid", mode: "takeaway", lines: [custom(45)], server: "Elizer Cruz",
     checkNumber: 1052, stage: "served", tips: 0, revenueCenter: "Counter pickup", paymentType: "Card",
@@ -334,6 +342,7 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1053", orderNo: 10253, number: 11, label: "Kevin M.", seats: 1,
+    guestEmail: "kevin.m@eatos.com", guestPhone: "(305) 555-0153",
     total: 18.75, date: DEFAULT_TICKET_DATE, arrivedAt: "5:31 PM", arrivedMinutesAgo: 14,
     status: "paid", mode: "takeaway", lines: [custom(18.75)], server: "Elizer Cruz",
     checkNumber: 1053, stage: "ordering", tips: 0, revenueCenter: "Counter pickup", paymentType: "Card",
@@ -341,30 +350,35 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1054", orderNo: 10254, number: 12, label: "Jake P.", seats: 1,
+    guestEmail: "jake.p@eatos.com", guestPhone: "(720) 555-0141",
     total: 12.2, date: DEFAULT_TICKET_DATE, arrivedAt: "5:35 PM", arrivedMinutesAgo: 10,
     status: "ordering", mode: "takeaway", lines: [custom(12.2)], server: "Elizer Cruz",
     checkNumber: 1054, tips: 0, revenueCenter: "Counter pickup", paymentType: "Unpaid", payments: [],
   },
   {
     id: "t-1055", orderNo: 10255, number: 13, label: "Lisa K.", seats: 1,
+    guestEmail: "lisa.k@eatos.com", guestPhone: "(206) 555-0188",
     total: 26.36, date: DEFAULT_TICKET_DATE, arrivedAt: "5:36 PM", arrivedMinutesAgo: 9,
     status: "preparing", mode: "takeaway", lines: [custom(26.36)], server: "Elizer Cruz",
     checkNumber: 1055, tips: 0, revenueCenter: "Counter pickup", paymentType: "Unpaid", payments: [],
   },
   {
     id: "t-1056", orderNo: 10256, table: "T3", number: 14, label: "Tom W.", seats: 2,
+    guestEmail: "tom.w@eatos.com", guestPhone: "(617) 555-0195",
     total: 42.5, date: DEFAULT_TICKET_DATE, arrivedAt: "5:37 PM", arrivedMinutesAgo: 8,
     status: "ordering", mode: "dine-in", lines: [custom(42.5)], server: "Elizer Cruz",
     checkNumber: 1056, tips: 0, revenueCenter: "Main dining", paymentType: "Unpaid", payments: [],
   },
   {
     id: "t-1057", orderNo: 10257, number: 15, label: "Anna D.", seats: 1,
+    guestEmail: "anna.d@eatos.com", guestPhone: "(702) 555-0113",
     total: 42.5, date: DEFAULT_TICKET_DATE, arrivedAt: "5:38 PM", arrivedMinutesAgo: 7,
     status: "ready", mode: "takeaway", lines: [custom(42.5)], server: "Elizer Cruz",
     checkNumber: 1057, tips: 0, revenueCenter: "Counter pickup", paymentType: "Unpaid", payments: [],
   },
   {
     id: "t-1058", orderNo: 10258, table: "EW79223", number: 16, label: "Sarah M.", seats: 3,
+    guestEmail: "sarah.m@eatos.com", guestPhone: "(404) 555-0160",
     total: 66.58, date: DEFAULT_TICKET_DATE, arrivedAt: "5:39 PM", arrivedMinutesAgo: 6,
     status: "preparing", mode: "dine-in", lines: [custom(66.58)], server: "Elizer Cruz",
     checkNumber: 1058, tips: 0, revenueCenter: "Main dining", paymentType: "Unpaid", payments: [],
@@ -378,6 +392,7 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1060", orderNo: 10260, table: "EW6072", number: 18, label: "Dana R.", seats: 4,
+    guestEmail: "dana.r@eatos.com", guestPhone: "(917) 555-0122",
     total: 42.5, date: DEFAULT_TICKET_DATE, arrivedAt: "5:42 PM", arrivedMinutesAgo: 4,
     status: "payment", mode: "dine-in", lines: [line("m1", 2), line("m11"), line("m14", 2)], server: "Elizer Cruz",
     checkNumber: 1060, tips: 0, revenueCenter: "Main dining", paymentType: "Card",
@@ -385,6 +400,7 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1061", orderNo: 10261, number: 19, label: "Omar F.", seats: 1,
+    guestEmail: "omar.f@eatos.com", guestPhone: "(347) 555-0136",
     total: 34.9, date: DEFAULT_TICKET_DATE, arrivedAt: "5:43 PM", arrivedMinutesAgo: 3,
     status: "preparing", mode: "delivery", lines: [line("m2"), line("m9", 2), line("m13", 2)], server: "Elizer Cruz",
     checkNumber: 1061, tips: 0, revenueCenter: "Counter pickup", paymentType: "Unpaid", payments: [],
@@ -414,6 +430,7 @@ export const initialTickets: Ticket[] = [
   },
   {
     id: "t-1065", orderNo: 10265, number: 23, label: "Priya T.", seats: 1,
+    guestEmail: "priya.t@eatos.com", guestPhone: "(650) 555-0170",
     total: 9.75, date: DEFAULT_TICKET_DATE, arrivedAt: "5:47 PM", arrivedMinutesAgo: 1,
     status: "paid", mode: "takeaway", lines: [line("m6"), line("m16")], server: "Elizer Cruz",
     checkNumber: 1065, stage: "ordering", tips: 0, revenueCenter: "Counter pickup", paymentType: "Cash",

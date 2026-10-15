@@ -11,12 +11,15 @@ export function guestDirectory(tickets: Ticket[], current: Guest): GuestRecord[]
   for (const ticket of tickets) {
     if (!named(ticket.label)) continue;
     const email = ticket.guestEmail?.trim() || undefined;
+    const phone = ticket.guestPhone?.trim() || undefined;
     const id = `${normalize(ticket.label)}|${normalize(email ?? "")}`;
     let record = records.find((row) => row.id === id);
     if (!record) {
-      record = { id, name: ticket.label.trim(), email, tickets: [] };
+      record = { id, name: ticket.label.trim(), email, phone, tickets: [] };
       records.push(record);
     }
+    if (email && !record.email) record.email = email;
+    if (phone && !record.phone) record.phone = phone;
     record.tickets.push(ticket);
   }
   if (named(current.name)) {

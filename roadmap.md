@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Guest search results show name, email and phone with no clipping; verified phone, tablet and desktop
 - [x] Rename Reports navigation to Sales and match reference date/time, filters and six switches; saved controls verified on phone, tablet and desktop, with live reports/printing remaining unconnected
 - [x] Contact Us opens the live official support website inside POS; verified phone, tablet and desktop with no new tabs
 - [ ] Chat opens the official support box on all layouts, but live content verification is blocked: the hosted Crisp embed remains on its loading spinner in the test browser
