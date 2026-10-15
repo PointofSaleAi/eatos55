@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Add screenshot-matched End of Day settings and Start End of Day checklist; verify all device sizes
 - [x] Match restaurant field widths and circular logo; replace Restaurant Settings with reference operating-hours options and verify across devices
 - [x] Add every restaurant information option from the two reference screenshots and verify editing across devices
 - [x] Replace the four-square Menu page content with the shared Dashboard and verify across devices
