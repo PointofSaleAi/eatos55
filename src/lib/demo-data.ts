@@ -494,8 +494,17 @@ export const helpArticles = [
 /** Money formatted in the active brand variant's locale and currency. */
 export const money = formatMoney;
 
+/** Version parts shown app-wide as "Build Version / Flutter Version / Build Date". */
+export const APP_BUILD_VERSION = "5.200.27 (+11350)";
+export const APP_FLUTTER_VERSION = "3.44.2";
+export const APP_BUILD_DATE = "15.10.26";
+
 /** Build/version string shown on the sign-in screen. */
-export const APP_VERSION = "5.200.27(+11350) / 3.44.2/31.07.26";
+export const APP_VERSION = `${APP_BUILD_VERSION} / ${APP_FLUTTER_VERSION} / ${APP_BUILD_DATE}`;
+
+/** Compose the full version label from a plain build version (e.g. "5.200.27"). */
+export const formatVersionLabel = (buildVersion: string) =>
+  `${buildVersion} (+11350) / ${APP_FLUTTER_VERSION} / ${APP_BUILD_DATE}`;
 
 /** Restaurant types offered during account creation. */
 export const restaurantTypes = [
