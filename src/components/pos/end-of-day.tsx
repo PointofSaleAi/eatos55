@@ -56,7 +56,7 @@ export function EndOfDaySettings() {
         {toggle("eodTasks", "End of Day Tasks")}
         {time("eodAutoTime", "Auto End of Day", !settings.eodTasks)}
         <p className="border-b border-border px-4 pb-3 t-caption text-muted-foreground">Auto end-of-day task triggers 10 minutes after setting a reminder by default.</p>
-        {tasks.map(([field, label]) => <div key={field}>{toggle(field, label, !settings.eodTasks)}{field === "eodPrintEmployees" && <p className="border-b border-border px-4 pb-3 t-caption text-muted-foreground">Enable to print employee data on sales summary report</p>}</div>)}
+        {tasks.map(([field, label]) => <div key={field} className="border-b border-border">{toggle(field, label, !settings.eodTasks)}{field === "eodPrintEmployees" && <p className="px-4 pb-3 t-caption text-muted-foreground">Enable to print employee data on sales summary report</p>}</div>)}
         <Button variant="ghost" className={`${settingsRowClass} h-auto justify-start rounded-none whitespace-normal`} disabled={!canManageSettings || !settings.eodTasks}
           onClick={() => { setDraftRecipients(settings.eodRecipients); setPicker("recipients"); }}>
           <span className="min-w-0 flex-1 t-row">Send Daily Reports</span><span className="shrink-0 t-value text-muted-foreground">{settings.eodRecipients.length} Employees</span><ChevronRight />
@@ -82,16 +82,16 @@ export function EndOfDaySettings() {
 }
 
 export function StartEndOfDay() {
-  const { tickets, settings, session, canManageSettings } = usePos();
+  const { tickets, ticketDate, settings, session, canManageSettings } = usePos();
   const [detail, setDetail] = useState<string | null>(null);
   const [confirm, setConfirm] = useState(false);
   const [complete, setComplete] = useState(false);
-  const today = new Date().toLocaleDateString("en-CA");
+  const today = ticketDate;
   const dayTickets = tickets.filter((ticket) => ticket.date === today);
   const unpaid = dayTickets.filter((ticket) => ticket.status !== "paid" && !ticket.closed);
   const open = dayTickets.filter((ticket) => ticket.status === "paid" && !ticket.closed);
-  const staff = employees.filter((employee) => employee.state.startsWith("Clocked in") || employee.state.startsWith("Break"));
-  const cash = dayTickets.flatMap((ticket) => (ticket.payments ?? []).filter((payment) => payment.method === "cash").map((payment) => ({ ticket, payment })));
+  const staff = employees.filter((employee) => employee.name === session.name ? session.clockedIn : employee.state.startsWith("Clocked in") || employee.state.startsWith("Break"));
+  const cash = dayTickets.flatMap((ticket) => (ticket.payments ?? []).filter((payment) => payment.method.toLowerCase() === "cash").map((payment) => ({ ticket, payment })));
   const minutes = staff.reduce((sum, employee) => { const match = /(\d+)h\s+(\d+)m/.exec(employee.state); return sum + (match ? Number(match[1]) * 60 + Number(match[2]) : 0); }, 0);
   const rows = [
     { title: "Unpaid Bills", count: unpaid.length, icon: ReceiptText },
@@ -107,8 +107,8 @@ export function StartEndOfDay() {
   return <>
     <SubHeader title="Start End Of Day" backLabel="End of Day" backTo="/settings/end-of-day" />
     <ScreenBody className="py-4">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        {metrics.map((metric) => <div key={metric.label} className="overflow-hidden rounded-card border border-border bg-surface text-center">
+      <div className="grid auto-rows-fr grid-cols-1 gap-3 sm:grid-cols-3">
+        {metrics.map((metric) => <div key={metric.label} className="grid grid-rows-[1fr_auto] overflow-hidden rounded-card border border-border bg-surface text-center">
           <div className="flex min-h-16 items-center justify-center bg-primary px-3 py-3 t-row text-primary-foreground">{metric.label}</div>
           <p className="px-2 py-4 t-row">{metric.value}</p>
         </div>)}
