@@ -5,6 +5,7 @@ import loginSlide2 from "@/assets/login-2.jpg.asset.json";
 import loginSlide3 from "@/assets/login-3.jpg.asset.json";
 import loginSlide4 from "@/assets/login-4.jpg.asset.json";
 import { setHapticsEnabled } from "@/lib/haptics";
+import { referenceSchedules, type RestaurantSchedule } from "@/lib/restaurant-schedules";
 import { isResumablePath, readResume, resumeKey, writeResume } from "@/lib/resume";
 import {
   DEFAULT_TICKET_DATE,
@@ -370,6 +371,7 @@ export type AppSettings = {
   readerEmulator: boolean;
 
   // Collections
+  restaurantSchedules: RestaurantSchedule[];
   discounts: SettingsListItem[];
   serviceCharges: SettingsListItem[];
   timedPricing: SettingsListItem[];
@@ -533,6 +535,7 @@ const defaultSettings: AppSettings = {
   printerEmulator: true,
   readerEmulator: true,
 
+  restaurantSchedules: referenceSchedules,
   discounts: [
     { id: "d1", name: "Staff Meal", detail: "50% · whole order" },
     { id: "d2", name: "Happy Hour", detail: "20% · drinks" },
