@@ -227,16 +227,16 @@ export function GuestSheet({
                   onMouseDown={(e) => e.preventDefault()}
                   onMouseEnter={() => setActive(i)}
                   onClick={() => pickGuest(g)}
-                  className={cn("flex w-full flex-col items-start rounded-row px-3 py-2 text-left transition-colors hover:bg-muted", i === active && "bg-muted")}
+                  className={cn("flex w-full items-center gap-x-2 rounded-row px-3 py-2 text-left transition-colors hover:bg-muted sm:gap-x-3", i === active && "bg-muted")}
                 >
-                  <span className="break-words text-fs-sm font-bold text-foreground">{g.name}</span>
-                  <span className="mt-0.5 flex w-full min-w-0 items-center gap-1.5 text-fs-xs text-muted-foreground">
+                  <span className="max-w-[40%] shrink-0 truncate text-fs-sm font-bold text-foreground">{g.name}</span>
+                  <span className="flex min-w-0 items-center gap-1.5 text-fs-xs text-muted-foreground">
                     <Mail className="size-3 shrink-0" aria-hidden />
-                    <span className="break-all">{g.email || "No email on file"}</span>
+                    <span className="truncate">{g.email}</span>
                   </span>
-                  <span className="mt-0.5 flex w-full items-center gap-1.5 text-fs-xs text-muted-foreground">
+                  <span className="ml-auto flex shrink-0 items-center gap-1.5 whitespace-nowrap text-fs-xs text-muted-foreground">
                     <Phone className="size-3 shrink-0" aria-hidden />
-                    <span>{g.phone || "No phone on file"}</span>
+                    <span>{g.phone}</span>
                   </span>
                 </button>
               )) : (
