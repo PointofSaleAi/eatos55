@@ -3,7 +3,6 @@ import { brand, isTenderVisible, tenderLabel } from "@/lib/brand";
 import {
   BadgeDollarSign,
   Banknote,
-  BedDouble,
   Bike,
   Building2,
   CalendarClock,
@@ -24,7 +23,8 @@ import {
   Utensils,
   Wallet,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { RoomServiceIcon } from "@/components/pos/icons/room-service-icon";
+import { type ComponentType, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AmountEntry } from "@/components/pos/amount-entry";
 import { PaymentCompleteDialog } from "@/components/pos/payment-complete-dialog";
@@ -76,7 +76,7 @@ export const Route = createFileRoute("/payment/method")({
 type Tender = {
   id: string;
   label: string;
-  icon: typeof CreditCard;
+  icon: ComponentType<{ className?: string }>;
   /** Surfaces that open their own step instead of charging straight away. */
   kind?: "room" | "split" | "route" | "dialog";
   /** Shown under the label when the tender is unavailable. */
@@ -521,7 +521,7 @@ function PaymentMethod() {
         {
           id: "room",
           label: "Rooms",
-          icon: BedDouble,
+          icon: RoomServiceIcon,
           kind: "room" as const,
           run: () => setRoomOpen(true),
         },
