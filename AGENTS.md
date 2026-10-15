@@ -22,7 +22,7 @@
 - Every Tap to Pay surface (checkout, settings rows, reader list, home reminder, route guards) goes through `useTapToPayAvailable` / `useTapToPayTenderVisible` in `src/lib/device.ts`, which combine the iPhone check with the phone-layout check, so no screen can re-offer Tap to Pay on tablet or web.
 - Product-card names use width-constrained browser measurements and semantic typography steps, with emergency word wrapping rather than truncation, so long words cannot overflow when the product area resizes.
 
-- Public access routes own their responsive content widths; the shell must not constrain them to a shared narrow column, so account and recovery layouts can adapt independently without altering app chrome.
+- Public access routes own responsive widths; the shell never constrains account or recovery content.
 
 - Demo password recovery stays in ephemeral route-local step state and never persists passwords or claims real code delivery; this keeps the prototype separate from real authentication.
 
@@ -36,4 +36,5 @@
 - Restaurant operating hours use shared demo settings with native time inputs and presentation-only 12-hour formatting, so edits persist without changing order or reporting logic.
 - End of Day settings use shared demo settings and a separate start-checklist route; closing is explicitly a demo confirmation, never an implicit ticket, staff, drawer or reporting mutation.
 - Schedule Information uses a dedicated editor and shared demo settings with per-day times and a reversible archive flag; row swipes reveal actions without opening the editor or archiving on dismissal, and never change employee shifts or ordering logic.
-- Timed Pricing uses dedicated structured demo settings for date ranges, source, centre and daily times, separate from legacy price rules; editing these reference screens never changes checkout prices. Archiving is a reversible flag with a left-swipe reveal like Schedule Information, never a delete.
+- Timed Pricing uses structured demo settings for dates, source, centre and times, separate from checkout pricing; archive/restore uses reversible swipe actions, never deletion.
+- Control Center's Device Settings uses its own route and merged demo defaults, not General; preferences never alter ordering, authentication or hardware behavior, and App Theme uses the shared appearance hook.

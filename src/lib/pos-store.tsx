@@ -7,6 +7,7 @@ import loginSlide4 from "@/assets/login-4.jpg.asset.json";
 import { setHapticsEnabled } from "@/lib/haptics";
 import { referenceSchedules, type RestaurantSchedule } from "@/lib/restaurant-schedules";
 import { referenceTimedPricing, type TimedPricingRule } from "@/lib/timed-pricing";
+import { defaultDevicePreferences, type DevicePreferences } from "@/lib/device-settings";
 import { isResumablePath, readResume, resumeKey, writeResume } from "@/lib/resume";
 import {
   DEFAULT_TICKET_DATE,
@@ -244,6 +245,7 @@ export type TapToPayState =
   | "ineligible";
 
 export type AppSettings = {
+  devicePreferences: DevicePreferences;
   restaurantName: string;
   restaurantAddress: string;
   restaurantCity: string;
@@ -399,6 +401,7 @@ const defaultLoginSlides: LoginSlide[] = [
 ];
 
 const defaultSettings: AppSettings = {
+  devicePreferences: defaultDevicePreferences,
   restaurantName: `${brand.appName} Kitchen · Downtown`,
   restaurantAddress: brand.venue.address,
   restaurantCity: brand.venue.city,
@@ -991,6 +994,11 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setSettings((s) => ({
           ...s,
           ...saved,
+          devicePreferences: {
+            ...defaultDevicePreferences,
+            ...saved.devicePreferences,
+            toggles: { ...defaultDevicePreferences.toggles, ...saved.devicePreferences?.toggles },
+          },
           tenders: { ...defaultTenders, ...(saved.tenders ?? {}) },
           tenderAutoClose: {
             ...defaultTenderAutoClose,
