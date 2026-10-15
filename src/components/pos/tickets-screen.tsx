@@ -20,6 +20,13 @@ import {
   ReceiptText,
   RefreshCcwDot,
   X,
+  Check,
+  CircleDollarSign,
+  ClipboardList,
+  DollarSign,
+  MessageSquareText,
+  Users,
+  Wallet,
 
 } from "lucide-react";
 import { useState } from "react";
@@ -134,6 +141,33 @@ const filterFacets = [
   options: readonly string[];
 }[];
 
+const statusChips: { id: Tab; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "open", label: "Open" },
+  { id: "closed", label: "Paid" },
+  { id: "unpaid", label: "Unpaid" },
+];
+
+const facetById = Object.fromEntries(filterFacets.map((f) => [f.id, f])) as Record<
+  (typeof filterFacets)[number]["id"],
+  (typeof filterFacets)[number]
+>;
+const trayIcons = {
+  payment: DollarSign,
+  employee: Users,
+  "order-type": ClipboardList,
+  revenue: CircleDollarSign,
+} as const;
+/** Order matches the recording: $ · (calendar) · people · clipboard · coin. */
+const trayFacets = (["payment", "employee", "order-type", "revenue"] as const).map((id) => ({
+  ...facetById[id],
+  icon: trayIcons[id],
+}));
+const roundIcon =
+  "relative grid size-8 shrink-0 place-items-center rounded-pill bg-muted text-foreground transition-colors hover:bg-secondary";
+const dot =
+  "absolute -right-0.5 -top-0.5 grid size-3.5 place-items-center rounded-pill bg-foreground text-[0.5rem] font-bold text-background";
+
 export function TicketsScreen({
   initialOverlay = "none",
   pane = false,
@@ -172,6 +206,7 @@ export function TicketsScreen({
   const [tab, setTab] = useState<Tab>("all");
   const [overlay, setOverlay] = useState<TicketsOverlay>(initialOverlay);
   const [openFacet, setOpenFacet] = useState<string | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [rangeOpen, setRangeOpen] = useState(false);
   const [draft, setDraft] = useState<DateRange | undefined>({
     from: parseIso(ticketRange.start),
