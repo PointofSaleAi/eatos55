@@ -147,6 +147,25 @@ export function GuestSheet({
   const vehicleComplete = Boolean(vehicleType && vehicleColor);
   const colorHex = vehicleColors.find((c) => c.name === vehicleColor)?.hex ?? "#b6bcc2";
   const star = (f: string) => (required.includes(f as never) ? "*" : "");
+  const query = name.trim().toLowerCase();
+  const digits = query.replace(/\D/g, "");
+  const suggestions = query
+    ? directory
+        .filter((g) =>
+          g.name.toLowerCase().includes(query) ||
+          g.email?.toLowerCase().includes(query) ||
+          (digits.length >= 3 && g.phone?.replace(/\D/g, "").includes(digits)),
+        )
+        .slice(0, 6)
+    : [];
+  const showSuggest = suggestOpen && Boolean(query);
+  const pickGuest = (g: GuestRecord) => {
+    setName(g.name);
+    if (g.email) setEmail(g.email);
+    if (g.phone) setPhone(g.phone);
+    if (g.address) setAddress({ street: g.address, unit: "", city: "", state: "", zipCode: "" });
+    setSuggestOpen(false);
+  };
 
   return (
     <Sheet open={open} onOpenChange={(next) => (next ? null : onClose())}>
