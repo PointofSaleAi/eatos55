@@ -8,6 +8,7 @@ import { setHapticsEnabled } from "@/lib/haptics";
 import { referenceSchedules, type RestaurantSchedule } from "@/lib/restaurant-schedules";
 import { referenceTimedPricing, type TimedPricingRule } from "@/lib/timed-pricing";
 import { defaultDevicePreferences, type DevicePreferences } from "@/lib/device-settings";
+import { defaultPeripheralPreferences, type PeripheralPreferences } from "@/lib/peripheral-settings";
 import { isResumablePath, readResume, resumeKey, writeResume } from "@/lib/resume";
 import {
   DEFAULT_TICKET_DATE,
@@ -246,6 +247,7 @@ export type TapToPayState =
 
 export type AppSettings = {
   devicePreferences: DevicePreferences;
+  peripheralPreferences: PeripheralPreferences;
   restaurantName: string;
   restaurantAddress: string;
   restaurantCity: string;
@@ -402,6 +404,7 @@ const defaultLoginSlides: LoginSlide[] = [
 
 const defaultSettings: AppSettings = {
   devicePreferences: defaultDevicePreferences,
+  peripheralPreferences: defaultPeripheralPreferences,
   restaurantName: `${brand.appName} Kitchen · Downtown`,
   restaurantAddress: brand.venue.address,
   restaurantCity: brand.venue.city,
@@ -994,6 +997,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setSettings((s) => ({
           ...s,
           ...saved,
+          peripheralPreferences: { ...defaultPeripheralPreferences, ...saved.peripheralPreferences },
           devicePreferences: {
             ...defaultDevicePreferences,
             ...saved.devicePreferences,

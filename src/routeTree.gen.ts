@@ -36,8 +36,10 @@ import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SettingsControlCenterRouteImport } from './routes/settings.control-center'
 import { Route as SettingsDeviceSettingsRouteImport } from './routes/settings.device-settings'
 import { Route as SettingsGeneralRouteImport } from './routes/settings.general'
+import { Route as SettingsGuestFacingDisplayRouteImport } from './routes/settings.guest-facing-display'
 import { Route as SettingsGuestbookRouteImport } from './routes/settings.guestbook'
 import { Route as SettingsHardwareRouteImport } from './routes/settings.hardware'
+import { Route as SettingsHardwareControlRouteImport } from './routes/settings.hardware-control'
 import { Route as SettingsLoginScreenRouteImport } from './routes/settings.login-screen'
 import { Route as SettingsMenuRouteImport } from './routes/settings.menu'
 import { Route as SettingsMoreRouteImport } from './routes/settings.more'
@@ -213,6 +215,12 @@ const SettingsGeneralRoute = SettingsGeneralRouteImport.update({
   path: '/settings/general',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsGuestFacingDisplayRoute =
+  SettingsGuestFacingDisplayRouteImport.update({
+    id: '/settings/guest-facing-display',
+    path: '/settings/guest-facing-display',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SettingsGuestbookRoute = SettingsGuestbookRouteImport.update({
   id: '/settings/guestbook',
   path: '/settings/guestbook',
@@ -221,6 +229,11 @@ const SettingsGuestbookRoute = SettingsGuestbookRouteImport.update({
 const SettingsHardwareRoute = SettingsHardwareRouteImport.update({
   id: '/settings/hardware',
   path: '/settings/hardware',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsHardwareControlRoute = SettingsHardwareControlRouteImport.update({
+  id: '/settings/hardware-control',
+  path: '/settings/hardware-control',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsLoginScreenRoute = SettingsLoginScreenRouteImport.update({
@@ -443,8 +456,10 @@ export interface FileRoutesByFullPath {
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/device-settings': typeof SettingsDeviceSettingsRoute
   '/settings/general': typeof SettingsGeneralRoute
+  '/settings/guest-facing-display': typeof SettingsGuestFacingDisplayRoute
   '/settings/guestbook': typeof SettingsGuestbookRoute
   '/settings/hardware': typeof SettingsHardwareRouteWithChildren
+  '/settings/hardware-control': typeof SettingsHardwareControlRoute
   '/settings/login-screen': typeof SettingsLoginScreenRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
@@ -513,8 +528,10 @@ export interface FileRoutesByTo {
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/device-settings': typeof SettingsDeviceSettingsRoute
   '/settings/general': typeof SettingsGeneralRoute
+  '/settings/guest-facing-display': typeof SettingsGuestFacingDisplayRoute
   '/settings/guestbook': typeof SettingsGuestbookRoute
   '/settings/hardware': typeof SettingsHardwareRouteWithChildren
+  '/settings/hardware-control': typeof SettingsHardwareControlRoute
   '/settings/login-screen': typeof SettingsLoginScreenRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
@@ -584,8 +601,10 @@ export interface FileRoutesById {
   '/settings/control-center': typeof SettingsControlCenterRoute
   '/settings/device-settings': typeof SettingsDeviceSettingsRoute
   '/settings/general': typeof SettingsGeneralRoute
+  '/settings/guest-facing-display': typeof SettingsGuestFacingDisplayRoute
   '/settings/guestbook': typeof SettingsGuestbookRoute
   '/settings/hardware': typeof SettingsHardwareRouteWithChildren
+  '/settings/hardware-control': typeof SettingsHardwareControlRoute
   '/settings/login-screen': typeof SettingsLoginScreenRoute
   '/settings/menu': typeof SettingsMenuRoute
   '/settings/more': typeof SettingsMoreRoute
@@ -656,8 +675,10 @@ export interface FileRouteTypes {
     | '/settings/control-center'
     | '/settings/device-settings'
     | '/settings/general'
+    | '/settings/guest-facing-display'
     | '/settings/guestbook'
     | '/settings/hardware'
+    | '/settings/hardware-control'
     | '/settings/login-screen'
     | '/settings/menu'
     | '/settings/more'
@@ -726,8 +747,10 @@ export interface FileRouteTypes {
     | '/settings/control-center'
     | '/settings/device-settings'
     | '/settings/general'
+    | '/settings/guest-facing-display'
     | '/settings/guestbook'
     | '/settings/hardware'
+    | '/settings/hardware-control'
     | '/settings/login-screen'
     | '/settings/menu'
     | '/settings/more'
@@ -796,8 +819,10 @@ export interface FileRouteTypes {
     | '/settings/control-center'
     | '/settings/device-settings'
     | '/settings/general'
+    | '/settings/guest-facing-display'
     | '/settings/guestbook'
     | '/settings/hardware'
+    | '/settings/hardware-control'
     | '/settings/login-screen'
     | '/settings/menu'
     | '/settings/more'
@@ -867,8 +892,10 @@ export interface RootRouteChildren {
   SettingsControlCenterRoute: typeof SettingsControlCenterRoute
   SettingsDeviceSettingsRoute: typeof SettingsDeviceSettingsRoute
   SettingsGeneralRoute: typeof SettingsGeneralRoute
+  SettingsGuestFacingDisplayRoute: typeof SettingsGuestFacingDisplayRoute
   SettingsGuestbookRoute: typeof SettingsGuestbookRoute
   SettingsHardwareRoute: typeof SettingsHardwareRouteWithChildren
+  SettingsHardwareControlRoute: typeof SettingsHardwareControlRoute
   SettingsLoginScreenRoute: typeof SettingsLoginScreenRoute
   SettingsMenuRoute: typeof SettingsMenuRoute
   SettingsMoreRoute: typeof SettingsMoreRoute
@@ -1106,6 +1133,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsGeneralRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/guest-facing-display': {
+      id: '/settings/guest-facing-display'
+      path: '/settings/guest-facing-display'
+      fullPath: '/settings/guest-facing-display'
+      preLoaderRoute: typeof SettingsGuestFacingDisplayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/guestbook': {
       id: '/settings/guestbook'
       path: '/settings/guestbook'
@@ -1118,6 +1152,13 @@ declare module '@tanstack/react-router' {
       path: '/settings/hardware'
       fullPath: '/settings/hardware'
       preLoaderRoute: typeof SettingsHardwareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/hardware-control': {
+      id: '/settings/hardware-control'
+      path: '/settings/hardware-control'
+      fullPath: '/settings/hardware-control'
+      preLoaderRoute: typeof SettingsHardwareControlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings/login-screen': {
@@ -1429,8 +1470,10 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsControlCenterRoute: SettingsControlCenterRoute,
   SettingsDeviceSettingsRoute: SettingsDeviceSettingsRoute,
   SettingsGeneralRoute: SettingsGeneralRoute,
+  SettingsGuestFacingDisplayRoute: SettingsGuestFacingDisplayRoute,
   SettingsGuestbookRoute: SettingsGuestbookRoute,
   SettingsHardwareRoute: SettingsHardwareRouteWithChildren,
+  SettingsHardwareControlRoute: SettingsHardwareControlRoute,
   SettingsLoginScreenRoute: SettingsLoginScreenRoute,
   SettingsMenuRoute: SettingsMenuRoute,
   SettingsMoreRoute: SettingsMoreRoute,

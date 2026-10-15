@@ -37,4 +37,4 @@
 - End of Day settings use shared demo settings and a separate start-checklist route; closing is explicitly a demo confirmation, never an implicit ticket, staff, drawer or reporting mutation.
 - Schedule Information uses a dedicated editor and shared demo settings with per-day times and a reversible archive flag; row swipes reveal actions without opening the editor or archiving on dismissal, and never change employee shifts or ordering logic.
 - Timed Pricing uses structured demo settings for dates, source, centre and times, separate from checkout pricing; archive/restore uses reversible swipe actions, never deletion.
-- Control Center's Device Settings uses its own route and merged demo defaults, not General; preferences never alter ordering, authentication or hardware behavior, and App Theme uses the shared appearance hook.
+- Control Center's Device Settings, Hardware Control and Guest Facing Display have dedicated routes with merged demo defaults; switches do not change hardware, payments or auth, and App Theme uses the appearance hook.
