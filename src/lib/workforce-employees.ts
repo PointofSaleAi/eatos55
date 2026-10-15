@@ -42,13 +42,19 @@ export const employeeNoticeFor = (employee: WorkforceEmployee): string => {
   return "";
 };
 
+/** Saved records from before the eatOS rename still carried the old vendor email domains. */
+export const migrateWorkforceEmployee = (employee: WorkforceEmployee): WorkforceEmployee =>
+  /lcros|lcrsystems/i.test(employee.email)
+    ? { ...employee, email: employee.email.replace(/lcrsystems\.co\.uk/gi, "eatos.co.uk").replace(/lcros\.uk/gi, "eatos.uk") }
+    : employee;
+
 export const referenceEmployees: WorkforceEmployee[] = [
   ["Abhishek", "Test", "Manager", "", ""],
-  ["Andrew", "Canfield", "Manager", "andrew.canfield@lcros.uk", "7971980606"],
+  ["Andrew", "Canfield", "Manager", "andrew.canfield@eatos.uk", "7971980606"],
   ["Andrew", "Canfield Test", "Manager", "canfieldandrew@hotmail.com", "7775508118"],
   ["Arthur", "Curry", "Dishwasher", "", ""],
-  ["Barry", "Allen", "Barista", "support@lcrsystems.co.uk", ""],
-  ["Becky", "lawson", "Manager", "BECKY.LAWSON@LCROS.UK", "7541346723"],
+  ["Barry", "Allen", "Barista", "support@eatos.co.uk", ""],
+  ["Becky", "lawson", "Manager", "BECKY.LAWSON@EATOS.UK", "7541346723"],
   ["Bruce", "Wayne", "Manager", "", ""],
   ["Charles", "Bronson", "Manager", "", ""],
 ].map(([firstName, lastName, role, email, phone], index) => ({

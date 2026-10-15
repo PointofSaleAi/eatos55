@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { usePos } from "@/lib/pos-store";
-import type { ServerConnectionPreferences } from "@/lib/server-connection";
+import { migrateServerConnection, type ServerConnectionPreferences } from "@/lib/server-connection";
 import { cn } from "@/lib/utils";
 
 type Editor = "deviceName" | "cloudAddress" | "edgeAddress" | "numberRangeStart" | "status";
@@ -19,7 +19,7 @@ const labels: Record<Editor, string> = {
 
 export function ServerConnection() {
   const { settings, updateSettings, canManageSettings } = usePos();
-  const preferences = settings.serverConnection;
+  const preferences = migrateServerConnection(settings.serverConnection);
   const [editor, setEditor] = useState<Editor | null>(null);
   const [draft, setDraft] = useState("");
   const [error, setError] = useState("");

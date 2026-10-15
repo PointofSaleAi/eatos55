@@ -10,7 +10,7 @@ import { referenceTimedPricing, type TimedPricingRule } from "@/lib/timed-pricin
 import { defaultDevicePreferences, type DevicePreferences } from "@/lib/device-settings";
 import { defaultPeripheralPreferences, type PeripheralPreferences } from "@/lib/peripheral-settings";
 import { defaultServerConnection, migrateServerConnection, type ServerConnectionPreferences } from "@/lib/server-connection";
-import { referenceEmployees, type WorkforceEmployee } from "@/lib/workforce-employees";
+import { migrateWorkforceEmployee, referenceEmployees, type WorkforceEmployee } from "@/lib/workforce-employees";
 import { isResumablePath, readResume, resumeKey, writeResume } from "@/lib/resume";
 import {
   DEFAULT_TICKET_DATE,
@@ -1004,6 +1004,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
           ...s,
           ...saved,
           serverConnection: migrateServerConnection(saved.serverConnection),
+          workforceEmployees: (saved.workforceEmployees ?? referenceEmployees).map(migrateWorkforceEmployee),
           peripheralPreferences: { ...defaultPeripheralPreferences, ...saved.peripheralPreferences },
           devicePreferences: {
             ...defaultDevicePreferences,
