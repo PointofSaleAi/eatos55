@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { CheckSquare, ChevronRight, Copy, Plus, Search } from "lucide-react";
+import { useRef, useState } from "react";
+import { Archive, ArchiveRestore, CheckSquare, ChevronRight, Copy, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, settingsRowClass } from "@/components/pos/settings-rows";
@@ -24,6 +24,12 @@ export function TimedPricing() {
   const [copyFrom, setCopyFrom] = useState<number | null>(null);
   const [copyTargets, setCopyTargets] = useState<number[]>([]);
   const [dayQuery, setDayQuery] = useState("");
+  const [archived, setArchived] = useState(false);
+  const [archiveTarget, setArchiveTarget] = useState<TimedPricingRule | null>(null);
+  const [revealedId, setRevealedId] = useState<string | null>(null);
+  const swipe = useRef<{ id: string; x: number; y: number; horizontal: boolean } | null>(null);
+  const suppressClickUntil = useRef(0);
+  const saveCollection = (next: TimedPricingRule[]) => { setRevealedId(null); updateSettings({ timedPricingRules: next }); };
   const open = (rule: TimedPricingRule) => { setDraft({ ...rule, days: rule.days.map(day => ({ ...day })) }); setError(""); };
   const updateDay = (index: number, patch: Partial<ScheduleDay>) => setDraft(current => current ? { ...current, days: current.days.map((day, i) => i === index ? { ...day, ...patch } : day) } : current);
   const save = () => {
