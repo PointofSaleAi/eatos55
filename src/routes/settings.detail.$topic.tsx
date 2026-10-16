@@ -41,6 +41,7 @@ import { MenuSettings } from "@/components/pos/menu-settings";
 import { CategorySettings } from "@/components/pos/category-settings";
 import { ProductSettings } from "@/components/pos/product-settings";
 import { InventorySettings } from "@/components/pos/inventory-settings";
+import { DefaultModifierSettings } from "@/components/pos/default-modifier-settings";
 import { AddOnSettings, ModifierSettings } from "@/components/pos/modifier-settings";
 import { WorkforceEmployees } from "@/components/pos/workforce-employees";
 import { AboutSettings } from "@/components/pos/about-settings";
@@ -101,6 +102,7 @@ function SettingsDetail() {
   if (topic === "categories") return <CategorySettings />;
   if (topic === "products") return <ProductSettings />;
   if (topic === "inventory") return <InventorySettings />;
+  if (topic === "default-modifiers") return <DefaultModifierSettings />;
   if (topic === "modifiers") return <ModifierSettings />;
   if (topic === "add-ons") return <AddOnSettings />;
   if (topic === "employee") return <WorkforceEmployees />;

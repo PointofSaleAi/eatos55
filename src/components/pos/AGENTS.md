@@ -23,3 +23,4 @@
 - Landscape ticket detail mirrors New Order using selected-ticket data and existing handlers, never the mutable order draft, to preserve behavior.
 - Settings > Payments > Taxes is a dedicated screen (`tax-settings.tsx`) with tax rules in shared demo settings; rules never change cart or checkout totals.
 - Inventory counts (Settings > Menu > Inventory) are demo-only and never affect ordering, sales or 86 status.
+- Default Modifiers (Settings > Menu) are demo-only and never change New Order or product default modifiers.
