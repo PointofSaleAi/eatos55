@@ -100,7 +100,7 @@ export function RestaurantInformation() {
           <div className="grid min-h-row grid-cols-[6rem_minmax(0,1fr)] items-center gap-3 px-4 py-2 sm:grid-cols-[9rem_minmax(0,1fr)]">
             <span className="t-row">Country</span>
             <Select value={settings.restaurantCountry} disabled={!canManageSettings} onValueChange={v => { setAddressDraft(null); updateSettings({ restaurantCountry: v }); }}>
-              <SelectTrigger aria-label="Country" className="w-full min-w-0 border-transparent shadow-none"><SelectValue placeholder="Select country" /></SelectTrigger>
+              <SelectTrigger aria-label="Country" className="w-full min-w-0 justify-end border-transparent text-right shadow-none"><SelectValue placeholder="Select country" /></SelectTrigger>
               <SelectContent>{phoneCountries.map(c => <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
             </Select>
           </div>
