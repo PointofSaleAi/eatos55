@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { BadgePercent, ChevronRight, NotebookPen, X } from "lucide-react";
@@ -249,14 +250,14 @@ export function PaymentBill({ room }: { room?: Room | null }) {
               </span>
             )}
             <span className="min-w-0 flex-1">
-              <span className="block text-fs-sm font-bold text-foreground">{line.name}</span>
+              <span className={cn("flex items-center text-fs-sm font-bold text-foreground", editable && "min-h-8")}>{line.name}</span>
               {line.modifiers?.map((m) => (
                 <span key={m} className="block text-fs-xs text-muted-foreground">
                   - {m}
                 </span>
               ))}
             </span>
-            <span className="shrink-0 text-fs-sm font-extrabold tabular-nums text-foreground">
+            <span className={cn("flex shrink-0 items-center text-fs-sm font-extrabold tabular-nums text-foreground", editable && "min-h-8")}>
               {money(line.price * line.qty)}
             </span>
           </li>
