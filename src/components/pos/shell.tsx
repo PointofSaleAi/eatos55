@@ -322,7 +322,7 @@ export function SubHeader({
 
   return (
     <div className="shrink-0 border-b border-border bg-surface px-4 pb-3 pt-4">
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+      <div className="grid min-h-tap grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
         <div className="flex min-w-0 items-center gap-2">
           {onBack ? (
             <Button variant="ghost" size="icon" aria-label={backLabel ? `Back to ${backLabel}` : "Go back"} title={backLabel ? `Back to ${backLabel}` : "Go back"} onClick={onBack}><ChevronLeft className="size-5" /></Button>
