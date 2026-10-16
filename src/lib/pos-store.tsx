@@ -668,6 +668,7 @@ type Store = {
   startBreak: () => void;
   setStation: (name: string) => void;
   setRole: (role: string) => void;
+  setName: (name: string) => void;
 
   /** Remember the current screen and order for whoever is clocked in. */
   saveResume: (path: string) => void;
@@ -1213,6 +1214,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
       startBreak: () => setSession((s) => ({ ...s, onBreak: true })),
       setStation: (name) => setSession((s) => ({ ...s, station: name })),
       setRole: (role) => setSession((s) => ({ ...s, role })),
+      setName: (name) => setSession((s) => ({ ...s, name })),
 
       saveResume: (path) => {
         if (!isResumablePath(path)) return;
