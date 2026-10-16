@@ -142,7 +142,7 @@ export function ClockPullDown() {
           >
             {wide ? <ClockPanel gate className="min-w-0" /> : null}
             <PhoneClock />
-            <div className="flex min-h-0 flex-1 flex-col justify-center">
+            <div className="flex min-h-0 flex-1 flex-col justify-start sm:justify-center">
               <PinPad
                 pin={pin}
                 onDigit={(d) => setPin((p) => (p.length < 4 ? p + d : p))}
@@ -170,7 +170,7 @@ export function ClockPullDown() {
                   close();
                   navigate({ to: "/" });
                 }}
-                className="h-full max-h-[34rem] w-full"
+                className="h-full max-h-none w-full sm:max-h-[34rem]"
               />
             </div>
           </div>
