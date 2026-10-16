@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { CheckCircle2, ChevronRight, ListChecks, Plus, Search, Trash2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -41,6 +42,7 @@ export function Picker({ title, options, selected, onChange, onClose }: { title:
 }
 
 export function TaxSettings() {
+  const navigate = useNavigate();
   const { settings, updateSettings, canManageSettings } = usePos();
   const taxes = settings.taxRules ?? referenceTaxes;
   const products = useMemo(taxProducts, []);
@@ -107,7 +109,7 @@ export function TaxSettings() {
 
   const list = taxes.filter(t => t.name.toLowerCase().includes(query.trim().toLowerCase()));
   return <>
-    <SubHeader title="Taxes" backLabel="Payments" backTo="/settings/payments" right={<Button variant="ghost" size="icon" aria-label="Search taxes" title="Search taxes" onClick={() => setSearchOpen(v => !v)}><Search /></Button>} />
+    <SubHeader title="Taxes" backLabel="Payments" onBack={() => void navigate({ to: "/settings/payments" })} right={<Button variant="ghost" size="icon" aria-label="Search taxes" title="Search taxes" onClick={() => setSearchOpen(v => !v)}><Search /></Button>} />
     <ScreenBody className="py-4">
       <div className="mb-5 flex items-start gap-3"><p className="min-w-0 flex-1 t-caption text-muted-foreground">{description}</p><Button size="icon" aria-label="Add tax" title="Add Tax" disabled={!canManageSettings} onClick={() => { setDraft(newTax()); setTouched(false); }}><Plus /></Button></div>
       {searchOpen && <Input autoFocus className="mb-4" aria-label="Search taxes" placeholder="Search" value={query} onChange={e => setQuery(e.target.value)} />}

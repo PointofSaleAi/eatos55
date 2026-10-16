@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { AlertCircle, Check, ChevronRight, Minus, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -32,6 +33,7 @@ function Choice<T extends string>({ value, options, onPick, disabled, label }: {
 }
 
 export function ServiceChargeSettings() {
+  const navigate = useNavigate();
   const { settings, updateSettings, canManageSettings } = usePos();
   const charges = settings.serviceChargeRules ?? referenceServiceCharges;
   const taxNames = (settings.taxRules ?? referenceTaxes).map(t => t.name).filter(Boolean);
@@ -123,7 +125,7 @@ export function ServiceChargeSettings() {
 
   const list = charges.filter(c => c.name.toLowerCase().includes(query.trim().toLowerCase()));
   return <>
-    <SubHeader title="Service Charge" backLabel="Payments" backTo="/settings/payments" right={<Button variant="ghost" size="icon" aria-label="Search service charges" title="Search service charges" onClick={() => { setSearchOpen(v => !v); setQuery(""); }}><Search /></Button>} />
+    <SubHeader title="Service Charge" backLabel="Payments" onBack={() => void navigate({ to: "/settings/payments" })} right={<Button variant="ghost" size="icon" aria-label="Search service charges" title="Search service charges" onClick={() => { setSearchOpen(v => !v); setQuery(""); }}><Search /></Button>} />
     <ScreenBody className="py-4">
       {searchOpen && <div className="mb-4 flex items-center gap-2"><Input autoFocus aria-label="Search service charges" placeholder="Search" value={query} onChange={e => setQuery(e.target.value)} /><Button variant="ghost" onClick={() => { setSearchOpen(false); setQuery(""); }}>Cancel</Button></div>}
       <div className="mb-5 flex items-start gap-3"><p className="min-w-0 flex-1 t-caption text-muted-foreground">{description}</p><Button size="icon" aria-label="Add service charge" title="Add Service Charge" disabled={!canManageSettings} onClick={() => { setDraft(newServiceCharge()); setTouched(false); }}><Plus /></Button></div>

@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { useMemo, useState, type ReactNode } from "react";
 import { AlertCircle, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -23,6 +24,7 @@ function ErrorLine({ text }: { text: string }) {
 const Help = ({ children }: { children: ReactNode }) => <p className="basis-full pt-1 t-caption text-muted-foreground">{children}</p>;
 
 export function DiscountSettings() {
+  const navigate = useNavigate();
   const { settings, updateSettings, canManageSettings } = usePos();
   const discounts = settings.discountRules ?? referenceDiscounts;
   const products = useMemo(taxProducts, []);
@@ -129,7 +131,7 @@ export function DiscountSettings() {
 
   const list = discounts.filter(d => d.name.toLowerCase().includes(query.trim().toLowerCase()));
   return <>
-    <SubHeader title="Discounts" backLabel="Payments" backTo="/settings/payments" right={<Button variant="ghost" size="icon" aria-label="Search discounts" title="Search discounts" onClick={() => setSearchOpen(v => !v)}><Search /></Button>} />
+    <SubHeader title="Discounts" backLabel="Payments" onBack={() => void navigate({ to: "/settings/payments" })} right={<Button variant="ghost" size="icon" aria-label="Search discounts" title="Search discounts" onClick={() => setSearchOpen(v => !v)}><Search /></Button>} />
     <ScreenBody className="py-4">
       <div className="mb-5 flex items-start gap-3"><p className="min-w-0 flex-1 t-caption text-muted-foreground">{description}</p><Button size="icon" aria-label="Add discount" title="Add Discount" disabled={!canManageSettings} onClick={() => { setDraft(newDiscount()); setTouched(false); }}><Plus /></Button></div>
       {searchOpen && <Input autoFocus className="mb-4" aria-label="Search discounts" placeholder="Search" value={query} onChange={e => setQuery(e.target.value)} />}
