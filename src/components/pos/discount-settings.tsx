@@ -24,6 +24,7 @@ function ErrorLine({ text }: { text: string }) {
 const Help = ({ children }: { children: ReactNode }) => <p className="basis-full pt-1 t-caption text-muted-foreground">{children}</p>;
 
 export function DiscountSettings() {
+  const navigate = useNavigate();
   const { settings, updateSettings, canManageSettings } = usePos();
   const discounts = settings.discountRules ?? referenceDiscounts;
   const products = useMemo(taxProducts, []);

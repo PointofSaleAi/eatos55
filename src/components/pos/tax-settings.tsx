@@ -42,6 +42,7 @@ export function Picker({ title, options, selected, onChange, onClose }: { title:
 }
 
 export function TaxSettings() {
+  const navigate = useNavigate();
   const { settings, updateSettings, canManageSettings } = usePos();
   const taxes = settings.taxRules ?? referenceTaxes;
   const products = useMemo(taxProducts, []);

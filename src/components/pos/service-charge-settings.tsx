@@ -33,6 +33,7 @@ function Choice<T extends string>({ value, options, onPick, disabled, label }: {
 }
 
 export function ServiceChargeSettings() {
+  const navigate = useNavigate();
   const { settings, updateSettings, canManageSettings } = usePos();
   const charges = settings.serviceChargeRules ?? referenceServiceCharges;
   const taxNames = (settings.taxRules ?? referenceTaxes).map(t => t.name).filter(Boolean);
