@@ -26,24 +26,33 @@ const SEED: ModifierRule[] = [
   m("Vanilla"), m("Vanilla Syrup", "0.50"), m("Vegan"), m("Vegetarian"), m("Well Done"), m("White Bread"),
 ];
 
-const KEY = "eatos.pos.modifier-settings";
-let cache: ModifierRule[] | null = null;
-const listeners = new Set<() => void>();
-function read() {
-  if (cache) return cache;
-  try { const raw = localStorage.getItem(KEY); cache = raw ? JSON.parse(raw) : SEED; } catch { cache = SEED; }
-  return cache!;
-}
-function write(next: ModifierRule[]) {
-  cache = next;
-  try { localStorage.setItem(KEY, JSON.stringify(next)); } catch { /* ignore */ }
-  listeners.forEach((l) => l());
-}
-export function useModifierSettings() {
-  const modifiers = useSyncExternalStore((l) => { listeners.add(l); return () => listeners.delete(l); }, read, () => SEED);
-  return {
-    modifiers,
-    save(r: ModifierRule) { const cur = read(); write(cur.some((x) => x.id === r.id) ? cur.map((x) => (x.id === r.id ? r : x)) : [...cur, r]); },
-    patch(id: string, p: Partial<ModifierRule>) { write(read().map((x) => (x.id === id ? { ...x, ...p } : x))); },
+function createRuleStore(KEY: string, SEED: ModifierRule[]) {
+  let cache: ModifierRule[] | null = null;
+  const listeners = new Set<() => void>();
+  function read() {
+    if (cache) return cache;
+    try { const raw = localStorage.getItem(KEY); cache = raw ? JSON.parse(raw) : SEED; } catch { cache = SEED; }
+    return cache!;
+  }
+  function write(next: ModifierRule[]) {
+    cache = next;
+    try { localStorage.setItem(KEY, JSON.stringify(next)); } catch { /* ignore */ }
+    listeners.forEach((l) => l());
+  }
+  return function useRules() {
+    const modifiers = useSyncExternalStore((l) => { listeners.add(l); return () => listeners.delete(l); }, read, () => SEED);
+    return {
+      modifiers,
+      save(r: ModifierRule) { const cur = read(); write(cur.some((x) => x.id === r.id) ? cur.map((x) => (x.id === r.id ? r : x)) : [...cur, r]); },
+      patch(id: string, p: Partial<ModifierRule>) { write(read().map((x) => (x.id === id ? { ...x, ...p } : x))); },
+    };
   };
 }
+export type RuleStoreHook = ReturnType<typeof createRuleStore>;
+export const useModifierSettings = createRuleStore("eatos.pos.modifier-settings", SEED);
+
+const a = (name: string, type = "Regular", max = 1): ModifierRule => ({ ...m(name, "1.00", type), id: `seed-addon-${name}`, max });
+const ADDON_SEED: ModifierRule[] = ["Add Bacon", "Add Cheese", "Add Chicken", "Add Chorizo", "Add Ham", "Add Honey", "Add Mushroom", "Add Olives", "Add Pepperoni", "Add Pineapple", "Add Sausage"]
+  .map((n) => a(n)).concat(a("Add One Egg", "Fried", 3));
+/** Demo-only add-ons; never changes New Order product add-ons or prices. */
+export const useAddOnSettings = createRuleStore("eatos.pos.addon-settings", ADDON_SEED);
