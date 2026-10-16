@@ -1,4 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
+import { tableAlign } from "@/components/ui/table";
 import { useMemo, useState } from "react";
 import { ArrowDownUp, Check, ChevronRight, Search, XCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -90,7 +91,7 @@ export function CashManagement() {
           <input type="date" aria-label="Select date" value={date} onChange={(e) => e.target.value && setDate(e.target.value)} className="min-h-11 bg-transparent t-value text-muted-foreground" />
         </label>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[34rem] text-left">
+          <table className={cn("w-full min-w-[34rem]", tableAlign)}>
             <thead><tr className="border-b border-border"><th className={th}>Time</th><th className={th}>Name</th><th className={th}>Reason</th><th className={cn(th, "text-right")}>Pay In</th><th className={cn(th, "text-right")}>Pay Out</th></tr></thead>
             <tbody>{logs.map((l) => <tr key={l.id} className="border-b border-border last:border-0">
               <td className={td}>{l.time}</td><td className={td}>{l.name}</td><td className={td}>{l.reason}{l.note && <span className="block t-caption text-muted-foreground">{l.note}</span>}</td>
@@ -103,7 +104,7 @@ export function CashManagement() {
 
       <GroupLabel>Employee Tips</GroupLabel>
       <GroupCard>
-        <table className="w-full text-left">
+        <table className={cn("w-full", tableAlign)}>
           <thead><tr className="border-b border-border"><th className={th}>Name</th><th className={cn(th, "text-right")}>Cash Tips</th><th className={cn(th, "text-right")}>Non Cash Tips</th></tr></thead>
           <tbody>{employees.map((e) => <tr key={e.id} className="border-b border-border last:border-0"><td className={td}>{e.name}</td><td className={cn(td, "text-right")}>{formatMoney(cash.state.tips[e.id] ?? 0)}</td><td className={cn(td, "text-right")}>{formatMoney(0)}</td></tr>)}</tbody>
         </table>

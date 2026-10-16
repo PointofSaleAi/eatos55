@@ -1,4 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
+import { tableAlign } from "@/components/ui/table";
 import { useMemo, useState, type ReactNode } from "react";
 import { Archive, ChevronDown, ChevronRight, ChevronUp, Circle, CircleCheck, Copy, GripVertical, Plus, Search, XCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -125,7 +126,7 @@ function MenuEditor({ id, onBack }: { id: string | null; onBack: () => void }) {
             <Row label="Start Date" value={fmtDate(c.start)} error={err === "Please select start date" ? err : null} onClick={() => { setTemp(c.start); setPopup({ kind: "date", ch, field: "start" }); }} />
             <Row label="End Date" value={fmtDate(c.end)} error={err && err !== "Please select start date" ? err : null} onClick={() => { setTemp(c.end || c.start); setPopup({ kind: "date", ch, field: "end" }); }} />
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[22rem] text-left">
+              <table className={cn("w-full min-w-[22rem]", tableAlign)}>
                 <thead><tr className="border-b border-border"><th className={th}>Days</th><th className={th}>Start Time</th><th className={th}>End Time</th><th className="w-12" /></tr></thead>
                 <tbody>{WEEKDAYS.map((day, i) => {
                   const s = c.days[i]!;
