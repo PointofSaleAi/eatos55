@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { SwipeRow } from "@/components/pos/swipe-row";
 import { Picker } from "@/components/pos/tax-settings";
-import { ORDER_TYPE_TAGS, newModifier, optId, useModifierSettings, type ModifierOption, type ModifierRule } from "@/lib/modifier-settings";
+import { ORDER_TYPE_TAGS, newModifier, optId, useAddOnSettings, useModifierSettings, type ModifierOption, type ModifierRule, type RuleStoreHook } from "@/lib/modifier-settings";
 import { cn } from "@/lib/utils";
 
 const cols = "grid grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)_1rem] items-center gap-2";
@@ -24,41 +24,52 @@ const summary = (m: ModifierRule) => {
 
 type View = { kind: "list" } | { kind: "archive" } | { kind: "edit"; id: string | null };
 
-export function ModifierSettings() {
+type Copy = { one: string; many: string; nameCol: string; intro: string; editTitle: string; addTitle: string; info: string; options: string; nameLabel: string; served: boolean; eightySix: string; hasOptions: string; useStore: RuleStoreHook };
+const MODIFIER_COPY: Copy = { one: "Modifier", many: "Modifiers", nameCol: "Modifier Name", addTitle: "Add Modifier", editTitle: "Edit Modifier", info: "Modifier Information", options: "Modifier Options", nameLabel: "Modifier Name", served: true,
+  eightySix: "86 this Modifier?", hasOptions: "Does this modifier have options?", useStore: useModifierSettings,
+  intro: "Modifiers customize dishes, catering to preferences. Enhance dining experiences by allowing customers to personalize their orders for satisfaction." };
+const ADDON_COPY: Copy = { one: "Add-On", many: "Add-Ons", nameCol: "Name", addTitle: "Add Add-Ons", editTitle: "Edit Add-Ons", info: "Add-Ons Information", options: "Add-Ons Options", nameLabel: "Name", served: false,
+  eightySix: "86 this Add-On?", hasOptions: "Does this Add-Ons have options?", useStore: useAddOnSettings,
+  intro: "Explore a culinary revolution with food add-ons – from truffle-infused salts to exotic spice blends, transforming ordinary dishes into extraordinary experiences." };
+
+export function ModifierSettings() { return <RuleSettings c={MODIFIER_COPY} />; }
+export function AddOnSettings() { return <RuleSettings c={ADDON_COPY} />; }
+
+function RuleSettings({ c }: { c: Copy }) {
   const [view, setView] = useState<View>({ kind: "list" });
-  if (view.kind === "edit") return <ModifierEditor id={view.id} onBack={() => setView({ kind: "list" })} />;
-  return <ModifierList archived={view.kind === "archive"} onOpen={(id) => setView({ kind: "edit", id })}
+  if (view.kind === "edit") return <ModifierEditor c={c} id={view.id} onBack={() => setView({ kind: "list" })} />;
+  return <ModifierList c={c} archived={view.kind === "archive"} onOpen={(id) => setView({ kind: "edit", id })}
     onArchive={() => setView({ kind: "archive" })} onBackFromArchive={() => setView({ kind: "list" })} />;
 }
 
-function ModifierList({ archived, onOpen, onArchive, onBackFromArchive }: { archived: boolean; onOpen: (id: string | null) => void; onArchive: () => void; onBackFromArchive: () => void }) {
+function ModifierList({ c, archived, onOpen, onArchive, onBackFromArchive }: { c: Copy; archived: boolean; onOpen: (id: string | null) => void; onArchive: () => void; onBackFromArchive: () => void }) {
   const navigate = useNavigate();
-  const { modifiers, patch } = useModifierSettings();
+  const { modifiers, patch } = c.useStore();
   const [searching, setSearching] = useState(false);
   const [q, setQ] = useState("");
   const list = modifiers.filter((m) => m.archived === archived && m.name.toLowerCase().includes(q.trim().toLowerCase()))
     .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
   return <>
-    <SubHeader title={archived ? "Archived Modifiers" : "Modifiers"} backLabel={archived ? "Modifiers" : "Back"}
+    <SubHeader title={archived ? `Archived ${c.many}` : c.many} backLabel={archived ? c.many : "Back"}
       onBack={archived ? onBackFromArchive : () => navigate({ to: "/settings/menu" })}
-      right={<Button variant="ghost" size="icon" aria-label="Search modifiers" onClick={() => { setSearching((v) => !v); setQ(""); }}><Search /></Button>} />
+      right={<Button variant="ghost" size="icon" aria-label={`Search ${c.many.toLowerCase()}`} onClick={() => { setSearching((v) => !v); setQ(""); }}><Search /></Button>} />
     <ScreenBody className="py-4">
       {searching && <div className="mb-3 flex items-center gap-2">
-        <Input autoFocus aria-label="Search modifiers" placeholder="Search" value={q} onChange={(e) => setQ(e.target.value)} />
+        <Input autoFocus aria-label={`Search ${c.many.toLowerCase()}`} placeholder="Search" value={q} onChange={(e) => setQ(e.target.value)} />
         <Button variant="ghost" onClick={() => { setSearching(false); setQ(""); }}>Cancel</Button></div>}
       <div className="flex items-start gap-3">
         <p className="min-w-0 flex-1 t-caption text-muted-foreground">Modifiers customize dishes, catering to preferences. Enhance dining experiences by allowing customers to personalize their orders for satisfaction.</p>
-        {!archived && <><Button variant="outline" size="icon" aria-label="Archived modifiers" onClick={onArchive}><Archive /></Button>
-          <Button size="icon" aria-label="Add modifier" onClick={() => onOpen(null)}><Plus /></Button></>}
+        {!archived && <><Button variant="outline" size="icon" aria-label={`Archived ${c.many.toLowerCase()}`} onClick={onArchive}><Archive /></Button>
+          <Button size="icon" aria-label={`Add ${c.one.toLowerCase()}`} onClick={() => onOpen(null)}><Plus /></Button></>}
       </div>
       <GroupCard className="mt-4">
         <div className={cn(cols, "hidden border-b border-border px-4 py-2 sm:grid")}>
-          <span className={th}>Modifier Name</span><span className={cn(th, "text-center")}>Type</span><span className={cn(th, "text-center")}>Selected Options</span><span className={cn(th, "text-right")}>Price</span><span />
+          <span className={th}>{c.nameCol}</span><span className={cn(th, "text-center")}>Type</span><span className={cn(th, "text-center")}>Selected Options</span><span className={cn(th, "text-right")}>Price</span><span />
         </div>
         {list.map((m) => {
           const s = summary(m);
           return <SwipeRow key={m.id} className="rounded-none border-b border-border last:border-0"
-            action={{ label: archived ? "Restore" : "Archive", destructive: !archived, onAction: () => { patch(m.id, { archived: !archived }); toast.success(archived ? "Modifier restored" : "Modifier archived"); } }}>
+            action={{ label: archived ? "Restore" : "Archive", destructive: !archived, onAction: () => { patch(m.id, { archived: !archived }); toast.success(`${c.one} ${archived ? "restored" : "archived"}`); } }}>
             <button type="button" onClick={() => onOpen(m.id)} className="w-full bg-surface px-4 py-2 text-left hover:bg-muted">
               <div className={cn(cols, "hidden min-h-10 sm:grid")}>
                 <span className="min-w-0 break-words t-row">{m.name}</span>
@@ -76,9 +87,9 @@ function ModifierList({ archived, onOpen, onArchive, onBackFromArchive }: { arch
             </button>
           </SwipeRow>;
         })}
-        {list.length === 0 && <p className="px-4 py-10 text-center t-row text-muted-foreground">{archived ? "No archived modifiers" : "No modifiers found"}</p>}
+        {list.length === 0 && <p className="px-4 py-10 text-center t-row text-muted-foreground">{archived ? `No archived ${c.many.toLowerCase()}` : `No ${c.many.toLowerCase()} found`}</p>}
       </GroupCard>
-      <Caption>Swipe left on a modifier to {archived ? "restore" : "archive"} it. Demo only — modifiers don't change New Order or prices.</Caption>
+      <Caption>Swipe left to {archived ? "restore" : "archive"}. Demo only — {c.many.toLowerCase()} don't change New Order or prices.</Caption>
     </ScreenBody>
   </>;
 }
@@ -115,8 +126,8 @@ function OptionRow({ opt, onChange, onRemove, focus }: { focus?: boolean; opt: M
   </SwipeRow>;
 }
 
-function ModifierEditor({ id, onBack }: { id: string | null; onBack: () => void }) {
-  const { modifiers, save, patch } = useModifierSettings();
+function ModifierEditor({ c, id, onBack }: { c: Copy; id: string | null; onBack: () => void }) {
+  const { modifiers, save, patch } = c.useStore();
   const existing = modifiers.find((m) => m.id === id);
   const [draft, setDraft] = useState<ModifierRule>(() => existing ?? newModifier());
   const [picker, setPicker] = useState(false);
@@ -140,28 +151,28 @@ function ModifierEditor({ id, onBack }: { id: string | null; onBack: () => void 
   const addOpt = (name: string) => { if (!name.trim()) { setNewName(name); return; } setNewName(""); const id = optId(); setFocusId(id); update({ options: [...draft.options, { id, name, price: newPrice }] }); setNewPrice(""); };
 
   return <>
-    <SubHeader title={existing ? "Edit Modifier" : "Add Modifier"} backLabel="Modifiers" onBack={back} />
+    <SubHeader title={existing ? c.editTitle : c.addTitle} backLabel={c.many} onBack={back} />
     <ScreenBody className="py-4">
       <GroupLabel>Order Type Applicable</GroupLabel>
       <GroupCard>
         <Row label="Order Type Tag" value={draft.orderTypes.length || "Choose"} sub={draft.orderTypes.join(", ") || undefined} onClick={() => setPicker(true)} />
       </GroupCard>
 
-      <GroupLabel>Modifier Information</GroupLabel>
+      <GroupLabel>{c.info}</GroupLabel>
       <GroupCard>
-        <label className={settingsRowClass}><span className="shrink-0 t-row">Modifier Name</span>
-          <input aria-label="Modifier Name" placeholder="Enter Name" value={draft.name} onChange={(e) => update({ name: e.target.value })}
+        <label className={settingsRowClass}><span className="shrink-0 t-row">{c.nameLabel}</span>
+          <input aria-label={c.nameLabel} placeholder="Enter Name" value={draft.name} onChange={(e) => update({ name: e.target.value })}
             className="min-h-11 min-w-0 flex-1 bg-transparent text-right t-value outline-none placeholder:text-muted-foreground" />
-          {draft.name && <Button variant="ghost" size="icon" aria-label="Clear modifier name" onClick={(e) => { e.preventDefault(); setDraft({ ...draft, name: "" }); }}><XCircle className="text-muted-foreground" /></Button>}
+          {draft.name && <Button variant="ghost" size="icon" aria-label="Clear name" onClick={(e) => { e.preventDefault(); setDraft({ ...draft, name: "" }); }}><XCircle className="text-muted-foreground" /></Button>}
         </label>
-        {!draft.name.trim() && touched && <p className="px-4 pb-3 t-caption text-destructive">Modifier name cannot be empty</p>}
-        <ToggleRow label="Can this modifier be served?" checked={draft.served} onChange={(served) => update({ served })} />
-        <ToggleRow label="86 this Modifier?" checked={draft.eightySixed} onChange={(eightySixed) => update({ eightySixed })} />
-        <ToggleRow label="Does this modifier have options?" checked={draft.hasOptions} onChange={(hasOptions) => update({ hasOptions })} />
+        {!draft.name.trim() && touched && <p className="px-4 pb-3 t-caption text-destructive">{c.one} name cannot be empty</p>}
+        {c.served && <ToggleRow label="Can this modifier be served?" checked={draft.served} onChange={(served) => update({ served })} />}
+        <ToggleRow label={c.eightySix} checked={draft.eightySixed} onChange={(eightySixed) => update({ eightySixed })} />
+        <ToggleRow label={c.hasOptions} checked={draft.hasOptions} onChange={(hasOptions) => update({ hasOptions })} />
       </GroupCard>
 
       {draft.hasOptions && <>
-        <GroupLabel>Modifier Options</GroupLabel>
+        <GroupLabel>{c.options}</GroupLabel>
         <GroupCard>
           <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.5rem] gap-2 border-b border-border px-4 py-2">
             <span className={th}>Name</span><span className={cn(th, "text-right")}>Price</span><span />
@@ -186,8 +197,8 @@ function ModifierEditor({ id, onBack }: { id: string | null; onBack: () => void 
 
       {saved && <GroupCard className="mt-4">
         <Button variant="ghost" className={cn(settingsRowClass, "h-auto justify-center rounded-none", !draft.archived && "text-destructive")}
-          onClick={() => { patch(draft.id, { archived: !draft.archived }); toast.success(draft.archived ? "Modifier restored" : "Modifier archived"); onBack(); }}>
-          {draft.archived ? "Restore Modifier" : "Archive Modifier"}</Button>
+          onClick={() => { patch(draft.id, { archived: !draft.archived }); toast.success(`${c.one} ${draft.archived ? "restored" : "archived"}`); onBack(); }}>
+          {draft.archived ? `Restore ${c.one}` : `Archive ${c.one}`}</Button>
       </GroupCard>}
       <Caption>Changes save automatically. Demo only — doesn't change New Order or prices.</Caption>
     </ScreenBody>
@@ -195,7 +206,7 @@ function ModifierEditor({ id, onBack }: { id: string | null; onBack: () => void 
     <Dialog open={exit} onOpenChange={setExit}>
       <DialogContent className="w-[calc(100%-2rem)] max-w-sm rounded-lg">
         <DialogTitle className="text-center">Are you sure you want to exit?</DialogTitle>
-        <DialogDescription className="text-center">Modifier name is required. If you go back now, you will lose the progress.</DialogDescription>
+        <DialogDescription className="text-center">{c.one} name is required. If you go back now, you will lose the progress.</DialogDescription>
         <div className="grid grid-cols-2 gap-2"><Button variant="outline" onClick={() => setExit(false)}>Keep Editing</Button><Button onClick={onBack}>Exit</Button></div>
       </DialogContent>
     </Dialog>
