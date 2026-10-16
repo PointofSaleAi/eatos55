@@ -1,6 +1,6 @@
-import { Navigate, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, Navigate, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
-import { Bell, LogOut, Mic, Search, Settings2 } from "lucide-react";
+import { Bell, ChevronRight, LogOut, Mic, Search, Settings2 } from "lucide-react";
 import { settingsGroups } from "@/lib/settings-destinations";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { SearchDock } from "@/components/pos/search-dock";
 import { useVoiceSearch } from "@/lib/voice-search";
 import { usePos } from "@/lib/pos-store";
+import { useProfileSettings } from "@/lib/profile-settings";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 
 export const Route = createFileRoute("/settings/")({
@@ -45,6 +46,7 @@ type Row = {
 function SettingsHub() {
   const navigate = useNavigate();
   const { session, settings, signOut, canManageSettings } = usePos();
+  const { profile } = useProfileSettings();
   const confirmAction = useConfirm();
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
@@ -155,18 +157,22 @@ function SettingsHub() {
         />
 
         <GroupCard className="mt-6">
+          <Link to="/settings/profile" aria-label="Open profile" className="block hover:bg-muted">
           <div className="flex items-center gap-4 px-4 py-4">
+            {profile.photo ? <img src={profile.photo} alt="" className="size-12 shrink-0 rounded-pill object-cover" /> :
             <span className="grid size-12 shrink-0 place-items-center rounded-pill bg-muted text-fs-sm font-extrabold text-foreground">
               {initials}
-            </span>
-            <div className="min-w-0">
+            </span>}
+            <div className="min-w-0 flex-1">
               <p className="truncate text-fs-base font-extrabold text-foreground">{session.name}</p>
               <p className="truncate text-fs-xs text-muted-foreground">{session.role}</p>
             </div>
+            <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
           </div>
           <div className="border-t border-border px-4 py-3">
-            <p className="text-fs-xs text-muted-foreground">Clocked in at {settings.clockedInAt}</p>
+            <p className="text-fs-xs text-muted-foreground">{session.clockedIn ? `Clocked in at ${settings.clockedInAt}` : "Not Clocked-In"}</p>
           </div>
+          </Link>
         </GroupCard>
 
         {filtered.length === 0 ? (

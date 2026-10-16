@@ -5,6 +5,7 @@ import { TicketsScreen } from "@/components/pos/tickets-screen";
 import { cn } from "@/lib/utils";
 import { settingsGroups } from "@/lib/settings-destinations";
 import { usePos } from "@/lib/pos-store";
+import { useProfileSettings } from "@/lib/profile-settings";
 import { useVoiceSearch } from "@/lib/voice-search";
 import { useLandscapeWide } from "@/hooks/use-layout-mode";
 
@@ -55,7 +56,7 @@ export function PaneEmpty({ title, detail }: { title: string; detail: string }) 
 }
 
 /** Top level settings destinations reachable straight from the sidebar. */
-const settingsTopLevel = new Set(settingsGroups.flat().map((l) => l.to));
+const settingsTopLevel = new Set([...settingsGroups.flat().map((l) => l.to), "/settings/profile"]);
 
 /** True when this path is a sidebar destination, so the sidebar is the way back. */
 export function isSettingsTopLevel(pathname: string) {
@@ -70,6 +71,7 @@ export function isSettingsTopLevel(pathname: string) {
 export function SettingsNavList() {
   const { canManageSettings, session, settings } = usePos();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { profile } = useProfileSettings();
   const [collapsed, setCollapsed] = useState(false);
   const [query, setQuery] = useState("");
   const { listening, start: startVoice } = useVoiceSearch(setQuery);
@@ -158,25 +160,28 @@ export function SettingsNavList() {
       ) : null}
       <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto p-2 lg:p-3">
         {!collapsed ? (
-          <div className="mb-3 overflow-hidden rounded-row border border-border bg-background">
+          <Link to="/settings/profile" preload="intent" aria-label="Open profile"
+            className={cn("mb-3 block overflow-hidden rounded-row border border-border bg-background transition-colors hover:bg-muted", pathname === "/settings/profile" && "bg-muted")}>
             <div className="flex items-center gap-3 px-3 py-3">
+              {profile.photo ? <img src={profile.photo} alt="" className="size-11 shrink-0 rounded-pill object-cover" /> :
               <span className="grid size-11 shrink-0 place-items-center rounded-pill bg-muted text-fs-sm font-extrabold text-foreground">
                 {session.name
                   .split(" ")
                   .map((p) => p[0])
                   .join("")}
-              </span>
-              <div className="min-w-0">
+              </span>}
+              <div className="min-w-0 flex-1">
                 <p className="truncate text-fs-base font-extrabold text-foreground">{session.name}</p>
                 <p className="truncate text-fs-xs text-muted-foreground">{session.role}</p>
               </div>
+              <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
             </div>
             <div className="border-t border-border px-3 py-2.5">
               <p className="text-fs-xs text-muted-foreground">
-                Clocked in at {settings.clockedInAt}
+                {session.clockedIn ? `Clocked in at ${settings.clockedInAt}` : "Not Clocked-In"}
               </p>
             </div>
-          </div>
+          </Link>
         ) : null}
         {anyMatches ? (
           visibleGroups.map((group, i) =>

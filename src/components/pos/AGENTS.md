@@ -25,3 +25,4 @@
 - Inventory counts (Settings > Menu > Inventory) are demo-only and never affect ordering, sales or 86 status.
 - Default Modifiers (Settings > Menu) are demo-only and never change New Order or product default modifiers.
 - Menu Groups (Settings > Menu > Groups) are demo-only and never change New Order modifiers or add-ons.
+- Settings Profile (personal info, password, two factor, PIN, photo) is demo-only; no value is ever used for authentication, SMS or real clock-in records beyond the shared session role.
