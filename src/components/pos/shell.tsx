@@ -2,13 +2,12 @@ import { Link, useCanGoBack, useRouter, useRouterState } from "@tanstack/react-r
 import {
   Check,
   ChevronLeft,
-  ClipboardList,
-  Columns3,
-  LayoutGrid,
   Plus,
   Settings,
   type LucideIcon,
 } from "lucide-react";
+import { OrderOSIcon } from "@/components/pos/icons/orderos-icon";
+import { TableOrderIcon, TicketsIcon } from "@/components/pos/icons/rail-icons";
 
 
 import {
@@ -373,10 +372,10 @@ export function ScreenFooter({ children }: { children: ReactNode }) {
   );
 }
 
-const tabs: { to: string; label: string; icon: LucideIcon }[] = [
-  { to: "/floor", label: "Table Order", icon: LayoutGrid },
-  { to: "/tickets", label: "Tickets", icon: ClipboardList },
-  { to: "/board", label: "orderOS", icon: Columns3 },
+const tabs: { to: string; label: string; icon: ComponentType<{ className?: string }> }[] = [
+  { to: "/floor", label: "Table Order", icon: TableOrderIcon },
+  { to: "/tickets", label: "Tickets", icon: TicketsIcon },
+  { to: "/board", label: "orderOS", icon: OrderOSIcon },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 
