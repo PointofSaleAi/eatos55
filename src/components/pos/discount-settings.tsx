@@ -1,4 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
+import { MoneyInput } from "@/components/pos/money-input";
 import { useMemo, useState, type ReactNode } from "react";
 import { AlertCircle, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -74,7 +75,7 @@ export function DiscountSettings() {
         </div>
         {!draft.open && <div className={cn(settingsRowClass, "flex-wrap")}>
           <label htmlFor="disc-value" className="t-row">Discount</label>
-          <div className="flex min-w-0 flex-1 items-center justify-end gap-1">{draft.type === "Amount" && <span className="t-value text-muted-foreground">$</span>}<Input id="disc-value" inputMode="decimal" placeholder="Required" disabled={!canManageSettings} value={draft.value} onBlur={() => setTouched(true)} onChange={e => update({ value: e.target.value.replace(/[^\d.]/g, "") })} className="w-28 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" />{draft.type === "Percentage" && <span className="t-value text-muted-foreground">%</span>}</div>
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-1">{draft.type === "Amount" && <span className="t-value text-muted-foreground">$</span>}{draft.type === "Amount" ? <MoneyInput id="disc-value" placeholder="Required" disabled={!canManageSettings} value={draft.value} onBlur={() => setTouched(true)} onChange={value => update({ value })} className="w-28 bg-transparent text-right t-value outline-none placeholder:text-muted-foreground" /> : <Input id="disc-value" inputMode="decimal" placeholder="Required" disabled={!canManageSettings} value={draft.value} onBlur={() => setTouched(true)} onChange={e => update({ value: e.target.value.replace(/[^\d.]/g, "") })} className="w-28 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" />}{draft.type === "Percentage" && <span className="t-value text-muted-foreground">%</span>}</div>
           {show("value") && <ErrorLine text={show("value")} />}
         </div>}
         <div className={settingsRowClass}>

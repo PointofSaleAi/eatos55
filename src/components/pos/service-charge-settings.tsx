@@ -1,4 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
+import { MoneyInput } from "@/components/pos/money-input";
 import { useState, type ReactNode } from "react";
 import { AlertCircle, Check, ChevronRight, Minus, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -78,7 +79,7 @@ export function ServiceChargeSettings() {
           <label htmlFor="sc-value" className="t-row">Amount</label>
           <div className="flex min-w-0 flex-1 items-center justify-end gap-1">
             {draft.type === "Amount" && <span className="t-value text-muted-foreground">$</span>}
-            <Input id="sc-value" inputMode="decimal" placeholder="0.00" disabled={!canManageSettings} value={draft.value} onBlur={() => setTouched(true)} onChange={e => update({ value: e.target.value.replace(/[^\d.]/g, "") })} className="w-24 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" />
+            {draft.type === "Amount" ? <MoneyInput id="sc-value" disabled={!canManageSettings} value={draft.value} onBlur={() => setTouched(true)} onChange={value => update({ value })} className="w-24 bg-transparent text-right t-value outline-none" /> : <Input id="sc-value" inputMode="decimal" placeholder="0.00" disabled={!canManageSettings} value={draft.value} onBlur={() => setTouched(true)} onChange={e => update({ value: e.target.value.replace(/[^\d.]/g, "") })} className="w-24 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" />}
             {draft.type === "Percentage" && <span className="t-value text-muted-foreground">%</span>}
             <Choice<ServiceChargeAmountType> label="Amount type" value={draft.type} options={["Percentage", "Amount"]} disabled={!canManageSettings} onPick={t => update({ type: t })} />
           </div>

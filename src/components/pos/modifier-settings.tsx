@@ -1,4 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
+import { MoneyInput } from "@/components/pos/money-input";
 import { useState, type ReactNode } from "react";
 import { Archive, ChevronRight, Minus, Plus, Search, XCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -94,14 +95,11 @@ function ToggleRow({ label, checked, onChange }: { label: string; checked: boole
   return <label className={settingsRowClass}><span className="flex-1 t-row">{label}</span><Switch aria-label={label} checked={checked} onCheckedChange={onChange} /></label>;
 }
 
-const cleanPrice = (v: string) => { const s = v.replace(/[^\d.]/g, ""); const [a, ...b] = s.split("."); return b.length ? `${a}.${b.join("").slice(0, 2)}` : a ?? ""; };
 
 function PriceField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return <label className="flex min-h-11 cursor-text items-center justify-end t-value">
     <span className={cn(value ? "text-foreground" : "text-muted-foreground")}>$</span>
-    <input aria-label={label} inputMode="decimal" placeholder="0.00" value={value}
-      onChange={(e) => onChange(cleanPrice(e.target.value))}
-      onBlur={() => onChange((Number(value) || 0).toFixed(2))}
+    <MoneyInput aria-label={label} value={value} onChange={onChange}
       style={{ width: `${Math.max(value.length, 4) + 0.5}ch` }}
       className="min-h-11 min-w-0 bg-transparent text-right tabular-nums outline-none placeholder:text-muted-foreground" />
   </label>;
@@ -171,7 +169,7 @@ function ModifierEditor({ id, onBack }: { id: string | null; onBack: () => void 
           {draft.options.map((o) => <OptionRow key={o.id} focus={o.id === focusId} opt={o} onChange={setOpt} onRemove={() => update({ options: draft.options.filter((x) => x.id !== o.id) })} />)}
           <div className="grid min-h-12 grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.5rem] items-center gap-2 px-4">
             <input aria-label="Add option" placeholder="Add Option" value={newName} onChange={(e) => addOpt(e.target.value)} className="min-h-11 min-w-0 bg-transparent t-row outline-none placeholder:text-muted-foreground" />
-            <PriceField label="New option price" value={newPrice} onChange={(v) => setNewPrice(v === "0.00" && !newPrice ? "" : v)} /><span />
+            <PriceField label="New option price" value={newPrice} onChange={setNewPrice} /><span />
           </div>
         </GroupCard>
         {draft.options.length === 0 && <p className="px-4 pt-2 t-caption text-destructive">At least 1 option should be added</p>}
