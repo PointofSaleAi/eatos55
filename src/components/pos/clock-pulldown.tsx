@@ -22,10 +22,10 @@ function PhoneClock() {
   const [hm, suffix] = time.split(" ");
   return (
     <div className="shrink-0 pb-2 pt-2 text-center sm:hidden">
-      <p className="text-fs-sm font-semibold text-muted-foreground">{today}</p>
-      <p className="font-extrabold tabular-nums text-foreground">
+      <p className="text-fs-sm font-semibold text-topbar-muted">{today}</p>
+      <p className="font-extrabold tabular-nums text-topbar-foreground">
         <span className="text-[3rem] leading-none">{hm}</span>
-        {suffix ? <span className="ml-1.5 text-fs-xl text-muted-foreground">{suffix}</span> : null}
+        {suffix ? <span className="ml-1.5 text-fs-xl text-topbar-muted">{suffix}</span> : null}
       </p>
     </div>
   );
@@ -132,7 +132,7 @@ export function ClockPullDown() {
 
 
       {open ? (
-        <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-background sm:bg-gate-overlay px-[clamp(0.75rem,5vw,5rem)] pb-[calc(0.75rem+var(--sab,0px))] pt-[calc(0.75rem+var(--sat,0px))] sm:absolute sm:z-30 sm:pb-[clamp(0.75rem,3dvh,2rem)] sm:pt-10">
+        <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-topbar sm:bg-gate-overlay px-[clamp(0.75rem,5vw,5rem)] pb-[calc(0.75rem+var(--sab,0px))] pt-[calc(0.75rem+var(--sat,0px))] sm:absolute sm:z-30 sm:pb-[clamp(0.75rem,3dvh,2rem)] sm:pt-10">
           <div
             className={
               wide
