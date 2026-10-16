@@ -46,7 +46,7 @@ function TicketDetail() {
   if (!ticket) {
     return (
       <>
-        <ScreenHeader eyebrow="Tickets" title="Ticket" back />
+        <ScreenHeader eyebrow="Tickets" title="Ticket" back backTo="/tickets" />
         <ScreenBody>
           <Card className="p-6 text-center text-fs-sm text-muted-foreground">
             This ticket is no longer in the queue.
@@ -136,6 +136,7 @@ function TicketDetail() {
       <ScreenHeader
         title={`Order Number ${ticket.number}`}
         back
+        backTo="/tickets"
         right={
           <span className="text-right">
             <span className="block t-row text-foreground">{ticket.label}</span>
