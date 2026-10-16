@@ -5,6 +5,7 @@ import { TicketsScreen } from "@/components/pos/tickets-screen";
 import { cn } from "@/lib/utils";
 import { settingsGroups } from "@/lib/settings-destinations";
 import { usePos } from "@/lib/pos-store";
+import { useProfileSettings } from "@/lib/profile-settings";
 import { useVoiceSearch } from "@/lib/voice-search";
 import { useLandscapeWide } from "@/hooks/use-layout-mode";
 
@@ -70,6 +71,7 @@ export function isSettingsTopLevel(pathname: string) {
 export function SettingsNavList() {
   const { canManageSettings, session, settings } = usePos();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { profile } = useProfileSettings();
   const [collapsed, setCollapsed] = useState(false);
   const [query, setQuery] = useState("");
   const { listening, start: startVoice } = useVoiceSearch(setQuery);
