@@ -49,7 +49,7 @@ function MenuList({ archived, onOpen, onArchive, onBackFromArchive }: { archived
       </div>
       <GroupCard className="mt-4">
         <div className="grid grid-cols-[minmax(0,1.4fr)_4rem_minmax(0,1fr)_minmax(0,1fr)_1.25rem] items-center gap-2 border-b border-border px-4 py-2">
-          <span className={cn(th, "px-0")}>Menu Name</span><span className={cn(th, "px-0")}>Status</span><span className={cn(th, "px-0")}>Start Date</span><span className={cn(th, "px-0")}>End Date</span><span />
+          <span className={cn(th, "px-0")}>Menu Name</span><span className={cn(th, "px-0 text-center")}>Status</span><span className={cn(th, "px-0 text-center")}>Start Date</span><span className={cn(th, "px-0 text-right")}>End Date</span><span />
         </div>
         {list.map((m) => {
           const d = menuDates(m);
@@ -57,9 +57,9 @@ function MenuList({ archived, onOpen, onArchive, onBackFromArchive }: { archived
             action={{ label: archived ? "Restore" : "Archive", destructive: !archived, onAction: () => { patch(m.id, { archived: !archived }); toast.success(archived ? "Menu restored" : "Menu archived"); } }}>
             <div className="grid min-h-12 grid-cols-[minmax(0,1.4fr)_4rem_minmax(0,1fr)_minmax(0,1fr)_1.25rem] items-center gap-2 bg-surface px-4 py-2 hover:bg-muted">
               <button type="button" className="min-w-0 break-words text-left t-row" onClick={() => onOpen(m.id)}>{m.name}</button>
-              <Switch aria-label={`${m.name} status`} checked={m.active} disabled={archived} onCheckedChange={(active) => patch(m.id, { active })} />
-              <button type="button" className="text-left t-value" onClick={() => onOpen(m.id)}>{d.start ? fmtDate(d.start) : "—"}</button>
-              <button type="button" className="text-left t-value" onClick={() => onOpen(m.id)}>{d.end ? fmtDate(d.end) : "—"}</button>
+              <Switch className="justify-self-center" aria-label={`${m.name} status`} checked={m.active} disabled={archived} onCheckedChange={(active) => patch(m.id, { active })} />
+              <button type="button" className="text-center t-value" onClick={() => onOpen(m.id)}>{d.start ? fmtDate(d.start) : "—"}</button>
+              <button type="button" className="text-right t-value" onClick={() => onOpen(m.id)}>{d.end ? fmtDate(d.end) : "—"}</button>
               <ChevronRight className="size-4 text-muted-foreground" />
             </div>
           </SwipeRow>;
