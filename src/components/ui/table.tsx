@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
     <div className="relative w-full overflow-auto">
-      <table ref={ref} className={cn("w-full caption-bottom text-sm", className)} {...props} />
+      <table ref={ref} className={cn("w-full caption-bottom text-sm", tableAlign, className)} {...props} />
     </div>
   ),
 );
@@ -92,3 +92,7 @@ const TableCaption = React.forwardRef<
 TableCaption.displayName = "TableCaption";
 
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption };
+
+/** App-wide table alignment: first column left, middle columns centered, last column right. */
+export const tableAlign =
+  "[&_th]:text-center [&_td]:text-center [&_th:first-child]:text-left [&_td:first-child]:text-left [&_th:last-child]:text-right [&_td:last-child]:text-right [&_td[colspan]]:!text-center";
