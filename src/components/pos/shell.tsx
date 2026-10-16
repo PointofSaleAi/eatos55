@@ -11,6 +11,7 @@ import { TableOrderIcon, TicketsIcon } from "@/components/pos/icons/rail-icons";
 
 
 import {
+  type ComponentType,
   useCallback,
   useContext,
   useEffect,
