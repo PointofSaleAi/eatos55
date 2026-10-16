@@ -22,3 +22,4 @@
 - New Order keeps a 24rem minimum cart width on wide layouts so guest name, mobile and arrival stay on one line; widen rather than shorten labels.
 - Landscape ticket detail mirrors New Order using selected-ticket data and existing handlers, never the mutable order draft, to preserve behavior.
 - Settings > Payments > Taxes is a dedicated screen (`tax-settings.tsx`) with tax rules in shared demo settings; rules never change cart or checkout totals.
+- Inventory counts (Settings > Menu > Inventory) are demo-only and never affect ordering, sales or 86 status.
