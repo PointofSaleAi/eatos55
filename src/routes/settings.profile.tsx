@@ -63,7 +63,7 @@ function ProfileScreen() {
   return <Main profile={profile} patch={patch} onOpen={setView} />;
 }
 
-function NavRow({ icon, label, value, onClick }: { icon?: ReactNode; label: string; value?: string; onClick: () => void }) {
+function NavRow({ icon, label, value, onClick }: { icon?: ReactNode; label: string; value?: string | undefined; onClick: () => void }) {
   return <button type="button" onClick={onClick} className={cn(row, "hover:bg-muted")}>
     {icon}<span className="flex-1 t-body font-medium">{label}</span>
     {value ? <span className="max-w-[55%] truncate t-body text-muted-foreground">{value}</span> : null}
