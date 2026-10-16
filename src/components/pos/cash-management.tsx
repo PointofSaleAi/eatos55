@@ -156,10 +156,14 @@ function PayScreen({ kind, amount, onBack, onDone, tips }: {
     .sort((a, b) => (asc ? 1 : -1) * a.name.localeCompare(b.name)), [q, asc]);
   const chosen = employees.find((e) => e.id === emp);
   const needNote = reason === "Other" && !note.trim();
+  const ready = Boolean(chosen && reason && !needNote);
+  const [exitAsk, setExitAsk] = useState(false);
+  const back = () => { if (ready && chosen && reason) onDone(chosen, reason, note.trim()); else setExitAsk(true); };
   return <>
-    <SubHeader title={kind === "in" ? "Pay In" : "Pay Out"} backLabel="Cash Management" onBack={onBack} />
+    <SubHeader title={kind === "in" ? "Pay In" : "Pay Out"} backLabel="Cash Management" onBack={back} />
     <ScreenBody className="py-4">
       <p className="t-row">{kind === "in" ? "Select an employee to receive pay in" : "Select an employee for pay out"} · <span className="text-muted-foreground">{formatMoney(amount)}</span></p>
+      <p className="mt-1 t-caption text-muted-foreground" aria-live="polite">{ready ? "Will be saved when you go back" : needNote ? "Add a note for Other" : "Select an employee and a reason"}</p>
       <div className="mt-3 flex gap-2">
         <label className="flex min-h-11 flex-1 items-center gap-2 rounded-md bg-muted px-3"><Search className="size-4 text-muted-foreground" />
           <input aria-label="Search employees" placeholder="Search" value={q} onChange={(e) => setQ(e.target.value)} className="min-w-0 flex-1 bg-transparent t-value outline-none" /></label>
@@ -177,8 +181,13 @@ function PayScreen({ kind, amount, onBack, onDone, tips }: {
         className={cn(settingsRowClass, "w-full text-left hover:bg-muted")}><span className="flex-1 t-row">{r}</span>{reason === r && <Check className="size-4" />}</button>)}</GroupCard>
       <GroupLabel>Notes</GroupLabel>
       <GroupCard><textarea aria-label="Notes" placeholder={reason === "Other" ? "Add a note (required)" : "Add a note"} value={note} onChange={(e) => setNote(e.target.value)} rows={3} className="w-full resize-none bg-transparent px-4 py-3 t-value outline-none" /></GroupCard>
-      <Button className="mt-6 min-h-ctl-lg w-full" disabled={!chosen || !reason || needNote}
-        onClick={() => chosen && reason && onDone(chosen, reason, note.trim())}>{kind === "in" ? "Pay In" : "Pay Out"} {formatMoney(amount)}</Button>
     </ScreenBody>
+    <Dialog open={exitAsk} onOpenChange={setExitAsk}>
+      <DialogContent className="w-[calc(100%-2rem)] max-w-sm rounded-lg">
+        <DialogTitle className="text-center">Are you sure you want to exit?</DialogTitle>
+        <DialogDescription className="text-center">Nothing will be recorded until an employee and a reason are selected.</DialogDescription>
+        <div className="grid grid-cols-2 gap-2"><Button variant="outline" onClick={() => setExitAsk(false)}>Keep Editing</Button><Button onClick={onBack}>Exit</Button></div>
+      </DialogContent>
+    </Dialog>
   </>;
 }
