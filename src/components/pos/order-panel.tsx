@@ -189,13 +189,6 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
           {secondaryActions(true)}
         </div>, railHost,
       ) : null}
-      <Sheet open={moreOpen && !docked} onOpenChange={onMoreOpenChange}>
-        <SheetContent side="right" className="flex h-dvh w-[min(21rem,88vw)] flex-col bg-surface px-3 py-5">
-          <SheetHeader><SheetTitle>Order Options</SheetTitle></SheetHeader>
-          <div className="no-scrollbar mt-4 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">{secondaryActions(false)}</div>
-        </SheetContent>
-      </Sheet>
-
       <GiftCardDialog open={giftOpen} onClose={() => setGiftOpen(false)} />
 
       <DiscountSheet
