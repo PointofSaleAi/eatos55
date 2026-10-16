@@ -126,6 +126,18 @@ function OptionRow({ opt, onChange, onRemove, focus }: { focus?: boolean; opt: M
   </SwipeRow>;
 }
 
+function QtyStepper({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const [text, setText] = useState<string | null>(null);
+  const commit = () => { if (text !== null) { onChange(Math.min(99, Math.max(1, Number(text) || 1))); setText(null); } };
+  return <div className="flex items-center rounded-pill border border-border bg-surface">
+    <Button variant="ghost" size="icon" className="size-11 rounded-pill" aria-label="Decrease maximum selections" disabled={value <= 1} onClick={() => onChange(value - 1)}><Minus /></Button>
+    <input aria-label="Maximum selections" inputMode="numeric" value={text ?? String(value)} onChange={(e) => setText(e.target.value.replace(/\D/g, "").slice(0, 2))}
+      onBlur={commit} onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+      className="w-10 bg-transparent text-center t-value tabular-nums outline-none" />
+    <Button variant="ghost" size="icon" className="size-11 rounded-pill" aria-label="Increase maximum selections" disabled={value >= 99} onClick={() => onChange(value + 1)}><Plus /></Button>
+  </div>;
+}
+
 function ModifierEditor({ c, id, onBack }: { c: Copy; id: string | null; onBack: () => void }) {
   const { modifiers, save, patch } = c.useStore();
   const existing = modifiers.find((m) => m.id === id);
@@ -139,9 +151,7 @@ function ModifierEditor({ c, id, onBack }: { c: Copy; id: string | null; onBack:
 
   const update = (p: Partial<ModifierRule>) => {
     const next = { ...draft, ...p };
-    const limit = Math.max(1, next.options.length);
-    if (next.max > limit) next.max = limit;
-    if (next.max < 1) next.max = 1;
+    next.max = Math.min(99, Math.max(1, Math.round(next.max) || 1));
     setDraft(next);
     if (next.name.trim()) save(next);
   };
@@ -189,9 +199,8 @@ function ModifierEditor({ c, id, onBack }: { c: Copy; id: string | null; onBack:
       <GroupCard className="mt-4">
         <ToggleRow label="Maximum Number of Selections" checked={draft.maxOn} onChange={(maxOn) => update({ maxOn })} />
         {draft.maxOn && <div className={settingsRowClass}>
-          <span className="flex-1 t-value" aria-live="polite">{draft.max}</span>
-          <Button variant="outline" size="icon" aria-label="Decrease maximum selections" disabled={draft.max <= 1} onClick={() => update({ max: draft.max - 1 })}><Minus /></Button>
-          <Button variant="outline" size="icon" aria-label="Increase maximum selections" disabled={draft.max >= Math.max(1, draft.options.length)} onClick={() => update({ max: draft.max + 1 })}><Plus /></Button>
+          <span className="flex-1 t-row">Selections</span>
+          <QtyStepper value={draft.max} onChange={(max) => update({ max })} />
         </div>}
       </GroupCard>
 
