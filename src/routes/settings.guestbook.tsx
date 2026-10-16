@@ -31,7 +31,7 @@ function Guestbook() {
   return <>
     <SubHeader title="Guestbook" backTo="/settings" />
     <ScreenBody>
-      {selected ? <div className="mx-auto w-full max-w-3xl space-y-6">
+      {selected ? <div className="w-full space-y-6">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" aria-label="Back to guests" title="Back to guests" onClick={() => setSelectedId(null)}><ArrowLeft className="size-5" /></Button>
           <h2 className="min-w-0 break-words text-fs-xl font-bold">{selected.name}</h2>
@@ -49,7 +49,7 @@ function Guestbook() {
             <div className="text-right"><p className="font-bold">{money(ticket.total)}</p><p className="text-fs-xs text-muted-foreground">{ticket.closed ? "Closed" : statusMeta[ticket.status].label}</p></div>
           </li>)}</ul> : <p className="py-4 text-fs-sm text-muted-foreground">No order history available.</p>}
         </section>
-      </div> : <div className="mx-auto w-full max-w-3xl">
+      </div> : <div className="w-full">
         <label className="mb-5 flex min-h-ctl-md items-center gap-3 rounded-pill border border-border bg-surface px-4">
           <Search className="size-5 shrink-0 text-muted-foreground" />
           <input type="search" aria-label="Search guests" placeholder="Search guests" value={query} onChange={(e) => setQuery(e.target.value)} className="min-h-tap min-w-0 flex-1 bg-transparent outline-none" />
