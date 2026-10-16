@@ -121,3 +121,33 @@ export function WheelTimePicker({
     </div>
   );
 }
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const;
+const YEARS = Array.from({ length: 21 }, (_, i) => String(2020 + i));
+const DAYS = Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, "0"));
+
+/** iOS-style wheel date picker (month / day / year); value is ISO yyyy-mm-dd. */
+export function WheelDatePicker({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const init = useRef((() => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+    const d = m ? { y: Number(m[1]), mo: Number(m[2]) - 1, d: Number(m[3]) - 1 } : (() => { const n = new Date(); return { y: n.getFullYear(), mo: n.getMonth(), d: n.getDate() - 1 }; })();
+    return { year: Math.max(0, Math.min(YEARS.length - 1, d.y - 2020)), month: d.mo, day: d.d };
+  })());
+  const [month, setMonth] = useState(init.current.month);
+  const [day, setDay] = useState(init.current.day);
+  const [year, setYear] = useState(init.current.year);
+  useEffect(() => {
+    const y = 2020 + year;
+    const max = new Date(y, month + 1, 0).getDate();
+    const dd = Math.min(day + 1, max);
+    onChange(`${y}-${String(month + 1).padStart(2, "0")}-${String(dd).padStart(2, "0")}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [month, day, year]);
+  return (
+    <div className="flex items-stretch justify-center gap-1">
+      <Column label="Month" items={MONTHS} index={month} onSelect={setMonth} />
+      <Column label="Day" items={DAYS} index={day} onSelect={setDay} />
+      <Column label="Year" items={YEARS} index={year} onSelect={setYear} />
+    </div>
+  );
+}
