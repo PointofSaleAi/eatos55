@@ -37,6 +37,7 @@ import { DiscountSettings } from "@/components/pos/discount-settings";
 import { ServiceChargeSettings } from "@/components/pos/service-charge-settings";
 import { CashManagement } from "@/components/pos/cash-management";
 import { ReceiptSettings } from "@/components/pos/receipt-settings";
+import { MenuSettings } from "@/components/pos/menu-settings";
 import { WorkforceEmployees } from "@/components/pos/workforce-employees";
 import { AboutSettings } from "@/components/pos/about-settings";
 import { ServerConnection } from "@/components/pos/server-connection";
@@ -92,6 +93,7 @@ function SettingsDetail() {
   if (topic === "service-charge") return <ServiceChargeSettings />;
   if (topic === "cash-management") return <CashManagement />;
   if (topic === "receipts") return <ReceiptSettings />;
+  if (topic === "menus") return <MenuSettings />;
   if (topic === "employee") return <WorkforceEmployees />;
   if (topic === "about") return <AboutSettings />;
   if (topic === "servers") return <ServerConnection />;
