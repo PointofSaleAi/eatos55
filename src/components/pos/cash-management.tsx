@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 import { employees } from "@/lib/demo-data";
 import { formatMoney } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
-import { amountToMoneyDigits, moneyDigitsToAmount, popMoneyDigit, pushMoneyDigit } from "@/lib/money-entry";
+import { moneyDigitsToAmount, popMoneyDigit, pushMoneyDigit } from "@/lib/money-entry";
 import { PAY_IN_REASONS, PAY_OUT_REASONS, todayKey, useCashManagement } from "@/lib/cash-management";
 import { cn } from "@/lib/utils";
 
@@ -22,7 +22,7 @@ function MoneyInput({ digits, onChange, label, autoFocus }: { digits: string; on
         if (/^\d$/.test(e.key)) { e.preventDefault(); onChange(pushMoneyDigit(digits, e.key)); }
         else if (e.key === "Backspace") { e.preventDefault(); onChange(popMoneyDigit(digits)); }
       }}
-      onChange={(e) => onChange(amountToMoneyDigits(Number(e.target.value.replace(/[^\d.]/g, "")) || 0) && pushMoneyDigit("", e.target.value.replace(/\D/g, "")))} />
+      onChange={(e) => onChange(pushMoneyDigit("", e.target.value.replace(/\D/g, "")))} />
   );
 }
 
