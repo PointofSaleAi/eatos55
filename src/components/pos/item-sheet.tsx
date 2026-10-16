@@ -1,5 +1,5 @@
-import {
 import { MoneyInput } from "@/components/pos/money-input";
+import {
   ArrowUpDown,
   ChevronDown,
   ChevronLeft,

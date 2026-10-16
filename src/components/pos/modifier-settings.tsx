@@ -95,7 +95,6 @@ function ToggleRow({ label, checked, onChange }: { label: string; checked: boole
   return <label className={settingsRowClass}><span className="flex-1 t-row">{label}</span><Switch aria-label={label} checked={checked} onCheckedChange={onChange} /></label>;
 }
 
-const cleanPrice = (v: string) => { const s = v.replace(/[^\d.]/g, ""); const [a, ...b] = s.split("."); return b.length ? `${a}.${b.join("").slice(0, 2)}` : a ?? ""; };
 
 function PriceField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return <label className="flex min-h-11 cursor-text items-center justify-end t-value">
