@@ -205,9 +205,9 @@ export const settingsDetails: Record<string, DetailScreen> = {
     ],
     empty: "No modifier groups on this device.",
   },
-  products: {
-    title: "Products",
-    backLabel: "Menu",
+  "product-order-options": {
+    title: "Order Options",
+    backLabel: "Products",
     icon: Store,
     intro:
       "Open a product to turn Course, Temperature, Preparation, Allergy, Sides and Add-Ons off, optional or required.",
