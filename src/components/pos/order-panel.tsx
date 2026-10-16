@@ -38,6 +38,7 @@ import { formatPhone, GuestSheet } from "@/components/pos/guest-sheet";
 import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { AddGuestForm } from "@/components/pos/add-guest-form";
 import { GiftCardDialog } from "@/components/pos/gift-card-dialog";
@@ -155,18 +156,31 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
         />
         <HeaderAction label="No Sale" icon={Wallet} onPress={() => toast.success("Register opened")} />
         </div>
-        <Button
-          type="button"
-          variant="secondary"
-          size="icon"
-          aria-label="More order options"
-          title="More order options"
-          aria-expanded={moreOpen}
-          onClick={() => onMoreOpenChange(!moreOpen)}
-          className="size-8 shrink-0 rounded-pill"
-        >
-          <MoreHorizontal className="size-4" />
-        </Button>
+        <Popover open={moreOpen && !docked} onOpenChange={onMoreOpenChange}>
+          <PopoverAnchor asChild>
+            <Button
+              type="button"
+              variant="secondary"
+              size="icon"
+              aria-label="More order options"
+              title="More order options"
+              aria-expanded={moreOpen}
+              onClick={() => onMoreOpenChange(!moreOpen)}
+              className="size-8 shrink-0 rounded-pill"
+            >
+              <MoreHorizontal className="size-4" />
+            </Button>
+          </PopoverAnchor>
+          <PopoverContent
+            align="end"
+            side="bottom"
+            sideOffset={6}
+            onOpenAutoFocus={(event) => event.preventDefault()}
+            className="no-scrollbar max-h-[min(60vh,26rem)] w-[min(16rem,calc(100vw-1.5rem))] overflow-y-auto rounded-row p-1.5"
+          >
+            <div className="flex flex-col gap-0.5">{secondaryActions(false)}</div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {docked && moreOpen && railHost ? createPortal(
@@ -175,13 +189,6 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
           {secondaryActions(true)}
         </div>, railHost,
       ) : null}
-      <Sheet open={moreOpen && !docked} onOpenChange={onMoreOpenChange}>
-        <SheetContent side="right" className="flex h-dvh w-[min(21rem,88vw)] flex-col bg-surface px-3 py-5">
-          <SheetHeader><SheetTitle>Order Options</SheetTitle></SheetHeader>
-          <div className="no-scrollbar mt-4 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">{secondaryActions(false)}</div>
-        </SheetContent>
-      </Sheet>
-
       <GiftCardDialog open={giftOpen} onClose={() => setGiftOpen(false)} />
 
       <DiscountSheet
