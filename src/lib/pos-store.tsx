@@ -9,6 +9,7 @@ import { referenceSchedules, type RestaurantSchedule } from "@/lib/restaurant-sc
 import { referenceTimedPricing, type TimedPricingRule } from "@/lib/timed-pricing";
 import { referenceTaxes, type TaxRule } from "@/lib/tax-settings";
 import { referenceDiscounts, type DiscountRule } from "@/lib/discount-settings";
+import { referenceServiceCharges, type ServiceChargeRule } from "@/lib/service-charge-settings";
 import { defaultDevicePreferences, type DevicePreferences } from "@/lib/device-settings";
 import { defaultPeripheralPreferences, type PeripheralPreferences } from "@/lib/peripheral-settings";
 import { defaultPrinterPreferences, type PrinterPreferences } from "@/lib/printer-settings";
@@ -396,6 +397,7 @@ export type AppSettings = {
   timedPricingRules: TimedPricingRule[];
   taxRules: TaxRule[];
   discountRules: DiscountRule[];
+  serviceChargeRules: ServiceChargeRule[];
   discounts: SettingsListItem[];
   serviceCharges: SettingsListItem[];
   timedPricing: SettingsListItem[];
@@ -573,6 +575,7 @@ const defaultSettings: AppSettings = {
   timedPricingRules: referenceTimedPricing,
   taxRules: referenceTaxes,
   discountRules: referenceDiscounts,
+  serviceChargeRules: referenceServiceCharges,
   discounts: [
     { id: "d1", name: "Staff Meal", detail: "50% · whole order" },
     { id: "d2", name: "Happy Hour", detail: "20% · drinks" },
