@@ -56,7 +56,7 @@ export function PaneEmpty({ title, detail }: { title: string; detail: string }) 
 }
 
 /** Top level settings destinations reachable straight from the sidebar. */
-const settingsTopLevel = new Set(settingsGroups.flat().map((l) => l.to));
+const settingsTopLevel = new Set([...settingsGroups.flat().map((l) => l.to), "/settings/profile"]);
 
 /** True when this path is a sidebar destination, so the sidebar is the way back. */
 export function isSettingsTopLevel(pathname: string) {
