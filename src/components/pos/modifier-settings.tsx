@@ -96,10 +96,10 @@ function ToggleRow({ label, checked, onChange }: { label: string; checked: boole
 
 const cleanPrice = (v: string) => { const s = v.replace(/[^\d.]/g, ""); const [a, ...b] = s.split("."); return b.length ? `${a}.${b.join("").slice(0, 2)}` : a ?? ""; };
 
-function OptionRow({ opt, onChange, onRemove }: { opt: ModifierOption; onChange: (o: ModifierOption) => void; onRemove: () => void }) {
+function OptionRow({ opt, onChange, onRemove, focus }: { focus?: boolean; opt: ModifierOption; onChange: (o: ModifierOption) => void; onRemove: () => void }) {
   return <SwipeRow className="rounded-none border-b border-border" action={{ label: "Remove", destructive: true, onAction: onRemove }}>
     <div className="grid min-h-12 grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.5rem] items-center gap-2 bg-surface px-4">
-      <input aria-label="Option name" placeholder="Enter Option Name" value={opt.name} onChange={(e) => onChange({ ...opt, name: e.target.value })} className="min-h-11 min-w-0 bg-transparent t-row outline-none placeholder:text-muted-foreground" />
+      <input autoFocus={focus} aria-label="Option name" placeholder="Enter Option Name" value={opt.name} onChange={(e) => onChange({ ...opt, name: e.target.value })} className="min-h-11 min-w-0 bg-transparent t-row outline-none placeholder:text-muted-foreground" />
       <span className="flex items-center justify-end gap-0.5 t-value"><span className="text-muted-foreground">$</span>
         <input aria-label={`${opt.name || "Option"} price`} inputMode="decimal" placeholder="Enter Price" value={opt.price} onChange={(e) => onChange({ ...opt, price: cleanPrice(e.target.value) })}
           className="min-h-11 w-24 min-w-0 bg-transparent text-right outline-none placeholder:text-muted-foreground" /></span>
@@ -115,6 +115,7 @@ function ModifierEditor({ id, onBack }: { id: string | null; onBack: () => void 
   const [picker, setPicker] = useState(false);
   const [exit, setExit] = useState(false);
   const [newName, setNewName] = useState("");
+  const [focusId, setFocusId] = useState<string | null>(null);
   const saved = modifiers.some((m) => m.id === draft.id);
 
   const update = (p: Partial<ModifierRule>) => {
@@ -128,7 +129,7 @@ function ModifierEditor({ id, onBack }: { id: string | null; onBack: () => void 
   const touched = JSON.stringify({ ...draft, id: "" }) !== JSON.stringify({ ...newModifier(), id: "" });
   const back = () => (!draft.name.trim() && touched ? setExit(true) : onBack());
   const setOpt = (o: ModifierOption) => update({ options: draft.options.map((x) => (x.id === o.id ? o : x)) });
-  const addOpt = (name: string) => { if (!name.trim()) { setNewName(name); return; } setNewName(""); update({ options: [...draft.options, { id: optId(), name, price: "" }] }); };
+  const addOpt = (name: string) => { if (!name.trim()) { setNewName(name); return; } setNewName(""); const id = optId(); setFocusId(id); update({ options: [...draft.options, { id, name, price: "" }] }); };
 
   return <>
     <SubHeader title={existing ? "Edit Modifier" : "Add Modifier"} backLabel="Modifiers" onBack={back} />
@@ -157,7 +158,7 @@ function ModifierEditor({ id, onBack }: { id: string | null; onBack: () => void 
           <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.5rem] gap-2 border-b border-border px-4 py-2">
             <span className={th}>Name</span><span className={cn(th, "text-right")}>Price</span><span />
           </div>
-          {draft.options.map((o) => <OptionRow key={o.id} opt={o} onChange={setOpt} onRemove={() => update({ options: draft.options.filter((x) => x.id !== o.id) })} />)}
+          {draft.options.map((o) => <OptionRow key={o.id} focus={o.id === focusId} opt={o} onChange={setOpt} onRemove={() => update({ options: draft.options.filter((x) => x.id !== o.id) })} />)}
           <div className="grid min-h-12 grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.5rem] items-center gap-2 px-4">
             <input aria-label="Add option" placeholder="Add Option" value={newName} onChange={(e) => addOpt(e.target.value)} className="min-h-11 min-w-0 bg-transparent t-row outline-none placeholder:text-muted-foreground" />
             <span className="text-right t-value text-muted-foreground">$0.00</span><span />
