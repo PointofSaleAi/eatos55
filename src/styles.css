@@ -18,6 +18,10 @@
   --text-fs-lg: var(--fs-lg);
   --text-fs-xl: var(--fs-xl);
   --text-fs-2xl: var(--fs-2xl);
+  /* Carousel headline: scales to the photo panel's own width so a one-line
+     headline never gets clipped on narrow landscape tablets. */
+  --text-fs-carousel: min(var(--fs-2xl), 4.2cqw);
+
   --text-fs-key: var(--fs-key);
   --text-fs-money: var(--fs-money);
 
