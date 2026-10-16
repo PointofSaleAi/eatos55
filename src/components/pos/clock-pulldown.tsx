@@ -132,7 +132,7 @@ export function ClockPullDown() {
 
 
       {open ? (
-        <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-gate-overlay px-[clamp(0.75rem,5vw,5rem)] pb-[calc(0.75rem+var(--sab,0px))] pt-[calc(0.75rem+var(--sat,0px))] sm:absolute sm:z-30 sm:pb-[clamp(0.75rem,3dvh,2rem)] sm:pt-10">
+        <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-background sm:bg-gate-overlay px-[clamp(0.75rem,5vw,5rem)] pb-[calc(0.75rem+var(--sab,0px))] pt-[calc(0.75rem+var(--sat,0px))] sm:absolute sm:z-30 sm:pb-[clamp(0.75rem,3dvh,2rem)] sm:pt-10">
           <div
             className={
               wide
