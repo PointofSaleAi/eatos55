@@ -545,8 +545,11 @@ export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boole
                       <span className="min-w-0 flex-1 truncate text-fs-sm font-bold leading-snug text-foreground">
                         {l.name}
                       </span>
-                      <span className="shrink-0 text-fs-sm font-bold tabular-nums text-foreground">
-                        {money(l.price * l.qty)}
+                      <span className="flex shrink-0 items-baseline gap-1.5 text-fs-sm font-bold tabular-nums text-foreground">
+                        {l.discountPercent ? (
+                          <s className="text-fs-xs text-muted-foreground">{money(l.price * l.qty)}</s>
+                        ) : null}
+                        {money(l.price * l.qty * (1 - (l.discountPercent ?? 0) / 100))}
                       </span>
                     </div>
                     {l.modifiers?.length ? (
