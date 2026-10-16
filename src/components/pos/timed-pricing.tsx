@@ -42,19 +42,19 @@ export function TimedPricing() {
     updateSettings({ timedPricingRules: rules.some(rule => rule.id === next.id) ? rules.map(rule => rule.id === next.id ? next : rule) : [...rules, next] });
     setDraft(null); toast.success("Timed pricing saved");
   };
-  const selectRow = (label: string, field: "revenueCentre" | "orderingSource", placeholder: string, options: string[]) => draft && <div className={settingsRowClass}><label htmlFor={`timed-${field}`} className="min-w-0 flex-1 t-row">{label}</label><Select value={draft[field]} disabled={!canManageSettings} onValueChange={value => setDraft({ ...draft, [field]: value })}><SelectTrigger id={`timed-${field}`} className="w-[48%] min-w-0 t-value"><SelectValue placeholder={placeholder} /></SelectTrigger><SelectContent>{options.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></div>;
+  const selectRow = (label: string, field: "revenueCentre" | "orderingSource", placeholder: string, options: string[]) => draft && <div className={settingsRowClass}><label htmlFor={`timed-${field}`} className="min-w-0 flex-1 t-row">{label}</label><Select value={draft[field]} disabled={!canManageSettings} onValueChange={value => setDraft({ ...draft, [field]: value })}><SelectTrigger id={`timed-${field}`} className="w-[48%] min-w-0 justify-end text-right t-value"><SelectValue placeholder={placeholder} /></SelectTrigger><SelectContent>{options.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}</SelectContent></Select></div>;
   return <>
     <SubHeader title={draft ? rules.some(rule => rule.id === draft.id) ? "Edit Timed Pricing" : "Add Timed Pricing" : "Timed Pricing"} backLabel="General" backTo="/settings/general" right={draft ? undefined : <Button variant="ghost" size="icon" aria-label="Search timed pricing" title="Search timed pricing" onClick={() => setSearchOpen(value => !value)}><Search /></Button>} />
     <ScreenBody className="py-4">
       {draft ? <>
         <GroupCard>
-          <div className={settingsRowClass}><label htmlFor="timed-name" className="min-w-0 flex-1 t-row">Timed Pricing Name</label><Input id="timed-name" placeholder="Enter Name" className="w-[48%] min-w-0 t-value" value={draft.name} maxLength={100} disabled={!canManageSettings} onChange={event => setDraft({ ...draft, name: event.target.value })} /></div>
+          <div className={settingsRowClass}><label htmlFor="timed-name" className="min-w-0 flex-1 t-row">Timed Pricing Name</label><Input id="timed-name" placeholder="Enter Name" className="w-[48%] min-w-0 text-right t-value" value={draft.name} maxLength={100} disabled={!canManageSettings} onChange={event => setDraft({ ...draft, name: event.target.value })} /></div>
           {selectRow("Revenue Centre", "revenueCentre", "Select Revenue Centre", revenueCenters)}
           {selectRow("Ordering Source", "orderingSource", "Select Ordering Source", ["Point of Sale", "Online", "Grubhub", "Uber Eats", "DoorDash"])}
         </GroupCard>
         <GroupCard className="mt-6">
-          <div className={settingsRowClass}><label htmlFor="timed-start" className="min-w-0 flex-1 t-row">Start Date</label><Input id="timed-start" type="date" className="w-[48%] min-w-0 t-value" value={draft.startDate} disabled={!canManageSettings} onChange={event => setDraft({ ...draft, startDate: event.target.value })} /></div>
-          <div className={settingsRowClass}><label htmlFor="timed-end" className="min-w-0 flex-1 t-row">End Date</label><Input id="timed-end" type="date" min={draft.startDate} className="w-[48%] min-w-0 t-value" value={draft.endDate} disabled={!canManageSettings} onChange={event => setDraft({ ...draft, endDate: event.target.value })} /></div>
+          <div className={settingsRowClass}><label htmlFor="timed-start" className="min-w-0 flex-1 t-row">Start Date</label><Input id="timed-start" type="date" className="w-[48%] min-w-0 justify-end text-right t-value" value={draft.startDate} disabled={!canManageSettings} onChange={event => setDraft({ ...draft, startDate: event.target.value })} /></div>
+          <div className={settingsRowClass}><label htmlFor="timed-end" className="min-w-0 flex-1 t-row">End Date</label><Input id="timed-end" type="date" min={draft.startDate} className="w-[48%] min-w-0 justify-end text-right t-value" value={draft.endDate} disabled={!canManageSettings} onChange={event => setDraft({ ...draft, endDate: event.target.value })} /></div>
         </GroupCard>
         <GroupCard className="mt-6">
           <div className="grid grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)_minmax(0,1fr)_2.25rem] items-center gap-2 border-b border-border px-2 py-4 t-caption font-bold"><span>Days</span><span>Start Time</span><span>End Time</span><span /></div>
