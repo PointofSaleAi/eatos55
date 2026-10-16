@@ -102,7 +102,8 @@ function PriceField({ label, value, onChange }: { label: string; value: string; 
     <input aria-label={label} inputMode="decimal" placeholder="0.00" value={value}
       onChange={(e) => onChange(cleanPrice(e.target.value))}
       onBlur={() => onChange((Number(value) || 0).toFixed(2))}
-      className="min-h-11 w-20 min-w-0 bg-transparent text-right outline-none placeholder:text-muted-foreground" />
+      style={{ width: `${Math.max(value.length, 4) + 0.5}ch` }}
+      className="min-h-11 min-w-0 bg-transparent text-right tabular-nums outline-none placeholder:text-muted-foreground" />
   </label>;
 }
 
