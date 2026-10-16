@@ -102,7 +102,7 @@ function OptionRow({ opt, onChange, onRemove, focus }: { focus?: boolean; opt: M
       <input autoFocus={focus} aria-label="Option name" placeholder="Enter Option Name" value={opt.name} onChange={(e) => onChange({ ...opt, name: e.target.value })} className="min-h-11 min-w-0 bg-transparent t-row outline-none placeholder:text-muted-foreground" />
       <span className="flex items-center justify-end gap-0.5 t-value"><span className="text-muted-foreground">$</span>
         <input aria-label={`${opt.name || "Option"} price`} inputMode="decimal" placeholder="Enter Price" value={opt.price} onChange={(e) => onChange({ ...opt, price: cleanPrice(e.target.value) })}
-          className="min-h-11 w-24 min-w-0 bg-transparent text-right outline-none placeholder:text-muted-foreground" /></span>
+          style={{ width: `${Math.max(opt.price.length, 4) + 1}ch` }} className="min-h-11 min-w-0 bg-transparent text-right outline-none placeholder:text-muted-foreground" /></span>
       <Button variant="ghost" size="icon" aria-label={`Remove ${opt.name || "option"}`} onClick={onRemove}><XCircle className="text-muted-foreground" /></Button>
     </div>
   </SwipeRow>;
