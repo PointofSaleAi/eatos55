@@ -1,4 +1,5 @@
 import {
+import { MoneyInput } from "@/components/pos/money-input";
   ArrowUpDown,
   ChevronDown,
   ChevronLeft,
@@ -271,12 +272,10 @@ export function ItemSheet({
                     {/* Cost and quantity sit at the right end of the name row. */}
                     <div className="flex shrink-0 items-center gap-1.5">
                       {editingPrice ? (
-                        <input
+                        <MoneyInput
                           autoFocus
-                          type="number"
-                          inputMode="decimal"
                           value={price}
-                          onChange={(e) => setPrice(Number(e.target.value) || 0)}
+                          onChange={(v) => setPrice(Number(v) || 0)}
                           onBlur={() => setEditingPrice(false)}
                           onPointerDown={(e) => e.stopPropagation()}
                           aria-label="Item price"
