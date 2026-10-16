@@ -158,25 +158,28 @@ export function SettingsNavList() {
       ) : null}
       <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto p-2 lg:p-3">
         {!collapsed ? (
-          <div className="mb-3 overflow-hidden rounded-row border border-border bg-background">
+          <Link to="/settings/profile" preload="intent" aria-label="Open profile"
+            className={cn("mb-3 block overflow-hidden rounded-row border border-border bg-background transition-colors hover:bg-muted", pathname === "/settings/profile" && "bg-muted")}>
             <div className="flex items-center gap-3 px-3 py-3">
+              {profile.photo ? <img src={profile.photo} alt="" className="size-11 shrink-0 rounded-pill object-cover" /> :
               <span className="grid size-11 shrink-0 place-items-center rounded-pill bg-muted text-fs-sm font-extrabold text-foreground">
                 {session.name
                   .split(" ")
                   .map((p) => p[0])
                   .join("")}
-              </span>
-              <div className="min-w-0">
+              </span>}
+              <div className="min-w-0 flex-1">
                 <p className="truncate text-fs-base font-extrabold text-foreground">{session.name}</p>
                 <p className="truncate text-fs-xs text-muted-foreground">{session.role}</p>
               </div>
+              <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
             </div>
             <div className="border-t border-border px-3 py-2.5">
               <p className="text-fs-xs text-muted-foreground">
-                Clocked in at {settings.clockedInAt}
+                {session.clockedIn ? `Clocked in at ${settings.clockedInAt}` : "Not Clocked-In"}
               </p>
             </div>
-          </div>
+          </Link>
         ) : null}
         {anyMatches ? (
           visibleGroups.map((group, i) =>
