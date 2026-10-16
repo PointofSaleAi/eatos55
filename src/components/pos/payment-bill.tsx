@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { BadgePercent, ChevronRight, NotebookPen, X } from "lucide-react";

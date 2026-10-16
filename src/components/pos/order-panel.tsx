@@ -541,7 +541,7 @@ export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boole
                     aria-label={l.custom ? undefined : `Edit ${l.name}`}
                     className="min-w-0 flex-1 rounded-md text-left enabled:hover:bg-muted/60 disabled:cursor-default"
                   >
-                    <div className="flex items-baseline gap-2">
+                    <div className="flex min-h-6 items-center gap-2">
                       <span className="min-w-0 flex-1 truncate text-fs-sm font-bold leading-snug text-foreground">
                         {l.name}
                       </span>
