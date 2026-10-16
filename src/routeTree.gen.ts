@@ -48,6 +48,7 @@ import { Route as SettingsNotificationsRouteImport } from './routes/settings.not
 import { Route as SettingsPaymentRouteImport } from './routes/settings.payment'
 import { Route as SettingsPaymentMethodsRouteImport } from './routes/settings.payment-methods'
 import { Route as SettingsPaymentsRouteImport } from './routes/settings.payments'
+import { Route as SettingsProfileRouteImport } from './routes/settings.profile'
 import { Route as SettingsReportsRouteImport } from './routes/settings.reports'
 import { Route as SettingsSalesSummaryRouteImport } from './routes/settings.sales-summary'
 import { Route as SettingsTapToPayRouteImport } from './routes/settings.tap-to-pay'
@@ -276,6 +277,11 @@ const SettingsPaymentsRoute = SettingsPaymentsRouteImport.update({
   path: '/settings/payments',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsProfileRoute = SettingsProfileRouteImport.update({
+  id: '/settings/profile',
+  path: '/settings/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsReportsRoute = SettingsReportsRouteImport.update({
   id: '/settings/reports',
   path: '/settings/reports',
@@ -468,6 +474,7 @@ export interface FileRoutesByFullPath {
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/settings/payments': typeof SettingsPaymentsRoute
+  '/settings/profile': typeof SettingsProfileRoute
   '/settings/reports': typeof SettingsReportsRoute
   '/settings/sales-summary': typeof SettingsSalesSummaryRoute
   '/settings/tap-to-pay': typeof SettingsTapToPayRoute
@@ -540,6 +547,7 @@ export interface FileRoutesByTo {
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/settings/payments': typeof SettingsPaymentsRoute
+  '/settings/profile': typeof SettingsProfileRoute
   '/settings/reports': typeof SettingsReportsRoute
   '/settings/sales-summary': typeof SettingsSalesSummaryRoute
   '/settings/tap-to-pay': typeof SettingsTapToPayRoute
@@ -613,6 +621,7 @@ export interface FileRoutesById {
   '/settings/payment': typeof SettingsPaymentRoute
   '/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/settings/payments': typeof SettingsPaymentsRoute
+  '/settings/profile': typeof SettingsProfileRoute
   '/settings/reports': typeof SettingsReportsRoute
   '/settings/sales-summary': typeof SettingsSalesSummaryRoute
   '/settings/tap-to-pay': typeof SettingsTapToPayRoute
@@ -687,6 +696,7 @@ export interface FileRouteTypes {
     | '/settings/payment'
     | '/settings/payment-methods'
     | '/settings/payments'
+    | '/settings/profile'
     | '/settings/reports'
     | '/settings/sales-summary'
     | '/settings/tap-to-pay'
@@ -759,6 +769,7 @@ export interface FileRouteTypes {
     | '/settings/payment'
     | '/settings/payment-methods'
     | '/settings/payments'
+    | '/settings/profile'
     | '/settings/reports'
     | '/settings/sales-summary'
     | '/settings/tap-to-pay'
@@ -831,6 +842,7 @@ export interface FileRouteTypes {
     | '/settings/payment'
     | '/settings/payment-methods'
     | '/settings/payments'
+    | '/settings/profile'
     | '/settings/reports'
     | '/settings/sales-summary'
     | '/settings/tap-to-pay'
@@ -904,6 +916,7 @@ export interface RootRouteChildren {
   SettingsPaymentRoute: typeof SettingsPaymentRoute
   SettingsPaymentMethodsRoute: typeof SettingsPaymentMethodsRoute
   SettingsPaymentsRoute: typeof SettingsPaymentsRoute
+  SettingsProfileRoute: typeof SettingsProfileRoute
   SettingsReportsRoute: typeof SettingsReportsRoute
   SettingsSalesSummaryRoute: typeof SettingsSalesSummaryRoute
   SettingsTapToPayRoute: typeof SettingsTapToPayRoute
@@ -1217,6 +1230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsPaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/profile': {
+      id: '/settings/profile'
+      path: '/settings/profile'
+      fullPath: '/settings/profile'
+      preLoaderRoute: typeof SettingsProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/reports': {
       id: '/settings/reports'
       path: '/settings/reports'
@@ -1482,6 +1502,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsPaymentRoute: SettingsPaymentRoute,
   SettingsPaymentMethodsRoute: SettingsPaymentMethodsRoute,
   SettingsPaymentsRoute: SettingsPaymentsRoute,
+  SettingsProfileRoute: SettingsProfileRoute,
   SettingsReportsRoute: SettingsReportsRoute,
   SettingsSalesSummaryRoute: SettingsSalesSummaryRoute,
   SettingsTapToPayRoute: SettingsTapToPayRoute,
