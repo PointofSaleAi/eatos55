@@ -71,7 +71,7 @@ export function ClockPullDown() {
 
           <AccountActions />
         </div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex h-11 items-end justify-center">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-11 items-end justify-center sm:flex">
           <Button
             type="button"
             variant="ghost"
