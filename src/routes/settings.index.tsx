@@ -1,6 +1,6 @@
-import { Navigate, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, Navigate, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
-import { Bell, LogOut, Mic, Search, Settings2 } from "lucide-react";
+import { Bell, ChevronRight, LogOut, Mic, Search, Settings2 } from "lucide-react";
 import { settingsGroups } from "@/lib/settings-destinations";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { SearchDock } from "@/components/pos/search-dock";
 import { useVoiceSearch } from "@/lib/voice-search";
 import { usePos } from "@/lib/pos-store";
+import { useProfileSettings } from "@/lib/profile-settings";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 
 export const Route = createFileRoute("/settings/")({
@@ -45,6 +46,7 @@ type Row = {
 function SettingsHub() {
   const navigate = useNavigate();
   const { session, settings, signOut, canManageSettings } = usePos();
+  const { profile } = useProfileSettings();
   const confirmAction = useConfirm();
   const [query, setQuery] = useState("");
   const [searching, setSearching] = useState(false);
