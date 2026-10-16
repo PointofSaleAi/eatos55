@@ -389,7 +389,7 @@ function ConfirmPanel({ confirm, onCancel, onConfirm }: { confirm: Exclude<Confi
     ? confirm.reassignment ? `This check was transferred to ${confirm.employee}. Do you want to reassign it?` : "This action cannot be undone."
     : close ? "This action cannot be undone." : "This will end your current shift.";
   const label = transfer ? confirm.reassignment ? "Confirm Reassign" : "Confirm Transfer" : close ? "Confirm Close" : "Clock Out";
-  return <div className="rounded-md border border-border bg-muted p-3"><div className="flex gap-2"><CircleDollarSign className="mt-0.5 size-4 shrink-0 text-warning" /><span><strong className="block text-fs-xs text-foreground">{title}</strong><small className="text-muted-foreground">{detail}</small></span></div><div className="mt-3 flex gap-2"><Button variant="outline" className={actionClass} onClick={onCancel}>Cancel</Button><Button className={actionClass} onClick={onConfirm}>{label}</Button></div></div>;
+  return <div className="rounded-md border border-border bg-muted p-3"><div className="flex gap-2"><CircleDollarSign className="mt-0.5 size-4 shrink-0 text-warning" /><span><strong className="block text-fs-xs text-foreground">{title}</strong><small className="text-muted-foreground">{detail}</small></span></div><div className="mt-3 flex gap-2"><Button variant="outline" className={actionClass} onClick={onCancel}>Cancel</Button><Button className={cn(actionClass, "bg-foreground text-background hover:bg-foreground/90 hover:text-background")} onClick={onConfirm}>{label}</Button></div></div>;
 }
 
 function TipEntry({ digits, onDigit, onClear, onBack, onAdd }: { digits: string; onDigit: (digit: string) => void; onClear: () => void; onBack: () => void; onAdd: () => void }) {
