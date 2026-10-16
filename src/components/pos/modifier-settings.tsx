@@ -96,13 +96,22 @@ function ToggleRow({ label, checked, onChange }: { label: string; checked: boole
 
 const cleanPrice = (v: string) => { const s = v.replace(/[^\d.]/g, ""); const [a, ...b] = s.split("."); return b.length ? `${a}.${b.join("").slice(0, 2)}` : a ?? ""; };
 
+function PriceField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return <label className="flex min-h-11 cursor-text items-center justify-end t-value">
+    <span className={cn(value ? "text-foreground" : "text-muted-foreground")}>$</span>
+    <input aria-label={label} inputMode="decimal" placeholder="0.00" value={value}
+      onChange={(e) => onChange(cleanPrice(e.target.value))}
+      onBlur={() => onChange((Number(value) || 0).toFixed(2))}
+      style={{ width: `${Math.max(value.length, 4) + 0.5}ch` }}
+      className="min-h-11 min-w-0 bg-transparent text-right tabular-nums outline-none placeholder:text-muted-foreground" />
+  </label>;
+}
+
 function OptionRow({ opt, onChange, onRemove, focus }: { focus?: boolean; opt: ModifierOption; onChange: (o: ModifierOption) => void; onRemove: () => void }) {
   return <SwipeRow className="rounded-none border-b border-border" action={{ label: "Remove", destructive: true, onAction: onRemove }}>
     <div className="grid min-h-12 grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.5rem] items-center gap-2 bg-surface px-4">
       <input autoFocus={focus} aria-label="Option name" placeholder="Enter Option Name" value={opt.name} onChange={(e) => onChange({ ...opt, name: e.target.value })} className="min-h-11 min-w-0 bg-transparent t-row outline-none placeholder:text-muted-foreground" />
-      <span className="flex items-center justify-end gap-0.5 t-value"><span className="text-muted-foreground">$</span>
-        <input aria-label={`${opt.name || "Option"} price`} inputMode="decimal" placeholder="Enter Price" value={opt.price} onChange={(e) => onChange({ ...opt, price: cleanPrice(e.target.value) })}
-          style={{ width: `${Math.max(opt.price.length, 4) + 1}ch` }} className="min-h-11 min-w-0 bg-transparent text-right outline-none placeholder:text-muted-foreground" /></span>
+      <PriceField label={`${opt.name || "Option"} price`} value={opt.price} onChange={(price) => onChange({ ...opt, price })} />
       <Button variant="ghost" size="icon" aria-label={`Remove ${opt.name || "option"}`} onClick={onRemove}><XCircle className="text-muted-foreground" /></Button>
     </div>
   </SwipeRow>;
@@ -115,6 +124,7 @@ function ModifierEditor({ id, onBack }: { id: string | null; onBack: () => void 
   const [picker, setPicker] = useState(false);
   const [exit, setExit] = useState(false);
   const [newName, setNewName] = useState("");
+  const [newPrice, setNewPrice] = useState("");
   const [focusId, setFocusId] = useState<string | null>(null);
   const saved = modifiers.some((m) => m.id === draft.id);
 
@@ -129,7 +139,7 @@ function ModifierEditor({ id, onBack }: { id: string | null; onBack: () => void 
   const touched = JSON.stringify({ ...draft, id: "" }) !== JSON.stringify({ ...newModifier(), id: "" });
   const back = () => (!draft.name.trim() && touched ? setExit(true) : onBack());
   const setOpt = (o: ModifierOption) => update({ options: draft.options.map((x) => (x.id === o.id ? o : x)) });
-  const addOpt = (name: string) => { if (!name.trim()) { setNewName(name); return; } setNewName(""); const id = optId(); setFocusId(id); update({ options: [...draft.options, { id, name, price: "" }] }); };
+  const addOpt = (name: string) => { if (!name.trim()) { setNewName(name); return; } setNewName(""); const id = optId(); setFocusId(id); update({ options: [...draft.options, { id, name, price: newPrice }] }); setNewPrice(""); };
 
   return <>
     <SubHeader title={existing ? "Edit Modifier" : "Add Modifier"} backLabel="Modifiers" onBack={back} />
@@ -161,7 +171,7 @@ function ModifierEditor({ id, onBack }: { id: string | null; onBack: () => void 
           {draft.options.map((o) => <OptionRow key={o.id} focus={o.id === focusId} opt={o} onChange={setOpt} onRemove={() => update({ options: draft.options.filter((x) => x.id !== o.id) })} />)}
           <div className="grid min-h-12 grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.5rem] items-center gap-2 px-4">
             <input aria-label="Add option" placeholder="Add Option" value={newName} onChange={(e) => addOpt(e.target.value)} className="min-h-11 min-w-0 bg-transparent t-row outline-none placeholder:text-muted-foreground" />
-            <span className="text-right t-value text-muted-foreground">$0.00</span><span />
+            <PriceField label="New option price" value={newPrice} onChange={(v) => setNewPrice(v === "0.00" && !newPrice ? "" : v)} /><span />
           </div>
         </GroupCard>
         {draft.options.length === 0 && <p className="px-4 pt-2 t-caption text-destructive">At least 1 option should be added</p>}
