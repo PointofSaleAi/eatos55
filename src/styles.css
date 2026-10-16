@@ -566,8 +566,11 @@
   font-size: var(--fs-sm);
   font-weight: 400;
   line-height: 1.5;
-  /* Comfortable measure: never runs past ~66 characters. */
-  max-width: 66ch;
+  /* Comfortable reading measure for paragraphs only — row labels, values and
+     inputs must fill their flex space so values reach the card's right edge. */
+  &:where(p) {
+    max-width: 66ch;
+  }
 }
 @utility t-caption {
   font-size: var(--fs-xs);
