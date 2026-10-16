@@ -54,7 +54,7 @@ function CategoryList({ archived, onOpen, onArchive, onBackFromArchive }: { arch
         <div className={cn(cols, "hidden border-b border-border px-4 py-2 sm:grid")}>
           <span className={th}>Category Name</span><span className={th}>Parent</span><span className={th}>Category Position</span><span className={cn(th, "text-right")}>Course</span><span />
         </div>
-        {list.map((c) => <SwipeRow key={c.id} className="border-b border-border last:border-0"
+        {list.map((c) => <SwipeRow key={c.id} className="rounded-none border-b border-border last:border-0"
           action={{ label: archived ? "Restore" : "Archive", destructive: !archived, onAction: () => { patch(c.id, { archived: !archived }); toast.success(archived ? "Category restored" : "Category archived"); } }}>
           <button type="button" onClick={() => onOpen(c.id)} className="w-full bg-surface px-4 py-2 text-left hover:bg-muted">
             <div className={cn(cols, "hidden min-h-10 sm:grid")}>
