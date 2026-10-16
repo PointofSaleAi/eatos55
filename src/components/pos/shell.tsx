@@ -241,11 +241,21 @@ export function BackButton({
 }) {
   const router = useRouter();
   const onClick = () => {
+    const fallback = fallbackTo ?? "/floor";
     if (typeof window !== "undefined" && window.history.length > 1) {
+      const before = window.location.pathname;
       router.history.back();
+      // A stale overlay history entry can swallow the pop (URL never changes,
+      // so back looks dead). If nothing happened shortly after, go to the
+      // fallback instead.
+      window.setTimeout(() => {
+        if (window.location.pathname === before) {
+          router.navigate({ to: fallback });
+        }
+      }, 250);
       return;
     }
-    router.navigate({ to: fallbackTo ?? "/floor" });
+    router.navigate({ to: fallback });
   };
   return (
     <button
