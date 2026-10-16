@@ -83,7 +83,7 @@ export function AccountInfo() {
         aria-label="Switch user"
         title="Switch user"
         onClick={() => window.dispatchEvent(new CustomEvent("pos:switch-user"))}
-        className="hidden size-9 shrink-0 text-topbar-foreground hover:bg-topbar-foreground/15 hover:text-topbar-foreground focus-visible:bg-topbar-foreground/15 sm:inline-flex"
+        className="inline-flex size-9 shrink-0 text-topbar-foreground hover:bg-topbar-foreground/15 hover:text-topbar-foreground focus-visible:bg-topbar-foreground/15"
       >
         <ArrowLeftRight className="size-4" />
       </Button>
