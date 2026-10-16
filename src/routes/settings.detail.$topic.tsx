@@ -35,6 +35,7 @@ import { TimedPricing } from "@/components/pos/timed-pricing";
 import { TaxSettings } from "@/components/pos/tax-settings";
 import { DiscountSettings } from "@/components/pos/discount-settings";
 import { ServiceChargeSettings } from "@/components/pos/service-charge-settings";
+import { CashManagement } from "@/components/pos/cash-management";
 import { WorkforceEmployees } from "@/components/pos/workforce-employees";
 import { AboutSettings } from "@/components/pos/about-settings";
 import { ServerConnection } from "@/components/pos/server-connection";
@@ -88,6 +89,7 @@ function SettingsDetail() {
   if (topic === "taxes") return <TaxSettings />;
   if (topic === "discounts") return <DiscountSettings />;
   if (topic === "service-charge") return <ServiceChargeSettings />;
+  if (topic === "cash-management") return <CashManagement />;
   if (topic === "employee") return <WorkforceEmployees />;
   if (topic === "about") return <AboutSettings />;
   if (topic === "servers") return <ServerConnection />;
