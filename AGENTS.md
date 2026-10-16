@@ -36,3 +36,4 @@
 - Sales retains the published /settings/reports URL and uses separate shared demo filter preferences; changing these controls never changes transactions or claims a live report or print operation.
 - Wall-clock labels shown while the app runs come from `useLiveTime` in `src/lib/use-live-time.ts` (mount-gated, minute-aligned), so every screen that displays the current time shares one ticking source rather than its own interval.
 - Typed dollar amounts use `MoneyInput` (src/components/pos/money-input.tsx) so every field fills cash-register style from the last decimal, matching the keypads.
+- Products settings are demo-only; only the product-order-options rules affect New Order.

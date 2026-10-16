@@ -39,6 +39,7 @@ import { CashManagement } from "@/components/pos/cash-management";
 import { ReceiptSettings } from "@/components/pos/receipt-settings";
 import { MenuSettings } from "@/components/pos/menu-settings";
 import { CategorySettings } from "@/components/pos/category-settings";
+import { ProductSettings } from "@/components/pos/product-settings";
 import { AddOnSettings, ModifierSettings } from "@/components/pos/modifier-settings";
 import { WorkforceEmployees } from "@/components/pos/workforce-employees";
 import { AboutSettings } from "@/components/pos/about-settings";
@@ -97,6 +98,7 @@ function SettingsDetail() {
   if (topic === "receipts") return <ReceiptSettings />;
   if (topic === "menus") return <MenuSettings />;
   if (topic === "categories") return <CategorySettings />;
+  if (topic === "products") return <ProductSettings />;
   if (topic === "modifiers") return <ModifierSettings />;
   if (topic === "add-ons") return <AddOnSettings />;
   if (topic === "employee") return <WorkforceEmployees />;
