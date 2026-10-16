@@ -11,33 +11,8 @@ import { Button } from "@/components/ui/button";
 import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
-import { useLiveTime } from "@/lib/use-live-time";
+import { revenueCenters } from "@/lib/demo-data";
 
-/** Phone-only date and large live clock above the PIN pad. */
-function PhoneClock() {
-  const time = useLiveTime();
-  const [today, setToday] = useState("");
-  useEffect(() => {
-    setToday(new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }));
-  }, []);
-  const [hm, suffix] = time.split(" ");
-  return (
-    <div className="shrink-0 pb-2 pt-2 text-center sm:hidden">
-      <p className="text-fs-sm font-semibold text-topbar-muted">{today}</p>
-      <p className="font-extrabold tabular-nums text-topbar-foreground">
-        <span className="text-[3rem] leading-none">{hm}</span>
-        {suffix ? <span className="ml-1.5 text-fs-xl text-topbar-muted">{suffix}</span> : null}
-      </p>
-    </div>
-  );
-}
-
-/**
- * Dark top bar (design parity) with two pull surfaces: the handle hanging from
- * the bar pulls down the settings map, and the switch-user control on the left
- * reveals the clock PIN keypad (Clock Out / Break / Clock In, biometrics,
- * revenue center and Log Out).
- */
 export function ClockPullDown() {
   const navigate = useNavigate();
   const { session, clockIn, clockOut, startBreak, signOut, tickets, setStation, setRole } = usePos();
@@ -151,7 +126,7 @@ export function ClockPullDown() {
 
 
       {open ? (
-        <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-topbar sm:bg-gate-overlay px-[clamp(0.75rem,5vw,5rem)] pb-[calc(0.75rem+var(--sab,0px))] pt-[calc(0.75rem+var(--sat,0px))] sm:absolute sm:z-30 sm:pb-[clamp(0.75rem,3dvh,2rem)] sm:pt-10">
+        <div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-[linear-gradient(var(--gate-overlay),var(--gate-overlay)),linear-gradient(var(--background),var(--background))] sm:bg-none sm:bg-gate-overlay px-[clamp(0.75rem,5vw,5rem)] pb-[calc(clamp(1rem,4dvh,3rem)+var(--sab,0px))] pt-[calc(clamp(1rem,4dvh,3rem)+var(--sat,0px))] sm:absolute sm:z-30 sm:pb-[clamp(0.75rem,3dvh,2rem)] sm:pt-10">
           <div
             className={
               wide
@@ -160,7 +135,7 @@ export function ClockPullDown() {
             }
           >
             {wide ? <ClockPanel gate className="min-w-0" /> : null}
-            <PhoneClock />
+            {wide ? null : <ClockPanel gate compact className="mb-3 h-[4.5rem] min-w-0 shrink-0 sm:hidden" />}
             <div className="flex min-h-0 flex-1 flex-col justify-start overflow-y-auto sm:justify-center">
               {step === "role" ? (
                 <RoleStep name={session.name} value={role} onBack={() => setStep("pin")} onPick={(r) => { setRoleLocal(r); setStep("summary"); }} />
@@ -194,7 +169,9 @@ export function ClockPullDown() {
                   setStep("role");
                 }}
                 onBiometric={() => toast.info("Biometrics not enrolled on this device")}
-                revenueCenter={session.station ?? "Test Revenue Center"}
+                revenueCenter={session.station ?? "Main"}
+                revenueCenterOptions={revenueCenters}
+                onRevenueCenterSelect={(c) => { setStation(c); toast.success(`Revenue center set to ${c}`); }}
                 onLogOut={() => {
                   signOut();
                   close();
