@@ -374,9 +374,9 @@ export function ScreenFooter({ children }: { children: ReactNode }) {
 }
 
 const tabs: { to: string; label: string; icon: LucideIcon }[] = [
-  { to: "/floor", label: "Home", icon: LayoutGrid },
+  { to: "/floor", label: "Table Order", icon: LayoutGrid },
   { to: "/tickets", label: "Tickets", icon: ClipboardList },
-  { to: "/board", label: "Board", icon: Columns3 },
+  { to: "/board", label: "orderOS", icon: Columns3 },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 
