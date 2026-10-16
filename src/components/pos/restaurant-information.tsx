@@ -60,7 +60,7 @@ export function RestaurantInformation() {
   const addressField = (field: keyof AppSettings, label: string, optional = false) => (
     <label key={field} className="grid min-h-row grid-cols-[6rem_minmax(0,1fr)] items-center gap-3 border-b border-border px-4 py-2 last:border-b-0 sm:grid-cols-[9rem_minmax(0,1fr)]">
       <span className="t-row">{label}</span>
-      <Input aria-label={label} disabled={!canManageSettings} value={String(settings[field] ?? "")} placeholder={optional ? "Optional" : label} onChange={e => { setAddressDraft(null); updateSettings({ [field]: e.target.value }); }} className="min-w-0 border-transparent bg-transparent shadow-none" />
+      <Input aria-label={label} disabled={!canManageSettings} value={String(settings[field] ?? "")} placeholder={optional ? "Optional" : label} onChange={e => { setAddressDraft(null); updateSettings({ [field]: e.target.value }); }} className="min-w-0 border-transparent bg-transparent text-right shadow-none" />
     </label>
   );
 
