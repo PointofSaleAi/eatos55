@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AccountActions, AccountInfo } from "@/components/pos/account-bar";
 import { ClockPanel } from "@/components/pos/clock-panel";
+import { MoodDetailStep, MoodStep, RoleStep, SummaryStep, clockInCenters } from "@/components/pos/clock-in-flow";
 import { PinPad } from "@/components/pos/pin-pad";
 import { SettingsPullDown } from "@/components/pos/settings-pulldown";
 import { Button } from "@/components/ui/button";
@@ -39,7 +40,7 @@ function PhoneClock() {
  */
 export function ClockPullDown() {
   const navigate = useNavigate();
-  const { session, settings, clockIn, clockOut, startBreak, signOut, tickets } = usePos();
+  const { session, clockIn, clockOut, startBreak, signOut, tickets, setStation, setRole } = usePos();
   const wide = useLandscapeWide();
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -68,16 +69,34 @@ export function ClockPullDown() {
     };
   }, [navigate]);
 
-  useBackDismiss(open, () => { setOpen(false); setPin(""); });
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") { setOpen(false); setPin(""); } };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
+  const [step, setStep] = useState<"pin" | "role" | "summary" | "mood" | "moodDetail">("pin");
+  const [role, setRoleLocal] = useState("Server");
+  const [center, setCenter] = useState(clockInCenters[0]!.name);
+  const [mood, setMood] = useState<string | undefined>();
+  const [clockedAt, setClockedAt] = useState("");
+
   const close = () => {
     setOpen(false);
     setPin("");
+    setStep("pin");
+    setMood(undefined);
+  };
+  const closeRef = useRef(close);
+  closeRef.current = close;
+  useBackDismiss(open, () => closeRef.current());
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closeRef.current(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  const finishClockIn = () => {
+    setStation(center);
+    setRole(role);
+    clockIn(pin);
+    toast.success(`Clocked in at ${clockedAt}`);
+    close();
   };
 
   const requirePin = (action: () => void, message: string) => {
@@ -142,7 +161,16 @@ export function ClockPullDown() {
           >
             {wide ? <ClockPanel gate className="min-w-0" /> : null}
             <PhoneClock />
-            <div className="flex min-h-0 flex-1 flex-col justify-start sm:justify-center">
+            <div className="flex min-h-0 flex-1 flex-col justify-start overflow-y-auto sm:justify-center">
+              {step === "role" ? (
+                <RoleStep name={session.name} value={role} onBack={() => setStep("pin")} onPick={(r) => { setRoleLocal(r); setStep("summary"); }} />
+              ) : step === "summary" ? (
+                <SummaryStep name={session.name} time={clockedAt} center={center} role={role} onCenter={setCenter} onRole={setRoleLocal} onContinue={() => setStep("mood")} />
+              ) : step === "mood" ? (
+                <MoodStep name={session.name} value={mood} onBack={() => setStep("summary")} onPick={(m) => { setMood(m); setStep("moodDetail"); }} onSubmit={finishClockIn} onSkip={finishClockIn} />
+              ) : step === "moodDetail" && mood ? (
+                <MoodDetailStep mood={mood} onBack={() => setStep("mood")} onSubmit={finishClockIn} onSkip={finishClockIn} />
+              ) : (
               <PinPad
                 pin={pin}
                 onDigit={(d) => setPin((p) => (p.length < 4 ? p + d : p))}
@@ -160,9 +188,11 @@ export function ClockPullDown() {
                 onBreak={() => requirePin(startBreak, "Break started")}
                 clockedIn={session.clockedIn}
                 onBreakNow={Boolean(session.onBreak)}
-                onClockIn={() =>
-                  requirePin(clockIn, `Clocked in at ${settings.clockedInAt}`)
-                }
+                onClockIn={() => {
+                  if (pin.length < 4) return void toast.error("Enter your 4-digit PIN");
+                  setClockedAt(new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }));
+                  setStep("role");
+                }}
                 onBiometric={() => toast.info("Biometrics not enrolled on this device")}
                 revenueCenter={session.station ?? "Test Revenue Center"}
                 onLogOut={() => {
@@ -172,6 +202,7 @@ export function ClockPullDown() {
                 }}
                 className="h-full max-h-none w-full sm:max-h-[34rem]"
               />
+              )}
             </div>
           </div>
         </div>
