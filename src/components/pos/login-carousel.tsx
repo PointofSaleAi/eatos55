@@ -31,7 +31,7 @@ export function LoginCarousel({ className }: { className?: string }) {
 
   return (
     <div
-      className={cn("relative h-full w-full overflow-hidden bg-shell", className)}
+      className={cn("@container relative h-full w-full overflow-hidden bg-shell", className)}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -55,7 +55,7 @@ export function LoginCarousel({ className }: { className?: string }) {
       <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-6 p-8">
         <p
           key={slides[index]?.id}
-          className="w-full max-w-[26rem] text-fs-2xl font-extrabold leading-tight text-white drop-shadow"
+          className="w-full whitespace-nowrap text-center text-fs-carousel font-extrabold leading-tight text-white drop-shadow"
         >
           {slides[index]?.headline}
         </p>
