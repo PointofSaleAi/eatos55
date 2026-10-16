@@ -9,7 +9,9 @@ import {
   RotateCw,
   Wifi,
   WifiOff,
+  MoreHorizontal,
 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useEffect, useState } from "react";
 import { AiMark } from "@/components/pos/dashboard/eatos-ai-chat";
 import { toast } from "sonner";
@@ -131,6 +133,7 @@ export function AccountActions() {
   const { settings } = usePos();
   const navigate = useNavigate();
   const [news, setNews] = useState(false);
+  const [more, setMore] = useState(false);
   const [seen, setSeen] = useState(false);
   const clock = useClock();
   const online = useOnline();
@@ -191,13 +194,52 @@ export function AccountActions() {
         aria-label="What's new"
         title="What's new"
         onClick={() => (news ? setNews(false) : openNews())}
-        className={cn(iconBtn, "relative hidden sm:inline-flex")}
+        className={cn(iconBtn, "relative hidden md:inline-flex")}
       >
         <Bell className="size-4" />
         {seen ? null : (
           <span className="absolute right-1.5 top-1.5 size-2 rounded-pill bg-tile-blue" />
         )}
       </Button>
+      <Popover open={more} onOpenChange={setMore}>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label="More actions"
+            title="More"
+            className={cn(iconBtn, "relative md:hidden")}
+          >
+            <MoreHorizontal className="size-5" />
+            {seen ? null : (
+              <span className="absolute right-1 top-1 size-2 rounded-pill bg-tile-blue" />
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent align="end" side="bottom" className="w-52 p-1">
+          {[
+            { label: "Maya AI", icon: <AiMark className="size-5 rounded-full" />, run: () => window.dispatchEvent(new CustomEvent("pos:open-dashboard")) },
+            { label: "Refresh", icon: <RotateCw className="size-4" />, run: () => toast.success("Tickets refreshed") },
+            { label: "Support", icon: <Headphones className="size-4" />, run: () => navigate({ to: "/system/customer-support" }) },
+            { label: "What's New", icon: <Bell className="size-4" />, run: openNews, dot: !seen },
+          ].map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              onClick={() => {
+                setMore(false);
+                item.run();
+              }}
+              className="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-fs-sm font-semibold text-foreground hover:bg-muted focus-visible:bg-muted focus-visible:outline-none"
+            >
+              <span className="grid size-5 place-items-center">{item.icon}</span>
+              <span className="flex-1">{item.label}</span>
+              {item.dot ? <span className="size-2 rounded-pill bg-tile-blue" /> : null}
+            </button>
+          ))}
+        </PopoverContent>
+      </Popover>
       <span
         aria-label={online ? "Online" : "Offline"}
         title={online ? "Online" : "Offline"}
