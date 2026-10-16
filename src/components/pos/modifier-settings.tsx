@@ -58,7 +58,7 @@ function ModifierList({ c, archived, onOpen, onArchive, onBackFromArchive }: { c
         <Input autoFocus aria-label={`Search ${c.many.toLowerCase()}`} placeholder="Search" value={q} onChange={(e) => setQ(e.target.value)} />
         <Button variant="ghost" onClick={() => { setSearching(false); setQ(""); }}>Cancel</Button></div>}
       <div className="flex items-start gap-3">
-        <p className="min-w-0 flex-1 t-caption text-muted-foreground">Modifiers customize dishes, catering to preferences. Enhance dining experiences by allowing customers to personalize their orders for satisfaction.</p>
+        <p className="min-w-0 flex-1 t-caption text-muted-foreground">{c.intro}</p>
         {!archived && <><Button variant="outline" size="icon" aria-label={`Archived ${c.many.toLowerCase()}`} onClick={onArchive}><Archive /></Button>
           <Button size="icon" aria-label={`Add ${c.one.toLowerCase()}`} onClick={() => onOpen(null)}><Plus /></Button></>}
       </div>
