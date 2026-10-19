@@ -236,6 +236,8 @@ function TagEditor({
           placeholder={addLabel}
           className="min-h-tap min-w-40 flex-1 bg-transparent text-fs-sm outline-none"
         />
+      ) : preset ? (
+        <DarkPill onClick={() => setPickerOpen(true)}>{addLabel}</DarkPill>
       ) : tone === "dark" ? (
         <DarkPill onClick={() => setAdding(true)}>{addLabel}</DarkPill>
       ) : (
@@ -250,6 +252,50 @@ function TagEditor({
         </Button>
       )}
     </div>
+      {preset && pickerOpen ? (
+        <div
+          role="presentation"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 p-4"
+          onClick={() => setPickerOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Tags"
+            tabIndex={-1}
+            autoFocus
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setPickerOpen(false);
+            }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md overflow-hidden rounded-2xl border border-border bg-surface shadow-xl outline-none"
+          >
+            <div className="border-b border-border py-4 text-center text-fs-lg font-bold">Tags</div>
+            <div className="space-y-4 p-6">
+              <p className="text-center text-fs-sm text-muted-foreground">Select relevant tags for the guest.</p>
+              <div className="flex flex-wrap justify-center gap-2.5">
+                {preset.map((tag) => {
+                  const selected = values.includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => (selected ? onRemove(tag) : onAdd(tag))}
+                      className={cn(
+                        "rounded-pill px-4 py-2 text-fs-sm font-bold uppercase tracking-wide transition-colors",
+                        selected ? "bg-foreground text-background" : "bg-muted text-foreground hover:bg-muted/80",
+                      )}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
   );
 }
 
