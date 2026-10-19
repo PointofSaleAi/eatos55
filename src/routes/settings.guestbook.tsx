@@ -202,6 +202,7 @@ function TagEditor({
     setAdding(false);
   };
   return (
+    <>
     <div className="flex flex-wrap items-center gap-2">
       {values.map((value) => (
         <span key={value} className="inline-flex items-center gap-1.5 rounded-pill bg-surface-muted px-3 py-1 text-fs-sm font-medium">
