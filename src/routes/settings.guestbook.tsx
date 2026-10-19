@@ -572,7 +572,7 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
           <div className="bg-surface"><StatCell value={money(avgTip)} label="Average Tip" /></div>
         </div>
 
-        <div className="grid gap-4 @lg:grid-cols-2 @4xl:grid-cols-3">
+        <div className="grid gap-4 @lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)_minmax(0,1fr)]">
           <div className="rounded-xl border border-border bg-surface p-4">
             <dl className="divide-y divide-border">
               {[
