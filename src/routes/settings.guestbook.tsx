@@ -1189,7 +1189,7 @@ function HistoryTab({ guest }: { guest: GuestRow }) {
           {cards.map(([label, icon, value]) => (
             <div key={label} className="flex items-center gap-3 rounded-lg bg-surface-muted p-3">
               <span className="grid size-9 shrink-0 place-items-center rounded-full bg-surface [&_svg]:size-4">{icon}</span>
-              <div className="min-w-0"><p className="truncate font-bold">{value}</p><p className="text-fs-xs text-muted-foreground">{label}</p></div>
+              <div className="min-w-0"><p className="break-words font-bold">{value}</p><p className="text-fs-xs text-muted-foreground">{label}</p></div>
             </div>
           ))}
         </div>
