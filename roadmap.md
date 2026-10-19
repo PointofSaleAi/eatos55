@@ -116,4 +116,3 @@
 - Reservation no-show swipe works with touch and mouse drag: SwipeRow drives both through pointer events (touch is no longer ignored), the row content sits above the revealed action (`z-10`) and `wasDragged()` stops a swipe release from opening the row tap menu.
 - [x] Add Tax flow completed and verified signed-in on desktop and phone (name/amount/type/applicability popups, validation, autosave)
 - [x] Taxes: swipe action shows the archive mark alone with no "Archive" word, and the toolbar archive button is removed so the header keeps only the plus; verified signed-in on desktop and phone
-- [x] Settings left navigation lists destinations alphabetically A→Z (one shared sorted list, so the portrait hub matches); verified signed-in on desktop, tablet and phone

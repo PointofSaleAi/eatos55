@@ -3,7 +3,7 @@ import { ChevronRight, Inbox, Mic, Search, SlidersHorizontal, X } from "lucide-r
 import { useMemo, useState, type ReactNode } from "react";
 import { TicketsScreen } from "@/components/pos/tickets-screen";
 import { cn } from "@/lib/utils";
-import { isSettingsDestinationVisible, settingsDestinations, settingsGroups } from "@/lib/settings-destinations";
+import { isSettingsDestinationVisible, settingsGroups } from "@/lib/settings-destinations";
 import { usePos } from "@/lib/pos-store";
 import { useProfileSettings } from "@/lib/profile-settings";
 import { useVoiceSearch } from "@/lib/voice-search";
@@ -76,16 +76,16 @@ export function SettingsNavList() {
   const [query, setQuery] = useState("");
   const { listening, start: startVoice } = useVoiceSearch(setQuery);
   const q = query.trim().toLowerCase();
-  const visibleDestinations = useMemo(
+  const visibleGroups = useMemo(
     () =>
-      settingsDestinations.filter(
-        (l) =>
-          isSettingsDestinationVisible(l, session, canManageSettings) &&
-          (!q || l.label.toLowerCase().includes(q)),
+      settingsGroups.map((group) =>
+        group
+          .filter((l) => isSettingsDestinationVisible(l, session, canManageSettings))
+          .filter((l) => !q || l.label.toLowerCase().includes(q)),
       ),
     [canManageSettings, session.role, session.clockedIn, q],
   );
-
+  const anyMatches = visibleGroups.some((g) => g.length > 0);
 
   const toggleCollapsed = () => {
     setCollapsed((v) => {
@@ -183,34 +183,38 @@ export function SettingsNavList() {
             </div>
           </Link>
         ) : null}
-        {visibleDestinations.length > 0 ? (
-          <ul className="mb-3 overflow-hidden rounded-row border border-border bg-background">
-            {visibleDestinations.map((l) => {
-              const active = pathname === l.to || pathname.startsWith(`${l.to}/`);
-              return (
-                <li key={l.to} className="border-b border-border last:border-b-0">
-                  <Link
-                    to={l.to}
-                    preload="intent"
-                    title={l.label}
-                    className={cn(
-                      "flex min-h-tap items-center gap-3 px-3 py-2.5 t-row transition-colors",
-                      collapsed && "justify-center px-0",
-                      active ? "bg-accent/15 text-accent" : "text-foreground hover:bg-muted",
-                    )}
-                  >
-                    <l.icon className={cn("size-5 shrink-0", active ? "" : "text-accent")} />
-                    {collapsed ? null : (
-                      <>
-                        <span className="min-w-0 flex-1 truncate">{l.label}</span>
-                        <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
-                      </>
-                    )}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+        {anyMatches ? (
+          visibleGroups.map((group, i) =>
+            group.length === 0 ? null : (
+              <ul key={i} className="mb-3 overflow-hidden rounded-row border border-border bg-background">
+                {group.map((l) => {
+                  const active = pathname === l.to || pathname.startsWith(`${l.to}/`);
+                  return (
+                    <li key={l.to} className="border-b border-border last:border-b-0">
+                      <Link
+                        to={l.to}
+                        preload="intent"
+                        title={l.label}
+                        className={cn(
+                          "flex min-h-tap items-center gap-3 px-3 py-2.5 t-row transition-colors",
+                          collapsed && "justify-center px-0",
+                          active ? "bg-accent/15 text-accent" : "text-foreground hover:bg-muted",
+                        )}
+                      >
+                        <l.icon className={cn("size-5 shrink-0", active ? "" : "text-accent")} />
+                        {collapsed ? null : (
+                          <>
+                            <span className="min-w-0 flex-1 truncate">{l.label}</span>
+                            <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+                          </>
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            ),
+          )
         ) : q ? (
           <div className="px-4 py-10 text-center">
             <p className="t-row font-bold text-foreground">No settings found</p>
