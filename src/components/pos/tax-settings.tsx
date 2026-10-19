@@ -53,6 +53,7 @@ export function TaxSettings() {
   const [draft, setDraft] = useState<TaxRule | null>(null);
   const [touched, setTouched] = useState(false);
   const [warned, setWarned] = useState(false);
+  const [confirmExit, setConfirmExit] = useState(false);
   const [picker, setPicker] = useState<"to" | "products" | null>(null);
   const [typeOpen, setTypeOpen] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
@@ -69,9 +70,9 @@ export function TaxSettings() {
       updateSettings({ taxRules: taxes.some(t => t.id === clean.id) ? taxes.map(t => t.id === clean.id ? clean : t) : [...taxes, clean] });
     }
   };
-  const close = () => { setDraft(null); setTouched(false); setWarned(false); };
-  // First back on an incomplete new tax shows what is missing; a second back discards it.
-  const back = () => { if (draft && !exists && !taxValid(draft) && !warned && canManageSettings) { setTouched(true); setWarned(true); return; } close(); };
+  const close = () => { setDraft(null); setTouched(false); setWarned(false); setConfirmExit(false); };
+  // First back on an incomplete new tax highlights what is missing; a second back asks to confirm discarding it.
+  const back = () => { if (draft && !exists && !taxValid(draft) && canManageSettings) { if (!warned) { setTouched(true); setWarned(true); return; } setConfirmExit(true); return; } close(); };
   const errors = draft ? taxErrors(draft) : { name: "", amount: "", type: "" };
   const show = (key: keyof typeof errors) => (touched || exists) ? errors[key] : "";
 
@@ -84,17 +85,17 @@ export function TaxSettings() {
     <SubHeader title={exists ? "Edit Tax" : "Add Tax"} backLabel="Back" onBack={back} />
     <ScreenBody className="py-4">
       <GroupCard>
-        <div className={cn(settingsRowClass, "flex-wrap")}>
+        <div className={cn(settingsRowClass, "flex-wrap", show("name") && "rounded-md ring-1 ring-destructive")}>
           <label htmlFor="tax-name" className="t-row">Name</label>
           <Input id="tax-name" placeholder="Required" maxLength={60} disabled={!canManageSettings} value={draft.name} onBlur={() => setTouched(true)} onChange={e => update({ name: e.target.value })} className="min-w-0 flex-1 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" /><ChevronRight aria-hidden className="size-4 shrink-0 text-muted-foreground" />
           {show("name") && <div className="basis-full"><ErrorLine text={show("name")} /></div>}
         </div>
-        <div className={cn(settingsRowClass, "flex-wrap")}>
+        <div className={cn(settingsRowClass, "flex-wrap", show("amount") && "rounded-md ring-1 ring-destructive")}>
           <label htmlFor="tax-amount" className="t-row">Amount</label>
           <div className="flex min-w-0 flex-1 items-center justify-end gap-1"><Input id="tax-amount" inputMode="decimal" placeholder="0.00" disabled={!canManageSettings} value={draft.amount} onBlur={() => setTouched(true)} onChange={e => update({ amount: e.target.value.replace(/[^\d.]/g, "") })} className="w-28 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" /><span className="t-value text-muted-foreground">%</span><ChevronRight aria-hidden className="size-4 shrink-0 text-muted-foreground" /></div>
           {show("amount") && <div className="basis-full"><ErrorLine text={show("amount")} /></div>}
         </div>
-        <div className={cn(settingsRowClass, "flex-wrap")}>
+        <div className={cn(settingsRowClass, "flex-wrap", show("type") && "rounded-md ring-1 ring-destructive")}>
           <span className="t-row">Type</span>
           <Popover open={typeOpen} onOpenChange={setTypeOpen}>
             <PopoverTrigger asChild><button type="button" disabled={!canManageSettings} className="ml-auto flex items-center gap-1 rounded-md px-2 py-1 t-value text-muted-foreground hover:bg-muted">{draft.type || "Choose"}<ChevronRight className="size-4" /></button></PopoverTrigger>
@@ -109,6 +110,12 @@ export function TaxSettings() {
     </ScreenBody>
     {picker === "to" && <Picker title="Applicable To" options={taxApplicableTo} selected={draft.applicableTo} onChange={v => update({ applicableTo: v })} onClose={() => setPicker(null)} />}
     {picker === "products" && <Picker title="Applicable Product" options={products} selected={draft.products} onChange={v => update({ products: v })} onClose={() => setPicker(null)} />}
+    <Dialog open={confirmExit} onOpenChange={o => { if (!o) setConfirmExit(false); }}>
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-xs gap-0 p-0 text-center">
+        <div className="p-5"><DialogTitle className="t-row font-bold">Are you sure you want to exit?</DialogTitle><DialogDescription className="mt-1 t-caption">If you go back now, you will lose the progress.</DialogDescription></div>
+        <div className="grid grid-cols-2 border-t border-border"><Button variant="ghost" className="rounded-none" onClick={() => setConfirmExit(false)}>Keep Editing</Button><Button variant="ghost" className="rounded-none border-l border-border text-destructive" onClick={close}>Exit</Button></div>
+      </DialogContent>
+    </Dialog>
   </>;
 
   const list = taxes.filter(t => !!t.archived === showArchived && t.name.toLowerCase().includes(query.trim().toLowerCase()));
