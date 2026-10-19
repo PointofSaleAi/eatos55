@@ -1618,12 +1618,15 @@ const VEHICLE_BRANDS: Record<string, string[]> = {
 };
 const VEHICLE_COLORS = ["Black", "White", "Silver", "Grey", "Red", "Blue", "Green"];
 
+function L({ t, r, children }: { t: string; r?: boolean; children: ReactNode }) {
+  return <label className="block space-y-1.5"><span className="text-fs-xs font-bold text-muted-foreground">{t}{r ? <span className="text-destructive">*</span> : null}</span>{children}</label>;
+}
+
 /** Collapsible New Vehicle / New Address form inside the New Guest page (demo-only). */
 function InlineForm({ kind, onClose }: { kind: "Vehicle Details" | "Address"; onClose: () => void }) {
   const [v, setV] = useState<Partial<Record<"number" | "type" | "color" | "brand" | "label" | "phone" | "street" | "city" | "state" | "zip" | "country", string>>>({ label: "Home" });
   const set = (k: "color" | "brand" | "label" | "phone" | "street" | "city" | "state" | "zip" | "country") => (e: { target: { value: string } }) => setV((d) => ({ ...d, [k]: e.target.value }));
   const field = "min-h-ctl-md w-full rounded-lg border border-border bg-surface-muted px-3 text-fs-sm outline-none placeholder:text-muted-foreground focus:border-foreground disabled:opacity-60";
-  const L = ({ t, r, children }: { t: string; r?: boolean; children: ReactNode }) => <label className="block space-y-1.5"><span className="text-fs-xs font-bold text-muted-foreground">{t}{r ? <span className="text-destructive">*</span> : null}</span>{children}</label>;
   const vehicle = kind === "Vehicle Details";
   return (
     <div className="rounded-xl border border-border bg-surface">
