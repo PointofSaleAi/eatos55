@@ -1573,7 +1573,7 @@ function NewGuestPage({ onCancel, onSave }: { onCancel: () => void; onSave: (inp
     <ScreenBody>
       <div className="w-full space-y-6">
         <div className="grid gap-4 md:grid-cols-[6rem_minmax(0,1fr)_minmax(0,1fr)]">
-          <div className="relative mx-auto grid size-24 place-items-center rounded-full bg-surface-muted text-muted-foreground"><Users className="size-9" /></div>
+          <div className="relative mx-auto grid size-24 place-items-center rounded-full bg-surface-muted text-muted-foreground"><Plus className="size-9" /></div>
           <div className="rounded-xl border border-border bg-surface px-4">
             <label className={row}><span className="text-fs-sm font-bold">First Name{req}</span><input aria-label="First name" placeholder="Enter" value={f.first} onChange={set("first")} className={input} /></label>
             <label className={row}><span className="text-fs-sm font-bold">Last Name{req}</span><input aria-label="Last name" placeholder="Enter" value={f.last} onChange={set("last")} className={input} /></label>
