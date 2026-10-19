@@ -645,7 +645,15 @@ const GUEST_TABS: { id: GuestTab; label: string }[] = [
 
 function GuestDetail({ guest }: { guest: GuestRow }) {
   const router = useRouter();
+  const { setGuest } = usePos();
   const [tab, setTab] = useState<GuestTab>("profile");
+  // Starting an order from a profile attaches that guest, so the New Order
+  // screen opens with their name, phone, email and address already filled in.
+  const startOrder = () => {
+    setGuest(guestOrderPatch(guest));
+    router.navigate({ to: "/order/new" });
+  };
+
   return (
     <div className="w-full space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
