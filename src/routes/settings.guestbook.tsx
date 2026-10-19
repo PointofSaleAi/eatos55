@@ -784,7 +784,7 @@ function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number })
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center gap-2" style={indent ? { paddingLeft: `${indent}px` } : undefined}>
+      <div data-resv-toggle className="flex items-center gap-2" style={indent ? { paddingLeft: `${indent}px` } : undefined}>
         <div role="tablist" aria-label="Reservations view" className="flex items-center rounded-pill bg-surface-muted p-1">
           {([["upcoming", "Upcoming Visits"], ["recent", "Recent Visits"]] as const).map(([id, label]) => (
             <button
