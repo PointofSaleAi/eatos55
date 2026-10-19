@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useRef, useState, type ReactNode } from "react";
 import { Camera, ChevronDown, ChevronRight, CheckCircle2, Circle, Images, Plus, ScanBarcode, Search, XCircle } from "lucide-react";
-import { ArchiveGlyph, ArchiveSwipeAction } from "@/components/pos/archive-glyph";
+import { ArchiveGlyph } from "@/components/pos/archive-glyph";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, GroupLabel, settingsRowClass } from "@/components/pos/settings-rows";
@@ -77,7 +77,7 @@ function ProductList({ archived, onOpen, onArchive, onBackFromArchive }: { archi
         {list.map((p) => {
           const v = p.variants[0];
           return <SwipeRow key={p.id} className="rounded-none border-b border-border last:border-0"
-            action={{ label: archived ? "Restore" : "Archive", destructive: !archived, icon: <ArchiveSwipeAction archived={archived} />, onAction: () => { patch(p.id, { archived: !archived }); toast.success(`Product ${archived ? "restored" : "archived"}`); } }}>
+            action={{ label: archived ? "Restore" : "Archive", destructive: !archived, icon: <ArchiveGlyph className="size-5" />, onAction: () => { patch(p.id, { archived: !archived }); toast.success(`Product ${archived ? "restored" : "archived"}`); } }}>
             <button type="button" onClick={() => onOpen(p.id)} className="w-full bg-surface px-4 py-2 text-left hover:bg-muted">
               <div className={cn(cols, "hidden min-h-10 sm:grid")}>
                 <span className="min-w-0 break-words t-row">{p.name}</span>

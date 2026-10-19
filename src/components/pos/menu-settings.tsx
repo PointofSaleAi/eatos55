@@ -2,7 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { tableAlign } from "@/components/ui/table";
 import { useMemo, useState, type ReactNode } from "react";
 import { ChevronDown, ChevronRight, ChevronUp, Circle, CircleCheck, Copy, GripVertical, Plus, Search, XCircle } from "lucide-react";
-import { ArchiveGlyph, ArchiveSwipeAction } from "@/components/pos/archive-glyph";
+import { ArchiveGlyph } from "@/components/pos/archive-glyph";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, settingsRowClass } from "@/components/pos/settings-rows";
@@ -55,7 +55,7 @@ function MenuList({ archived, onOpen, onArchive, onBackFromArchive }: { archived
         {list.map((m) => {
           const d = menuDates(m);
           return <SwipeRow key={m.id} className="border-b border-border last:border-0"
-            action={{ label: archived ? "Restore" : "Archive", destructive: !archived, icon: <ArchiveSwipeAction archived={archived} />, onAction: () => { patch(m.id, { archived: !archived }); toast.success(archived ? "Menu restored" : "Menu archived"); } }}>
+            action={{ label: archived ? "Restore" : "Archive", destructive: !archived, icon: <ArchiveGlyph className="size-5" />, onAction: () => { patch(m.id, { archived: !archived }); toast.success(archived ? "Menu restored" : "Menu archived"); } }}>
             <div className="grid min-h-12 grid-cols-[minmax(0,1.4fr)_4rem_minmax(0,1fr)_minmax(0,1fr)_1.25rem] items-center gap-2 bg-surface px-4 py-2 hover:bg-muted">
               <button type="button" className="min-w-0 break-words text-left t-row" onClick={() => onOpen(m.id)}>{m.name}</button>
               <Switch className="justify-self-center" aria-label={`${m.name} status`} checked={m.active} disabled={archived} onCheckedChange={(active) => patch(m.id, { active })} />

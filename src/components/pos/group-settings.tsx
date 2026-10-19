@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { ArrowDown, ArrowUp, CheckCircle2, ChevronRight, Minus, Plus, Search, UtensilsCrossed, XCircle } from "lucide-react";
-import { ArchiveGlyph, ArchiveSwipeAction } from "@/components/pos/archive-glyph";
+import { ArchiveGlyph } from "@/components/pos/archive-glyph";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, GroupLabel } from "@/components/pos/settings-rows";
@@ -57,7 +57,7 @@ function List({ archived, onOpen, onArchive, onBackFromArchive }: { archived: bo
           <UtensilsCrossed className="mb-2 size-12 text-muted-foreground" />
           <p className="t-body font-semibold">No item found</p><p className="t-caption text-muted-foreground">try to search with different word</p></div>}
         {list.map((x) => <SwipeRow key={x.id} className="rounded-none border-b border-border last:border-0"
-          action={{ label: archived ? "Restore" : "Archive", destructive: !archived, icon: <ArchiveSwipeAction archived={archived} />, onAction: () => { patch(x.id, { archived: !archived }); toast.success(`Group ${archived ? "restored" : "archived"}`); } }}>
+          action={{ label: archived ? "Restore" : "Archive", destructive: !archived, icon: <ArchiveGlyph className="size-5" />, onAction: () => { patch(x.id, { archived: !archived }); toast.success(`Group ${archived ? "restored" : "archived"}`); } }}>
           <button type="button" onClick={() => onOpen(x.id)} className="w-full bg-surface px-4 py-3 text-left hover:bg-muted">
             <div className={cn(cols, "hidden sm:grid")}><span className="truncate t-body">{x.name}</span><span className="text-center t-body">{x.type || "—"}</span><ChevronRight className="size-4 text-muted-foreground" /></div>
             <div className="flex items-center gap-2 sm:hidden"><div className="min-w-0 flex-1"><p className="t-body">{x.name}</p><p className="t-caption text-muted-foreground">{x.type || "—"}</p></div><ChevronRight className="size-4 text-muted-foreground" /></div>

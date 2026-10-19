@@ -2,7 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { MoneyInput } from "@/components/pos/money-input";
 import { useState, type ReactNode } from "react";
 import { ChevronRight, Minus, Plus, Search, XCircle } from "lucide-react";
-import { ArchiveGlyph, ArchiveSwipeAction } from "@/components/pos/archive-glyph";
+import { ArchiveGlyph } from "@/components/pos/archive-glyph";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, GroupLabel, settingsRowClass } from "@/components/pos/settings-rows";
@@ -70,7 +70,7 @@ function ModifierList({ c, archived, onOpen, onArchive, onBackFromArchive }: { c
         {list.map((m) => {
           const s = summary(m);
           return <SwipeRow key={m.id} className="rounded-none border-b border-border last:border-0"
-            action={{ label: archived ? "Restore" : "Archive", destructive: !archived, icon: <ArchiveSwipeAction archived={archived} />, onAction: () => { patch(m.id, { archived: !archived }); toast.success(`${c.one} ${archived ? "restored" : "archived"}`); } }}>
+            action={{ label: archived ? "Restore" : "Archive", destructive: !archived, icon: <ArchiveGlyph className="size-5" />, onAction: () => { patch(m.id, { archived: !archived }); toast.success(`${c.one} ${archived ? "restored" : "archived"}`); } }}>
             <button type="button" onClick={() => onOpen(m.id)} className="w-full bg-surface px-4 py-2 text-left hover:bg-muted">
               <div className={cn(cols, "hidden min-h-10 sm:grid")}>
                 <span className="min-w-0 break-words t-row">{m.name}</span>
