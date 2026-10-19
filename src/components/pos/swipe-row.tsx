@@ -76,9 +76,6 @@ export function SwipeRow({
           startY.current = e.clientY;
           startDx.current = dx;
           locked.current = false;
-          dragging.current = true;
-          // Mouse drags keep sending moves even when the pointer leaves the row.
-          if (e.pointerType === "mouse") e.currentTarget.setPointerCapture(e.pointerId);
         }}
         onPointerMove={(e) => {
           if (startX.current === null || startY.current === null) return;
@@ -90,6 +87,9 @@ export function SwipeRow({
             }
             if (Math.abs(e.clientX - startX.current) < 8) return;
             locked.current = true;
+            // Only once a drag is real: capturing keeps the moves coming without
+            // stealing the click a plain tap on the row (or the action) needs.
+            if (e.pointerType !== "touch") e.currentTarget.setPointerCapture(e.pointerId);
           }
           const moved = Math.max(-width, Math.min(0, startDx.current + e.clientX - startX.current));
           dragging.current = true;
