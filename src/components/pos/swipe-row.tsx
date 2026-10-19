@@ -101,7 +101,7 @@ export function SwipeRow({
           transform: dx ? `translateX(${dx}px)` : undefined,
           transition: dragging.current ? "none" : "transform 180ms ease-out",
         }}
-        className="relative touch-pan-y select-none"
+        className="relative z-10 touch-pan-y select-none"
       >
         {children}
       </div>
