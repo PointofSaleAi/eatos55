@@ -11,12 +11,14 @@ import { ArchiveGlyph } from "@/components/pos/archive-glyph";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { usePos } from "@/lib/pos-store";
 import { taxProducts } from "@/lib/tax-settings";
 import { cn } from "@/lib/utils";
-import { discountCategories, discountErrors, discountValid, formatDiscount, newDiscount, referenceDiscounts, type DiscountRule, type DiscountType } from "@/lib/discount-settings";
+import { defaultDiscountDays, discountCategories, discountErrors, discountValid, formatDiscount, newDiscount, referenceDiscounts, type DiscountDay, type DiscountRule, type DiscountType } from "@/lib/discount-settings";
+import { scheduleDays } from "@/lib/restaurant-schedules";
 
 const description = "Discount is a reduction in the total amount due for a purchase, often granted for early or prompt payment.";
 const cols = "sm:grid sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,1fr)_1rem]";
