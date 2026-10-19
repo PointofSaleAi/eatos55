@@ -312,13 +312,9 @@ function GuestList({
             ))}
           </PopoverContent>
         </Popover>
-        <Popover open={undefined}>
-          <PopoverTrigger asChild>
-            <Button variant={archivedView ? "secondary" : "ghost"} size="icon" aria-label={archivedView ? "Show active guests" : "Show archived guests"} aria-pressed={archivedView} onClick={() => setArchivedView((v) => !v)} title={archivedView ? "Show active guests" : "Show archived guests"}>
-              <Archive className="size-4" />
-            </Button>
-          </PopoverTrigger>
-        </Popover>
+        <Button variant={archivedView ? "secondary" : "ghost"} size="icon" aria-label={archivedView ? "Show active guests" : "Show archived guests"} aria-pressed={archivedView} onClick={() => setArchivedView((v) => !v)} title={archivedView ? "Show active guests" : "Show archived guests"}>
+          <Archive className="size-4" />
+        </Button>
       </div>
       {visible.length ? (
         <ul className="min-h-0 min-w-0 flex-1 divide-y divide-border overflow-y-auto border-y border-border">
