@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { CheckCircle2, ChevronRight, ListChecks, Plus, Search, Trash2, AlertCircle } from "lucide-react";
+import { CheckCircle2, ChevronRight, ListChecks, Plus, Search, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, settingsRowClass } from "@/components/pos/settings-rows";
@@ -10,6 +10,8 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
+import { SwipeRow } from "@/components/pos/swipe-row";
+import { ArchiveGlyph, ArchiveSwipeAction } from "@/components/pos/archive-glyph";
 import { formatTaxAmount, newTax, referenceTaxes, taxApplicableTo, taxErrors, taxProducts, taxValid, type TaxRule, type TaxType } from "@/lib/tax-settings";
 
 const description = "Taxes are levies imposed on financial transactions or income, collected by government authorities to fund public services and infrastructure.";
@@ -53,7 +55,7 @@ export function TaxSettings() {
   const [warned, setWarned] = useState(false);
   const [picker, setPicker] = useState<"to" | "products" | null>(null);
   const [typeOpen, setTypeOpen] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const exists = !!draft && taxes.some(t => t.id === draft.id);
@@ -67,7 +69,7 @@ export function TaxSettings() {
       updateSettings({ taxRules: taxes.some(t => t.id === clean.id) ? taxes.map(t => t.id === clean.id ? clean : t) : [...taxes, clean] });
     }
   };
-  const close = () => { setDraft(null); setTouched(false); setWarned(false); setConfirmDelete(false); };
+  const close = () => { setDraft(null); setTouched(false); setWarned(false); };
   // First back on an incomplete new tax shows what is missing; a second back discards it.
   const back = () => { if (draft && !exists && !taxValid(draft) && !warned && canManageSettings) { setTouched(true); setWarned(true); return; } close(); };
   const errors = draft ? taxErrors(draft) : { name: "", amount: "", type: "" };
