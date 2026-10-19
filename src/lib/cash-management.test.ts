@@ -16,6 +16,26 @@ describe("demo cash drawer flow", () => {
   test("zero opening cash can start the till", () => {
     assert.equal(applyCashAction(empty(), { kind: "open", amount: 0, name: employee.name }).tillOpen, true);
   });
+  test("pay in without opening till records cash without opening the till", () => {
+    const s = applyCashAction(empty(), { kind: "in", amount: 25, employee, reason: "Change Order", note: "Before opening" });
+    assert.equal(s.tillOpen, false);
+    assert.equal(s.openingTill, 0);
+    assert.equal(s.logs[0]?.payIn, 25);
+    assert.equal(s.logs[0]?.note, "Before opening");
+    assert.equal(estimatedCash(s), 25);
+    const opened = applyCashAction(s, { kind: "open", amount: 100, name: employee.name });
+    assert.equal(estimatedCash(opened), 125);
+  });
+  test("pay in after closing counts only new cash and still validates required details", () => {
+    const closed = applyCashAction(open(), { kind: "close", name: employee.name });
+    const s = applyCashAction(closed, { kind: "in", amount: 10, employee, reason: "Tips", note: "" });
+    assert.equal(estimatedCash(s), 10);
+    assert.equal(s.previousClose, 100);
+    assert.equal(s.tips["e1"], 10);
+    assert.throws(() => applyCashAction(closed, { kind: "in", amount: 0, employee, reason: "Tips", note: "" }), /amount/);
+    assert.throws(() => applyCashAction(closed, { kind: "in", amount: 10, employee, reason: "Other", note: "" }), /note/);
+    assert.throws(() => applyCashAction(s, { kind: "out", amount: 1, employee, reason: "Tips", note: "" }), /Open the till/);
+  });
   test("pay in adds cash and records employee, reason and notes", () => {
     const s = applyCashAction(open(), { kind: "in", amount: 25, employee, reason: "Other", note: "Change delivery" });
     assert.equal(estimatedCash(s), 125);
