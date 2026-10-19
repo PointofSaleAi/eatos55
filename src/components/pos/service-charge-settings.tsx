@@ -44,6 +44,7 @@ export function ServiceChargeSettings() {
   const taxNames = (settings.taxRules ?? referenceTaxes).map(t => t.name).filter(Boolean);
   const [draft, setDraft] = useState<ServiceChargeRule | null>(null);
   const [touched, setTouched] = useState(false);
+  const [warned, setWarned] = useState(false);
   const [picker, setPicker] = useState<"taxes" | "orderTypes" | null>(null);
   const [confirmExit, setConfirmExit] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -60,8 +61,9 @@ export function ServiceChargeSettings() {
       updateSettings({ serviceChargeRules: charges.some(c => c.id === clean.id) ? charges.map(c => c.id === clean.id ? clean : c) : [...charges, clean] });
     }
   };
-  const close = () => { setDraft(null); setTouched(false); setConfirmExit(false); setConfirmDelete(false); };
-  const back = () => { if (draft && !exists && (draft.name || draft.value) && !serviceChargeValid(draft)) { setTouched(true); setConfirmExit(true); } else close(); };
+  const close = () => { setDraft(null); setTouched(false); setWarned(false); setConfirmExit(false); setConfirmDelete(false); };
+  // First back on a half-filled new charge highlights the missing fields; a second back asks to confirm discarding it.
+  const back = () => { if (draft && !exists && (draft.name || draft.value) && !serviceChargeValid(draft)) { if (!warned) { setTouched(true); setWarned(true); return; } setConfirmExit(true); return; } close(); };
   const errors = draft ? serviceChargeErrors(draft) : { name: "", value: "", seats: "" };
   const show = (k: keyof typeof errors) => (touched || exists) && errors[k] ? errors[k] : "";
 
@@ -74,12 +76,12 @@ export function ServiceChargeSettings() {
     <SubHeader title={exists ? "Edit Service Charge" : "Add Service Charge"} backLabel="Service Charge" onBack={back} />
     <ScreenBody className="py-4">
       <GroupCard>
-        <div className={cn(settingsRowClass, "flex-wrap")}>
+        <div className={cn(settingsRowClass, "flex-wrap", show("name") && "rounded-md ring-1 ring-destructive")}>
           <label htmlFor="sc-name" className="t-row">Name</label>
           <Input id="sc-name" placeholder="Enter Name" maxLength={60} disabled={!canManageSettings} value={draft.name} onBlur={() => setTouched(true)} onChange={e => update({ name: e.target.value })} className="min-w-0 flex-1 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" />
           {show("name") && <ErrorLine text={show("name")} />}
         </div>
-        <div className={cn(settingsRowClass, "flex-wrap")}>
+        <div className={cn(settingsRowClass, "flex-wrap", show("value") && "rounded-md ring-1 ring-destructive")}>
           <label htmlFor="sc-value" className="t-row">Amount</label>
           <div className="flex min-w-0 flex-1 items-center justify-end gap-1">
             {draft.type === "Amount" && <span className="t-value text-muted-foreground">$</span>}
@@ -116,7 +118,7 @@ export function ServiceChargeSettings() {
       {exists && canManageSettings && <div className="mt-6 flex flex-wrap items-center justify-end gap-2">
         {confirmDelete ? <><span className="t-caption text-muted-foreground">Delete this service charge?</span><Button variant="outline" onClick={() => setConfirmDelete(false)}>Cancel</Button><Button variant="destructive" onClick={() => { updateSettings({ serviceChargeRules: charges.filter(c => c.id !== draft.id) }); toast.success("Service charge deleted"); close(); }}>Delete</Button></> : <Button variant="outline" onClick={() => setConfirmDelete(true)}><Trash2 />Delete Service Charge</Button>}
       </div>}
-      {!exists && touched && !serviceChargeValid(draft) && <p className="mt-4 t-caption text-muted-foreground">The service charge saves automatically once the name and amount are filled in.</p>}
+      {!exists && touched && !serviceChargeValid(draft) && <p className="mt-4 t-caption text-muted-foreground">The service charge saves automatically once the name and amount are filled in. Tap Back again to discard it.</p>}
     </ScreenBody>
     {picker === "taxes" && <Picker title="Tax Applicable" options={taxNames} selected={draft.taxes} onChange={v => update({ taxes: v })} onClose={() => setPicker(null)} />}
     {picker === "orderTypes" && <Picker title="Order Type" options={serviceChargeOrderTypes} selected={draft.orderTypes} onChange={v => update({ orderTypes: v })} onClose={() => setPicker(null)} />}
