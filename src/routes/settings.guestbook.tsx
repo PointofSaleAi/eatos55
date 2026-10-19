@@ -76,6 +76,10 @@ const saveExtras = (id: string, extras: Extras) => {
 const initials = (name: string) =>
   name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase() ?? "").join("") || "?";
 
+/** "2026-07-31" -> "07/31/2026"; returns null for unknown shapes so callers show "-". */
+const formatDate = (iso: string | undefined) =>
+  iso && /^\d{4}-\d{2}-\d{2}$/.test(iso) ? `${iso.slice(5, 7)}/${iso.slice(8, 10)}/${iso.slice(0, 4)}` : null;
+
 const initialsTone = (name: string) => {
   const tones = ["bg-muted", "bg-surface-muted", "bg-accent"];
   return tones[[...name].reduce((a, c) => a + c.charCodeAt(0), 0) % tones.length];
@@ -381,8 +385,8 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
   const avgSpend = orders.length ? lifetime / orders.length : 0;
   const tips = orders.reduce((sum, ticket) => sum + (ticket.tips ?? 0), 0);
   const avgTip = orders.length ? tips / orders.length : 0;
-  const lastVisit = orders[0]?.date ?? "-";
-  const firstVisit = orders[orders.length - 1]?.date ?? "-";
+  const lastVisit = formatDate(orders[0]?.date) ?? "-";
+  const firstVisit = formatDate(orders[orders.length - 1]?.date) ?? "-";
 
   const itemTotals = new Map<string, number>();
   for (const ticket of guest.tickets) {
