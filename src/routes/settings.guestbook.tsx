@@ -297,6 +297,7 @@ function TagEditor({
           </div>
         </div>
       ) : null}
+    </>
   );
 }
 
