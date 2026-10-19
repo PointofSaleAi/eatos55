@@ -1,14 +1,11 @@
 import type { LucideIcon } from "lucide-react";
-import { brand } from "@/lib/brand";
 import {
   BadgePercent,
   Boxes,
   CalendarClock,
-  CircleDollarSign,
   CircleDot,
   Coins,
   CreditCard,
-  Globe,
   Grid2x2,
   HandCoins,
   Inbox,
@@ -16,7 +13,7 @@ import {
   Layers,
   LayoutList,
   PencilRuler,
-  Percent,
+
   Printer,
   Receipt,
   ReceiptText,
