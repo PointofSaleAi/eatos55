@@ -938,6 +938,19 @@ const payGroupOf = (method: string): PayGroup =>
   /cash/i.test(method) ? "Cash" : /gift/i.test(method) ? "Gift Card" : /loyal|point/i.test(method) ? "Loyalty" : "Cards";
 type PaySortKey = "date" | "spent" | "tips" | "points" | "type" | "total";
 
+const CARD_BRANDS = ["Visa", "Mastercard", "Amex", "Discover"] as const;
+/** Demo per-tender detail line for a payment row: card brand / till / points, plus its check and time. */
+const payDetailOf = (method: string, seed: number, ref: string | undefined, points: number, check: string, time: string): string => {
+  const refTxt = ref ?? `AUTH-${100000 + (seed % 900000)}`;
+  const tail = `Check #${check} · ${time}`;
+  if (/cash/i.test(method)) return `Cash · Till ${1 + (seed % 4)} · Ref ${refTxt} · ${tail}`;
+  if (/gift/i.test(method)) return `Gift Card · Ref ${refTxt} · ${tail}`;
+  if (/loyal|point/i.test(method)) return `Loyalty · ${points} pts redeemed · Ref ${refTxt} · ${tail}`;
+  if (/qr/i.test(method)) return `Scan to Pay · Ref ${refTxt} · ${tail}`;
+  const brand = CARD_BRANDS[seed % CARD_BRANDS.length] ?? "Visa";
+  return `Card · ${brand} ····${1000 + (seed % 9000)} · Auth ${refTxt} · ${tail}`;
+};
+
 /** Payments tab: payments on the guest's checks grouped by tender, with a summary strip. Points are demo values (1 per $10). */
 function PaymentsTab({ guest }: { guest: GuestRow }) {
   const [sort, setSort] = useState<{ key: PaySortKey; dir: 1 | -1 }>({ key: "date", dir: -1 });
@@ -946,7 +959,12 @@ function PaymentsTab({ guest }: { guest: GuestRow }) {
     const paid = (ticket.payments ?? []).reduce((n, p) => n + p.amount, 0) || 1;
     return (ticket.payments ?? []).map((p) => {
       const tips = ((ticket.tips ?? 0) * p.amount) / paid;
-      return { key: `${ticket.id}-${p.no}-${p.at}`, date: ticket.date, method: p.method, group: payGroupOf(p.method), total: p.amount, tips, spent: p.amount - tips, points: Math.floor(p.amount / 10) };
+      const key = `${ticket.id}-${p.no}-${p.at}`;
+      const seed = textSeed(key);
+      // Loyalty rows are redemptions: their Points cell shows points spent, other rows earn 1 point per $10.
+      const points = /loyal|point/i.test(p.method) ? Math.round(p.amount) : Math.floor(p.amount / 10);
+      const check = String(ticket.checkNumber ?? ticket.number ?? ticket.id);
+      return { key, date: ticket.date, method: p.method, group: payGroupOf(p.method), total: p.amount, tips, spent: p.amount - tips, points, detail: payDetailOf(p.method, seed, p.ref, points, check, p.at) };
     });
   });
   const val = (r: (typeof rows)[number]) => (sort.key === "type" ? r.method : sort.key === "date" ? r.date : r[sort.key]);
@@ -955,7 +973,7 @@ function PaymentsTab({ guest }: { guest: GuestRow }) {
     return (typeof x === "number" && typeof y === "number" ? x - y : String(x).localeCompare(String(y))) * sort.dir;
   });
   const sum = (g: PayGroup) => rows.filter((r) => r.group === g).reduce((n, r) => n + r.total, 0);
-  const points = rows.reduce((n, r) => n + r.points, 0);
+  const points = rows.filter((r) => r.group !== "Loyalty").reduce((n, r) => n + r.points, 0);
   const fmtDate = (d: string) => new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
   const cols = "grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-2 @lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,1.3fr)_minmax(0,1fr)]";
   const header: [PaySortKey, string, string][] = [["date", "Date", ""], ["spent", "Spent", "hidden @lg:flex"], ["tips", "Tips", "hidden @lg:flex"], ["points", "Points", "hidden @lg:flex"], ["type", "Payment Type", ""], ["total", "Total", "justify-end"]];
@@ -1003,13 +1021,16 @@ function PaymentsTab({ guest }: { guest: GuestRow }) {
                   <span className="flex items-center justify-end gap-1 font-bold">{money(list.reduce((n, r) => n + r.total, 0))}<PayDown className={cn("size-4 text-muted-foreground transition-transform", !expanded && "-rotate-90")} /></span>
                 </button>
                 {expanded ? list.map((r) => (
-                  <div key={r.key} className={cn(cols, "border-b border-border bg-surface-muted/50 px-3 py-2.5 text-fs-sm")}>
-                    <span>{fmtDate(r.date)}</span>
-                    <span className="hidden @lg:block">{money(r.spent)}</span>
-                    <span className="hidden @lg:block">{money(r.tips)}</span>
-                    <span className="hidden @lg:block">{String(r.points).padStart(2, "0")}</span>
-                    <span className="truncate @lg:text-center">{r.method}</span>
-                    <span className="text-right">{money(r.total)}</span>
+                  <div key={r.key} className="border-b border-border bg-surface-muted/50">
+                    <div className={cn(cols, "px-3 pt-2.5 text-fs-sm")}>
+                      <span>{fmtDate(r.date)}</span>
+                      <span className="hidden @lg:block">{money(r.spent)}</span>
+                      <span className="hidden @lg:block">{money(r.tips)}</span>
+                      <span className="hidden @lg:block">{String(r.points).padStart(2, "0")}</span>
+                      <span className="truncate @lg:text-center">{r.method}</span>
+                      <span className="text-right">{money(r.total)}</span>
+                    </div>
+                    <p className="px-3 pb-2.5 pt-0.5 text-fs-xs text-muted-foreground">{r.detail}</p>
                   </div>
                 )) : null}
               </div>
