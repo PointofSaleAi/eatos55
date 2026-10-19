@@ -6,9 +6,12 @@ export type SwipeAction = {
   label: string;
   onAction: () => void;
   destructive?: boolean;
+  /** Neutral grey strip instead of the red or dark one, for reversible housekeeping. */
+  muted?: boolean;
   /** Optional icon shown in the revealed strip instead of the label text; the label stays the accessible name. */
   icon?: ReactNode;
 };
+
 
 /**
  * Row with an optional swipe-left action. Works with touch and with a mouse or
