@@ -109,4 +109,4 @@ export const SwipeRow = forwardRef<SwipeRowHandle, {
       </div>
     </div>
   );
-}
+});
