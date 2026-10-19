@@ -48,6 +48,7 @@ export function TaxSettings() {
   const products = useMemo(taxProducts, []);
   const [draft, setDraft] = useState<TaxRule | null>(null);
   const [touched, setTouched] = useState(false);
+  const [warned, setWarned] = useState(false);
   const [picker, setPicker] = useState<"to" | "products" | null>(null);
   const [typeOpen, setTypeOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -64,9 +65,9 @@ export function TaxSettings() {
       updateSettings({ taxRules: taxes.some(t => t.id === clean.id) ? taxes.map(t => t.id === clean.id ? clean : t) : [...taxes, clean] });
     }
   };
-  const close = () => { setDraft(null); setTouched(false); setConfirmDelete(false); };
+  const close = () => { setDraft(null); setTouched(false); setWarned(false); setConfirmDelete(false); };
   // First back on an incomplete new tax shows what is missing; a second back discards it.
-  const back = () => { if (draft && !exists && !taxValid(draft) && !touched && canManageSettings) { setTouched(true); return; } close(); };
+  const back = () => { if (draft && !exists && !taxValid(draft) && !warned && canManageSettings) { setTouched(true); setWarned(true); return; } close(); };
   const errors = draft ? taxErrors(draft) : { name: "", amount: "", type: "" };
   const show = (key: keyof typeof errors) => (touched || exists) ? errors[key] : "";
 
