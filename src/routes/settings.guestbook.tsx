@@ -115,7 +115,39 @@ const markSeeded = (id: string) => {
   }
 };
 /** Preset tags offered in the Tags popup, matching the guestbook reference. */
-const TAG_OPTIONS = ["VIP", "BIRTHDAY", "REGULAR", "SMOKER", "NON-SMOKER", "VEGETARIAN", "HIGH CHAIR", "VEGAN", "PATIO REQUIRED", "FRIEND OF OWNER"];
+/** A preset choice in the add popup; `color` paints the pill, `large` makes it a bigger button. */
+type PickerOption = { label: string; color?: string | undefined; large?: boolean | undefined };
+
+const TAG_OPTIONS: PickerOption[] = [
+  "VIP",
+  "BIRTHDAY",
+  "REGULAR",
+  "SMOKER",
+  "NON-SMOKER",
+  "VEGETARIAN",
+  "HIGH CHAIR",
+  "VEGAN",
+  "PATIO REQUIRED",
+  "FRIEND OF OWNER",
+].map((label) => ({ label }));
+
+/** Allergy popup: pill colours and sizes follow the reference screen. */
+const ALLERGY_OPTIONS: PickerOption[] = [
+  { label: "Almonds", color: "#FCAE68", large: true },
+  { label: "Corn", color: "#70B8FF" },
+  { label: "Egg", color: "#7876FA" },
+  { label: "Fish", color: "#74B7FF" },
+  { label: "Gelatin", color: "#F96D76", large: true },
+  { label: "Gluten", color: "#FDB872" },
+  { label: "Meat", color: "#6F73EC" },
+  { label: "Milk", color: "#F96D76", large: true },
+  { label: "Soy", color: "#7572EB" },
+  { label: "Peanuts", color: "#F96D76", large: true },
+  { label: "Shellfish", color: "#FDB872", large: true },
+  { label: "Sesame", color: "#6CB8FF" },
+  { label: "Tree Nuts", color: "#F96D76", large: true },
+  { label: "Wheat", color: "#FDB872", large: true },
+];
 const loadExtras = (id: string): Extras => {
   try {
     const all = JSON.parse(localStorage.getItem(EXTRAS_KEY) ?? "{}") as Record<string, Extras>;
@@ -235,6 +267,9 @@ function TagEditor({
   addLabel,
   tone = "ghost",
   preset,
+  dialogTitle,
+  dialogNote,
+  dialogFooter,
   onAdd,
   onRemove,
 }: {
@@ -242,8 +277,14 @@ function TagEditor({
   addLabel: string;
   /** "dark" renders the reference-style pill; "ghost" a quiet inline control. */
   tone?: "ghost" | "dark";
-  /** When set, the add button opens a popup offering these preset tags. */
-  preset?: string[];
+  /** When set, the add button opens a popup offering these preset choices. */
+  preset?: PickerOption[];
+  /** Heading shown in that popup. */
+  dialogTitle?: string;
+  /** Line shown under the heading; defaults to the tags wording. */
+  dialogNote?: ReactNode;
+  /** Line shown under the choices; used for the allergy note. */
+  dialogFooter?: ReactNode;
   onAdd: (value: string) => void;
   onRemove: (value: string) => void;
 }) {
@@ -263,19 +304,32 @@ function TagEditor({
   return (
     <>
     <div className="flex flex-wrap items-center gap-2">
-      {values.map((value) => (
-        <span key={value} className="inline-flex items-center gap-1.5 rounded-pill bg-surface-muted px-3 py-1 text-fs-sm font-medium">
-          {value}
-          <button
-            type="button"
-            aria-label={`Remove ${value}`}
-            className="text-muted-foreground transition-colors hover:text-foreground"
-            onClick={() => onRemove(value)}
+      {values.map((value) => {
+        const color = preset?.find((option) => option.label === value)?.color;
+        return (
+          <span
+            key={value}
+            style={color ? { backgroundColor: color } : undefined}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-pill px-3 py-1 text-fs-sm font-bold",
+              color ? "text-background" : "bg-surface-muted",
+            )}
           >
-            <X className="size-3.5" />
-          </button>
-        </span>
-      ))}
+            {value}
+            <button
+              type="button"
+              aria-label={`Remove ${value}`}
+              className={cn(
+                "transition-colors",
+                color ? "text-background/80 hover:text-background" : "text-muted-foreground hover:text-foreground",
+              )}
+              onClick={() => onRemove(value)}
+            >
+              <X className="size-3.5" />
+            </button>
+          </span>
+        );
+      })}
       {adding ? (
         <input
           autoFocus
@@ -321,37 +375,64 @@ function TagEditor({
           <div
             role="dialog"
             aria-modal="true"
-            aria-label="Tags"
+            aria-label={dialogTitle ?? "Tags"}
             tabIndex={-1}
             autoFocus
             onKeyDown={(e) => {
               if (e.key === "Escape") setPickerOpen(false);
             }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md overflow-hidden rounded-2xl border border-border bg-surface shadow-xl outline-none"
+            className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-border bg-surface shadow-xl outline-none"
           >
-            <div className="border-b border-border py-4 text-center text-fs-lg font-bold">Tags</div>
-            <div className="space-y-4 p-6">
-              <p className="text-center text-fs-sm text-muted-foreground">Select relevant tags for the guest.</p>
-              <div className="flex flex-wrap justify-center gap-2.5">
-                {preset.map((tag) => {
-                  const selected = values.includes(tag);
+            <div className="relative border-b border-border px-14 py-4 text-center text-fs-lg font-bold">
+              {dialogTitle ?? "Tags"}
+              <button
+                type="button"
+                aria-label="Close"
+                className="absolute right-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:text-foreground"
+                onClick={() => setPickerOpen(false)}
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+            <div className="space-y-5 p-6">
+              <p className="text-center text-fs-sm text-muted-foreground">
+                {dialogNote ?? "Select relevant tags for the guest."}
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-2.5">
+                {preset.map((option) => {
+                  const selected = values.includes(option.label);
                   return (
                     <button
-                      key={tag}
+                      key={option.label}
                       type="button"
                       aria-pressed={selected}
-                      onClick={() => (selected ? onRemove(tag) : onAdd(tag))}
+                      style={option.color ? { backgroundColor: option.color } : undefined}
+                      onClick={() => (selected ? onRemove(option.label) : onAdd(option.label))}
                       className={cn(
-                        "rounded-pill px-4 py-2 text-fs-sm font-bold uppercase tracking-wide transition-colors",
-                        selected ? "bg-foreground text-background" : "bg-muted text-foreground hover:bg-muted/80",
+                        "rounded-pill font-bold transition-all",
+                        option.color
+                          ? cn(
+                              "text-background",
+                              option.large ? "px-6 py-3 text-fs-base" : "px-4 py-2 text-fs-sm",
+                              selected && "ring-2 ring-foreground ring-offset-2 ring-offset-surface",
+                            )
+                          : cn(
+                              "px-4 py-2 text-fs-sm uppercase tracking-wide",
+                              selected
+                                ? "bg-foreground text-background"
+                                : "bg-muted text-foreground hover:bg-muted/80",
+                            ),
                       )}
                     >
-                      {tag}
+                      {option.label}
                     </button>
                   );
                 })}
               </div>
+              {dialogFooter ? (
+                <p className="text-center text-fs-sm text-muted-foreground">{dialogFooter}</p>
+              ) : null}
             </div>
           </div>
         </div>
@@ -633,6 +714,15 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
                 values={extras.allergies}
                 addLabel="Add"
                 tone="dark"
+                preset={ALLERGY_OPTIONS}
+                dialogTitle="Allergies"
+                dialogNote="Select what type of food allergy the customer has from the list below"
+                dialogFooter={
+                  <>
+                    <span className="font-bold">Note:</span> The most commonly used products that trigger allergies are
+                    displayed with larger buttons.
+                  </>
+                }
                 onAdd={(value) => update({ allergies: [...extras.allergies, value] })}
                 onRemove={(value) => update({ allergies: extras.allergies.filter((item) => item !== value) })}
               />
