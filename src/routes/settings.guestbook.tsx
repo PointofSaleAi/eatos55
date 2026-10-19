@@ -62,6 +62,8 @@ type Extras = {
   visits: { date: string; time: string }[];
 };
 const emptyExtras = (): Extras => ({ tags: [], allergies: [], notes: {}, visits: [] });
+/** Preset tags offered in the Tags popup, matching the guestbook reference. */
+const TAG_OPTIONS = ["VIP", "BIRTHDAY", "REGULAR", "SMOKER", "NON-SMOKER", "VEGETARIAN", "HIGH CHAIR", "VEGAN", "PATIO REQUIRED", "FRIEND OF OWNER"];
 const loadExtras = (id: string): Extras => {
   try {
     const all = JSON.parse(localStorage.getItem(EXTRAS_KEY) ?? "{}") as Record<string, Extras>;
@@ -173,6 +175,7 @@ function TagEditor({
   values,
   addLabel,
   tone = "ghost",
+  preset,
   onAdd,
   onRemove,
 }: {
@@ -180,10 +183,13 @@ function TagEditor({
   addLabel: string;
   /** "dark" renders the reference-style pill; "ghost" a quiet inline control. */
   tone?: "ghost" | "dark";
+  /** When set, the add button opens a popup offering these preset tags. */
+  preset?: string[];
   onAdd: (value: string) => void;
   onRemove: (value: string) => void;
 }) {
   const [adding, setAdding] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const cancelled = useRef(false);
   const commit = () => {
@@ -196,6 +202,7 @@ function TagEditor({
     setAdding(false);
   };
   return (
+    <>
     <div className="flex flex-wrap items-center gap-2">
       {values.map((value) => (
         <span key={value} className="inline-flex items-center gap-1.5 rounded-pill bg-surface-muted px-3 py-1 text-fs-sm font-medium">
@@ -230,6 +237,8 @@ function TagEditor({
           placeholder={addLabel}
           className="min-h-tap min-w-40 flex-1 bg-transparent text-fs-sm outline-none"
         />
+      ) : preset ? (
+        <DarkPill onClick={() => setPickerOpen(true)}>{addLabel}</DarkPill>
       ) : tone === "dark" ? (
         <DarkPill onClick={() => setAdding(true)}>{addLabel}</DarkPill>
       ) : (
@@ -244,6 +253,51 @@ function TagEditor({
         </Button>
       )}
     </div>
+      {preset && pickerOpen ? (
+        <div
+          role="presentation"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 p-4"
+          onClick={() => setPickerOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Tags"
+            tabIndex={-1}
+            autoFocus
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setPickerOpen(false);
+            }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md overflow-hidden rounded-2xl border border-border bg-surface shadow-xl outline-none"
+          >
+            <div className="border-b border-border py-4 text-center text-fs-lg font-bold">Tags</div>
+            <div className="space-y-4 p-6">
+              <p className="text-center text-fs-sm text-muted-foreground">Select relevant tags for the guest.</p>
+              <div className="flex flex-wrap justify-center gap-2.5">
+                {preset.map((tag) => {
+                  const selected = values.includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => (selected ? onRemove(tag) : onAdd(tag))}
+                      className={cn(
+                        "rounded-pill px-4 py-2 text-fs-sm font-bold uppercase tracking-wide transition-colors",
+                        selected ? "bg-foreground text-background" : "bg-muted text-foreground hover:bg-muted/80",
+                      )}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }
 
@@ -414,6 +468,8 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
           <TagEditor
             values={extras.tags}
             addLabel="Add Tags"
+            tone="dark"
+            preset={TAG_OPTIONS}
             onAdd={(value) => update({ tags: [...extras.tags, value] })}
             onRemove={(value) => update({ tags: extras.tags.filter((tag) => tag !== value) })}
           />
