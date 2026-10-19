@@ -691,21 +691,34 @@ function Guestbook() {
   const goSettings = () => router.navigate({ to: "/settings" });
 
   if (wide) {
-    // The guestbook owns the whole panel: guest list on the left, the selected
-    // guest's details on the right, and a back chevron straight to Settings.
+    // The guestbook owns the whole panel: a "Guestbook" header with a back
+    // chevron to Settings above the guest list on the left, and the selected
+    // guest's details on the right.
+    const listHeader = <SubHeader title="Guestbook" backLabel="Settings" onBack={goSettings} />;
     return selected ? (
       <SplitPane
-        list={<GuestList records={records} selectedId={selected.id} className="px-3 py-3 lg:px-4" onSelect={(id) => setSelectedId(id === selected.id ? null : id)} />}
+        list={
+          <>
+            {listHeader}
+            <GuestList records={records} selectedId={selected.id} className="px-3 py-3 lg:px-4" onSelect={(id) => setSelectedId(id === selected.id ? null : id)} />
+          </>
+        }
       >
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <SubHeader title={selected.name} backLabel="Settings" onBack={goSettings} />
+          <SubHeader title={selected.name} />
           <ScreenBody><GuestDetail guest={selected} /></ScreenBody>
         </div>
       </SplitPane>
     ) : (
-      <SplitPane list={<GuestList records={records} selectedId={null} className="px-3 py-3 lg:px-4" onSelect={setSelectedId} />}>
+      <SplitPane
+        list={
+          <>
+            {listHeader}
+            <GuestList records={records} selectedId={null} className="px-3 py-3 lg:px-4" onSelect={setSelectedId} />
+          </>
+        }
+      >
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <SubHeader title="Guestbook" backLabel="Settings" onBack={goSettings} />
           <PaneEmpty title="No guest selected" detail="Pick a guest on the left to see contact details and order history." />
         </div>
       </SplitPane>
