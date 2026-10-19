@@ -1,3 +1,4 @@
+- [x] Rework the Guestbook guest list with initials avatars, a New Guest popover, sort and archive/restore with per-row actions; verified on phone, tablet and desktop
 # Roadmap
 - [x] Match Guestbook Order History references; expansion, collapse and sorting verified on phone, tablet and desktop
 - [x] Keep Guestbook feedback on one line, reveal full text/time/server only through More, and use uploaded source logos; verified phone, tablet and desktop

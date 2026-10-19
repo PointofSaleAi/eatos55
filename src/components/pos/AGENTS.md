@@ -29,6 +29,7 @@
 
 - Guestbook future booking reuses floor layouts in a dedicated in-page table selector and saves guest visits only; it never starts an order or changes live table occupancy.
 - Guestbook opens with the first guest selected on wide layouts (phones open on the list), so the detail pane is never empty on arrival.
+- Guestbook guest list rows show initials avatars with a per-row ⋯ actions menu; archiving, restoring, sorting and New Guest are demo-only device stores (`eatos.pos.guestbook-directory`) and never touch real contacts.
 - Guestbook reservation rows carry a reversible demo no-show flag; a left swipe (touch or mouse drag) reveals only the red "No show" action (never "Undo"), while undo stays reachable from the row's tap menu so nothing is swipe-only; a no show never changes orders, table occupancy or reporting.
 - Guestbook Feedback tab shows sample reviews per guest (date badge, smiley rating, expandable text with More/Less, time, text source wordmarks and reviewer); the list is deterministic per guest and demo-only.
 - SwipeRow drives touch and mouse drives through pointer events, keeps the row content above the revealed action with `z-10`, and exposes `wasDragged()` so a swipe release cannot open the row's own tap control.
