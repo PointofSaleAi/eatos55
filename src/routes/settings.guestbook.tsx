@@ -2,6 +2,8 @@ import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CreditCard as PayCard, Banknote as PayCash, Gift as PayGift, Award as PayPoints, ChevronDown as PayDown, ArrowUpDown as PaySort } from "lucide-react";
 import {
+  Archive,
+  ArchiveRestore,
   ArrowLeft,
   Armchair,
   Banknote,
@@ -10,6 +12,7 @@ import {
   CalendarClock,
   CalendarX,
   Car,
+  Check,
   ChevronRight,
   Clock,
   Frown,
@@ -28,7 +31,6 @@ import {
   Table2,
   Tag,
   UserRound,
-  Users,
   Utensils,
   UtensilsCrossed,
   X,
@@ -37,7 +39,7 @@ import { Button } from "@/components/ui/button";
 import { ScreenBody, SubHeader, useWideLayout } from "@/components/pos/shell";
 import { PaneEmpty, SplitPane } from "@/components/pos/split-pane";
 import { usePos } from "@/lib/pos-store";
-import { guestDirectory, guestOrderPatch } from "@/lib/guestbook";
+import { guestDirectory, guestOrderPatch, mockEmail, mockPhone, type DirectoryEntry } from "@/lib/guestbook";
 import { money, statusMeta } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { brand } from "@/lib/brand";
@@ -202,6 +204,25 @@ const saveExtras = (id: string, extras: Extras) => {
   }
 };
 
+/** Demo directory actions — guests added here and archived ids, kept on the device only. */
+const DIRECTORY_KEY = "eatos.pos.guestbook-directory";
+type DirectoryStore = { added: DirectoryEntry[]; archived: string[] };
+const emptyDirectory = (): DirectoryStore => ({ added: [], archived: [] });
+const loadDirectory = (): DirectoryStore => {
+  try {
+    return { ...emptyDirectory(), ...(JSON.parse(localStorage.getItem(DIRECTORY_KEY) ?? "{}") as DirectoryStore) };
+  } catch {
+    return emptyDirectory();
+  }
+};
+const saveDirectory = (store: DirectoryStore) => {
+  try {
+    localStorage.setItem(DIRECTORY_KEY, JSON.stringify(store));
+  } catch {
+    // Demo-only storage: ignore write failures.
+  }
+};
+
 const initials = (name: string) =>
   name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase() ?? "").join("") || "?";
 
@@ -217,49 +238,123 @@ const initialsTone = (name: string) => {
 /** Searchable guest list; used full-width on phones and as the left pane on wide screens. */
 function GuestList({
   records,
+  archivedRecords,
   selectedId,
   onSelect,
+  onArchive,
+  onRestore,
+  onAdd,
   className,
 }: {
   records: GuestRow[];
+  archivedRecords: GuestRow[];
   selectedId: string | null;
   onSelect: (id: string) => void;
+  onArchive: (id: string) => void;
+  onRestore: (id: string) => void;
+  onAdd: (input: { name: string; email?: string | undefined; phone?: string | undefined }) => void;
   className?: string | undefined;
 }) {
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<"az" | "za" | "recent">("az");
+  const [archivedView, setArchivedView] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [draft, setDraft] = useState({ name: "", email: "", phone: "" });
   const q = query.trim().toLowerCase();
-  const visible = records.filter((row) => [row.name, row.email, row.phone].some((value) => value?.toLowerCase().includes(q)));
+  const pool = archivedView ? archivedRecords : records;
+  const latestDate = (row: GuestRow) => row.tickets.reduce((latest, ticket) => (ticket.date > latest ? ticket.date : latest), "");
+  const visible = useMemo(() => {
+    const list = pool.filter((row) => [row.name, row.email, row.phone].some((value) => value?.toLowerCase().includes(q)));
+    if (sort === "az") return [...list].sort((a, b) => a.name.localeCompare(b.name));
+    if (sort === "za") return [...list].sort((a, b) => b.name.localeCompare(a.name));
+    return [...list].sort((a, b) => latestDate(b).localeCompare(latestDate(a)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pool, q, sort]);
+  const submit = () => {
+    if (!draft.name.trim()) return;
+    onAdd({ name: draft.name, email: draft.email.trim() || undefined, phone: draft.phone.trim() || undefined });
+    setDraft({ name: "", email: "", phone: "" });
+    setAdding(false);
+    setArchivedView(false);
+  };
   return (
     <div className={cn("flex min-h-0 w-full flex-1 flex-col", className)}>
-      <label className="mb-5 flex min-h-ctl-md shrink-0 items-center gap-3 rounded-pill border border-border bg-surface px-4">
+      <label className="mb-3 flex min-h-ctl-md shrink-0 items-center gap-3 rounded-pill border border-border bg-surface px-4">
         <Search className="size-5 shrink-0 text-muted-foreground" />
         <input type="search" aria-label="Search guests" placeholder="Search guests" value={query} onChange={(e) => setQuery(e.target.value)} className="min-h-tap min-w-0 flex-1 bg-transparent outline-none" />
       </label>
+      <div className="mb-3 flex items-center gap-1.5">
+        <Popover open={adding} onOpenChange={setAdding}>
+          <PopoverTrigger asChild>
+            <button type="button" className="inline-flex min-h-tap items-center gap-1 rounded-pill bg-foreground px-3 py-1.5 text-fs-sm font-bold text-background transition-colors hover:bg-foreground/90">
+              <Plus className="size-4" /> New Guest
+            </button>
+          </PopoverTrigger>
+          <PopoverContent align="start" className="w-72 space-y-2">
+            <p className="text-fs-sm font-bold">New Guest</p>
+            <input aria-label="Guest name" placeholder="Full name" value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} className="min-h-tap w-full rounded-lg border border-border bg-transparent px-3 text-fs-sm outline-none focus:border-foreground" />
+            <input aria-label="Guest email" placeholder="Email (optional)" value={draft.email} onChange={(e) => setDraft((d) => ({ ...d, email: e.target.value }))} className="min-h-tap w-full rounded-lg border border-border bg-transparent px-3 text-fs-sm outline-none focus:border-foreground" />
+            <input aria-label="Guest phone" placeholder="Phone (optional)" value={draft.phone} onChange={(e) => setDraft((d) => ({ ...d, phone: e.target.value }))} className="min-h-tap w-full rounded-lg border border-border bg-transparent px-3 text-fs-sm outline-none focus:border-foreground" />
+            <Button className="w-full" disabled={!draft.name.trim()} onClick={submit}>Add Guest</Button>
+          </PopoverContent>
+        </Popover>
+        <span className="flex-1" />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon" aria-label="Sort guests" title="Sort guests"><PaySort className="size-4" /></Button>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-44 p-1">
+            {([["az", "Name A–Z"], ["za", "Name Z–A"], ["recent", "Most Recent"]] as const).map(([value, label]) => (
+              <button key={value} type="button" onClick={() => setSort(value)} className={cn("flex min-h-tap w-full items-center justify-between rounded-lg px-3 py-2 text-left text-fs-sm hover:bg-muted", sort === value && "bg-muted font-bold")}>
+                {label}
+                {sort === value ? <Check className="size-4" /> : null}
+              </button>
+            ))}
+          </PopoverContent>
+        </Popover>
+        <Button variant={archivedView ? "secondary" : "ghost"} size="icon" aria-label={archivedView ? "Show active guests" : "Show archived guests"} aria-pressed={archivedView} onClick={() => setArchivedView((v) => !v)} title={archivedView ? "Show active guests" : "Show archived guests"}>
+          <Archive className="size-4" />
+        </Button>
+      </div>
       {visible.length ? (
         <ul className="min-h-0 min-w-0 flex-1 divide-y divide-border overflow-y-auto border-y border-border">
           {visible.map((row) => (
-            <li key={row.id}>
+            <li key={row.id} className="flex items-center gap-1">
               <Button
                 variant="ghost"
                 className={cn(
-                  "h-auto min-h-ctl-lg w-full justify-start gap-3 rounded-none px-2 py-4 text-foreground hover:bg-muted",
+                  "h-auto min-h-ctl-lg w-full min-w-0 flex-1 justify-start gap-3 rounded-none px-2 py-4 text-foreground hover:bg-muted",
                   row.id === selectedId && "bg-muted",
                 )}
                 onClick={() => onSelect(row.id)}
               >
-                <Users className="size-5 shrink-0" />
+                <span className={cn("grid size-9 shrink-0 place-items-center rounded-full text-fs-xs font-bold", initialsTone(row.name))} aria-hidden="true">{initials(row.name)}</span>
                 <span className="min-w-0 flex-1 whitespace-normal break-words text-left">
                   <span className="block font-bold">{row.name}</span>
                   {row.email ? <span className="block break-all text-fs-xs text-muted-foreground">{row.email}</span> : null}
                 </span>
                 <ChevronRight className="size-4 shrink-0" />
               </Button>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" aria-label={`Actions for ${row.name}`} className="mr-1 size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted">
+                    <MoreHorizontal className="size-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="w-44 p-1">
+                  <button type="button" onClick={() => (archivedView ? onRestore(row.id) : onArchive(row.id))} className="flex min-h-tap w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-fs-sm hover:bg-muted">
+                    {archivedView ? <ArchiveRestore className="size-4" /> : <Archive className="size-4" />}
+                    {archivedView ? "Restore to list" : "Archive guest"}
+                  </button>
+                </PopoverContent>
+              </Popover>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="py-10 text-center text-muted-foreground">{q ? "No guests found." : "No named guests available."}</p>
+        <p className="py-10 text-center text-muted-foreground">{archivedView ? "No archived guests." : q ? "No guests found." : "No named guests available."}</p>
       )}
+      <p className="pt-2 text-fs-xs text-muted-foreground">{archivedView ? "Archived guests stay on this device only. Use the ⋯ menu to restore them." : "Demo only — new guests and archiving stay on this device."}</p>
     </div>
   );
 }
@@ -1357,7 +1452,33 @@ function Guestbook() {
   const router = useRouter();
   const wide = useWideLayout();
   const { tickets, guest } = usePos();
-  const records = useMemo(() => guestDirectory(tickets, guest), [tickets, guest]);
+  const [directory, setDirectory] = useState<DirectoryStore>(loadDirectory);
+  const updateDirectory = (next: DirectoryStore) => {
+    setDirectory(next);
+    saveDirectory(next);
+  };
+  const merged = useMemo(() => {
+    const base = guestDirectory(tickets, guest);
+    const known = new Set(base.map((row) => row.id));
+    return [...base, ...directory.added.filter((row) => !known.has(row.id))];
+  }, [tickets, guest, directory.added]);
+  const records = useMemo(() => merged.filter((row) => !directory.archived.includes(row.id)), [merged, directory.archived]);
+  const archivedRecords = useMemo(() => merged.filter((row) => directory.archived.includes(row.id)), [merged, directory.archived]);
+  const archiveGuest = (id: string) => {
+    updateDirectory({ ...directory, archived: [...new Set([...directory.archived, id])] });
+    if (selectedId === id) setSelectedId(records.find((row) => row.id !== id)?.id ?? null);
+  };
+  const restoreGuest = (id: string) => {
+    updateDirectory({ ...directory, archived: directory.archived.filter((item) => item !== id) });
+  };
+  const addGuest = (input: { name: string; email?: string | undefined; phone?: string | undefined }) => {
+    const name = input.name.trim();
+    if (!name) return;
+    const id = `custom|${name.toLowerCase()}`;
+    const entry: DirectoryEntry = { id, name, email: input.email?.trim() || mockEmail(name), phone: input.phone?.trim() || mockPhone(name), tickets: [] };
+    updateDirectory({ ...directory, added: [...directory.added.filter((row) => row.id !== id), entry] });
+    setSelectedId(id);
+  };
   // On wide screens the detail pane would otherwise sit empty, so the first
   // guest is picked for you; phones still open on the list.
   const [selectedId, setSelectedId] = useState<string | null>(() => (wide ? records[0]?.id ?? null : null));
@@ -1384,7 +1505,7 @@ function Guestbook() {
         list={
           <>
             {listHeader}
-            <GuestList records={records} selectedId={selected.id} className="px-3 py-3 lg:px-4" onSelect={(id) => setSelectedId(id === selected.id ? null : id)} />
+            <GuestList records={records} archivedRecords={archivedRecords} selectedId={selected.id} className="px-3 py-3 lg:px-4" onSelect={(id) => setSelectedId(id === selected.id ? null : id)} onArchive={archiveGuest} onRestore={restoreGuest} onAdd={addGuest} />
           </>
         }
       >
@@ -1398,7 +1519,7 @@ function Guestbook() {
         list={
           <>
             {listHeader}
-            <GuestList records={records} selectedId={null} className="px-3 py-3 lg:px-4" onSelect={setSelectedId} />
+            <GuestList records={records} archivedRecords={archivedRecords} selectedId={null} className="px-3 py-3 lg:px-4" onSelect={setSelectedId} onArchive={archiveGuest} onRestore={restoreGuest} onAdd={addGuest} />
           </>
         }
       >
@@ -1418,7 +1539,7 @@ function Guestbook() {
           <h2 className="min-w-0 break-words text-fs-xl font-bold">{selected.name}</h2>
         </div>
         <GuestDetail key={selected.id} guest={selected} onBook={() => setBooking(true)} />
-      </div> : <GuestList records={records} selectedId={null} onSelect={setSelectedId} />}
+      </div> : <GuestList records={records} archivedRecords={archivedRecords} selectedId={null} onSelect={setSelectedId} onArchive={archiveGuest} onRestore={restoreGuest} onAdd={addGuest} />}
     </ScreenBody>
   </>;
 }
