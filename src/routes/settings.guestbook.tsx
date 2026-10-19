@@ -558,7 +558,7 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const dateParts = (iso: string) => {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
-  return match ? { day: match[3], month: MONTHS[Number(match[2]) - 1] ?? "" } : null;
+  return match ? { day: match[3] ?? "--", month: MONTHS[Number(match[2]) - 1] ?? "" } : null;
 };
 
 /** "18:45" -> "6:45 PM"; labels already in a display form pass through unchanged. */
