@@ -395,7 +395,8 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
   const mostOrdered = [...itemTotals.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[15rem_minmax(0,1fr)]">
+    <div className="space-y-5">
+      <div className="grid gap-5 lg:grid-cols-[15rem_minmax(0,1fr)]">
       {/* Identity column */}
       <div className="flex flex-col items-center gap-2 self-start rounded-xl border border-border bg-surface p-6 text-center">
         <span className={cn("flex size-20 items-center justify-center rounded-full text-fs-xl font-bold", initialsTone(guest.name))}>{initials(guest.name)}</span>
@@ -457,7 +458,10 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
             </div>
           </div>
         </div>
+        </div>
+      </div>
 
+      <div className="space-y-5">
         <div className="grid gap-4 md:grid-cols-[2fr_1fr]">
           <SectionCard
             label="Most Ordered Items"
