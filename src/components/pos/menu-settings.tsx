@@ -151,8 +151,6 @@ function MenuEditor({ id, onBack }: { id: string | null; onBack: () => void }) {
         <Row label="Organize" value={draft.categories.length || "Organize Categories"} onClick={() => setOrganize(true)} />
         <Row label="Revenue Centers" value={draft.revenueCenters.length} sub={draft.revenueCenters.join(", ") || undefined} onClick={() => setPopup({ kind: "revenue" })} />
       </GroupCard>
-      {existing && <Button variant="outline" aria-label={draft.archived ? "Restore menu" : "Archive menu"} title={draft.archived ? "Restore menu" : "Archive menu"} className="mt-6 min-h-ctl-lg w-full" onClick={() => { save({ ...draft, archived: !draft.archived }); toast.success(draft.archived ? "Menu restored" : "Menu archived"); onBack(); }}>
-        <ArchiveGlyph className="size-4" /></Button>}
       <Caption>Changes save automatically. Demo only — menus don't change what New Order sells.</Caption>
     </ScreenBody>
 

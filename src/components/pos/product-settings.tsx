@@ -214,11 +214,6 @@ function ProductEditor({ id, onBack }: { id: string | null; onBack: () => void }
         <Row label="Order Options" value="Course, Sides…" sub="Turn order prompts off, optional or required for New Order" onClick={() => navigate({ to: "/settings/detail/$topic", params: { topic: "product-order-options" } })} />
       </GroupCard>
 
-      {saved && <GroupCard className="mt-4">
-        <Button variant="ghost" aria-label={draft.archived ? "Restore product" : "Archive product"} title={draft.archived ? "Restore product" : "Archive product"} className={cn(settingsRowClass, "h-auto justify-center rounded-none", !draft.archived && "text-destructive")}
-          onClick={() => { patch(draft.id, { archived: !draft.archived }); toast.success(`Product ${draft.archived ? "restored" : "archived"}`); onBack(); }}>
-          <ArchiveGlyph className="size-4" /></Button>
-      </GroupCard>}
       <Caption>Changes save automatically. Demo only — doesn't change New Order, prices, printing or taxes.</Caption>
     </ScreenBody>
 
