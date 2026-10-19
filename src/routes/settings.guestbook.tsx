@@ -414,7 +414,7 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
       </div>
 
       {/* Detail column */}
-      <div className="min-w-0 space-y-5">
+      <div className="@container min-w-0 space-y-5">
         <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-3 lg:grid-cols-[1.25fr_1fr_1fr_0.8fr_1fr]" aria-label="Visit and spend summary">
           <div className="bg-surface"><StatCell value={lastVisit} label="Last Visit" /></div>
           <div className="bg-surface"><StatCell value={money(avgSpend)} label="Average Spend" /></div>
@@ -423,7 +423,7 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
           <div className="bg-surface"><StatCell value={money(avgTip)} label="Average Tip" /></div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 @lg:grid-cols-2 @4xl:grid-cols-3">
           <div className="rounded-xl border border-border bg-surface p-4">
             <dl className="divide-y divide-border">
               {[
@@ -433,7 +433,7 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
                 ["Anniversary", "-"],
               ].map(([label, value]) => (
                 <div key={label} className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
-                  <dt className="min-w-0 font-bold">{label}</dt>
+                  <dt className="min-w-0 truncate font-bold">{label}</dt>
                   <dd className="shrink-0 text-right text-fs-sm text-muted-foreground">{value}</dd>
                 </div>
               ))}
