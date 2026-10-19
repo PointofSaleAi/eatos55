@@ -235,6 +235,57 @@ const initialsTone = (name: string) => {
   return tones[[...name].reduce((a, c) => a + c.charCodeAt(0), 0) % tones.length];
 };
 
+/** One guest row: swipe left to archive the guest (or restore them in the archived view). */
+function GuestListRow({
+  row,
+  selected,
+  archived,
+  onSelect,
+  onArchive,
+  onRestore,
+}: {
+  row: GuestRow;
+  selected: boolean;
+  archived: boolean;
+  onSelect: (id: string) => void;
+  onArchive: (id: string) => void;
+  onRestore: (id: string) => void;
+}) {
+  const rowRef = useRef<SwipeRowHandle>(null);
+  return (
+    <SwipeRow
+      ref={rowRef}
+      className="rounded-none"
+      action={{
+        label: archived ? "Restore to list" : "Archive guest",
+        destructive: !archived,
+        icon: archived ? <ArchiveRestore className="size-5" /> : <Archive className="size-5" />,
+        onAction: () => (archived ? onRestore(row.id) : onArchive(row.id)),
+      }}
+    >
+      <Button
+        variant="ghost"
+        className={cn(
+          "h-auto min-h-ctl-lg w-full min-w-0 justify-start gap-3 rounded-none px-2 py-4 text-foreground hover:bg-muted",
+          selected && "bg-muted",
+        )}
+        onClick={() => {
+          // A swipe release leaves a click behind; it must not open the guest.
+          if (rowRef.current?.wasDragged()) return;
+          onSelect(row.id);
+        }}
+      >
+        <span className={cn("grid size-9 shrink-0 place-items-center rounded-full text-fs-xs font-bold", initialsTone(row.name))} aria-hidden="true">{initials(row.name)}</span>
+        <span className="min-w-0 flex-1 whitespace-normal break-words text-left">
+          <span className="block font-bold">{row.name}</span>
+          {row.email ? <span className="block break-all text-fs-xs text-muted-foreground">{row.email}</span> : null}
+        </span>
+        <ChevronRight className="size-4 shrink-0" />
+      </Button>
+    </SwipeRow>
+  );
+}
+
 /** Searchable guest list; used full-width on phones and as the left pane on wide screens. */
 function GuestList({
   records,
@@ -286,9 +337,9 @@ function GuestList({
       <div className="mb-3 flex items-center gap-1.5">
         <Popover open={adding} onOpenChange={setAdding}>
           <PopoverTrigger asChild>
-            <button type="button" className="inline-flex min-h-tap items-center gap-1 rounded-pill bg-foreground px-3 py-1.5 text-fs-sm font-bold text-background transition-colors hover:bg-foreground/90">
-              <Plus className="size-4" /> New Guest
-            </button>
+            <Button variant="ghost" size="icon" aria-label="Add new guest" title="Add new guest" className="rounded-full bg-foreground text-background hover:bg-foreground/90 hover:text-background">
+              <Plus className="size-4" />
+            </Button>
           </PopoverTrigger>
           <PopoverContent align="start" className="w-72 space-y-2">
             <p className="text-fs-sm font-bold">New Guest</p>
@@ -298,10 +349,13 @@ function GuestList({
             <Button className="w-full" disabled={!draft.name.trim()} onClick={submit}>Add Guest</Button>
           </PopoverContent>
         </Popover>
+        <Button variant={archivedView ? "secondary" : "ghost"} size="icon" aria-label={archivedView ? "Show active guests" : "Show archived guests"} aria-pressed={archivedView} onClick={() => setArchivedView((v) => !v)} title={archivedView ? "Show active guests" : "Show archived guests"} className="rounded-full">
+          <Archive className="size-4" />
+        </Button>
         <span className="flex-1" />
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label="Sort guests" title="Sort guests"><PaySort className="size-4" /></Button>
+            <Button variant="ghost" size="icon" aria-label="Sort guests" title="Sort guests" className="rounded-full"><PaySort className="size-4" /></Button>
           </PopoverTrigger>
           <PopoverContent align="end" className="w-44 p-1">
             {([["az", "Name A–Z"], ["za", "Name Z–A"], ["recent", "Most Recent"]] as const).map(([value, label]) => (
@@ -312,49 +366,26 @@ function GuestList({
             ))}
           </PopoverContent>
         </Popover>
-        <Button variant={archivedView ? "secondary" : "ghost"} size="icon" aria-label={archivedView ? "Show active guests" : "Show archived guests"} aria-pressed={archivedView} onClick={() => setArchivedView((v) => !v)} title={archivedView ? "Show active guests" : "Show archived guests"}>
-          <Archive className="size-4" />
-        </Button>
       </div>
       {visible.length ? (
         <ul className="min-h-0 min-w-0 flex-1 divide-y divide-border overflow-y-auto border-y border-border">
           {visible.map((row) => (
-            <li key={row.id} className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                className={cn(
-                  "h-auto min-h-ctl-lg w-full min-w-0 flex-1 justify-start gap-3 rounded-none px-2 py-4 text-foreground hover:bg-muted",
-                  row.id === selectedId && "bg-muted",
-                )}
-                onClick={() => onSelect(row.id)}
-              >
-                <span className={cn("grid size-9 shrink-0 place-items-center rounded-full text-fs-xs font-bold", initialsTone(row.name))} aria-hidden="true">{initials(row.name)}</span>
-                <span className="min-w-0 flex-1 whitespace-normal break-words text-left">
-                  <span className="block font-bold">{row.name}</span>
-                  {row.email ? <span className="block break-all text-fs-xs text-muted-foreground">{row.email}</span> : null}
-                </span>
-                <ChevronRight className="size-4 shrink-0" />
-              </Button>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label={`Actions for ${row.name}`} className="mr-1 size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted">
-                    <MoreHorizontal className="size-4" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="end" className="w-44 p-1">
-                  <button type="button" onClick={() => (archivedView ? onRestore(row.id) : onArchive(row.id))} className="flex min-h-tap w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-fs-sm hover:bg-muted">
-                    {archivedView ? <ArchiveRestore className="size-4" /> : <Archive className="size-4" />}
-                    {archivedView ? "Restore to list" : "Archive guest"}
-                  </button>
-                </PopoverContent>
-              </Popover>
+            <li key={row.id}>
+              <GuestListRow
+                row={row}
+                selected={row.id === selectedId}
+                archived={archivedView}
+                onSelect={onSelect}
+                onArchive={onArchive}
+                onRestore={onRestore}
+              />
             </li>
           ))}
         </ul>
       ) : (
         <p className="py-10 text-center text-muted-foreground">{archivedView ? "No archived guests." : q ? "No guests found." : "No named guests available."}</p>
       )}
-      <p className="pt-2 text-fs-xs text-muted-foreground">{archivedView ? "Archived guests stay on this device only. Use the ⋯ menu to restore them." : "Demo only — new guests and archiving stay on this device."}</p>
+      <p className="pt-2 text-fs-xs text-muted-foreground">{archivedView ? "Archived guests stay on this device only. Swipe a guest left to restore them." : "Demo only — swipe a guest left to archive them."}</p>
     </div>
   );
 }
