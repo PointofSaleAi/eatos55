@@ -972,7 +972,7 @@ function PaymentsTab({ guest }: { guest: GuestRow }) {
     return (typeof x === "number" && typeof y === "number" ? x - y : String(x).localeCompare(String(y))) * sort.dir;
   });
   const sum = (g: PayGroup) => rows.filter((r) => r.group === g).reduce((n, r) => n + r.total, 0);
-  const points = rows.reduce((n, r) => n + r.points, 0);
+  const points = rows.filter((r) => r.group !== "Loyalty").reduce((n, r) => n + r.points, 0);
   const fmtDate = (d: string) => new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
   const cols = "grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-2 @lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,1.3fr)_minmax(0,1fr)]";
   const header: [PaySortKey, string, string][] = [["date", "Date", ""], ["spent", "Spent", "hidden @lg:flex"], ["tips", "Tips", "hidden @lg:flex"], ["points", "Points", "hidden @lg:flex"], ["type", "Payment Type", ""], ["total", "Total", "justify-end"]];
