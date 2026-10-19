@@ -1628,7 +1628,7 @@ function InlineForm({ kind, onClose }: { kind: "Vehicle Details" | "Address"; on
   return (
     <div className="rounded-xl border border-border bg-surface">
       <button type="button" onClick={onClose} aria-label="Collapse form" className="flex w-full items-center justify-between border-b border-border px-4 py-3 text-fs-sm font-bold">
-        {vehicle ? "New Vehicle" : "New Address"}<ChevronDown className="size-4 rotate-180" />
+        {vehicle ? "New Vehicle" : "New Address"}<PayDown className="size-4 rotate-180" />
       </button>
       <div className="space-y-3 p-4">
         {vehicle ? <>
