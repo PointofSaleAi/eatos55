@@ -572,8 +572,8 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
           <div className="bg-surface"><StatCell value={money(avgTip)} label="Average Tip" /></div>
         </div>
 
-        <div className="grid gap-4 @lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)_minmax(0,1fr)]">
-          <div className="rounded-xl border border-border bg-surface p-4">
+        <div className="grid gap-4 @md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="rounded-xl border border-border bg-surface p-3 @xl:p-4">
             <dl className="divide-y divide-border">
               {[
                 ["Loyalty No.", "-"],
@@ -588,18 +588,18 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
               ))}
             </dl>
           </div>
-          <div className="rounded-xl border border-border bg-surface p-4">
+          <div className="rounded-xl border border-border bg-surface p-3 @xl:p-4">
             <h4 className="text-fs-sm font-bold uppercase tracking-wide text-muted-foreground">Loyalty</h4>
-            <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3">
+            <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 @xl:gap-x-4">
               <MiniStat value={0} label="Earned" />
               <MiniStat value={0} label="Redeemed" />
               <MiniStat value={0} label="Available" />
               <MiniStat value={money(0)} label="Amount" />
             </div>
           </div>
-          <div className="rounded-xl border border-border bg-surface p-4">
+          <div className="rounded-xl border border-border bg-surface p-3 @xl:p-4">
             <h4 className="text-fs-sm font-bold uppercase tracking-wide text-muted-foreground">Visits</h4>
-            <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3">
+            <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 @xl:gap-x-4">
               <MiniStat value={orders.length} label="Total" />
               <MiniStat value={extras.visits.length} label="Upcoming" />
               <MiniStat value={0} label="Canceled" />
