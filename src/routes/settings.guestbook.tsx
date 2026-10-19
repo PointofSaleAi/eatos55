@@ -574,7 +574,7 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
 
         <div className="grid gap-3 @xl:gap-4 @md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)]">
           <div className="rounded-xl border border-border bg-surface p-3 @xl:p-4">
-            <dl className="divide-y divide-border">
+            <dl className="divide-y divide-border @md:flex @md:h-full @md:flex-col @md:justify-between">
               {[
                 ["Loyalty No.", "-"],
                 ["Since", firstVisit],
