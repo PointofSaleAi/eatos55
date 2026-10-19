@@ -4,6 +4,7 @@
 - [x] Rework the Guestbook guest list with initials avatars, a New Guest popover, sort and archive/restore with per-row actions; verified on phone, tablet and desktop
 
 # Roadmap
+- [x] Remove the archive button from every Menu settings editor (menu, category, modifier, add-on, product, default-modifier, group); archiving stays only as the list left-swipe, verified phone, tablet and desktop
 - [x] Hide Login Screen settings entries unless a manager is clocked in; actual manager clock-in and hidden states verified on phone, tablet and desktop
 - [x] Replace Cash Management drawer navigation with an available-drawer dropdown; selection and reload persistence verified on phone, tablet and desktop
 - [x] Allow Pay In without opening the till balance; saved cash and logs verified after reload on phone, tablet and desktop, with 10 cash tests passing
