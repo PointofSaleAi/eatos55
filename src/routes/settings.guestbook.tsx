@@ -39,7 +39,7 @@ import { money, statusMeta } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { brand } from "@/lib/brand";
 import { GuestVisitBooking } from "@/components/pos/guest-visit-booking";
-import { SwipeRow } from "@/components/pos/swipe-row";
+import { SwipeRow, type SwipeRowHandle } from "@/components/pos/swipe-row";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { GuestVisit } from "@/lib/guest-reservation";
 
@@ -789,6 +789,7 @@ function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number })
   const [view, setView] = useState<"upcoming" | "recent">("recent");
   const [extras, setExtras] = useState<Extras>(() => loadExtras(guest.id));
   const [menu, setMenu] = useState<string | null>(null);
+  const rowRef = useRef<SwipeRowHandle>(null);
   /** Marks a visit as a no show (or back to a normal visit) and keeps it on the device. */
   const setNoShow = (key: string, value: boolean) =>
     setExtras((prev) => {
