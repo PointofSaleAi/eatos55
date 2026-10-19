@@ -364,7 +364,7 @@ function StatCell({ value, label }: { value: string; label: string }) {
 function MiniStat({ value, label, className }: { value: string | number; label: string; className?: string | undefined }) {
   return (
     <div className={cn("flex min-w-0 flex-col gap-0.5", className)}>
-      <span className="truncate text-fs-lg font-bold">{value}</span>
+      <span className="truncate text-fs-base font-bold">{value}</span>
       <span className="text-fs-xs text-muted-foreground">{label}</span>
     </div>
   );
