@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button";
 import { ScreenBody, SubHeader, useWideLayout } from "@/components/pos/shell";
 import { PaneEmpty, SplitPane } from "@/components/pos/split-pane";
 import { usePos } from "@/lib/pos-store";
-import { guestDirectory } from "@/lib/guestbook";
+import { guestDirectory, guestOrderPatch } from "@/lib/guestbook";
 import { money, statusMeta } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { brand } from "@/lib/brand";
