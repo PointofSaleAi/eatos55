@@ -93,3 +93,4 @@
 - [x] After-close ticket flow: Completed state, swipe/tap Refund, reason codes, refunded display
 - [x] Move the ticket Paid dropdown to the bottom directly above the totals summary on phone, tablet and desktop; verified expansion keeps the summary pinned
 - [x] Select the first ticket by default when Tickets opens in landscape (route-derived, order draft untouched); verified phone, portrait tablet, landscape tablet and desktop
+- [x] Put the guest profile account, Loyalty and Visits cards in one row on tablet and desktop (stacked only when too narrow); verified no clipped text on phone, portrait tablet, landscape tablet and desktop

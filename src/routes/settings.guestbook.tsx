@@ -543,7 +543,7 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-5 lg:grid-cols-[15rem_minmax(0,1fr)]">
+      <div className="grid gap-5 lg:grid-cols-[12rem_minmax(0,1fr)] xl:grid-cols-[14rem_minmax(0,1fr)]">
       {/* Identity column */}
       <div className="flex flex-col items-center gap-2 self-start rounded-xl border border-border bg-surface p-6 text-center">
         <span className={cn("flex size-20 items-center justify-center rounded-full text-fs-xl font-bold", initialsTone(guest.name))}>{initials(guest.name)}</span>
@@ -572,9 +572,9 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
           <div className="bg-surface"><StatCell value={money(avgTip)} label="Average Tip" /></div>
         </div>
 
-        <div className="grid gap-4 @lg:grid-cols-2 @4xl:grid-cols-3">
-          <div className="rounded-xl border border-border bg-surface p-4">
-            <dl className="divide-y divide-border">
+        <div className="grid gap-3 @xl:gap-4 @md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="rounded-xl border border-border bg-surface p-3 @xl:p-4">
+            <dl className="divide-y divide-border @md:flex @md:h-full @md:flex-col @md:justify-between">
               {[
                 ["Loyalty No.", "-"],
                 ["Since", firstVisit],
@@ -588,18 +588,18 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
               ))}
             </dl>
           </div>
-          <div className="rounded-xl border border-border bg-surface p-4">
+          <div className="rounded-xl border border-border bg-surface p-3 @xl:p-4">
             <h4 className="text-fs-sm font-bold uppercase tracking-wide text-muted-foreground">Loyalty</h4>
-            <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3">
+            <div className="mt-3 grid grid-cols-1 gap-y-2 @xl:grid-cols-2 @xl:gap-x-4 @xl:gap-y-3">
               <MiniStat value={0} label="Earned" />
               <MiniStat value={0} label="Redeemed" />
               <MiniStat value={0} label="Available" />
               <MiniStat value={money(0)} label="Amount" />
             </div>
           </div>
-          <div className="rounded-xl border border-border bg-surface p-4">
+          <div className="rounded-xl border border-border bg-surface p-3 @xl:p-4">
             <h4 className="text-fs-sm font-bold uppercase tracking-wide text-muted-foreground">Visits</h4>
-            <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3">
+            <div className="mt-3 grid grid-cols-1 gap-y-2 @xl:grid-cols-2 @xl:gap-x-4 @xl:gap-y-3">
               <MiniStat value={orders.length} label="Total" />
               <MiniStat value={extras.visits.length} label="Upcoming" />
               <MiniStat value={0} label="Canceled" />
