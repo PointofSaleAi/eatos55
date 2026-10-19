@@ -39,6 +39,8 @@ import { money, statusMeta } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { brand } from "@/lib/brand";
 import { GuestVisitBooking } from "@/components/pos/guest-visit-booking";
+import { SwipeRow } from "@/components/pos/swipe-row";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { GuestVisit } from "@/lib/guest-reservation";
 
 export const Route = createFileRoute("/settings/guestbook")({
@@ -64,14 +66,24 @@ type Visit = {
   description?: string | undefined;
   party?: number | undefined;
   table?: string | undefined;
+  /** Stable id, so a visit keeps its no-show flag when the list changes. */
+  id?: string | undefined;
 };
 type Extras = {
   tags: string[];
   allergies: string[];
   notes: Record<string, string>;
   visits: Visit[];
+  /** Row keys of the visits the guest did not turn up for. */
+  noShows: string[];
 };
-const emptyExtras = (): Extras => ({ tags: [], allergies: [], notes: {}, visits: [] });
+const emptyExtras = (): Extras => ({ tags: [], allergies: [], notes: {}, visits: [], noShows: [] });
+
+/** Stable id for a visit that was just booked. */
+const newVisitId = () =>
+  typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `v${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 
 /** Demo reservations seeded once per guest so the Reservations tab opens with real history. */
 const SEED_KEY = "eatos.pos.guestbook-seeded";
@@ -94,6 +106,7 @@ const seedVisits = (id: string): Visit[] => {
   const seed = textSeed(id);
   const today = new Date().toISOString().slice(0, 10);
   return RESERVATION_PLAN.map((entry, index) => ({
+    id: `seed-${index}`,
     date: shiftDate(today, entry.offset),
     time: entry.time,
     description: RESERVATION_NOTES[(seed + index) % RESERVATION_NOTES.length] ?? "No Description",
@@ -159,6 +172,12 @@ const loadExtras = (id: string): Extras => {
       all[id] = stored;
       localStorage.setItem(EXTRAS_KEY, JSON.stringify(all));
       markSeeded(id);
+    }
+    // Visits booked before ids existed get one now, so their no-show flag stays put.
+    if (stored.visits.some((visit) => !visit.id)) {
+      stored.visits = stored.visits.map((visit, index) => (visit.id ? visit : { ...visit, id: `legacy-${index}` }));
+      all[id] = stored;
+      localStorage.setItem(EXTRAS_KEY, JSON.stringify(all));
     }
     return stored;
   } catch {
@@ -603,7 +622,7 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
               <MiniStat value={orders.length} label="Total" />
               <MiniStat value={extras.visits.length} label="Upcoming" />
               <MiniStat value={0} label="Canceled" />
-              <MiniStat value={0} label="No Show" />
+              <MiniStat value={extras.noShows.length} label="No Show" />
             </div>
           </div>
         </div>
@@ -723,16 +742,19 @@ const formatTime = (time: string | undefined) => {
 };
 
 /** One visit row: date badge, description and the time / party / table summary. */
-function VisitRow({ day, month, time, party, table, description }: { day: string; month: string; time: string | null; party: string | number; table: string | null; description: string | null }) {
+function VisitRow({ day, month, time, party, table, description, noShow }: { day: string; month: string; time: string | null; party: string | number; table: string | null; description: string | null; noShow: boolean }) {
   return (
-    <li className="flex items-stretch overflow-hidden rounded-xl border border-border bg-surface">
-      <span aria-hidden className="w-1 shrink-0 bg-success" />
+    <div className={cn("flex items-stretch overflow-hidden rounded-xl border border-border bg-surface group-hover:bg-muted", noShow && "border-destructive")}>
+      <span aria-hidden className={cn("w-1 shrink-0", noShow ? "bg-destructive" : "bg-success")} />
       <div className="flex min-w-0 flex-1 items-center gap-3 px-3 py-3 sm:px-4">
         <div aria-label={`Visit date ${month} ${day}`} className="flex shrink-0 flex-col items-center border-r border-border pr-3 sm:pr-4">
           <span className="text-fs-lg font-bold leading-none">{day}</span>
           <span className="text-fs-xs text-muted-foreground">{month}</span>
         </div>
-        <p className="min-w-0 flex-1 truncate font-bold">{description || "No Description"}</p>
+        <div className="min-w-0 flex-1">
+          <p className="min-w-0 truncate font-bold">{description || "No Description"}</p>
+          {noShow ? <p className="mt-0.5 text-fs-xs font-bold text-destructive">No show</p> : null}
+        </div>
         <div className="flex shrink-0 items-center gap-2 text-fs-sm text-muted-foreground sm:gap-3">
           {time ? <span className="flex items-center gap-1.5"><Clock className="size-4" />{time}</span> : null}
           <span className="hidden h-4 w-px bg-border sm:block" />
@@ -746,7 +768,7 @@ function VisitRow({ day, month, time, party, table, description }: { day: string
         </div>
         <ChevronRight className="size-5 shrink-0 text-muted-foreground" />
       </div>
-    </li>
+    </div>
   );
 }
 
@@ -765,7 +787,18 @@ function ReservationsCell({ icon, value, label }: { icon: ReactNode; value: stri
 /** Reservations tab: Upcoming/Recent toggle, summary strip and visit rows. */
 function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number }) {
   const [view, setView] = useState<"upcoming" | "recent">("recent");
-  const extras = useMemo(() => loadExtras(guest.id), [guest.id]);
+  const [extras, setExtras] = useState<Extras>(() => loadExtras(guest.id));
+  const [menu, setMenu] = useState<string | null>(null);
+  /** Marks a visit as a no show (or back to a normal visit) and keeps it on the device. */
+  const setNoShow = (key: string, value: boolean) =>
+    setExtras((prev) => {
+      const noShows = value
+        ? Array.from(new Set([...prev.noShows, key]))
+        : prev.noShows.filter((item) => item !== key);
+      const next = { ...prev, noShows };
+      saveExtras(guest.id, next);
+      return next;
+    });
   const today = new Date().toISOString().slice(0, 10);
   const booked = [...extras.visits].sort((a, b) => a.date.localeCompare(b.date));
   const upcoming = booked.filter((visit) => visit.date >= today);
@@ -782,6 +815,7 @@ function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number })
     const demo = demoDetails(visit, index);
     return {
       ...parts,
+      key: visit.id ?? `b:${visit.date}-${visit.time}`,
       time: formatTime(visit.time),
       description: visit.description ?? null,
       party: visit.party ?? demo.party,
@@ -794,6 +828,7 @@ function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number })
   const recentRows = [
     ...pastBooked,
     ...[...guest.tickets].sort((a, b) => b.date.localeCompare(a.date)).map((ticket) => ({
+      key: `t:${ticket.id}`,
       day: dateParts(ticket.date)?.day ?? "--",
       month: dateParts(ticket.date)?.month ?? "",
       time: ticket.arrivedAt || null,
@@ -841,11 +876,44 @@ function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number })
       </section>
 
       {rows.length ? (
-        <ul className="space-y-3">
-          {rows.map((row, index) => (
-            <VisitRow key={`${row.day}-${row.month}-${row.time ?? "t"}-${index}`} day={row.day} month={row.month} time={row.time} party={row.party} table={row.table} description={row.description} />
-          ))}
-        </ul>
+        <>
+          <ul className="space-y-3">
+            {rows.map((row) => {
+              const noShow = extras.noShows.includes(row.key);
+              return (
+                <li key={row.key}>
+                  <SwipeRow
+                    className="rounded-xl"
+                    action={noShow
+                      ? { label: "Undo", onAction: () => setNoShow(row.key, false) }
+                      : { label: "No show", destructive: true, onAction: () => setNoShow(row.key, true) }}
+                  >
+                    <Popover open={menu === row.key} onOpenChange={(open) => setMenu(open ? row.key : null)}>
+                      <PopoverTrigger asChild>
+                        <button type="button" className="group w-full text-left">
+                          <VisitRow day={row.day} month={row.month} time={row.time} party={row.party} table={row.table} description={row.description} noShow={noShow} />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent align="end" className="w-48 p-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNoShow(row.key, !noShow);
+                            setMenu(null);
+                          }}
+                          className="flex w-full items-center rounded-sm px-3 py-2 text-left text-fs-sm font-bold hover:bg-muted"
+                        >
+                          {noShow ? "Undo no show" : "No show"}
+                        </button>
+                      </PopoverContent>
+                    </Popover>
+                  </SwipeRow>
+                </li>
+              );
+            })}
+          </ul>
+          <p className="text-fs-xs text-muted-foreground">Swipe left on a visit to mark it as a no show, or tap the visit for the same option. Demo only — it doesn't change orders or table occupancy.</p>
+        </>
       ) : (
         <p className="py-2 text-fs-sm text-muted-foreground">{view === "upcoming" ? "No Upcoming Visits" : "No Past Reservations"}</p>
       )}
@@ -1014,7 +1082,7 @@ function Guestbook() {
   if (booking && selected) {
     const book = (visit: GuestVisit) => {
       const extras = loadExtras(selected.id);
-      saveExtras(selected.id, { ...extras, visits: [...extras.visits, visit] });
+      saveExtras(selected.id, { ...extras, visits: [...extras.visits, { ...visit, id: newVisitId() }] });
       setBooking(false);
     };
     return <GuestVisitBooking name={selected.name} phone={selected.phone} onCancel={() => setBooking(false)} onBook={book} />;
