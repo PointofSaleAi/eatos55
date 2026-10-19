@@ -415,7 +415,7 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
 
       {/* Detail column */}
       <div className="@container min-w-0 space-y-5">
-        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-3 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,1fr)]" aria-label="Visit and spend summary">
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-border @sm:grid-cols-3 @xl:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,1fr)]" aria-label="Visit and spend summary">
           <div className="bg-surface"><StatCell value={lastVisit} label="Last Visit" /></div>
           <div className="bg-surface"><StatCell value={money(avgSpend)} label="Average Spend" /></div>
           <div className="bg-surface"><StatCell value={money(lifetime)} label="Lifetime Spend" /></div>
