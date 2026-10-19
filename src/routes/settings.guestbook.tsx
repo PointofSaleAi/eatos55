@@ -477,16 +477,14 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
           </SectionCard>
         </div>
 
-        <SectionCard
-          label="Allergies"
-          action={<DarkPill onClick={() => { /* adding happens inline below */ }}>Add</DarkPill>}
-        >
-          <div className="flex items-center gap-3">
-            <Utensils className="size-5 shrink-0" />
+        <SectionCard label="Allergies">
+          <div className="flex items-start gap-3">
+            <Utensils className="mt-1 size-5 shrink-0" />
             <div className="min-w-0 flex-1">
               <TagEditor
                 values={extras.allergies}
-                addLabel="Add allergy"
+                addLabel="Add"
+                tone="dark"
                 onAdd={(value) => update({ allergies: [...extras.allergies, value] })}
                 onRemove={(value) => update({ allergies: extras.allergies.filter((item) => item !== value) })}
               />
@@ -495,26 +493,15 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
         </SectionCard>
 
         <SectionCard label="Upcoming Visits">
-          <div className="flex items-center gap-3">
-            <Cake className="size-5 shrink-0" />
+          <div className="flex items-start gap-3">
+            <Cake className="mt-1 size-5 shrink-0" />
             <div className="min-w-0 flex-1">
-              {extras.visits.length ? (
-                <VisitEditor
-                  visits={extras.visits}
-                  onAdd={(visit) => update({ visits: [...extras.visits, visit] })}
-                  onRemove={(visit) => update({ visits: extras.visits.filter((item) => item !== visit) })}
-                />
-              ) : (
-                <p className="text-fs-sm">No Upcoming Visits</p>
-              )}
-            </div>
-            {!extras.visits.length ? (
               <VisitEditor
                 visits={extras.visits}
                 onAdd={(visit) => update({ visits: [...extras.visits, visit] })}
                 onRemove={(visit) => update({ visits: extras.visits.filter((item) => item !== visit) })}
               />
-            ) : null}
+            </div>
           </div>
         </SectionCard>
 
