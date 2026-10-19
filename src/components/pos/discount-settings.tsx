@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { MoneyInput } from "@/components/pos/money-input";
 import { useMemo, useState, type ReactNode } from "react";
-import { AlertCircle, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
+import { AlertCircle, CheckSquare, ChevronRight, Copy, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, settingsRowClass } from "@/components/pos/settings-rows";
@@ -11,12 +11,14 @@ import { ArchiveGlyph } from "@/components/pos/archive-glyph";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { usePos } from "@/lib/pos-store";
 import { taxProducts } from "@/lib/tax-settings";
 import { cn } from "@/lib/utils";
-import { discountCategories, discountErrors, discountValid, formatDiscount, newDiscount, referenceDiscounts, type DiscountRule, type DiscountType } from "@/lib/discount-settings";
+import { defaultDiscountDays, discountCategories, discountErrors, discountValid, formatDiscount, newDiscount, referenceDiscounts, type DiscountDay, type DiscountRule, type DiscountType } from "@/lib/discount-settings";
+import { scheduleDays } from "@/lib/restaurant-schedules";
 
 const description = "Discount is a reduction in the total amount due for a purchase, often granted for early or prompt payment.";
 const cols = "sm:grid sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,1fr)_1rem]";
@@ -42,7 +44,12 @@ export function DiscountSettings() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [copyFrom, setCopyFrom] = useState<number | null>(null);
+  const [copyTargets, setCopyTargets] = useState<number[]>([]);
+  const [dayQuery, setDayQuery] = useState("");
   const exists = !!draft && discounts.some(d => d.id === draft.id);
+  const days = draft && draft.days?.length === 7 ? draft.days : defaultDiscountDays();
+  const updateDay = (index: number, patch: Partial<DiscountDay>) => { if (draft) update({ days: days.map((d, i) => i === index ? { ...d, ...patch } : d) }); };
 
   const update = (patch: Partial<DiscountRule>) => {
     if (!draft || !canManageSettings) return;
@@ -113,11 +120,22 @@ export function DiscountSettings() {
         {draft.scheduled && <>
           {inputRow("disc-start-date", "Start Date", draft.startDate, v => update({ startDate: v }), "date")}
           {inputRow("disc-end-date", "End Date", draft.endDate, v => update({ endDate: v }), "date")}
-          {inputRow("disc-start-time", "Start Time", draft.startTime, v => update({ startTime: v }), "time")}
-          {inputRow("disc-end-time", "End Time", draft.endTime, v => update({ endTime: v }), "time")}
           {errors.schedule && <div className="px-4 pb-3"><ErrorLine text={errors.schedule} /></div>}
         </>}
       </GroupCard>
+
+      {draft.scheduled && <>
+        <p className="mb-2 mt-6 px-1 t-caption font-semibold text-muted-foreground">Select Time</p>
+        <GroupCard>
+          <div className="grid grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)_minmax(0,1fr)_2.25rem] items-center gap-2 border-b border-border px-2 py-4 t-caption font-bold"><span>Days</span><span>Start Time</span><span>End Time</span><span /></div>
+          {days.map((day, index) => <div key={scheduleDays[index]} className={cn("grid grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)_minmax(0,1fr)_2.25rem] items-center gap-2 border-b border-border px-2 py-3 last:border-b-0", index % 2 === 0 && "bg-muted/40")}>
+            <label className="flex min-w-0 flex-wrap items-center gap-2 t-caption"><Checkbox className="rounded-full" aria-label={scheduleDays[index]} disabled={!canManageSettings} checked={day.enabled} onCheckedChange={enabled => updateDay(index, { enabled: enabled === true })} /><span className="break-words">{scheduleDays[index]}</span></label>
+            <Input type="time" aria-label={`${scheduleDays[index]} start time`} disabled={!canManageSettings} className="min-w-0 px-1 t-caption" value={day.start} onChange={event => updateDay(index, { start: event.target.value })} />
+            <Input type="time" aria-label={`${scheduleDays[index]} end time`} disabled={!canManageSettings} className="min-w-0 px-1 t-caption" value={day.end} onChange={event => updateDay(index, { end: event.target.value })} />
+            <Button variant="ghost" size="icon" className="size-9" aria-label={`Copy ${scheduleDays[index]} times`} title={`Copy ${scheduleDays[index]} times`} disabled={!canManageSettings} onClick={() => { setCopyFrom(index); setCopyTargets([]); setDayQuery(""); }}><Copy className="size-4" /></Button>
+          </div>)}
+        </GroupCard>
+      </>}
 
       {exists && canManageSettings && <div className="mt-6 flex flex-wrap items-center justify-end gap-2">
         {confirmDelete ? <><span className="t-caption text-muted-foreground">Delete this discount?</span><Button variant="outline" onClick={() => setConfirmDelete(false)}>Cancel</Button><Button variant="destructive" onClick={() => { updateSettings({ discountRules: discounts.filter(d => d.id !== draft.id) }); toast.success("Discount deleted"); close(); }}>Delete</Button></> : <Button variant="outline" onClick={() => setConfirmDelete(true)}><Trash2 />Delete Discount</Button>}
@@ -126,6 +144,21 @@ export function DiscountSettings() {
     </ScreenBody>
     {picker === "categories" && <Picker title="Applicable Categories" options={categories} selected={draft.categories} onChange={v => update({ categories: v })} onClose={() => { setPicker(null); if (!draft.categories.length) update({ categoriesOn: false }); }} />}
     {picker === "products" && <Picker title="Applicable Product" options={products} selected={draft.products} onChange={v => update({ products: v })} onClose={() => setPicker(null)} />}
+    <Dialog open={copyFrom !== null} onOpenChange={open => { if (!open) setCopyFrom(null); }}>
+      <DialogContent className="max-h-[85dvh] w-[calc(100%-2rem)] overflow-y-auto rounded-lg">
+        <DialogTitle>Select Days</DialogTitle>
+        <DialogDescription>To copy the times please select days</DialogDescription>
+        <div className="flex items-center gap-2">
+          <Input aria-label="Search days" placeholder="Search" value={dayQuery} onChange={event => setDayQuery(event.target.value)} />
+          <Button variant="ghost" size="icon" aria-label="Select all days" title="Select all days" onClick={() => setCopyTargets(copyTargets.length === 6 ? [] : scheduleDays.flatMap((_, index) => index !== copyFrom ? [index] : []))}><CheckSquare /></Button>
+        </div>
+        {scheduleDays.map((day, index) => index !== copyFrom && day.toLowerCase().includes(dayQuery.toLowerCase()) ? <label key={day} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 t-row"><span>{day}</span><Checkbox aria-label={`Copy to ${day}`} checked={copyTargets.includes(index)} onCheckedChange={checked => setCopyTargets(values => checked ? [...values, index] : values.filter(value => value !== index))} /></label> : null)}
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => setCopyFrom(null)}>Cancel</Button>
+          <Button disabled={!copyTargets.length} onClick={() => { if (copyFrom === null || !draft) return; const source = days[copyFrom]; if (!source) return; update({ days: days.map((d, i) => copyTargets.includes(i) ? { ...source, enabled: true } : d) }); setCopyFrom(null); }}>Apply</Button>
+        </div>
+      </DialogContent>
+    </Dialog>
     <Dialog open={confirmExit} onOpenChange={o => { if (!o) setConfirmExit(false); }}>
       <DialogContent className="w-[calc(100vw-2rem)] max-w-xs gap-0 p-0 text-center">
         <div className="p-5"><DialogTitle className="t-row font-bold">Are you sure you want to exit?</DialogTitle><DialogDescription className="mt-1 t-caption">If you go back now, you will lose the progress.</DialogDescription></div>
