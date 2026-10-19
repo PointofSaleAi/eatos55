@@ -1,5 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { CreditCard as PayCard, Banknote as PayCash, Gift as PayGift, Award as PayPoints, ChevronDown as PayDown, ArrowUpDown as PaySort } from "lucide-react";
 import {
   ArrowLeft,
   Armchair,
@@ -931,29 +932,94 @@ function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number })
   );
 }
 
-/** Payments tab: payments recorded on the guest's checks. */
+type PayGroup = "Cards" | "Loyalty" | "Cash" | "Gift Card";
+const PAY_GROUPS: PayGroup[] = ["Cards", "Loyalty", "Cash", "Gift Card"];
+const payGroupOf = (method: string): PayGroup =>
+  /cash/i.test(method) ? "Cash" : /gift/i.test(method) ? "Gift Card" : /loyal|point/i.test(method) ? "Loyalty" : "Cards";
+type PaySortKey = "date" | "spent" | "tips" | "points" | "type" | "total";
+
+/** Payments tab: payments on the guest's checks grouped by tender, with a summary strip. Points are demo values (1 per $10). */
 function PaymentsTab({ guest }: { guest: GuestRow }) {
-  const payments = guest.tickets
-    .flatMap((ticket) => (ticket.payments ?? []).map((payment) => ({ ...payment, ticket })))
-    .sort((a, b) => b.ticket.date.localeCompare(a.ticket.date));
+  const [sort, setSort] = useState<{ key: PaySortKey; dir: 1 | -1 }>({ key: "date", dir: -1 });
+  const [open, setOpen] = useState<PayGroup | null>(null);
+  const rows = guest.tickets.flatMap((ticket) => {
+    const paid = (ticket.payments ?? []).reduce((n, p) => n + p.amount, 0) || 1;
+    return (ticket.payments ?? []).map((p) => {
+      const tips = ((ticket.tips ?? 0) * p.amount) / paid;
+      return { key: `${ticket.id}-${p.no}-${p.at}`, date: ticket.date, method: p.method, group: payGroupOf(p.method), total: p.amount, tips, spent: p.amount - tips, points: Math.floor(p.amount / 10) };
+    });
+  });
+  const val = (r: (typeof rows)[number]) => (sort.key === "type" ? r.method : sort.key === "date" ? r.date : r[sort.key]);
+  const sorted = [...rows].sort((a, b) => {
+    const x = val(a), y = val(b);
+    return (typeof x === "number" && typeof y === "number" ? x - y : String(x).localeCompare(String(y))) * sort.dir;
+  });
+  const sum = (g: PayGroup) => rows.filter((r) => r.group === g).reduce((n, r) => n + r.total, 0);
+  const points = rows.reduce((n, r) => n + r.points, 0);
+  const fmtDate = (d: string) => new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+  const cols = "grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-2 @lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,1.3fr)_minmax(0,1fr)]";
+  const header: [PaySortKey, string, string][] = [["date", "Date", ""], ["spent", "Spent", "hidden @lg:flex"], ["tips", "Tips", "hidden @lg:flex"], ["points", "Points", "hidden @lg:flex"], ["type", "Payment Type", ""], ["total", "Total", "justify-end"]];
+  const cards: [string, ReactNode, ReactNode][] = [
+    ["Cards", <PayCard key="c" className="size-4" />, money(sum("Cards"))],
+    ["Cash", <PayCash key="m" className="size-4" />, money(sum("Cash"))],
+    ["Loyalty Points", <PayPoints key="l" className="size-4" />, points.toFixed(2)],
+    ["Gift Card", <PayGift key="g" className="size-4" />, money(sum("Gift Card"))],
+  ];
   return (
-    <SectionCard label="Payments">
-      {payments.length ? (
-        <ul className="divide-y divide-border">
-          {payments.map((payment) => (
-            <li key={`${payment.ticket.id}-${payment.no}-${payment.at}`} className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
-              <div className="min-w-0">
-                <p className="font-bold">{payment.method}</p>
-                <p className="text-fs-xs text-muted-foreground">Order# {payment.ticket.orderNo ?? "--"} · {payment.ticket.date} · {payment.at}</p>
-              </div>
-              <p className="shrink-0 font-bold">{money(payment.amount)}</p>
-            </li>
+    <section aria-label="Payments" className="@container space-y-4">
+      <div>
+        <h3 className="mb-2 text-fs-sm font-bold uppercase tracking-wide text-muted-foreground">Summary</h3>
+        <div className="grid grid-cols-2 gap-2 rounded-xl border border-border bg-surface p-2 @xl:grid-cols-4">
+          {cards.map(([label, icon, value]) => (
+            <div key={label} className="flex items-center gap-3 rounded-lg bg-surface-muted p-3">
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-surface">{icon}</span>
+              <div className="min-w-0"><p className="font-bold">{value}</p><p className="truncate text-fs-xs text-muted-foreground">{label}</p></div>
+            </div>
           ))}
-        </ul>
+        </div>
+      </div>
+      {rows.length ? (
+        <div className="overflow-hidden rounded-xl border border-border bg-surface">
+          <div className={cn(cols, "border-b border-border px-3 py-2.5 text-fs-xs font-bold")}>
+            {header.map(([key, label, extra]) => (
+              <button key={key} type="button" onClick={() => setSort((s) => ({ key, dir: s.key === key ? (s.dir === 1 ? -1 : 1) : -1 }))} className={cn("flex items-center gap-1 text-left hover:text-foreground", key === "type" && "@lg:justify-center", extra)}>
+                {label}<PaySort className={cn("size-3", sort.key === key ? "text-foreground" : "text-muted-foreground")} />
+              </button>
+            ))}
+          </div>
+          {PAY_GROUPS.filter((g) => rows.some((r) => r.group === g)).map((g) => {
+            const list = sorted.filter((r) => r.group === g);
+            const latest = list[0]!;
+            const expanded = open === g;
+            return (
+              <div key={g}>
+                <p className="bg-surface-muted px-3 py-1.5 text-fs-xs font-bold uppercase text-muted-foreground">{g}</p>
+                <button type="button" aria-expanded={expanded} onClick={() => setOpen(expanded ? null : g)} className={cn(cols, "w-full border-b border-border px-3 py-3 text-left text-fs-sm hover:bg-muted")}>
+                  <span className="font-bold">{fmtDate(latest.date)}</span>
+                  <span className="hidden @lg:block">{money(list.reduce((n, r) => n + r.spent, 0))}</span>
+                  <span className="hidden @lg:block">{money(list.reduce((n, r) => n + r.tips, 0))}</span>
+                  <span className="hidden @lg:block">{String(list.reduce((n, r) => n + r.points, 0)).padStart(2, "0")}</span>
+                  <span className="flex items-center gap-2 truncate @lg:justify-center">{latest.method}<span className="grid size-5 place-items-center rounded-full border border-border text-fs-xs">{list.length}</span></span>
+                  <span className="flex items-center justify-end gap-1 font-bold">{money(list.reduce((n, r) => n + r.total, 0))}<PayDown className={cn("size-4 text-muted-foreground transition-transform", !expanded && "-rotate-90")} /></span>
+                </button>
+                {expanded ? list.map((r) => (
+                  <div key={r.key} className={cn(cols, "border-b border-border bg-surface-muted/50 px-3 py-2.5 text-fs-sm")}>
+                    <span>{fmtDate(r.date)}</span>
+                    <span className="hidden @lg:block">{money(r.spent)}</span>
+                    <span className="hidden @lg:block">{money(r.tips)}</span>
+                    <span className="hidden @lg:block">{String(r.points).padStart(2, "0")}</span>
+                    <span className="truncate @lg:text-center">{r.method}</span>
+                    <span className="text-right">{money(r.total)}</span>
+                  </div>
+                )) : null}
+              </div>
+            );
+          })}
+        </div>
       ) : (
         <p className="py-2 text-fs-sm text-muted-foreground">No payments to show.</p>
       )}
-    </SectionCard>
+    </section>
   );
 }
 
