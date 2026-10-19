@@ -238,49 +238,127 @@ const initialsTone = (name: string) => {
 /** Searchable guest list; used full-width on phones and as the left pane on wide screens. */
 function GuestList({
   records,
+  archivedRecords,
   selectedId,
   onSelect,
+  onArchive,
+  onRestore,
+  onAdd,
   className,
 }: {
   records: GuestRow[];
+  archivedRecords: GuestRow[];
   selectedId: string | null;
   onSelect: (id: string) => void;
+  onArchive: (id: string) => void;
+  onRestore: (id: string) => void;
+  onAdd: (input: { name: string; email?: string | undefined; phone?: string | undefined }) => void;
   className?: string | undefined;
 }) {
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<"az" | "za" | "recent">("az");
+  const [archivedView, setArchivedView] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [draft, setDraft] = useState({ name: "", email: "", phone: "" });
   const q = query.trim().toLowerCase();
-  const visible = records.filter((row) => [row.name, row.email, row.phone].some((value) => value?.toLowerCase().includes(q)));
+  const pool = archivedView ? archivedRecords : records;
+  const latestDate = (row: GuestRow) => row.tickets.reduce((latest, ticket) => (ticket.date > latest ? ticket.date : latest), "");
+  const visible = useMemo(() => {
+    const list = pool.filter((row) => [row.name, row.email, row.phone].some((value) => value?.toLowerCase().includes(q)));
+    if (sort === "az") return [...list].sort((a, b) => a.name.localeCompare(b.name));
+    if (sort === "za") return [...list].sort((a, b) => b.name.localeCompare(a.name));
+    return [...list].sort((a, b) => latestDate(b).localeCompare(latestDate(a)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pool, q, sort]);
+  const submit = () => {
+    if (!draft.name.trim()) return;
+    onAdd({ name: draft.name, email: draft.email.trim() || undefined, phone: draft.phone.trim() || undefined });
+    setDraft({ name: "", email: "", phone: "" });
+    setAdding(false);
+    setArchivedView(false);
+  };
   return (
     <div className={cn("flex min-h-0 w-full flex-1 flex-col", className)}>
-      <label className="mb-5 flex min-h-ctl-md shrink-0 items-center gap-3 rounded-pill border border-border bg-surface px-4">
+      <label className="mb-3 flex min-h-ctl-md shrink-0 items-center gap-3 rounded-pill border border-border bg-surface px-4">
         <Search className="size-5 shrink-0 text-muted-foreground" />
         <input type="search" aria-label="Search guests" placeholder="Search guests" value={query} onChange={(e) => setQuery(e.target.value)} className="min-h-tap min-w-0 flex-1 bg-transparent outline-none" />
       </label>
+      <div className="mb-3 flex items-center gap-1.5">
+        <Popover open={adding} onOpenChange={setAdding}>
+          <PopoverTrigger asChild>
+            <button type="button" className="inline-flex min-h-tap items-center gap-1 rounded-pill bg-foreground px-3 py-1.5 text-fs-sm font-bold text-background transition-colors hover:bg-foreground/90">
+              <Plus className="size-4" /> New Guest
+            </button>
+          </PopoverTrigger>
+          <PopoverContent align="start" className="w-72 space-y-2">
+            <p className="text-fs-sm font-bold">New Guest</p>
+            <input aria-label="Guest name" placeholder="Full name" value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} className="min-h-tap w-full rounded-lg border border-border bg-transparent px-3 text-fs-sm outline-none focus:border-foreground" />
+            <input aria-label="Guest email" placeholder="Email (optional)" value={draft.email} onChange={(e) => setDraft((d) => ({ ...d, email: e.target.value }))} className="min-h-tap w-full rounded-lg border border-border bg-transparent px-3 text-fs-sm outline-none focus:border-foreground" />
+            <input aria-label="Guest phone" placeholder="Phone (optional)" value={draft.phone} onChange={(e) => setDraft((d) => ({ ...d, phone: e.target.value }))} className="min-h-tap w-full rounded-lg border border-border bg-transparent px-3 text-fs-sm outline-none focus:border-foreground" />
+            <Button className="w-full" disabled={!draft.name.trim()} onClick={submit}>Add Guest</Button>
+          </PopoverContent>
+        </Popover>
+        <span className="flex-1" />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon" aria-label="Sort guests" title="Sort guests"><PaySort className="size-4" /></Button>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-44 p-1">
+            {([["az", "Name A–Z"], ["za", "Name Z–A"], ["recent", "Most Recent"]] as const).map(([value, label]) => (
+              <button key={value} type="button" onClick={() => setSort(value)} className={cn("flex min-h-tap w-full items-center justify-between rounded-lg px-3 py-2 text-left text-fs-sm hover:bg-muted", sort === value && "bg-muted font-bold")}>
+                {label}
+                {sort === value ? <Check className="size-4" /> : null}
+              </button>
+            ))}
+          </PopoverContent>
+        </Popover>
+        <Popover open={undefined}>
+          <PopoverTrigger asChild>
+            <Button variant={archivedView ? "secondary" : "ghost"} size="icon" aria-label={archivedView ? "Show active guests" : "Show archived guests"} aria-pressed={archivedView} onClick={() => setArchivedView((v) => !v)} title={archivedView ? "Show active guests" : "Show archived guests"}>
+              <Archive className="size-4" />
+            </Button>
+          </PopoverTrigger>
+        </Popover>
+      </div>
       {visible.length ? (
         <ul className="min-h-0 min-w-0 flex-1 divide-y divide-border overflow-y-auto border-y border-border">
           {visible.map((row) => (
-            <li key={row.id}>
+            <li key={row.id} className="relative">
               <Button
                 variant="ghost"
                 className={cn(
-                  "h-auto min-h-ctl-lg w-full justify-start gap-3 rounded-none px-2 py-4 text-foreground hover:bg-muted",
+                  "h-auto min-h-ctl-lg w-full justify-start gap-3 rounded-none py-4 pl-2 pr-12 text-foreground hover:bg-muted",
                   row.id === selectedId && "bg-muted",
                 )}
                 onClick={() => onSelect(row.id)}
               >
-                <Users className="size-5 shrink-0" />
+                <span className={cn("grid size-9 shrink-0 place-items-center rounded-full text-fs-xs font-bold", initialsTone(row.name))} aria-hidden="true">{initials(row.name)}</span>
                 <span className="min-w-0 flex-1 whitespace-normal break-words text-left">
                   <span className="block font-bold">{row.name}</span>
                   {row.email ? <span className="block break-all text-fs-xs text-muted-foreground">{row.email}</span> : null}
                 </span>
                 <ChevronRight className="size-4 shrink-0" />
               </Button>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" aria-label={`Actions for ${row.name}`} className="absolute right-9 top-1/2 size-7 -translate-y-1/2 rounded-full text-muted-foreground hover:bg-muted">
+                    <MoreHorizontal className="size-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="w-44 p-1">
+                  <button type="button" onClick={() => (archivedView ? onRestore(row.id) : onArchive(row.id))} className="flex min-h-tap w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-fs-sm hover:bg-muted">
+                    {archivedView ? <ArchiveRestore className="size-4" /> : <Archive className="size-4" />}
+                    {archivedView ? "Restore to list" : "Archive guest"}
+                  </button>
+                </PopoverContent>
+              </Popover>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="py-10 text-center text-muted-foreground">{q ? "No guests found." : "No named guests available."}</p>
+        <p className="py-10 text-center text-muted-foreground">{archivedView ? "No archived guests." : q ? "No guests found." : "No named guests available."}</p>
       )}
+      <p className="pt-2 text-fs-xs text-muted-foreground">{archivedView ? "Archived guests stay on this device only. Use the ⋯ menu to restore them." : "Demo only — new guests and archiving stay on this device."}</p>
     </div>
   );
 }
