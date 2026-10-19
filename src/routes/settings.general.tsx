@@ -104,22 +104,20 @@ function GeneralSettings() {
             value={settings.language}
             icon={Globe}
             color="pink"
-            topic="language"
           />
-          <IconNavRow
+          <IconValueRow
             title="Currency"
             value={settings.currency}
             icon={CircleDollarSign}
             color="green"
-            topic="currency"
           />
           <IconValueRow
             title="Tax Alias"
             value={settings.taxAlias}
             icon={Percent}
             color="sky"
-            topic="tax-alias"
           />
+
         </GroupCard>
 
         <GroupCard className="mt-6">
