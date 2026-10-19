@@ -786,7 +786,7 @@ function ReservationsCell({ icon, value, label }: { icon: ReactNode; value: stri
 
 /** Reservations tab: Upcoming/Recent toggle, summary strip and visit rows. */
 function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number }) {
-  console.log("RENDER_RESV", guest.name, indent);
+  (window as any).__L.push("RENDER_RESV " + guest.name + " " + indent);
   const [view, setView] = useState<"upcoming" | "recent">("recent");
   const [extras, setExtras] = useState<Extras>(() => loadExtras(guest.id));
   const [menu, setMenu] = useState<string | null>(null);
@@ -997,11 +997,11 @@ const GUEST_TABS: { id: GuestTab; label: string }[] = [
 ];
 
 function GuestDetail({ guest, onBook }: { guest: GuestRow; onBook: () => void }) {
-  console.log("RENDER_DETAIL", guest.name);
+  (window as any).__L = ((window as any).__L || []); (window as any).__L.push("RENDER_DETAIL " + guest.name);
   const router = useRouter();
   const { setGuest } = usePos();
   const [tab, setTabRaw] = useState<GuestTab>("profile");
-  const setTab = (t: GuestTab) => { console.log("SET_TAB", t); setTabRaw(t); };
+  const setTab = (t: GuestTab) => { (window as any).__L.push("SET_TAB " + t); setTabRaw(t); };
   const [resvIndent, setResvIndent] = useState(0);
   const paneRef = useRef<HTMLDivElement>(null);
   // Starting an order from a profile attaches that guest, so the New Order
@@ -1032,7 +1032,6 @@ function GuestDetail({ guest, onBook }: { guest: GuestRow; onBook: () => void })
       const used = (toggle?.getBoundingClientRect().width ?? 0) + (infoWidth ? 8 + infoWidth : 0);
       const room = pane.getBoundingClientRect().right - stripRect.left - used;
       const next = Math.max(0, Math.min(wanted, room));
-      console.log("SET_INDENT", next);
       setResvIndent((current) => (Math.abs(current - next) < 1 ? current : next));
     };
     measure();

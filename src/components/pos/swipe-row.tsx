@@ -34,6 +34,7 @@ export function SwipeRow({
 
   const end = () => {
     if (startX.current === null) return;
+    (window as any).__L.push("END");
     startX.current = null;
     startY.current = null;
     locked.current = false;
@@ -70,6 +71,7 @@ export function SwipeRow({
           if (e.touches.length > 1) end();
         }}
         onPointerDown={(e) => {
+          (window as any).__L.push("DOWN " + e.pointerType + " " + Math.round(e.clientX));
           if (e.pointerType === "touch") return;
           if (e.pointerType === "mouse" && e.button !== 0) return;
           startX.current = e.clientX;
@@ -87,6 +89,7 @@ export function SwipeRow({
             }
             if (Math.abs(e.clientX - startX.current) < 8) return;
             locked.current = true;
+            (window as any).__L.push("LOCK " + Math.round(e.clientX));
             // Only once a drag is real: capturing keeps the moves coming without
             // stealing the click a plain tap on the row (or the action) needs.
             if (e.pointerType !== "touch") e.currentTarget.setPointerCapture(e.pointerId);
@@ -94,6 +97,7 @@ export function SwipeRow({
           const moved = Math.max(-width, Math.min(0, startDx.current + e.clientX - startX.current));
           dragging.current = true;
           setDx(moved);
+          (window as any).__L.push("MOVE " + Math.round(moved));
         }}
         onPointerUp={end}
         onPointerCancel={end}
