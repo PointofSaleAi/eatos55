@@ -884,9 +884,13 @@ function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number })
                 <li key={row.key}>
                   <SwipeRow
                     className="rounded-xl"
-                    action={noShow
-                      ? { label: "Undo", onAction: () => setNoShow(row.key, false) }
-                      : { label: "No show", destructive: true, onAction: () => setNoShow(row.key, true) }}
+                    action={{
+                      label: "No show",
+                      destructive: true,
+                      onAction: () => {
+                        if (!noShow) setNoShow(row.key, true);
+                      },
+                    }}
                   >
                     <Popover open={menu === row.key} onOpenChange={(open) => setMenu(open ? row.key : null)}>
                       <PopoverTrigger asChild>
@@ -912,7 +916,7 @@ function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number })
               );
             })}
           </ul>
-          <p className="text-fs-xs text-muted-foreground">Swipe left on a visit to mark it as a no show, or tap the visit for the same option. Demo only — it doesn't change orders or table occupancy.</p>
+          <p className="text-fs-xs text-muted-foreground">Swipe left on a visit to mark it as a no show. Tap a visit for the same option, or to undo a no show. Demo only — it doesn't change orders or table occupancy.</p>
         </>
       ) : (
         <p className="py-2 text-fs-sm text-muted-foreground">{view === "upcoming" ? "No Upcoming Visits" : "No Past Reservations"}</p>
@@ -1073,9 +1077,11 @@ function Guestbook() {
   const router = useRouter();
   const wide = useWideLayout();
   const { tickets, guest } = usePos();
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [booking, setBooking] = useState(false);
   const records = useMemo(() => guestDirectory(tickets, guest), [tickets, guest]);
+  // On wide screens the detail pane would otherwise sit empty, so the first
+  // guest is picked for you; phones still open on the list.
+  const [selectedId, setSelectedId] = useState<string | null>(() => (wide ? records[0]?.id ?? null : null));
+  const [booking, setBooking] = useState(false);
   const selected = records.find((row) => row.id === selectedId);
   const goSettings = () => router.navigate({ to: "/settings" });
 
