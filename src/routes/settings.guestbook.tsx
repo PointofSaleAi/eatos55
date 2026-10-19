@@ -1452,7 +1452,33 @@ function Guestbook() {
   const router = useRouter();
   const wide = useWideLayout();
   const { tickets, guest } = usePos();
-  const records = useMemo(() => guestDirectory(tickets, guest), [tickets, guest]);
+  const [directory, setDirectory] = useState<DirectoryStore>(loadDirectory);
+  const updateDirectory = (next: DirectoryStore) => {
+    setDirectory(next);
+    saveDirectory(next);
+  };
+  const merged = useMemo(() => {
+    const base = guestDirectory(tickets, guest);
+    const known = new Set(base.map((row) => row.id));
+    return [...base, ...directory.added.filter((row) => !known.has(row.id))];
+  }, [tickets, guest, directory.added]);
+  const records = useMemo(() => merged.filter((row) => !directory.archived.includes(row.id)), [merged, directory.archived]);
+  const archivedRecords = useMemo(() => merged.filter((row) => directory.archived.includes(row.id)), [merged, directory.archived]);
+  const archiveGuest = (id: string) => {
+    updateDirectory({ ...directory, archived: [...new Set([...directory.archived, id])] });
+    if (selectedId === id) setSelectedId(records.find((row) => row.id !== id)?.id ?? null);
+  };
+  const restoreGuest = (id: string) => {
+    updateDirectory({ ...directory, archived: directory.archived.filter((item) => item !== id) });
+  };
+  const addGuest = (input: { name: string; email?: string | undefined; phone?: string | undefined }) => {
+    const name = input.name.trim();
+    if (!name) return;
+    const id = `custom|${name.toLowerCase()}`;
+    const entry: DirectoryEntry = { id, name, email: input.email?.trim() || mockEmail(name), phone: input.phone?.trim() || mockPhone(name), tickets: [] };
+    updateDirectory({ ...directory, added: [...directory.added.filter((row) => row.id !== id), entry] });
+    setSelectedId(id);
+  };
   // On wide screens the detail pane would otherwise sit empty, so the first
   // guest is picked for you; phones still open on the list.
   const [selectedId, setSelectedId] = useState<string | null>(() => (wide ? records[0]?.id ?? null : null));
@@ -1479,7 +1505,7 @@ function Guestbook() {
         list={
           <>
             {listHeader}
-            <GuestList records={records} selectedId={selected.id} className="px-3 py-3 lg:px-4" onSelect={(id) => setSelectedId(id === selected.id ? null : id)} />
+            <GuestList records={records} archivedRecords={archivedRecords} selectedId={selected.id} className="px-3 py-3 lg:px-4" onSelect={(id) => setSelectedId(id === selected.id ? null : id)} onArchive={archiveGuest} onRestore={restoreGuest} onAdd={addGuest} />
           </>
         }
       >
@@ -1493,7 +1519,7 @@ function Guestbook() {
         list={
           <>
             {listHeader}
-            <GuestList records={records} selectedId={null} className="px-3 py-3 lg:px-4" onSelect={setSelectedId} />
+            <GuestList records={records} archivedRecords={archivedRecords} selectedId={null} className="px-3 py-3 lg:px-4" onSelect={setSelectedId} onArchive={archiveGuest} onRestore={restoreGuest} onAdd={addGuest} />
           </>
         }
       >
@@ -1513,7 +1539,7 @@ function Guestbook() {
           <h2 className="min-w-0 break-words text-fs-xl font-bold">{selected.name}</h2>
         </div>
         <GuestDetail key={selected.id} guest={selected} onBook={() => setBooking(true)} />
-      </div> : <GuestList records={records} selectedId={null} onSelect={setSelectedId} />}
+      </div> : <GuestList records={records} archivedRecords={archivedRecords} selectedId={null} onSelect={setSelectedId} onArchive={archiveGuest} onRestore={restoreGuest} onAdd={addGuest} />}
     </ScreenBody>
   </>;
 }
