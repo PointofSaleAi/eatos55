@@ -70,7 +70,6 @@ export function SwipeRow({
           if (e.touches.length > 1) end();
         }}
         onPointerDown={(e) => {
-          if (e.pointerType === "touch") return;
           if (e.pointerType === "mouse" && e.button !== 0) return;
           startX.current = e.clientX;
           startY.current = e.clientY;
