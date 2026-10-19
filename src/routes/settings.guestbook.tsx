@@ -930,8 +930,9 @@ function GuestDetail({ guest }: { guest: GuestRow }) {
       }
       const stripRect = strip.getBoundingClientRect();
       const wanted = target.getBoundingClientRect().left - stripRect.left - 4;
-      // Keep the whole row (toggle, gap, info icon) inside the pane.
-      const used = (toggle?.getBoundingClientRect().width ?? 0) + (info ? 8 + info.getBoundingClientRect().width : 0);
+      // Keep the whole row (toggle, gap, info icon) inside the pane. The icon is hidden on phones.
+      const infoWidth = info?.getBoundingClientRect().width ?? 0;
+      const used = (toggle?.getBoundingClientRect().width ?? 0) + (infoWidth ? 8 + infoWidth : 0);
       const room = pane.getBoundingClientRect().right - stripRect.left - used;
       const next = Math.max(0, Math.min(wanted, room));
       setResvIndent((current) => (Math.abs(current - next) < 1 ? current : next));
