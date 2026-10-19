@@ -144,6 +144,21 @@ export function DiscountSettings() {
     </ScreenBody>
     {picker === "categories" && <Picker title="Applicable Categories" options={categories} selected={draft.categories} onChange={v => update({ categories: v })} onClose={() => { setPicker(null); if (!draft.categories.length) update({ categoriesOn: false }); }} />}
     {picker === "products" && <Picker title="Applicable Product" options={products} selected={draft.products} onChange={v => update({ products: v })} onClose={() => setPicker(null)} />}
+    <Dialog open={copyFrom !== null} onOpenChange={open => { if (!open) setCopyFrom(null); }}>
+      <DialogContent className="max-h-[85dvh] w-[calc(100%-2rem)] overflow-y-auto rounded-lg">
+        <DialogTitle>Select Days</DialogTitle>
+        <DialogDescription>To copy the times please select days</DialogDescription>
+        <div className="flex items-center gap-2">
+          <Input aria-label="Search days" placeholder="Search" value={dayQuery} onChange={event => setDayQuery(event.target.value)} />
+          <Button variant="ghost" size="icon" aria-label="Select all days" title="Select all days" onClick={() => setCopyTargets(copyTargets.length === 6 ? [] : scheduleDays.flatMap((_, index) => index !== copyFrom ? [index] : []))}><CheckSquare /></Button>
+        </div>
+        {scheduleDays.map((day, index) => index !== copyFrom && day.toLowerCase().includes(dayQuery.toLowerCase()) ? <label key={day} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 t-row"><span>{day}</span><Checkbox aria-label={`Copy to ${day}`} checked={copyTargets.includes(index)} onCheckedChange={checked => setCopyTargets(values => checked ? [...values, index] : values.filter(value => value !== index))} /></label> : null)}
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={() => setCopyFrom(null)}>Cancel</Button>
+          <Button disabled={!copyTargets.length} onClick={() => { if (copyFrom === null || !draft) return; const source = days[copyFrom]; if (!source) return; update({ days: days.map((d, i) => copyTargets.includes(i) ? { ...source, enabled: true } : d) }); setCopyFrom(null); }}>Apply</Button>
+        </div>
+      </DialogContent>
+    </Dialog>
     <Dialog open={confirmExit} onOpenChange={o => { if (!o) setConfirmExit(false); }}>
       <DialogContent className="w-[calc(100vw-2rem)] max-w-xs gap-0 p-0 text-center">
         <div className="p-5"><DialogTitle className="t-row font-bold">Are you sure you want to exit?</DialogTitle><DialogDescription className="mt-1 t-caption">If you go back now, you will lose the progress.</DialogDescription></div>
