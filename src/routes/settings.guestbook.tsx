@@ -674,7 +674,7 @@ function GuestDetail({ guest }: { guest: GuestRow }) {
             </button>
           ))}
         </div>
-        <DarkPill onClick={() => router.navigate({ to: "/order/new" })}>
+        <DarkPill onClick={startOrder}>
           <Plus className="size-4" />
           New Order
         </DarkPill>
