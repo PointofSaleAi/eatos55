@@ -45,6 +45,7 @@ import { cn } from "@/lib/utils";
 import { brand } from "@/lib/brand";
 import { GuestVisitBooking } from "@/components/pos/guest-visit-booking";
 import { SwipeRow, type SwipeRowHandle } from "@/components/pos/swipe-row";
+import { formatPhoneFor as formatPhoneRaw, isValidPhoneFor, phoneCountries, phoneCountryByName, defaultPhoneCountry } from "@/lib/phone";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { GuestVisit } from "@/lib/guest-reservation";
 import googleFeedbackLogo from "@/assets/feedback-google.png.asset.json";
@@ -1564,14 +1565,15 @@ function Guestbook() {
 function NewGuestPage({ onCancel, onSave }: { onCancel: () => void; onSave: (input: { name: string; email?: string | undefined; phone?: string | undefined }) => void }) {
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [saved, setSaved] = useState<{ "Vehicle Details": FormValues[]; Address: FormValues[] }>({ "Vehicle Details": [], Address: [] });
+  const [cc, setCc] = useState(defaultPhoneCountry.name);
   const [f, setF] = useState({ first: "", last: "", phone: "", email: "", dob: "", since: "", anniversary: "", note: "" });
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF((d) => ({ ...d, [k]: e.target.value }));
-  const valid = f.first.trim() && f.last.trim() && f.phone.replace(/\D/g, "").length >= 10 && /.+@.+\..+/.test(f.email);
+  const valid = f.first.trim() && f.last.trim() && isValidPhoneFor(phoneCountryByName(cc), f.phone) && /.+@.+\..+/.test(f.email);
   const row = "flex min-h-ctl-md items-center justify-between gap-3 border-b border-border py-2 last:border-b-0";
   const input = "min-w-0 flex-1 bg-transparent text-right text-fs-sm outline-none placeholder:text-muted-foreground";
   const req = <span className="text-destructive"> *</span>;
   return <>
-    <SubHeader title="New Guest" backLabel="Guestbook" onBack={() => (valid ? onSave({ name: `${f.first.trim()} ${f.last.trim()}`, email: f.email.trim(), phone: f.phone.trim() }) : onCancel())} />
+    <SubHeader title="New Guest" backLabel="Guestbook" onBack={() => (valid ? onSave({ name: `${f.first.trim()} ${f.last.trim()}`, email: f.email.trim(), phone: `${phoneCountryByName(cc).dial} ${f.phone.trim()}` }) : onCancel())} />
     <ScreenBody>
       <div className="w-full space-y-6">
         <div className="grid gap-4 md:grid-cols-[6rem_minmax(0,1fr)_minmax(0,1fr)]">
@@ -1579,7 +1581,7 @@ function NewGuestPage({ onCancel, onSave }: { onCancel: () => void; onSave: (inp
           <div className="rounded-xl border border-border bg-surface px-4">
             <label className={row}><span className="text-fs-sm font-bold">First Name{req}</span><input aria-label="First name" placeholder="Enter" value={f.first} onChange={set("first")} className={input} /></label>
             <label className={row}><span className="text-fs-sm font-bold">Last Name{req}</span><input aria-label="Last name" placeholder="Enter" value={f.last} onChange={set("last")} className={input} /></label>
-            <label className={row}><span className="text-fs-sm font-bold">Phone{req}</span><span className="rounded-md bg-surface-muted px-2 py-1 text-fs-xs">🇺🇸 +1</span><input aria-label="Phone" inputMode="tel" placeholder="(XXX) XXX-XXXX" value={f.phone} onChange={set("phone")} className={input} /></label>
+            <label className={row}><span className="text-fs-sm font-bold">Phone{req}</span><CountrySelect value={cc} onChange={(c) => { setCc(c); setF((d) => ({ ...d, phone: formatPhoneFor(phoneCountryByName(c), d.phone) })); }} /><input aria-label="Phone" inputMode="tel" placeholder={formatPhoneFor(phoneCountryByName(cc), "0000000000").replace(/0/g, "X")} value={f.phone} onChange={(e) => setF((d) => ({ ...d, phone: formatPhoneFor(phoneCountryByName(cc), e.target.value) }))} className={input} /></label>
             <label className={row}><span className="text-fs-sm font-bold">Email{req}</span><input aria-label="Email" type="email" placeholder="email@example.com" value={f.email} onChange={set("email")} className={input} /></label>
           </div>
           <div className="self-start rounded-xl border border-border bg-surface px-4">
@@ -1600,7 +1602,7 @@ function NewGuestPage({ onCancel, onSave }: { onCancel: () => void; onSave: (inp
             <h3 className="mb-2 text-fs-sm font-bold">{t}</h3>
             <div className="grid gap-3 @container sm:grid-cols-2">
               {saved[t].map((v, i) => <SavedCard key={i} kind={t} v={v} />)}
-              {open[t] ? <div className="sm:col-span-2"><InlineForm kind={t} onClose={(v) => { setOpen((o) => ({ ...o, [t]: false })); if (v) setSaved((d) => ({ ...d, [t]: [...d[t], v] })); }} /></div> :
+              {open[t] ? <div className="sm:col-span-2"><InlineForm kind={t} phone={f.phone} country={cc} onClose={(v) => { setOpen((o) => ({ ...o, [t]: false })); if (v) setSaved((d) => ({ ...d, [t]: [...d[t], v] })); }} /></div> :
               <button type="button" onClick={() => setOpen((o) => ({ ...o, [t]: true }))} className="grid min-h-24 w-full place-items-center rounded-xl border-2 border-dashed border-border text-fs-xs text-muted-foreground hover:bg-muted"><span className="grid place-items-center gap-1"><Plus className="size-5" />{t === "Address" ? "Add Address" : "Add Vehicle"}</span></button>}
             </div>
           </section>)}
@@ -1619,7 +1621,7 @@ const VEHICLE_BRANDS: Record<string, string[]> = {
 };
 const VEHICLE_COLORS = ["Black", "White", "Silver", "Grey", "Red", "Blue", "Green"];
 
-type FormValues = Partial<Record<"number" | "type" | "color" | "brand" | "label" | "phone" | "street" | "city" | "state" | "zip" | "country", string>>;
+type FormValues = Partial<Record<"number" | "type" | "color" | "brand" | "label" | "phone" | "cc" | "street" | "city" | "state" | "zip" | "country", string>>;
 const DEMO_ADDRESSES = [
   { street: "350 Fifth Avenue", city: "New York", state: "NY", zip: "10118", country: "United States" },
   { street: "1600 Amphitheatre Parkway", city: "Mountain View", state: "CA", zip: "94043", country: "United States" },
@@ -1642,13 +1644,29 @@ function SavedCard({ kind, v }: { kind: "Vehicle Details" | "Address"; v: FormVa
   </div>;
 }
 
+/** Guest phone fields accept at most 10 digits, formatted for the chosen country. */
+function formatPhoneFor(country: Parameters<typeof formatPhoneRaw>[0], raw: string) {
+  return formatPhoneRaw(country, raw.replace(/\D/g, "").slice(0, 10));
+}
+
+function CountrySelect({ value, onChange, boxed }: { value: string; onChange: (name: string) => void; boxed?: boolean }) {
+  const c = phoneCountryByName(value);
+  return <label className={cn("relative inline-flex shrink-0 items-center gap-1 rounded-md bg-surface-muted px-2 text-fs-xs", boxed ? "min-h-ctl-md rounded-lg border border-border px-3 text-fs-sm" : "py-1")}>
+    <span aria-hidden>{c.flag} {c.dial}</span><PayDown className="size-3 text-muted-foreground" />
+    <select aria-label="Country code" value={value} onChange={(e) => onChange(e.target.value)} className="absolute inset-0 cursor-pointer opacity-0">
+      {phoneCountries.map((x) => <option key={x.name} value={x.name}>{x.flag} {x.name} {x.dial}</option>)}
+    </select>
+  </label>;
+}
+
 function L({ t, r, children }: { t: string; r?: boolean; children: ReactNode }) {
   return <label className="block space-y-1.5"><span className="text-fs-xs font-bold text-muted-foreground">{t}{r ? <span className="text-destructive">*</span> : null}</span>{children}</label>;
 }
 
 /** Collapsible New Vehicle / New Address form inside the New Guest page (demo-only). */
-function InlineForm({ kind, onClose }: { kind: "Vehicle Details" | "Address"; onClose: (v?: FormValues) => void }) {
-  const [v, setV] = useState<FormValues>({ label: "Home" });
+function InlineForm({ kind, phone, country, onClose }: { kind: "Vehicle Details" | "Address"; phone: string; country: string; onClose: (v?: FormValues) => void }) {
+  const [v, setV] = useState<FormValues>({ label: "Home", phone, cc: country });
+  const pc = phoneCountryByName(v.cc);
   const [suggest, setSuggest] = useState(false);
   const q = (v.street ?? "").trim().toLowerCase();
   const matches = q ? DEMO_ADDRESSES.filter((a) => `${a.street} ${a.city} ${a.state} ${a.zip}`.toLowerCase().includes(q)).slice(0, 5) : [];
@@ -1669,7 +1687,7 @@ function InlineForm({ kind, onClose }: { kind: "Vehicle Details" | "Address"; on
           <L t="Vehicle Brand" r><select aria-label="Vehicle brand" disabled={!v.type} value={v.brand ?? ""} onChange={set("brand")} className={field}><option value="">{v.type ? "Select Brand" : "Select type first"}</option>{(VEHICLE_BRANDS[v.type ?? ""] ?? []).map((x) => <option key={x}>{x}</option>)}</select></L>
         </> : <>
           <L t="Label"><select aria-label="Address label" value={v.label} onChange={set("label")} className={field}>{["Home", "Work", "Other"].map((x) => <option key={x}>{x}</option>)}</select></L>
-          <L t="Phone Number"><div className="flex gap-2"><span className="grid min-h-ctl-md shrink-0 place-items-center rounded-lg border border-border bg-surface-muted px-3 text-fs-sm">🇺🇸 +1</span><input aria-label="Address phone" inputMode="tel" placeholder="(201) 555-0123" value={v.phone ?? ""} onChange={set("phone")} className={field} /></div></L>
+          <L t="Phone Number"><div className="flex gap-2"><CountrySelect boxed value={v.cc ?? defaultPhoneCountry.name} onChange={(c) => setV((d) => ({ ...d, cc: c, phone: formatPhoneFor(phoneCountryByName(c), d.phone ?? "") }))} /><input aria-label="Address phone" inputMode="tel" placeholder={formatPhoneFor(pc, "2015550123")} value={v.phone ?? ""} onChange={(e) => setV((d) => ({ ...d, phone: formatPhoneFor(pc, e.target.value) }))} className={field} /></div></L>
           <div className="relative"><L t="Street Address" r><input aria-label="Street address" autoComplete="off" placeholder="Start typing an address..." value={v.street ?? ""} onFocus={() => setSuggest(true)} onBlur={() => setTimeout(() => setSuggest(false), 150)} onChange={(e) => { set("street")(e); setSuggest(true); }} className={field} /></L>
             {suggest && matches.length ? <ul role="listbox" aria-label="Address suggestions" className="absolute inset-x-0 top-full z-20 mt-1 overflow-hidden rounded-lg border border-border bg-surface shadow-lg">
               {matches.map((a) => <li key={a.street + a.zip}><button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => { setV((d) => ({ ...d, ...a })); setSuggest(false); }} className="flex w-full items-start gap-2 px-3 py-2 text-left text-fs-sm hover:bg-muted"><MapPin className="mt-0.5 size-4 shrink-0 text-muted-foreground" /><span><span className="block">{a.street}</span><span className="block text-fs-xs text-muted-foreground">{a.city}, {a.state} {a.zip}, {a.country}</span></span></button></li>)}
