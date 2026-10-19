@@ -909,6 +909,11 @@ function GuestDetail({ guest }: { guest: GuestRow }) {
   const paneRef = useRef<HTMLDivElement>(null);
   // Starting an order from a profile attaches that guest, so the New Order
   // screen opens with their name, phone, email and address already filled in.
+  const startOrder = () => {
+    setGuest(guestOrderPatch(guest));
+    router.navigate({ to: "/order/new" });
+  };
+
   // The Reservations view toggle sits under the "Reservations" tab: measure that tab's
   // left edge so the two line up at any width, and never shift the toggle past the pane.
   useEffect(() => {
