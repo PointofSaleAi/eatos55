@@ -414,8 +414,8 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
       </div>
 
       {/* Detail column */}
-      <div className="min-w-0 space-y-5">
-        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-3 lg:grid-cols-[1.25fr_1fr_1fr_0.8fr_1fr]" aria-label="Visit and spend summary">
+      <div className="@container min-w-0 space-y-5">
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-border @sm:grid-cols-3 @xl:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,1fr)]" aria-label="Visit and spend summary">
           <div className="bg-surface"><StatCell value={lastVisit} label="Last Visit" /></div>
           <div className="bg-surface"><StatCell value={money(avgSpend)} label="Average Spend" /></div>
           <div className="bg-surface"><StatCell value={money(lifetime)} label="Lifetime Spend" /></div>
@@ -423,7 +423,7 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
           <div className="bg-surface"><StatCell value={money(avgTip)} label="Average Tip" /></div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 @lg:grid-cols-2 @4xl:grid-cols-3">
           <div className="rounded-xl border border-border bg-surface p-4">
             <dl className="divide-y divide-border">
               {[
@@ -433,7 +433,7 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
                 ["Anniversary", "-"],
               ].map(([label, value]) => (
                 <div key={label} className="flex items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0">
-                  <dt className="min-w-0 font-bold">{label}</dt>
+                  <dt className="min-w-0 truncate font-bold">{label}</dt>
                   <dd className="shrink-0 text-right text-fs-sm text-muted-foreground">{value}</dd>
                 </div>
               ))}
@@ -691,21 +691,34 @@ function Guestbook() {
   const goSettings = () => router.navigate({ to: "/settings" });
 
   if (wide) {
-    // The guestbook owns the whole panel: guest list on the left, the selected
-    // guest's details on the right, and a back chevron straight to Settings.
+    // The guestbook owns the whole panel: a "Guestbook" header with a back
+    // chevron to Settings above the guest list on the left, and the selected
+    // guest's details on the right.
+    const listHeader = <SubHeader title="Guestbook" backLabel="Settings" onBack={goSettings} />;
     return selected ? (
       <SplitPane
-        list={<GuestList records={records} selectedId={selected.id} className="px-3 py-3 lg:px-4" onSelect={(id) => setSelectedId(id === selected.id ? null : id)} />}
+        list={
+          <>
+            {listHeader}
+            <GuestList records={records} selectedId={selected.id} className="px-3 py-3 lg:px-4" onSelect={(id) => setSelectedId(id === selected.id ? null : id)} />
+          </>
+        }
       >
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <SubHeader title={selected.name} backLabel="Settings" onBack={goSettings} />
+          <SubHeader title={selected.name} />
           <ScreenBody><GuestDetail guest={selected} /></ScreenBody>
         </div>
       </SplitPane>
     ) : (
-      <SplitPane list={<GuestList records={records} selectedId={null} className="px-3 py-3 lg:px-4" onSelect={setSelectedId} />}>
+      <SplitPane
+        list={
+          <>
+            {listHeader}
+            <GuestList records={records} selectedId={null} className="px-3 py-3 lg:px-4" onSelect={setSelectedId} />
+          </>
+        }
+      >
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <SubHeader title="Guestbook" backLabel="Settings" onBack={goSettings} />
           <PaneEmpty title="No guest selected" detail="Pick a guest on the left to see contact details and order history." />
         </div>
       </SplitPane>
@@ -713,7 +726,7 @@ function Guestbook() {
   }
 
   return <>
-    <SubHeader title="Guestbook" backTo="/settings" />
+    <SubHeader title="Guestbook" backLabel="Settings" onBack={goSettings} />
     <ScreenBody>
       {selected ? <div className="w-full space-y-6">
         <div className="flex items-center gap-3">
