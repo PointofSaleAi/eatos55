@@ -96,3 +96,5 @@
 - [x] Put the guest profile account, Loyalty and Visits cards in one row on tablet and desktop (stacked only when too narrow); verified no clipped text on phone, portrait tablet, landscape tablet and desktop
 - [x] Add swipe-left "No show" on guestbook reservation rows with tap-menu parity, undo, persistence and the Profile no-show count; verified on phone, tablet and desktop
 - [x] Open the guestbook with the first guest already selected on wide layouts, and make the reservation left swipe reveal only the "No show" button (undo stays in the tap menu); verified on phone, tablet and desktop
+
+- Reservation no-show swipe works with touch and mouse drag: SwipeRow drives both through pointer events (touch is no longer ignored), the row content sits above the revealed action (`z-10`) and `wasDragged()` stops a swipe release from opening the row tap menu.
