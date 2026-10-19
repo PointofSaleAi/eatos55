@@ -9,7 +9,8 @@ export type SwipeAction = {
 };
 
 /**
- * Row with an optional swipe-left action. Every swipe action must also be
+ * Row with an optional swipe-left action. Works with touch and with a mouse or
+ * trackpad drag, and keeps vertical scrolling. Every swipe action must also be
  * reachable by tap elsewhere in the UI, so nothing is swipe-only.
  */
 export function SwipeRow({
@@ -24,7 +25,9 @@ export function SwipeRow({
   const [dx, setDx] = useState(0);
   const startX = useRef<number | null>(null);
   const startY = useRef<number | null>(null);
+  const startDx = useRef(0);
   const locked = useRef(false);
+  const dragging = useRef(false);
   const width = 96;
 
   if (!action) return <div className={className}>{children}</div>;
@@ -34,6 +37,7 @@ export function SwipeRow({
     startX.current = null;
     startY.current = null;
     locked.current = false;
+    dragging.current = false;
     setDx((d) => (d < -width * 0.6 ? -width : 0));
   };
 
@@ -59,32 +63,45 @@ export function SwipeRow({
         {action.label}
       </button>
       <div
+        onDragStart={(e) => e.preventDefault()}
         onTouchStart={(e) => {
-          startX.current = e.touches[0]?.clientX ?? null;
-          startY.current = e.touches[0]?.clientY ?? null;
+          // Touch browsers also fire pointer events; the pointer path below
+          // owns touch so a swipe can't be driven twice.
+          if (e.touches.length > 1) end();
         }}
-        onTouchMove={(e) => {
+        onPointerDown={(e) => {
+          if (e.pointerType === "touch") return;
+          if (e.pointerType === "mouse" && e.button !== 0) return;
+          startX.current = e.clientX;
+          startY.current = e.clientY;
+          startDx.current = dx;
+          locked.current = false;
+          dragging.current = true;
+          // Mouse drags keep sending moves even when the pointer leaves the row.
+          if (e.pointerType === "mouse") e.currentTarget.setPointerCapture(e.pointerId);
+        }}
+        onPointerMove={(e) => {
           if (startX.current === null || startY.current === null) return;
-          const x = e.touches[0]?.clientX ?? startX.current;
-          const y = e.touches[0]?.clientY ?? startY.current;
           if (!locked.current) {
-            if (Math.abs(y - startY.current) > Math.abs(x - startX.current)) {
+            if (Math.abs(e.clientY - startY.current) > Math.abs(e.clientX - startX.current)) {
               // Vertical intent: let the list scroll.
               startX.current = null;
               return;
             }
-            if (Math.abs(x - startX.current) < 8) return;
+            if (Math.abs(e.clientX - startX.current) < 8) return;
             locked.current = true;
           }
-          setDx(Math.max(-width, Math.min(0, x - startX.current)));
+          const moved = Math.max(-width, Math.min(0, startDx.current + e.clientX - startX.current));
+          dragging.current = true;
+          setDx(moved);
         }}
-        onTouchEnd={end}
-        onTouchCancel={end}
+        onPointerUp={end}
+        onPointerCancel={end}
         style={{
           transform: dx ? `translateX(${dx}px)` : undefined,
-          transition: startX.current === null ? "transform 180ms ease-out" : "none",
+          transition: dragging.current ? "none" : "transform 180ms ease-out",
         }}
-        className="relative"
+        className="relative touch-pan-y select-none"
       >
         {children}
       </div>
