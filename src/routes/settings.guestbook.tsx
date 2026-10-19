@@ -961,7 +961,8 @@ function PaymentsTab({ guest }: { guest: GuestRow }) {
       const tips = ((ticket.tips ?? 0) * p.amount) / paid;
       const key = `${ticket.id}-${p.no}-${p.at}`;
       const seed = textSeed(key);
-      const points = Math.floor(p.amount / 10);
+      // Loyalty rows are redemptions: their Points cell shows points spent, other rows earn 1 point per $10.
+      const points = /loyal|point/i.test(p.method) ? Math.round(p.amount) : Math.floor(p.amount / 10);
       const check = String(ticket.checkNumber ?? ticket.number ?? ticket.id);
       return { key, date: ticket.date, method: p.method, group: payGroupOf(p.method), total: p.amount, tips, spent: p.amount - tips, points, detail: payDetailOf(p.method, seed, p.ref, points, check, p.at) };
     });
