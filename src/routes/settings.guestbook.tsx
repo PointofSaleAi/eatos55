@@ -705,7 +705,7 @@ function ReservationsTab({ guest }: { guest: GuestRow }) {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center gap-2">
         <div role="tablist" aria-label="Reservations view" className="flex items-center rounded-pill bg-surface-muted p-1">
           {([["upcoming", "Upcoming Visits"], ["recent", "Recent Visits"]] as const).map(([id, label]) => (
             <button
