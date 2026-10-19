@@ -793,7 +793,7 @@ function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number })
               role="tab"
               aria-selected={view === id}
               className={cn(
-                "min-h-tap rounded-pill px-4 py-1.5 text-fs-sm font-bold transition-colors sm:px-5",
+                "min-h-tap shrink-0 whitespace-nowrap rounded-pill px-3 py-1.5 text-fs-sm font-bold transition-colors sm:px-5",
                 view === id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
               )}
               onClick={() => setView(id)}
