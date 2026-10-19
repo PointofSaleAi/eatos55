@@ -4,7 +4,7 @@
 - [x] Rework the Guestbook guest list with initials avatars, a New Guest popover, sort and archive/restore with per-row actions; verified on phone, tablet and desktop
 
 # Roadmap
-- [ ] Complete Cash Management pay in, pay out, opening till and closing flows; verify balances, logs, cancellation and saved state on phone, tablet and desktop
+- [x] Complete demo Cash Management pay in, pay out, opening till and closing flows; balances, logs, notes, cancellation and saved state verified on phone, tablet and desktop
 - [x] Align the empty upcoming visit row, open all most-ordered items with sorting, and show the reservation info legend; verified phone, tablet and desktop
 - [x] Center Add Tags and push Allergy Add and Book A Visit to the right edge of their cards on the guest profile; verified on phone, tablet and desktop
 - [x] Match Guestbook Order History references; expansion, collapse and sorting verified on phone, tablet and desktop
