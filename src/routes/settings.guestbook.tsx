@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { CreditCard as PayCard, Banknote as PayCash, Gift as PayGift, Award as PayPoints, ChevronDown as PayDown, ArrowUpDown as PaySort, House as Home } from "lucide-react";
+import { CreditCard as PayCard, Banknote as PayCash, Gift as PayGift, Award as PayPoints, ChevronDown as PayDown, ArrowUpDown as PaySort, House as Home, Camera, Pencil, Trash2 } from "lucide-react";
 import {
   Archive,
   ArchiveRestore,
@@ -1566,6 +1566,8 @@ function NewGuestPage({ onCancel, onSave }: { onCancel: () => void; onSave: (inp
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [saved, setSaved] = useState<{ "Vehicle Details": FormValues[]; Address: FormValues[] }>({ "Vehicle Details": [], Address: [] });
   const [cc, setCc] = useState(defaultPhoneCountry.name);
+  const [photo, setPhoto] = useState<string | null>(null);
+  const [editing, setEditing] = useState<Record<string, number | null>>({});
   const [f, setF] = useState({ first: "", last: "", phone: "", email: "", dob: "", since: "", anniversary: "", note: "" });
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF((d) => ({ ...d, [k]: e.target.value }));
   const valid = f.first.trim() && f.last.trim() && isValidPhoneFor(phoneCountryByName(cc), f.phone) && /.+@.+\..+/.test(f.email);
@@ -1577,7 +1579,11 @@ function NewGuestPage({ onCancel, onSave }: { onCancel: () => void; onSave: (inp
     <ScreenBody>
       <div className="w-full space-y-6">
         <div className="grid gap-4 md:grid-cols-[6rem_minmax(0,1fr)_minmax(0,1fr)]">
-          <div className="relative mx-auto grid size-24 place-items-center rounded-full bg-surface-muted text-muted-foreground"><Plus className="size-9" /></div>
+          <label className="relative mx-auto grid size-24 cursor-pointer place-items-center rounded-full bg-surface-muted text-muted-foreground hover:bg-muted" aria-label="Add guest photo" title="Add guest photo">
+            {photo ? <img src={photo} alt="Guest photo" className="size-full rounded-full object-cover" /> : <Plus className="size-9" />}
+            <span className="absolute -bottom-1 -right-1 grid size-8 place-items-center rounded-full border border-border bg-surface text-foreground"><Camera className="size-4" /></span>
+            <input type="file" accept="image/*" className="sr-only" onChange={(e) => { const file = e.target.files?.[0]; if (!file) return; const r = new FileReader(); r.onload = () => setPhoto(String(r.result)); r.readAsDataURL(file); e.target.value = ""; }} />
+          </label>
           <div className="rounded-xl border border-border bg-surface px-4">
             <label className={row}><span className="text-fs-sm font-bold">First Name{req}</span><input aria-label="First name" placeholder="Enter" value={f.first} onChange={set("first")} className={input} /></label>
             <label className={row}><span className="text-fs-sm font-bold">Last Name{req}</span><input aria-label="Last name" placeholder="Enter" value={f.last} onChange={set("last")} className={input} /></label>
@@ -1601,7 +1607,8 @@ function NewGuestPage({ onCancel, onSave }: { onCancel: () => void; onSave: (inp
           {(["Vehicle Details", "Address"] as const).map((t) => <section key={t}>
             <h3 className="mb-2 text-fs-sm font-bold">{t}</h3>
             <div className="grid gap-3 @container sm:grid-cols-2">
-              {saved[t].map((v, i) => <SavedCard key={i} kind={t} v={v} />)}
+              {saved[t].map((v, i) => editing[t] === i ? <div key={i} className="sm:col-span-2"><InlineForm kind={t} phone={f.phone} country={cc} initial={v} onClose={(nv) => { setEditing((e) => ({ ...e, [t]: null })); if (nv) setSaved((d) => ({ ...d, [t]: d[t].map((x, j) => (j === i ? nv : x)) })); }} /></div> :
+                <SwipeCard key={i} onEdit={() => { setOpen((o) => ({ ...o, [t]: false })); setEditing((e) => ({ ...e, [t]: i })); }} onDelete={() => { setEditing((e) => ({ ...e, [t]: null })); setSaved((d) => ({ ...d, [t]: d[t].filter((_, j) => j !== i) })); }}><SavedCard kind={t} v={v} /></SwipeCard>)}
               {open[t] ? <div className="sm:col-span-2"><InlineForm kind={t} phone={f.phone} country={cc} onClose={(v) => { setOpen((o) => ({ ...o, [t]: false })); if (v) setSaved((d) => ({ ...d, [t]: [...d[t], v] })); }} /></div> :
               <button type="button" onClick={() => setOpen((o) => ({ ...o, [t]: true }))} className="grid min-h-24 w-full place-items-center rounded-xl border-2 border-dashed border-border text-fs-xs text-muted-foreground hover:bg-muted"><span className="grid place-items-center gap-1"><Plus className="size-5" />{t === "Address" ? "Add Address" : "Add Vehicle"}</span></button>}
             </div>
@@ -1632,6 +1639,29 @@ const DEMO_ADDRESSES = [
   { street: "500 Fifth Avenue", city: "New York", state: "NY", zip: "10110", country: "United States" },
   { street: "200 Santa Monica Pier", city: "Santa Monica", state: "CA", zip: "90401", country: "United States" },
 ];
+
+/** Saved vehicle/address card: swipe (or drag) left to reveal Edit and Delete. */
+function SwipeCard({ children, onEdit, onDelete }: { children: ReactNode; onEdit: () => void; onDelete: () => void }) {
+  const W = 112;
+  const [dx, setDx] = useState(0);
+  const start = useRef<{ x: number; base: number } | null>(null);
+  const [drag, setDrag] = useState(false);
+  return <div className="relative overflow-hidden rounded-xl">
+    <div className="absolute inset-y-0 right-0 flex" style={{ width: W, visibility: dx === 0 ? "hidden" : "visible" }}>
+      <button type="button" aria-label="Edit" onClick={() => { setDx(0); onEdit(); }} className="grid flex-1 place-items-center bg-surface-muted text-foreground hover:bg-muted"><Pencil className="size-5" /></button>
+      <button type="button" aria-label="Delete" onClick={() => { setDx(0); onDelete(); }} className="grid flex-1 place-items-center bg-destructive text-destructive-foreground"><Trash2 className="size-5" /></button>
+    </div>
+    <div
+      className="relative z-10 touch-pan-y select-none"
+      style={{ transform: `translateX(${dx}px)`, transition: drag ? "none" : "transform 180ms ease-out" }}
+      onPointerDown={(e) => { start.current = { x: e.clientX, base: dx }; setDrag(true); }}
+      onPointerMove={(e) => { if (!start.current) return; setDx(Math.max(-W, Math.min(0, start.current.base + e.clientX - start.current.x))); }}
+      onPointerUp={() => { start.current = null; setDrag(false); setDx((d) => (d < -W / 2 ? -W : 0)); }}
+      onPointerCancel={() => { start.current = null; setDrag(false); setDx(0); }}
+      onPointerLeave={() => { if (start.current) { start.current = null; setDrag(false); setDx((d) => (d < -W / 2 ? -W : 0)); } }}
+    >{children}</div>
+  </div>;
+}
 
 function SavedCard({ kind, v }: { kind: "Vehicle Details" | "Address"; v: FormValues }) {
   const vehicle = kind === "Vehicle Details";
@@ -1664,8 +1694,8 @@ function L({ t, r, children }: { t: string; r?: boolean; children: ReactNode }) 
 }
 
 /** Collapsible New Vehicle / New Address form inside the New Guest page (demo-only). */
-function InlineForm({ kind, phone, country, onClose }: { kind: "Vehicle Details" | "Address"; phone: string; country: string; onClose: (v?: FormValues) => void }) {
-  const [v, setV] = useState<FormValues>({ label: "Home", phone, cc: country });
+function InlineForm({ kind, phone, country, initial, onClose }: { kind: "Vehicle Details" | "Address"; phone: string; country: string; initial?: FormValues; onClose: (v?: FormValues) => void }) {
+  const [v, setV] = useState<FormValues>(initial ?? { label: "Home", phone, cc: country });
   const pc = phoneCountryByName(v.cc);
   const [suggest, setSuggest] = useState(false);
   const q = (v.street ?? "").trim().toLowerCase();
@@ -1677,7 +1707,7 @@ function InlineForm({ kind, phone, country, onClose }: { kind: "Vehicle Details"
   return (
     <div className="rounded-xl border border-border bg-surface">
       <button type="button" onClick={() => onClose(complete ? v : undefined)} aria-label="Collapse form" className="flex w-full items-center justify-between border-b border-border px-4 py-3 text-fs-sm font-bold">
-        {vehicle ? "New Vehicle" : "New Address"}<PayDown className="size-4 rotate-180" />
+        {initial ? (vehicle ? "Edit Vehicle" : "Edit Address") : vehicle ? "New Vehicle" : "New Address"}<PayDown className="size-4 rotate-180" />
       </button>
       <div className="space-y-3 p-4">
         {vehicle ? <>
