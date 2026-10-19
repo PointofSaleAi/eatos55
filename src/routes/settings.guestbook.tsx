@@ -348,7 +348,7 @@ function GuestList({
         </Popover>
       </div>
       {visible.length ? (
-        <ul className="min-h-0 min-w-0 flex-1 divide-y divide-border overflow-y-auto border-y border-border">
+        <ul className="no-scrollbar min-h-0 min-w-0 flex-1 divide-y divide-border overflow-y-auto border-y border-border">
           {visible.map((row) => (
             <li key={row.id}>
               <GuestListRow
@@ -1562,6 +1562,7 @@ function Guestbook() {
 
 /** Full-page Add Guest form (reference layout, app theme). Demo-only: saves to the device guest directory. */
 function NewGuestPage({ onCancel, onSave }: { onCancel: () => void; onSave: (input: { name: string; email?: string | undefined; phone?: string | undefined }) => void }) {
+  const [open, setOpen] = useState<Record<string, boolean>>({});
   const [f, setF] = useState({ first: "", last: "", phone: "", email: "", dob: "", since: "", anniversary: "", note: "" });
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF((d) => ({ ...d, [k]: e.target.value }));
   const valid = f.first.trim() && f.last.trim() && f.phone.replace(/\D/g, "").length >= 10 && /.+@.+\..+/.test(f.email);
@@ -1594,9 +1595,10 @@ function NewGuestPage({ onCancel, onSave }: { onCancel: () => void; onSave: (inp
           </div>
         </section>
         <div className="grid gap-6 sm:grid-cols-2">
-          {["Vehicle Details", "Address"].map((t) => <section key={t}>
+          {(["Vehicle Details", "Address"] as const).map((t) => <section key={t}>
             <h3 className="mb-2 text-fs-sm font-bold">{t}</h3>
-            <button type="button" className="grid h-24 w-full max-w-xs place-items-center rounded-xl border-2 border-dashed border-border text-fs-xs text-muted-foreground hover:bg-muted"><span className="grid place-items-center gap-1"><Plus className="size-5" />{t === "Address" ? "Add Address" : "Add Vehicle"}</span></button>
+            {open[t] ? <InlineForm kind={t} onClose={() => setOpen((o) => ({ ...o, [t]: false }))} /> :
+            <button type="button" onClick={() => setOpen((o) => ({ ...o, [t]: true }))} className="grid h-24 w-full max-w-xs place-items-center rounded-xl border-2 border-dashed border-border text-fs-xs text-muted-foreground hover:bg-muted"><span className="grid place-items-center gap-1"><Plus className="size-5" />{t === "Address" ? "Add Address" : "Add Vehicle"}</span></button>}
           </section>)}
         </div>
         <div className="flex justify-end gap-2">
@@ -1606,4 +1608,46 @@ function NewGuestPage({ onCancel, onSave }: { onCancel: () => void; onSave: (inp
       </div>
     </ScreenBody>
   </>;
+}
+
+const VEHICLE_BRANDS: Record<string, string[]> = {
+  Car: ["Toyota", "Honda", "Ford", "Tesla", "BMW", "Chevrolet"],
+  SUV: ["Jeep", "Toyota", "Ford", "Kia", "Subaru"],
+  Truck: ["Ford", "Ram", "GMC", "Chevrolet"],
+  Motorcycle: ["Harley-Davidson", "Honda", "Yamaha", "Ducati"],
+};
+const VEHICLE_COLORS = ["Black", "White", "Silver", "Grey", "Red", "Blue", "Green"];
+
+/** Collapsible New Vehicle / New Address form inside the New Guest page (demo-only). */
+function InlineForm({ kind, onClose }: { kind: "Vehicle Details" | "Address"; onClose: () => void }) {
+  const [v, setV] = useState<Record<string, string>>({ label: "Home" });
+  const set = (k: string) => (e: { target: { value: string } }) => setV((d) => ({ ...d, [k]: e.target.value }));
+  const field = "min-h-ctl-md w-full rounded-lg border border-border bg-surface-muted px-3 text-fs-sm outline-none placeholder:text-muted-foreground focus:border-foreground disabled:opacity-60";
+  const L = ({ t, r, children }: { t: string; r?: boolean; children: ReactNode }) => <label className="block space-y-1.5"><span className="text-fs-xs font-bold text-muted-foreground">{t}{r ? <span className="text-destructive">*</span> : null}</span>{children}</label>;
+  const vehicle = kind === "Vehicle Details";
+  return (
+    <div className="rounded-xl border border-border bg-surface">
+      <button type="button" onClick={onClose} aria-label="Collapse form" className="flex w-full items-center justify-between border-b border-border px-4 py-3 text-fs-sm font-bold">
+        {vehicle ? "New Vehicle" : "New Address"}<ChevronUp className="size-4" />
+      </button>
+      <div className="space-y-3 p-4">
+        {vehicle ? <>
+          <L t="Vehicle Number" r><input aria-label="Vehicle number" placeholder="ENTER VEHICLE NUMBER" value={v.number ?? ""} onChange={(e) => setV((d) => ({ ...d, number: e.target.value.toUpperCase() }))} className={field} /></L>
+          <L t="Vehicle Type"><select aria-label="Vehicle type" value={v.type ?? ""} onChange={(e) => setV((d) => ({ ...d, type: e.target.value, brand: "" }))} className={field}><option value="">Enter Vehicle Type</option>{Object.keys(VEHICLE_BRANDS).map((x) => <option key={x}>{x}</option>)}</select></L>
+          <L t="Vehicle Color"><select aria-label="Vehicle color" value={v.color ?? ""} onChange={set("color")} className={field}><option value="">Enter Vehicle Color</option>{VEHICLE_COLORS.map((x) => <option key={x}>{x}</option>)}</select></L>
+          <L t="Vehicle Brand" r><select aria-label="Vehicle brand" disabled={!v.type} value={v.brand ?? ""} onChange={set("brand")} className={field}><option value="">{v.type ? "Select Brand" : "Select type first"}</option>{(VEHICLE_BRANDS[v.type ?? ""] ?? []).map((x) => <option key={x}>{x}</option>)}</select></L>
+        </> : <>
+          <L t="Label"><select aria-label="Address label" value={v.label} onChange={set("label")} className={field}>{["Home", "Work", "Other"].map((x) => <option key={x}>{x}</option>)}</select></L>
+          <L t="Phone Number"><div className="flex gap-2"><span className="grid min-h-ctl-md shrink-0 place-items-center rounded-lg border border-border bg-surface-muted px-3 text-fs-sm">🇺🇸 +1</span><input aria-label="Address phone" inputMode="tel" placeholder="(201) 555-0123" value={v.phone ?? ""} onChange={set("phone")} className={field} /></div></L>
+          <L t="Street Address" r><input aria-label="Street address" placeholder="Start typing an address..." value={v.street ?? ""} onChange={set("street")} className={field} /></L>
+          <div className="grid grid-cols-2 gap-3">
+            <L t="City" r><input aria-label="City" placeholder="City" value={v.city ?? ""} onChange={set("city")} className={field} /></L>
+            <L t="State" r><input aria-label="State" placeholder="State" value={v.state ?? ""} onChange={set("state")} className={field} /></L>
+            <L t="Zip Code" r><input aria-label="Zip code" inputMode="numeric" placeholder="Zip" value={v.zip ?? ""} onChange={set("zip")} className={field} /></L>
+            <L t="Country"><input aria-label="Country" placeholder="Country" value={v.country ?? ""} onChange={set("country")} className={field} /></L>
+          </div>
+        </>}
+      </div>
+    </div>
+  );
 }
