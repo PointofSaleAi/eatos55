@@ -1,7 +1,7 @@
 import { menu } from "@/lib/demo-data";
 
 export type TaxType = "Exclusive" | "Inclusive";
-export type TaxRule = { id: string; name: string; amount: string; type: TaxType | ""; applicableTo: string[]; products: string[] };
+export type TaxRule = { id: string; name: string; amount: string; type: TaxType | ""; applicableTo: string[]; products: string[]; archived?: boolean };
 
 export const taxApplicableTo = ["Banquet", "Cash Drawer", "Custom Item", "Delivery", "Dine-In", "Pick Up", "Take Out", "Online Ordering", "Service Charge", "Drive Thru"];
 export const taxProducts = (): string[] => Array.from(new Set(menu.map(item => item.name))).sort((a, b) => a.localeCompare(b));
