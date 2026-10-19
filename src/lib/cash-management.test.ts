@@ -32,9 +32,9 @@ describe("demo cash drawer flow", () => {
   });
   test("employee tips follow pay in and pay out", () => {
     let s = applyCashAction(open(), { kind: "in", amount: 10, employee, reason: "Tips", note: "" });
-    assert.equal(s.tips.e1, 10);
+    assert.equal(s.tips["e1"], 10);
     s = applyCashAction(s, { kind: "out", amount: 4, employee, reason: "Tips", note: "" });
-    assert.equal(s.tips.e1, 6);
+    assert.equal(s.tips["e1"], 6);
   });
   test("Other requires notes and incomplete selection records nothing", () => {
     const s = open();
