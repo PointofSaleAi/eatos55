@@ -1,6 +1,6 @@
 - [x] Rework the Guestbook guest list with initials avatars, a New Guest popover, sort and archive/restore with per-row actions; verified on phone, tablet and desktop
 # Roadmap
-- [ ] Align the empty upcoming visit row, open all most-ordered items with sorting, and show the reservation info legend; verify phone, tablet and desktop
+- [x] Align the empty upcoming visit row, open all most-ordered items with sorting, and show the reservation info legend; verified phone, tablet and desktop
 - [x] Center Add Tags and push Allergy Add and Book A Visit to the right edge of their cards on the guest profile; verified on phone, tablet and desktop
 - [x] Match Guestbook Order History references; expansion, collapse and sorting verified on phone, tablet and desktop
 - [x] Keep Guestbook feedback on one line, reveal full text/time/server only through More, and use uploaded source logos; verified phone, tablet and desktop
