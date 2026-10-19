@@ -60,6 +60,9 @@
   --color-tile-red: var(--tile-red);
   --color-tile-blue: var(--tile-blue);
   --color-tile-grey: var(--tile-grey);
+  --color-action-grey: var(--action-grey);
+  --color-action-grey-foreground: var(--action-grey-foreground);
+
   --color-tile-black: var(--tile-black);
   --color-surface-muted: var(--surface-muted);
   --color-card: var(--card);
@@ -168,6 +171,9 @@
   --tile-blue: oklch(0.58 0.18 255);
   --tile-grey: oklch(0.62 0.01 260);
   --tile-black: oklch(0.25 0.01 275);
+  --action-grey: oklch(0.87 0.008 260);
+  --action-grey-foreground: oklch(0.3 0.012 275);
+
 
   --surface-muted: oklch(0.965 0.003 260);
 
@@ -248,6 +254,9 @@
   --tile-blue: oklch(0.68 0.16 255);
   --tile-grey: oklch(0.72 0.01 260);
   --tile-black: oklch(0.85 0.01 275);
+  --action-grey: oklch(0.36 0.006 260);
+  --action-grey-foreground: oklch(0.95 0 0);
+
   --card: oklch(0.2 0.005 260);
   --card-foreground: oklch(0.98 0 0);
   --popover: oklch(0.2 0.005 260);
