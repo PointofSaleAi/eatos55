@@ -3,10 +3,15 @@ import { useMemo, useRef, useState, type ReactNode } from "react";
 import {
   ArrowLeft,
   Armchair,
+  Banknote,
   Cake,
+  CalendarCheck,
   CalendarClock,
+  CalendarX,
   Car,
   ChevronRight,
+  Clock,
+  Info,
   Mail,
   MapPin,
   MessageSquareText,
@@ -17,7 +22,9 @@ import {
   Search,
   Star,
   StickyNote,
+  Table2,
   Tag,
+  UserRound,
   Users,
   Utensils,
   UtensilsCrossed,
@@ -547,28 +554,144 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
   );
 }
 
-/** Reservations tab: the guest's booked visits only. */
+/** "2026-01-21" -> { day: "21", month: "Jan" }; null for unknown shapes. */
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const dateParts = (iso: string) => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  return match ? { day: match[3], month: MONTHS[Number(match[2]) - 1] ?? "" } : null;
+};
+
+/** "18:45" -> "6:45 PM"; labels already in a display form pass through unchanged. */
+const formatTime = (time: string | undefined) => {
+  if (!time) return null;
+  const match = /^(\d{1,2}):(\d{2})$/.exec(time);
+  if (!match) return time;
+  const hours = Number(match[1]);
+  const hour12 = hours % 12 === 0 ? 12 : hours % 12;
+  return `${hour12}:${match[2]} ${hours >= 12 ? "PM" : "AM"}`;
+};
+
+/** One visit row: date badge, description and the time / party / table summary. */
+function VisitRow({ day, month, time, party, table }: { day: string; month: string; time: string | null; party: string | number; table: string | null }) {
+  return (
+    <li className="flex items-stretch overflow-hidden rounded-xl border border-border bg-surface">
+      <span aria-hidden className="w-1 shrink-0 bg-success" />
+      <div className="flex min-w-0 flex-1 items-center gap-3 px-3 py-3 sm:px-4">
+        <div aria-label={`Visit date ${month} ${day}`} className="flex shrink-0 flex-col items-center border-r border-border pr-3 sm:pr-4">
+          <span className="text-fs-lg font-bold leading-none">{day}</span>
+          <span className="text-fs-xs text-muted-foreground">{month}</span>
+        </div>
+        <p className="min-w-0 flex-1 truncate font-bold">No Description</p>
+        <div className="flex shrink-0 items-center gap-2 text-fs-sm text-muted-foreground sm:gap-3">
+          {time ? <span className="flex items-center gap-1.5"><Clock className="size-4" />{time}</span> : null}
+          <span className="hidden h-4 w-px bg-border sm:block" />
+          <span className="flex items-center gap-1.5"><UserRound className="size-4" />{party}</span>
+          {table ? (
+            <>
+              <span className="hidden h-4 w-px bg-border sm:block" />
+              <span className="flex items-center gap-1.5"><Table2 className="size-4" />{table}</span>
+            </>
+          ) : null}
+        </div>
+        <ChevronRight className="size-5 shrink-0 text-muted-foreground" />
+      </div>
+    </li>
+  );
+}
+
+function ReservationsCell({ icon, value, label }: { icon: ReactNode; value: string | number; label: string }) {
+  return (
+    <div className="flex min-w-0 items-center gap-3 rounded-lg bg-surface-muted px-4 py-4">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-surface">{icon}</span>
+      <div className="min-w-0">
+        <p className="truncate text-fs-lg font-bold">{value}</p>
+        <p className="text-fs-xs text-muted-foreground">{label}</p>
+      </div>
+    </div>
+  );
+}
+
+/** Reservations tab: Upcoming/Recent toggle, summary strip and visit rows. */
 function ReservationsTab({ guest }: { guest: GuestRow }) {
-  const extras = loadExtras(guest.id);
+  const [view, setView] = useState<"upcoming" | "recent">("recent");
+  const extras = useMemo(() => loadExtras(guest.id), [guest.id]);
+  const today = new Date().toISOString().slice(0, 10);
+  const booked = [...extras.visits].sort((a, b) => a.date.localeCompare(b.date));
+  const upcoming = booked.filter((visit) => visit.date >= today);
+  const spent = guest.tickets.reduce((sum, ticket) => sum + (ticket.payments ?? []).reduce((total, payment) => total + payment.amount, 0), 0);
+
+  /** Stable demo party size / table code for a booked visit (not stored by the booking form). */
+  const demoDetails = (visit: { date: string }, index: number) => {
+    const seed = [...(guest.id + visit.date)].reduce((total, char) => total + char.charCodeAt(0), 0) + index;
+    return { party: 1 + (seed % 4), table: `${initials(guest.name).slice(0, 2)}${100 + (seed % 900)}` };
+  };
+
+  const upcomingRows = upcoming.map((visit, index) => {
+    const parts = dateParts(visit.date) ?? { day: "--", month: "" };
+    return { ...parts, time: formatTime(visit.time), ...demoDetails(visit, index) };
+  });
+  const pastBooked = booked.filter((visit) => visit.date < today).reverse().map((visit, index) => {
+    const parts = dateParts(visit.date) ?? { day: "--", month: "" };
+    return { ...parts, time: formatTime(visit.time), ...demoDetails(visit, index) };
+  });
+  // Recent visits come from the guest's real checks, joined by any booked past visits.
+  const recentRows = [
+    ...pastBooked,
+    ...[...guest.tickets].sort((a, b) => b.date.localeCompare(a.date)).map((ticket) => ({
+      day: dateParts(ticket.date)?.day ?? "--",
+      month: dateParts(ticket.date)?.month ?? "",
+      time: ticket.arrivedAt || null,
+      party: ticket.seats,
+      table: ticket.table ?? null,
+    })),
+  ];
+  const rows = view === "upcoming" ? upcomingRows : recentRows;
+
   return (
     <div className="space-y-5">
-      <SectionCard label="Upcoming Visits">
-        {extras.visits.length ? (
-          <ul className="divide-y divide-border">
-            {extras.visits.map((visit, index) => (
-              <li key={`${visit.date}-${visit.time}-${index}`} className="flex items-center gap-3 py-2 first:pt-0 last:pb-0">
-                <CalendarClock className="size-4 shrink-0 text-muted-foreground" />
-                <span className="min-w-0 flex-1 text-fs-sm">{visit.date || "Unset date"}{visit.time ? ` · ${visit.time}` : ""}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="py-2 text-fs-sm text-muted-foreground">No Upcoming Visits</p>
-        )}
-      </SectionCard>
-      <SectionCard label="Past Reservations">
-        <p className="py-2 text-fs-sm text-muted-foreground">No Past Reservations</p>
-      </SectionCard>
+      <div className="flex items-center justify-center gap-2">
+        <div role="tablist" aria-label="Reservations view" className="flex items-center rounded-pill bg-surface-muted p-1">
+          {([["upcoming", "Upcoming Visits"], ["recent", "Recent Visits"]] as const).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={view === id}
+              className={cn(
+                "min-h-tap rounded-pill px-4 py-1.5 text-fs-sm font-bold transition-colors sm:px-5",
+                view === id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
+              )}
+              onClick={() => setView(id)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <span className="text-muted-foreground" title="Reservation and visit history for this guest">
+          <Info className="size-4" />
+          <span className="sr-only">Reservation and visit history for this guest</span>
+        </span>
+      </div>
+
+      <section aria-label="Reservations summary">
+        <h3 className="mb-3 text-fs-sm font-bold uppercase tracking-wide text-muted-foreground">Summary</h3>
+        <div className="grid gap-2 rounded-xl border border-border bg-surface p-2 sm:grid-cols-2 xl:grid-cols-4">
+          <ReservationsCell icon={<CalendarClock className="size-5" />} value={booked.length} label="Reservations" />
+          <ReservationsCell icon={<CalendarCheck className="size-5" />} value={upcoming.length} label="Upcoming Visits" />
+          <ReservationsCell icon={<CalendarX className="size-5" />} value={0} label="Cancellation" />
+          <ReservationsCell icon={<Banknote className="size-5" />} value={money(spent)} label="Spent" />
+        </div>
+      </section>
+
+      {rows.length ? (
+        <ul className="space-y-3">
+          {rows.map((row, index) => (
+            <VisitRow key={`${row.day}-${row.month}-${row.time ?? "t"}-${index}`} day={row.day} month={row.month} time={row.time} party={row.party} table={row.table} />
+          ))}
+        </ul>
+      ) : (
+        <p className="py-2 text-fs-sm text-muted-foreground">{view === "upcoming" ? "No Upcoming Visits" : "No Past Reservations"}</p>
+      )}
     </div>
   );
 }
