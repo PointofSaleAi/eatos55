@@ -3,6 +3,11 @@ import type { TileColor } from "@/components/pos/settings-rows";
 
 type SettingsDestination = { to: string; label: string; icon: LucideIcon; color: TileColor; manager?: boolean };
 
+export function isSettingsDestinationVisible(row: Pick<SettingsDestination, "to" | "manager">, session: { role: string; clockedIn: boolean }, canManageSettings: boolean) {
+  if (row.to === "/settings/login-screen") return session.clockedIn && session.role === "Manager";
+  return !row.manager || canManageSettings;
+}
+
 /** Shared destinations for the header menu, settings hub and settings sidebar. */
 export const settingsGroups: SettingsDestination[][] = [
   [

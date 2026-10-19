@@ -3,7 +3,7 @@ import { ChevronRight, Inbox, Mic, Search, SlidersHorizontal, X } from "lucide-r
 import { useMemo, useState, type ReactNode } from "react";
 import { TicketsScreen } from "@/components/pos/tickets-screen";
 import { cn } from "@/lib/utils";
-import { settingsGroups } from "@/lib/settings-destinations";
+import { isSettingsDestinationVisible, settingsGroups } from "@/lib/settings-destinations";
 import { usePos } from "@/lib/pos-store";
 import { useProfileSettings } from "@/lib/profile-settings";
 import { useVoiceSearch } from "@/lib/voice-search";
@@ -80,10 +80,10 @@ export function SettingsNavList() {
     () =>
       settingsGroups.map((group) =>
         group
-          .filter((l) => !l.manager || canManageSettings)
+          .filter((l) => isSettingsDestinationVisible(l, session, canManageSettings))
           .filter((l) => !q || l.label.toLowerCase().includes(q)),
       ),
-    [canManageSettings, q],
+    [canManageSettings, session.role, session.clockedIn, q],
   );
   const anyMatches = visibleGroups.some((g) => g.length > 0);
 
