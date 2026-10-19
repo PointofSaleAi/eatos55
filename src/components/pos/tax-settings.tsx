@@ -103,27 +103,25 @@ export function TaxSettings() {
         {summaryRow("Applicable To", draft.applicableTo, () => setPicker("to"))}
       </GroupCard>
       <GroupCard className="mt-6">{summaryRow("Applicable Products", draft.products, () => setPicker("products"))}</GroupCard>
-      {exists && canManageSettings && <div className="mt-6 flex flex-wrap items-center justify-end gap-2">
-        {confirmDelete ? <><span className="t-caption text-muted-foreground">Delete this tax?</span><Button variant="outline" onClick={() => setConfirmDelete(false)}>Cancel</Button><Button variant="destructive" onClick={() => { updateSettings({ taxRules: taxes.filter(t => t.id !== draft.id) }); toast.success("Tax deleted"); close(); }}>Delete</Button></> : <Button variant="outline" onClick={() => setConfirmDelete(true)}><Trash2 />Delete Tax</Button>}
-      </div>}
       {!exists && touched && !taxValid(draft) && <p className="mt-4 t-caption text-muted-foreground">The tax saves automatically once the name, amount and type are filled in. Tap Back again to discard it.</p>}
     </ScreenBody>
     {picker === "to" && <Picker title="Applicable To" options={taxApplicableTo} selected={draft.applicableTo} onChange={v => update({ applicableTo: v })} onClose={() => setPicker(null)} />}
     {picker === "products" && <Picker title="Applicable Product" options={products} selected={draft.products} onChange={v => update({ products: v })} onClose={() => setPicker(null)} />}
   </>;
 
-  const list = taxes.filter(t => t.name.toLowerCase().includes(query.trim().toLowerCase()));
+  const list = taxes.filter(t => !!t.archived === showArchived && t.name.toLowerCase().includes(query.trim().toLowerCase()));
+  const toggleArchive = (t: TaxRule) => { updateSettings({ taxRules: taxes.map(x => x.id === t.id ? { ...x, archived: !showArchived } : x) }); toast.success(showArchived ? "Tax restored" : "Tax archived"); };
   return <>
-    <SubHeader title="Taxes" backLabel="Payments" onBack={() => void navigate({ to: "/settings/payments" })} right={<Button variant="ghost" size="icon" aria-label="Search taxes" title="Search taxes" onClick={() => setSearchOpen(v => !v)}><Search /></Button>} />
+    <SubHeader title={showArchived ? "Archived Taxes" : "Taxes"} backLabel={showArchived ? "Taxes" : "Payments"} onBack={() => showArchived ? setShowArchived(false) : void navigate({ to: "/settings/payments" })} right={<Button variant="ghost" size="icon" aria-label="Search taxes" title="Search taxes" onClick={() => setSearchOpen(v => !v)}><Search /></Button>} />
     <ScreenBody className="py-4">
-      <div className="mb-5 flex items-start gap-3"><p className="min-w-0 flex-1 t-caption text-muted-foreground">{description}</p><Button size="icon" aria-label="Add tax" title="Add Tax" disabled={!canManageSettings} onClick={() => { setDraft(newTax()); setTouched(false); }}><Plus /></Button></div>
+      <div className="mb-5 flex items-start gap-3"><p className="min-w-0 flex-1 t-caption text-muted-foreground">{description}</p>{!showArchived && <><Button variant="outline" size="icon" aria-label="Archived taxes" title="Archived taxes" onClick={() => setShowArchived(true)}><ArchiveGlyph className="size-4" /></Button><Button size="icon" aria-label="Add tax" title="Add Tax" onClick={() => { setDraft(newTax()); setTouched(false); }}><Plus /></Button></>}</div>
       {searchOpen && <Input autoFocus className="mb-4" aria-label="Search taxes" placeholder="Search" value={query} onChange={e => setQuery(e.target.value)} />}
       <GroupCard>
         <div className="hidden grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_1rem] gap-3 border-b border-border px-4 py-4 t-caption font-bold sm:grid"><span>Tax Name</span><span>Amount</span><span>Type</span><span className="text-right">Applicable To</span><span /></div>
-        {list.length === 0 ? <p className="p-6 text-center t-caption text-muted-foreground">{taxes.length ? "No taxes match your search." : "No taxes yet. Tap + to add one."}</p> : list.map(t => <button key={t.id} type="button" aria-label={`Edit ${t.name}`} onClick={() => { setDraft({ ...t, applicableTo: [...t.applicableTo], products: [...t.products] }); setTouched(true); }} className="flex w-full items-center gap-3 border-b border-border px-4 py-4 text-left last:border-b-0 hover:bg-muted sm:grid sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_1rem]">
+        {list.length === 0 ? <p className="p-6 text-center t-caption text-muted-foreground">{showArchived ? "No archived taxes." : query ? "No taxes match your search." : "No taxes yet. Tap + to add one."}</p> : list.map(t => <SwipeRow key={t.id} className="rounded-none border-b border-border last:border-0" action={{ label: showArchived ? "Restore" : "Archive", destructive: !showArchived, icon: <ArchiveSwipeAction archived={showArchived} />, onAction: () => toggleArchive(t) }}><button type="button" aria-label={`Edit ${t.name}`} onClick={() => { setDraft({ ...t, applicableTo: [...t.applicableTo], products: [...t.products] }); setTouched(true); }} className="flex w-full items-center gap-3 px-4 py-4 text-left hover:bg-muted sm:grid sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_1rem]">
           <span className="min-w-0 flex-1 sm:contents"><span className="block break-words t-row">{t.name}</span><span className="block t-caption text-muted-foreground sm:hidden">{formatTaxAmount(t.amount, 1)} · {t.type}</span><span className="hidden t-row sm:block">{formatTaxAmount(t.amount, 1)}</span><span className="hidden t-row sm:block">{t.type}</span></span>
           <span className="shrink-0 t-row sm:text-right">{t.applicableTo.length}</span><ChevronRight className="size-4 shrink-0 text-muted-foreground" />
-        </button>)}
+        </button></SwipeRow>)}
       </GroupCard>
     </ScreenBody>
   </>;
