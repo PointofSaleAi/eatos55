@@ -385,12 +385,12 @@ function SectionCard({ label, action, children }: { label: string; action?: Reac
 }
 
 /** Dark pill used for the reference-style actions (New Order, Add, Book A Visit…). */
-function DarkPill({ children, onClick }: { children: ReactNode; onClick?: () => void }) {
+function DarkPill({ children, onClick, className }: { children: ReactNode; onClick?: () => void; className?: string }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex min-h-tap items-center gap-1 rounded-pill bg-foreground px-4 py-1.5 text-fs-sm font-bold text-background transition-colors hover:bg-foreground/90"
+      className={cn("inline-flex min-h-tap items-center gap-1 rounded-pill bg-foreground px-4 py-1.5 text-fs-sm font-bold text-background transition-colors hover:bg-foreground/90", className)}
     >
       {children}
     </button>
@@ -402,6 +402,7 @@ function TagEditor({
   values,
   addLabel,
   tone = "ghost",
+  align = "start",
   preset,
   dialogTitle,
   dialogNote,
@@ -413,6 +414,8 @@ function TagEditor({
   addLabel: string;
   /** "dark" renders the reference-style pill; "ghost" a quiet inline control. */
   tone?: "ghost" | "dark";
+  /** Where the add control sits among the chips: left, centered, or pushed to the right edge. */
+  align?: "start" | "center" | "end";
   /** When set, the add button opens a popup offering these preset choices. */
   preset?: PickerOption[];
   /** Heading shown in that popup. */
@@ -428,6 +431,7 @@ function TagEditor({
   const [pickerOpen, setPickerOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const cancelled = useRef(false);
+  const pushRight = align === "end" ? "ml-auto" : undefined;
   const commit = () => {
     if (!cancelled.current) {
       const value = draft.trim();
@@ -439,7 +443,7 @@ function TagEditor({
   };
   return (
     <>
-    <div className="flex flex-wrap items-center gap-2">
+    <div className={cn("flex flex-wrap items-center gap-2", align === "center" && "justify-center")}>
       {values.map((value) => {
         const color = preset?.find((option) => option.label === value)?.color;
         return (
@@ -487,14 +491,14 @@ function TagEditor({
           className="min-h-tap min-w-40 flex-1 bg-transparent text-fs-sm outline-none"
         />
       ) : preset ? (
-        <DarkPill onClick={() => setPickerOpen(true)}>{addLabel}</DarkPill>
+        <DarkPill className={pushRight} onClick={() => setPickerOpen(true)}>{addLabel}</DarkPill>
       ) : tone === "dark" ? (
-        <DarkPill onClick={() => setAdding(true)}>{addLabel}</DarkPill>
+        <DarkPill className={pushRight} onClick={() => setAdding(true)}>{addLabel}</DarkPill>
       ) : (
         <Button
           variant="ghost"
           size="sm"
-          className="min-h-tap rounded-pill px-3 text-fs-sm text-muted-foreground hover:text-foreground"
+          className={cn("min-h-tap rounded-pill px-3 text-fs-sm text-muted-foreground hover:text-foreground", pushRight)}
           onClick={() => setAdding(true)}
         >
           <Plus className="size-4" />
@@ -629,7 +633,7 @@ function VisitEditor({ visits, onBook, onRemove }: { visits: Visit[]; onBook: ()
       <span className="min-w-0 flex-1 break-words text-fs-sm"><span className="font-bold">{visit.description || "No Description"}</span><span className="text-muted-foreground"> · {visit.date} · {visit.time}{visit.table ? ` · ${visit.table}` : ""}{visit.party ? ` · ${visit.party} guests` : ""}</span></span>
       <Button type="button" variant="ghost" size="icon" aria-label="Remove visit" onClick={() => onRemove(visit)}><X /></Button>
     </li>)}</ul> : <p className="text-fs-sm">No Upcoming Visits</p>}
-    <DarkPill onClick={onBook}>Book A Visit</DarkPill>
+    <div className="flex justify-end"><DarkPill onClick={onBook}>Book A Visit</DarkPill></div>
   </div>;
 }
 
@@ -689,6 +693,7 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
             values={extras.tags}
             addLabel="Add Tags"
             tone="dark"
+            align="center"
             preset={TAG_OPTIONS}
             onAdd={(value) => update({ tags: [...extras.tags, value] })}
             onRemove={(value) => update({ tags: extras.tags.filter((tag) => tag !== value) })}
@@ -780,6 +785,7 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
                 values={extras.allergies}
                 addLabel="Add"
                 tone="dark"
+                align="end"
                 preset={ALLERGY_OPTIONS}
                 dialogTitle="Allergies"
                 dialogNote="Select what type of food allergy the customer has from the list below"
