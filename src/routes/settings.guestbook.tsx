@@ -239,7 +239,7 @@ function TagEditor({
 /** A labelled note row; tapping the placeholder turns it into an autosaving field. */
 function NoteRow({
   title,
-  icon: Icon,
+  icon,
   value,
   onChange,
 }: {
@@ -252,7 +252,7 @@ function NoteRow({
   return (
     <div className="border-b border-border py-3 last:border-b-0">
       <div className="flex items-center gap-2.5">
-        <Icon />
+        {icon}
         <span className="font-bold">{title}</span>
       </div>
       {editing ? (
