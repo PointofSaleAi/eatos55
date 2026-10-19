@@ -405,10 +405,11 @@ function NoteRow({
 }
 
 /** Inline visit booking: pick a date and time, saved to the guest's demo record. */
-function VisitEditor({ visits, onAdd, onRemove }: { visits: Extras["visits"]; onAdd: (visit: { date: string; time: string }) => void; onRemove: (visit: { date: string; time: string }) => void }) {
+function VisitEditor({ visits, onAdd, onRemove }: { visits: Visit[]; onAdd: (visit: Visit) => void; onRemove: (visit: Visit) => void }) {
   const [adding, setAdding] = useState(false);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [description, setDescription] = useState("");
   return (
     <div className="space-y-3">
       {visits.length ? (
@@ -416,7 +417,10 @@ function VisitEditor({ visits, onAdd, onRemove }: { visits: Extras["visits"]; on
           {visits.map((visit, index) => (
             <li key={`${visit.date}-${visit.time}-${index}`} className="flex items-center gap-3 py-2 first:pt-0 last:pb-0">
               <CalendarClock className="size-4 shrink-0 text-muted-foreground" />
-              <span className="min-w-0 flex-1 text-fs-sm">{visit.date || "Unset date"}{visit.time ? ` · ${visit.time}` : ""}</span>
+              <span className="min-w-0 flex-1 truncate text-fs-sm">
+                <span className="font-bold">{visit.description || "No Description"}</span>
+                <span className="text-muted-foreground"> · {visit.date || "Unset date"}{visit.time ? ` · ${visit.time}` : ""}</span>
+              </span>
               <button type="button" aria-label="Remove visit" className="text-muted-foreground hover:text-foreground" onClick={() => onRemove(visit)}>
                 <X className="size-4" />
               </button>
@@ -428,6 +432,14 @@ function VisitEditor({ visits, onAdd, onRemove }: { visits: Extras["visits"]; on
       )}
       {adding ? (
         <div className="flex flex-wrap items-center gap-2">
+          <input
+            type="text"
+            aria-label="Visit description"
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="min-h-tap w-full rounded-lg border border-border bg-transparent px-3 text-fs-sm outline-none sm:w-60"
+          />
           <input
             type="date"
             aria-label="Visit date"
@@ -444,9 +456,10 @@ function VisitEditor({ visits, onAdd, onRemove }: { visits: Extras["visits"]; on
           />
           <DarkPill
             onClick={() => {
-              if (date || time) onAdd({ date, time });
+              if (date || time) onAdd({ date, time, description: description.trim() || undefined });
               setDate("");
               setTime("");
+              setDescription("");
               setAdding(false);
             }}
           >
@@ -459,6 +472,7 @@ function VisitEditor({ visits, onAdd, onRemove }: { visits: Extras["visits"]; on
             onClick={() => {
               setDate("");
               setTime("");
+              setDescription("");
               setAdding(false);
             }}
           >
@@ -631,7 +645,7 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
             <Cake className="mt-1 size-5 shrink-0" />
             <div className="min-w-0 flex-1">
               <VisitEditor
-                visits={extras.visits}
+                visits={extras.visits.filter((visit) => visit.date >= new Date().toISOString().slice(0, 10))}
                 onAdd={(visit) => update({ visits: [...extras.visits, visit] })}
                 onRemove={(visit) => update({ visits: extras.visits.filter((item) => item !== visit) })}
               />
@@ -687,7 +701,7 @@ const formatTime = (time: string | undefined) => {
 };
 
 /** One visit row: date badge, description and the time / party / table summary. */
-function VisitRow({ day, month, time, party, table }: { day: string; month: string; time: string | null; party: string | number; table: string | null }) {
+function VisitRow({ day, month, time, party, table, description }: { day: string; month: string; time: string | null; party: string | number; table: string | null; description: string | null }) {
   return (
     <li className="flex items-stretch overflow-hidden rounded-xl border border-border bg-surface">
       <span aria-hidden className="w-1 shrink-0 bg-success" />
@@ -696,7 +710,7 @@ function VisitRow({ day, month, time, party, table }: { day: string; month: stri
           <span className="text-fs-lg font-bold leading-none">{day}</span>
           <span className="text-fs-xs text-muted-foreground">{month}</span>
         </div>
-        <p className="min-w-0 flex-1 truncate font-bold">No Description</p>
+        <p className="min-w-0 flex-1 truncate font-bold">{description || "No Description"}</p>
         <div className="flex shrink-0 items-center gap-2 text-fs-sm text-muted-foreground sm:gap-3">
           {time ? <span className="flex items-center gap-1.5"><Clock className="size-4" />{time}</span> : null}
           <span className="hidden h-4 w-px bg-border sm:block" />
