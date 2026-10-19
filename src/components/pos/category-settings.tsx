@@ -154,11 +154,6 @@ function CategoryEditor({ id, onBack }: { id: string | null; onBack: () => void 
         <Row label="Parent Category" value={draft.parent || "Select Category"} onClick={() => setPopup("parent")} />
         <Row label="Products" value={draft.products.length || "Select Products"} sub={draft.products.join(", ") || undefined} onClick={() => setPopup("products")} />
       </GroupCard>
-      {saved && <GroupCard className="mt-4">
-        <Button variant="ghost" aria-label={draft.archived ? "Restore category" : "Archive category"} title={draft.archived ? "Restore category" : "Archive category"} className={cn(settingsRowClass, "h-auto justify-center rounded-none", !draft.archived && "text-destructive")}
-          onClick={() => { patch(draft.id, { archived: !draft.archived }); toast.success(draft.archived ? "Category restored" : "Category archived"); onBack(); }}>
-          <ArchiveGlyph className="size-4" /></Button>
-      </GroupCard>}
       <Caption>Changes save automatically. Demo only — doesn't change New Order or printing.</Caption>
     </ScreenBody>
     {popup === "printers" && <Picker title="Assigned Printers" options={PRINTERS} selected={draft.printers} onChange={(printers) => update({ printers })} onClose={() => setPopup(null)} />}

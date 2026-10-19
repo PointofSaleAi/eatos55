@@ -96,9 +96,6 @@ function Editor({ id, onBack }: { id: string | null; onBack: () => void }) {
           <span className="t-body text-muted-foreground">{draft.type}</span><ChevronRight className="size-4 text-muted-foreground" />
         </button>
       </GroupCard>
-      {stored && <Button variant="outline" aria-label={stored.archived ? "Restore default modifier" : "Archive default modifier"} title={stored.archived ? "Restore default modifier" : "Archive default modifier"} className="mt-6 w-full" onClick={() => {
-        patch(stored.id, { archived: !stored.archived }); toast.success(`Default modifier ${stored.archived ? "restored" : "archived"}`); onBack();
-      }}><ArchiveGlyph className="size-4" /></Button>}
     </ScreenBody>
     <Dialog open={popup === "type"} onOpenChange={(o) => { if (!o) setPopup(null); }}>
       <DialogContent className="w-[calc(100vw-2rem)] max-w-sm gap-0 overflow-hidden p-0">
