@@ -3,7 +3,7 @@ import { ChevronRight, Inbox, Mic, Search, SlidersHorizontal, X } from "lucide-r
 import { useMemo, useState, type ReactNode } from "react";
 import { TicketsScreen } from "@/components/pos/tickets-screen";
 import { cn } from "@/lib/utils";
-import { isSettingsDestinationVisible, settingsGroups } from "@/lib/settings-destinations";
+import { isSettingsDestinationVisible, settingsDestinations, settingsGroups } from "@/lib/settings-destinations";
 import { usePos } from "@/lib/pos-store";
 import { useProfileSettings } from "@/lib/profile-settings";
 import { useVoiceSearch } from "@/lib/voice-search";
@@ -76,16 +76,16 @@ export function SettingsNavList() {
   const [query, setQuery] = useState("");
   const { listening, start: startVoice } = useVoiceSearch(setQuery);
   const q = query.trim().toLowerCase();
-  const visibleGroups = useMemo(
+  const visibleDestinations = useMemo(
     () =>
-      settingsGroups.map((group) =>
-        group
-          .filter((l) => isSettingsDestinationVisible(l, session, canManageSettings))
-          .filter((l) => !q || l.label.toLowerCase().includes(q)),
+      settingsDestinations.filter(
+        (l) =>
+          isSettingsDestinationVisible(l, session, canManageSettings) &&
+          (!q || l.label.toLowerCase().includes(q)),
       ),
     [canManageSettings, session.role, session.clockedIn, q],
   );
-  const anyMatches = visibleGroups.some((g) => g.length > 0);
+
 
   const toggleCollapsed = () => {
     setCollapsed((v) => {
