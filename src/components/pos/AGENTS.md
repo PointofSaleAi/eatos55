@@ -28,4 +28,5 @@
 - Settings Profile (personal info, password, two factor, PIN, photo) is demo-only; no value is ever used for authentication, SMS or real clock-in records beyond the shared session role.
 
 - Guestbook future booking reuses floor layouts in a dedicated in-page table selector and saves guest visits only; it never starts an order or changes live table occupancy.
-- Guestbook reservation rows carry a reversible swipe no-show flag in shared demo settings, also reachable from the row's tap menu so nothing is swipe-only; a no show never changes orders, table occupancy or reporting.
+- Guestbook opens with the first guest selected on wide layouts (phones open on the list), so the detail pane is never empty on arrival.
+- Guestbook reservation rows carry a reversible demo no-show flag; a left swipe reveals only the red "No show" action (never "Undo"), while undo stays reachable from the row's tap menu so nothing is swipe-only; a no show never changes orders, table occupancy or reporting.
