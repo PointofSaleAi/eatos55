@@ -6,6 +6,8 @@ export type SwipeAction = {
   label: string;
   onAction: () => void;
   destructive?: boolean;
+  /** Optional icon shown in the revealed strip instead of the label text; the label stays the accessible name. */
+  icon?: ReactNode;
 };
 
 /**
@@ -29,7 +31,8 @@ export const SwipeRow = forwardRef<SwipeRowHandle, {
   const startDx = useRef(0);
   const locked = useRef(false);
   const dragging = useRef(false);
-  const width = 96;
+  const moving = useRef(false);
+  const width = action?.icon ? 64 : 96;
 
   useImperativeHandle(ref, () => ({ wasDragged: () => dragging.current }), []);
 
@@ -40,7 +43,7 @@ export const SwipeRow = forwardRef<SwipeRowHandle, {
     startX.current = null;
     startY.current = null;
     locked.current = false;
-    dragging.current = false;
+    moving.current = false;
     setDx((d) => (d < -width * 0.6 ? -width : 0));
   };
 
@@ -50,6 +53,7 @@ export const SwipeRow = forwardRef<SwipeRowHandle, {
         type="button"
         aria-hidden={dx === 0}
         tabIndex={-1}
+        aria-label={action.label}
         onClick={() => {
           setDx(0);
           haptic(action.destructive ? "error" : "medium");
@@ -65,7 +69,7 @@ export const SwipeRow = forwardRef<SwipeRowHandle, {
             : "bg-primary text-primary-foreground",
         )}
       >
-        {action.label}
+        {action.icon ?? action.label}
       </button>
       <div
         onDragStart={(e) => e.preventDefault()}
@@ -80,6 +84,8 @@ export const SwipeRow = forwardRef<SwipeRowHandle, {
           startY.current = e.clientY;
           startDx.current = dx;
           locked.current = false;
+          dragging.current = false;
+          moving.current = false;
         }}
         onPointerMove={(e) => {
           if (startX.current === null || startY.current === null) return;
@@ -97,13 +103,14 @@ export const SwipeRow = forwardRef<SwipeRowHandle, {
           }
           const moved = Math.max(-width, Math.min(0, startDx.current + e.clientX - startX.current));
           dragging.current = true;
+          moving.current = true;
           setDx(moved);
         }}
         onPointerUp={end}
         onPointerCancel={end}
         style={{
           transform: dx ? `translateX(${dx}px)` : undefined,
-          transition: dragging.current ? "none" : "transform 180ms ease-out",
+          transition: moving.current ? "none" : "transform 180ms ease-out",
         }}
         className="relative z-10 touch-pan-y select-none"
       >
