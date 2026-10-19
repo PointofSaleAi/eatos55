@@ -62,6 +62,8 @@ type Extras = {
   visits: { date: string; time: string }[];
 };
 const emptyExtras = (): Extras => ({ tags: [], allergies: [], notes: {}, visits: [] });
+/** Preset tags offered in the Tags popup, matching the guestbook reference. */
+const TAG_OPTIONS = ["VIP", "BIRTHDAY", "REGULAR", "SMOKER", "NON-SMOKER", "VEGETARIAN", "HIGH CHAIR", "VEGAN", "PATIO REQUIRED", "FRIEND OF OWNER"];
 const loadExtras = (id: string): Extras => {
   try {
     const all = JSON.parse(localStorage.getItem(EXTRAS_KEY) ?? "{}") as Record<string, Extras>;
@@ -173,6 +175,7 @@ function TagEditor({
   values,
   addLabel,
   tone = "ghost",
+  preset,
   onAdd,
   onRemove,
 }: {
@@ -180,10 +183,13 @@ function TagEditor({
   addLabel: string;
   /** "dark" renders the reference-style pill; "ghost" a quiet inline control. */
   tone?: "ghost" | "dark";
+  /** When set, the add button opens a popup offering these preset tags. */
+  preset?: string[];
   onAdd: (value: string) => void;
   onRemove: (value: string) => void;
 }) {
   const [adding, setAdding] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [draft, setDraft] = useState("");
   const cancelled = useRef(false);
   const commit = () => {
