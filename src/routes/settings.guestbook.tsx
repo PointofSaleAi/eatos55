@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   ArrowLeft,
   Armchair,
@@ -55,19 +55,78 @@ type GuestRow = ReturnType<typeof guestDirectory>[number];
 
 /** Demo guest extras (tags, allergies, notes, booked visits) kept on the device only. */
 const EXTRAS_KEY = "eatos.pos.guestbook-extras";
+/** A booked visit: date, time and the optional note / party / table it was booked under. */
+type Visit = {
+  date: string;
+  time: string;
+  description?: string | undefined;
+  party?: number | undefined;
+  table?: string | undefined;
+};
 type Extras = {
   tags: string[];
   allergies: string[];
   notes: Record<string, string>;
-  visits: { date: string; time: string }[];
+  visits: Visit[];
 };
 const emptyExtras = (): Extras => ({ tags: [], allergies: [], notes: {}, visits: [] });
+
+/** Demo reservations seeded once per guest so the Reservations tab opens with real history. */
+const SEED_KEY = "eatos.pos.guestbook-seeded";
+const RESERVATION_NOTES = ["Birthday dinner", "Anniversary celebration", "Business lunch", "Window table requested", "High chair needed", "Quiet corner please", "Tasting menu for guests", "Date night", "Family Sunday lunch", "Team dinner after work"];
+const RESERVATION_TABLES = ["T1", "T2", "EC226", "P4", "B7", "V3"];
+const RESERVATION_PLAN = [
+  { offset: -9, time: "19:30" },
+  { offset: -23, time: "13:00" },
+  { offset: -38, time: "20:15" },
+  { offset: 4, time: "19:00" },
+  { offset: 12, time: "20:30" },
+];
+const textSeed = (text: string) => [...text].reduce((total, char) => total + char.charCodeAt(0), 0);
+const shiftDate = (iso: string, days: number) => {
+  const day = new Date(`${iso}T12:00:00`);
+  day.setDate(day.getDate() + days);
+  return day.toISOString().slice(0, 10);
+};
+const seedVisits = (id: string): Visit[] => {
+  const seed = textSeed(id);
+  const today = new Date().toISOString().slice(0, 10);
+  return RESERVATION_PLAN.map((entry, index) => ({
+    date: shiftDate(today, entry.offset),
+    time: entry.time,
+    description: RESERVATION_NOTES[(seed + index) % RESERVATION_NOTES.length] ?? "No Description",
+    party: 1 + ((seed + index) % 5),
+    table: RESERVATION_TABLES[(seed + index) % RESERVATION_TABLES.length] ?? undefined,
+  }));
+};
+const alreadySeeded = (id: string) => {
+  try {
+    return (JSON.parse(localStorage.getItem(SEED_KEY) ?? "[]") as string[]).includes(id);
+  } catch {
+    return false;
+  }
+};
+const markSeeded = (id: string) => {
+  try {
+    const list = (JSON.parse(localStorage.getItem(SEED_KEY) ?? "[]") as string[]).filter((item) => item !== id);
+    localStorage.setItem(SEED_KEY, JSON.stringify([...list, id]));
+  } catch {
+    // Demo-only storage: ignore write failures.
+  }
+};
 /** Preset tags offered in the Tags popup, matching the guestbook reference. */
 const TAG_OPTIONS = ["VIP", "BIRTHDAY", "REGULAR", "SMOKER", "NON-SMOKER", "VEGETARIAN", "HIGH CHAIR", "VEGAN", "PATIO REQUIRED", "FRIEND OF OWNER"];
 const loadExtras = (id: string): Extras => {
   try {
     const all = JSON.parse(localStorage.getItem(EXTRAS_KEY) ?? "{}") as Record<string, Extras>;
-    return { ...emptyExtras(), ...all[id] };
+    const stored: Extras = { ...emptyExtras(), ...all[id] };
+    if (!alreadySeeded(id)) {
+      stored.visits = [...stored.visits, ...seedVisits(id)];
+      all[id] = stored;
+      localStorage.setItem(EXTRAS_KEY, JSON.stringify(all));
+      markSeeded(id);
+    }
+    return stored;
   } catch {
     return emptyExtras();
   }
@@ -346,10 +405,11 @@ function NoteRow({
 }
 
 /** Inline visit booking: pick a date and time, saved to the guest's demo record. */
-function VisitEditor({ visits, onAdd, onRemove }: { visits: Extras["visits"]; onAdd: (visit: { date: string; time: string }) => void; onRemove: (visit: { date: string; time: string }) => void }) {
+function VisitEditor({ visits, onAdd, onRemove }: { visits: Visit[]; onAdd: (visit: Visit) => void; onRemove: (visit: Visit) => void }) {
   const [adding, setAdding] = useState(false);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [description, setDescription] = useState("");
   return (
     <div className="space-y-3">
       {visits.length ? (
@@ -357,7 +417,10 @@ function VisitEditor({ visits, onAdd, onRemove }: { visits: Extras["visits"]; on
           {visits.map((visit, index) => (
             <li key={`${visit.date}-${visit.time}-${index}`} className="flex items-center gap-3 py-2 first:pt-0 last:pb-0">
               <CalendarClock className="size-4 shrink-0 text-muted-foreground" />
-              <span className="min-w-0 flex-1 text-fs-sm">{visit.date || "Unset date"}{visit.time ? ` · ${visit.time}` : ""}</span>
+              <span className="min-w-0 flex-1 truncate text-fs-sm">
+                <span className="font-bold">{visit.description || "No Description"}</span>
+                <span className="text-muted-foreground"> · {visit.date || "Unset date"}{visit.time ? ` · ${visit.time}` : ""}</span>
+              </span>
               <button type="button" aria-label="Remove visit" className="text-muted-foreground hover:text-foreground" onClick={() => onRemove(visit)}>
                 <X className="size-4" />
               </button>
@@ -369,6 +432,14 @@ function VisitEditor({ visits, onAdd, onRemove }: { visits: Extras["visits"]; on
       )}
       {adding ? (
         <div className="flex flex-wrap items-center gap-2">
+          <input
+            type="text"
+            aria-label="Visit description"
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="min-h-tap w-full rounded-lg border border-border bg-transparent px-3 text-fs-sm outline-none sm:w-60"
+          />
           <input
             type="date"
             aria-label="Visit date"
@@ -385,9 +456,10 @@ function VisitEditor({ visits, onAdd, onRemove }: { visits: Extras["visits"]; on
           />
           <DarkPill
             onClick={() => {
-              if (date || time) onAdd({ date, time });
+              if (date || time) onAdd({ date, time, description: description.trim() || undefined });
               setDate("");
               setTime("");
+              setDescription("");
               setAdding(false);
             }}
           >
@@ -400,6 +472,7 @@ function VisitEditor({ visits, onAdd, onRemove }: { visits: Extras["visits"]; on
             onClick={() => {
               setDate("");
               setTime("");
+              setDescription("");
               setAdding(false);
             }}
           >
@@ -572,7 +645,7 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
             <Cake className="mt-1 size-5 shrink-0" />
             <div className="min-w-0 flex-1">
               <VisitEditor
-                visits={extras.visits}
+                visits={extras.visits.filter((visit) => visit.date >= new Date().toISOString().slice(0, 10))}
                 onAdd={(visit) => update({ visits: [...extras.visits, visit] })}
                 onRemove={(visit) => update({ visits: extras.visits.filter((item) => item !== visit) })}
               />
@@ -628,7 +701,7 @@ const formatTime = (time: string | undefined) => {
 };
 
 /** One visit row: date badge, description and the time / party / table summary. */
-function VisitRow({ day, month, time, party, table }: { day: string; month: string; time: string | null; party: string | number; table: string | null }) {
+function VisitRow({ day, month, time, party, table, description }: { day: string; month: string; time: string | null; party: string | number; table: string | null; description: string | null }) {
   return (
     <li className="flex items-stretch overflow-hidden rounded-xl border border-border bg-surface">
       <span aria-hidden className="w-1 shrink-0 bg-success" />
@@ -637,7 +710,7 @@ function VisitRow({ day, month, time, party, table }: { day: string; month: stri
           <span className="text-fs-lg font-bold leading-none">{day}</span>
           <span className="text-fs-xs text-muted-foreground">{month}</span>
         </div>
-        <p className="min-w-0 flex-1 truncate font-bold">No Description</p>
+        <p className="min-w-0 flex-1 truncate font-bold">{description || "No Description"}</p>
         <div className="flex shrink-0 items-center gap-2 text-fs-sm text-muted-foreground sm:gap-3">
           {time ? <span className="flex items-center gap-1.5"><Clock className="size-4" />{time}</span> : null}
           <span className="hidden h-4 w-px bg-border sm:block" />
@@ -668,7 +741,7 @@ function ReservationsCell({ icon, value, label }: { icon: ReactNode; value: stri
 }
 
 /** Reservations tab: Upcoming/Recent toggle, summary strip and visit rows. */
-function ReservationsTab({ guest }: { guest: GuestRow }) {
+function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number }) {
   const [view, setView] = useState<"upcoming" | "recent">("recent");
   const extras = useMemo(() => loadExtras(guest.id), [guest.id]);
   const today = new Date().toISOString().slice(0, 10);
@@ -682,14 +755,19 @@ function ReservationsTab({ guest }: { guest: GuestRow }) {
     return { party: 1 + (seed % 4), table: `${initials(guest.name).slice(0, 2)}${100 + (seed % 900)}` };
   };
 
-  const upcomingRows = upcoming.map((visit, index) => {
+  const rowFor = (visit: Visit, index: number) => {
     const parts = dateParts(visit.date) ?? { day: "--", month: "" };
-    return { ...parts, time: formatTime(visit.time), ...demoDetails(visit, index) };
-  });
-  const pastBooked = booked.filter((visit) => visit.date < today).reverse().map((visit, index) => {
-    const parts = dateParts(visit.date) ?? { day: "--", month: "" };
-    return { ...parts, time: formatTime(visit.time), ...demoDetails(visit, index) };
-  });
+    const demo = demoDetails(visit, index);
+    return {
+      ...parts,
+      time: formatTime(visit.time),
+      description: visit.description ?? null,
+      party: visit.party ?? demo.party,
+      table: visit.table ?? demo.table,
+    };
+  };
+  const upcomingRows = upcoming.map((visit, index) => rowFor(visit, index));
+  const pastBooked = booked.filter((visit) => visit.date < today).reverse().map((visit, index) => rowFor(visit, index));
   // Recent visits come from the guest's real checks, joined by any booked past visits.
   const recentRows = [
     ...pastBooked,
@@ -697,6 +775,7 @@ function ReservationsTab({ guest }: { guest: GuestRow }) {
       day: dateParts(ticket.date)?.day ?? "--",
       month: dateParts(ticket.date)?.month ?? "",
       time: ticket.arrivedAt || null,
+      description: null,
       party: ticket.seats,
       table: ticket.table ?? null,
     })),
@@ -705,7 +784,7 @@ function ReservationsTab({ guest }: { guest: GuestRow }) {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center gap-2">
+      <div data-resv-toggle className="flex items-center gap-2" style={indent ? { paddingLeft: `${indent}px` } : undefined}>
         <div role="tablist" aria-label="Reservations view" className="flex items-center rounded-pill bg-surface-muted p-1">
           {([["upcoming", "Upcoming Visits"], ["recent", "Recent Visits"]] as const).map(([id, label]) => (
             <button
@@ -714,7 +793,7 @@ function ReservationsTab({ guest }: { guest: GuestRow }) {
               role="tab"
               aria-selected={view === id}
               className={cn(
-                "min-h-tap rounded-pill px-4 py-1.5 text-fs-sm font-bold transition-colors sm:px-5",
+                "min-h-tap shrink-0 whitespace-nowrap rounded-pill px-3 py-1.5 text-fs-sm font-bold transition-colors sm:px-5",
                 view === id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
               )}
               onClick={() => setView(id)}
@@ -723,7 +802,7 @@ function ReservationsTab({ guest }: { guest: GuestRow }) {
             </button>
           ))}
         </div>
-        <span className="text-muted-foreground" title="Reservation and visit history for this guest">
+        <span className="hidden text-muted-foreground sm:block" title="Reservation and visit history for this guest">
           <Info className="size-4" />
           <span className="sr-only">Reservation and visit history for this guest</span>
         </span>
@@ -742,7 +821,7 @@ function ReservationsTab({ guest }: { guest: GuestRow }) {
       {rows.length ? (
         <ul className="space-y-3">
           {rows.map((row, index) => (
-            <VisitRow key={`${row.day}-${row.month}-${row.time ?? "t"}-${index}`} day={row.day} month={row.month} time={row.time} party={row.party} table={row.table} />
+            <VisitRow key={`${row.day}-${row.month}-${row.time ?? "t"}-${index}`} day={row.day} month={row.month} time={row.time} party={row.party} table={row.table} description={row.description} />
           ))}
         </ul>
       ) : (
@@ -826,6 +905,8 @@ function GuestDetail({ guest }: { guest: GuestRow }) {
   const router = useRouter();
   const { setGuest } = usePos();
   const [tab, setTab] = useState<GuestTab>("profile");
+  const [resvIndent, setResvIndent] = useState(0);
+  const paneRef = useRef<HTMLDivElement>(null);
   // Starting an order from a profile attaches that guest, so the New Order
   // screen opens with their name, phone, email and address already filled in.
   const startOrder = () => {
@@ -833,13 +914,43 @@ function GuestDetail({ guest }: { guest: GuestRow }) {
     router.navigate({ to: "/order/new" });
   };
 
+  // The Reservations view toggle sits under the "Reservations" tab: measure that tab's
+  // left edge so the two line up at any width, and never shift the toggle past the pane.
+  useEffect(() => {
+    const pane = paneRef.current;
+    if (!pane) return;
+    const measure = () => {
+      const strip = pane.querySelector<HTMLElement>('[role="tablist"][aria-label="Guest sections"]');
+      const target = pane.querySelector<HTMLElement>('[data-tab="reservations"]');
+      const toggle = pane.querySelector<HTMLElement>('[role="tablist"][aria-label="Reservations view"]');
+      const info = pane.querySelector<HTMLElement>('[data-resv-toggle] span[title]');
+      if (!strip || !target) {
+        setResvIndent(0);
+        return;
+      }
+      const stripRect = strip.getBoundingClientRect();
+      const wanted = target.getBoundingClientRect().left - stripRect.left - 4;
+      // Keep the whole row (toggle, gap, info icon) inside the pane. The icon is hidden on phones.
+      const infoWidth = info?.getBoundingClientRect().width ?? 0;
+      const used = (toggle?.getBoundingClientRect().width ?? 0) + (infoWidth ? 8 + infoWidth : 0);
+      const room = pane.getBoundingClientRect().right - stripRect.left - used;
+      const next = Math.max(0, Math.min(wanted, room));
+      setResvIndent((current) => (Math.abs(current - next) < 1 ? current : next));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(pane);
+    return () => observer.disconnect();
+  }, [tab]);
+
   return (
-    <div className="w-full space-y-5">
+    <div ref={paneRef} className="w-full space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div role="tablist" aria-label="Guest sections" className="flex min-w-0 items-center gap-1 overflow-x-auto rounded-pill bg-surface-muted p-1">
           {GUEST_TABS.map((entry) => (
             <button
               key={entry.id}
+              data-tab={entry.id}
               type="button"
               role="tab"
               aria-selected={tab === entry.id}
@@ -860,7 +971,7 @@ function GuestDetail({ guest }: { guest: GuestRow }) {
       </div>
 
       {tab === "profile" ? <GuestProfile guest={guest} /> : null}
-      {tab === "reservations" ? <ReservationsTab guest={guest} /> : null}
+      {tab === "reservations" ? <ReservationsTab guest={guest} indent={resvIndent} /> : null}
       {tab === "payments" ? <PaymentsTab guest={guest} /> : null}
       {tab === "feedback" ? <FeedbackTab /> : null}
       {tab === "history" ? <HistoryTab guest={guest} /> : null}
