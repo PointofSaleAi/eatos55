@@ -1,1 +1,2 @@
 - Guestbook feedback uses original source assets and row-local expansion state so opening one review never expands neighboring reviews.
+- Guestbook order history derives summaries and expandable visit, bill and item details from the selected guest's saved tickets; it remains read-only and never loads a ticket into the order draft.

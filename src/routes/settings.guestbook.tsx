@@ -1150,26 +1150,115 @@ function FeedbackTab({ guest }: { guest: GuestRow }) {
   );
 }
 
-/** Order History tab: the guest's real checks, newest first. */
+/** Read-only order history; expansion never opens or changes the active POS order. */
 function HistoryTab({ guest }: { guest: GuestRow }) {
+  const [open, setOpen] = useState<string | null>(null);
+  const [sort, setSort] = useState<{ key: "date" | "name" | "spent" | "tips" | "items" | "type"; dir: 1 | -1 }>({ key: "date", dir: -1 });
+  const chronological = [...guest.tickets].sort((a, b) => b.date.localeCompare(a.date) || b.arrivedAt.localeCompare(a.arrivedAt));
+  const rows = chronological.map((ticket) => ({
+    ticket,
+    date: `${ticket.date} ${ticket.arrivedAt}`,
+    name: ticket.lines.map((line) => line.name).join(", ") || "No items",
+    spent: ticket.total - (ticket.tips ?? 0),
+    tips: ticket.tips ?? 0,
+    items: ticket.lines.reduce((sum, line) => sum + line.qty, 0),
+    type: ticket.orderType || ({ "dine-in": "Dine in", takeaway: "Takeaway", delivery: "Delivery", bar: "Bar" }[ticket.mode]),
+  }));
+  const latest = rows[0];
+  const counts = new Map<string, number>();
+  for (const ticket of guest.tickets) for (const line of ticket.lines) counts.set(line.name, (counts.get(line.name) ?? 0) + line.qty);
+  const favorite = [...counts].sort((a, b) => b[1] - a[1])[0]?.[0] ?? "—";
+  const cards: [string, ReactNode, string][] = [
+    ["Recent Spent", <Banknote key="rs" />, money(latest?.spent ?? 0)],
+    ["Recent Tips", <PayPoints key="rt" />, money(latest?.tips ?? 0)],
+    ["Total Spent", <Banknote key="ts" />, money(rows.reduce((sum, row) => sum + row.spent, 0))],
+    ["Total Tips", <PayPoints key="tt" />, money(rows.reduce((sum, row) => sum + row.tips, 0))],
+    ["Most Ordered Items", <Star key="mi" />, favorite],
+  ];
+  const sorted = [...rows].sort((a, b) => {
+    const x = a[sort.key], y = b[sort.key];
+    return (typeof x === "number" && typeof y === "number" ? x - y : String(x).localeCompare(String(y))) * sort.dir;
+  });
+  const cols = "grid grid-cols-[3rem_minmax(0,1fr)_5rem_1.25rem] items-center gap-2 @2xl:grid-cols-[3rem_minmax(0,2fr)_minmax(4rem,1fr)_minmax(4rem,1fr)_minmax(3rem,0.7fr)_minmax(5rem,1fr)_1.25rem]";
+  const headers: [typeof sort.key, string, string][] = [["date", "Date", ""], ["name", "Dish Name", ""], ["spent", "Spent", "justify-end"], ["tips", "Tips", "hidden @2xl:flex justify-end"], ["items", "Items", "hidden @2xl:flex justify-center"], ["type", "Order Type", "hidden @2xl:flex justify-end"]];
   return (
-    <section aria-label="Order history">
-      <h3 className="mb-3 text-fs-lg font-bold">Order History</h3>
-      {guest.tickets.length ? (
-        <ul className="divide-y divide-border">
-          {[...guest.tickets].sort((a, b) => b.date.localeCompare(a.date)).map((ticket) => (
-            <li key={ticket.id} className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 py-4">
-              <div>
-                <p className="font-bold">Order# {ticket.orderNo ?? "--"}</p>
-                <p className="text-fs-xs text-muted-foreground">{ticket.date} · {ticket.arrivedAt}</p>
-              </div>
-              <div className="text-right">
-                <p className="font-bold">{money(ticket.total)}</p>
-                <p className="text-fs-xs text-muted-foreground">{ticket.closed ? "Closed" : statusMeta[ticket.status].label}</p>
-              </div>
-            </li>
+    <section aria-label="Order history" className="@container space-y-4">
+      <div>
+        <h3 className="mb-2 text-fs-sm font-bold uppercase tracking-wide text-muted-foreground">Summary</h3>
+        <div className="grid grid-cols-2 gap-2 @lg:grid-cols-3 @3xl:grid-cols-5">
+          {cards.map(([label, icon, value]) => (
+            <div key={label} className="flex min-w-0 items-center gap-2 rounded-lg bg-surface-muted p-3">
+              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-surface [&_svg]:size-4">{icon}</span>
+              <div className="min-w-0"><p className="break-words text-fs-sm font-bold">{value}</p><p className="text-fs-xs text-muted-foreground">{label}</p></div>
+            </div>
           ))}
-        </ul>
+        </div>
+      </div>
+      {rows.length ? (
+        <div className="space-y-2">
+          <div className={cn(cols, "rounded-lg bg-surface px-3 py-2 text-fs-xs font-bold")}>
+            {headers.map(([key, label, extra]) => (
+              <Button key={key} variant="ghost" onClick={() => setSort((s) => ({ key, dir: s.key === key && s.dir === -1 ? 1 : -1 }))} className={cn("h-auto min-h-8 gap-0.5 whitespace-normal p-0 text-left text-fs-xs", extra)} aria-label={`Sort orders by ${label}`}>
+                {label}<PaySort className="size-3" />
+              </Button>
+            ))}
+            <span />
+          </div>
+          <ul className="space-y-2">
+            {sorted.map((row) => {
+              const { ticket } = row;
+              const expanded = open === ticket.id;
+              const date = dateParts(ticket.date);
+              const detailId = `history-${ticket.id}`;
+              const paid = (ticket.payments ?? []).reduce((sum, payment) => sum + payment.amount, 0);
+              const itemTotal = ticket.lines.reduce((sum, line) => sum + line.price * line.qty * (1 - (line.discountPercent ?? 0) / 100), 0);
+              const info: [string, string][] = [["Arrived at", ticket.arrivedAt || "—"], ["Leave at", ticket.closed ? ticket.payments?.at(-1)?.at ?? "—" : "—"], ["Seated at", ticket.table || "—"], ["People", String(ticket.seats)], ["Server", ticket.server || "—"], ["Order Type", row.type], ["Revenue Centre", ticket.revenueCenter || "—"]];
+              const bill: [string, string][] = [["Confirmation No.", String(ticket.checkNumber ?? ticket.number)], ["Order No.", String(ticket.orderNo ?? "—")], ["Payment Mode", ticket.payments?.map((p) => p.method).join(", ") || ticket.paymentType || "—"], ["Transaction ID", ticket.payments?.map((p) => p.ref).filter(Boolean).join(", ") || "—"], ["Time", ticket.payments?.at(-1)?.at ?? "—"], ["Payment", ticket.refund ? "Refunded" : ticket.closed ? "Completed" : statusMeta[ticket.status].label]];
+              return (
+                <li key={ticket.id} className="overflow-hidden rounded-lg border-l-2 border-border bg-surface">
+                  <Button variant="ghost" aria-label={`Order ${ticket.orderNo ?? ticket.checkNumber ?? ticket.number}: ${row.name}`} aria-expanded={expanded} aria-controls={detailId} onClick={() => setOpen(expanded ? null : ticket.id)} className={cn(cols, "h-auto min-h-16 w-full rounded-none px-3 py-3 text-left font-normal whitespace-normal")}>
+                    <span className="border-r border-border pr-2 text-center text-fs-xs"><span className="block font-bold">{date?.day ?? "—"}</span>{date?.month ?? ""}</span>
+                    <span className="min-w-0 break-words text-fs-sm font-semibold">{ticket.lines.length > 3 ? `${ticket.lines[0]?.name} +${ticket.lines.length - 1} more` : row.name}<span className="mt-1 block text-fs-xs font-normal text-muted-foreground @2xl:hidden">{row.type} · {row.items} items · Tips {money(row.tips)}</span></span>
+                    <span className="text-right text-fs-sm tabular-nums">{money(row.spent)}</span>
+                    <span className="hidden text-right text-fs-sm tabular-nums @2xl:block">{money(row.tips)}</span>
+                    <span className="hidden text-center text-fs-sm tabular-nums @2xl:block">{String(row.items).padStart(2, "0")}</span>
+                    <span className="hidden items-center justify-end gap-1 text-fs-xs @2xl:flex"><Utensils className="size-3" />{row.type}</span>
+                    <ChevronRight className={cn("size-4 text-muted-foreground transition-transform", expanded && "rotate-90")} />
+                  </Button>
+                  {expanded ? (
+                    <div id={detailId} className="grid gap-4 border-t border-border p-3 @3xl:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+                      <div className="min-w-0">
+                        <div className="grid gap-4 @lg:grid-cols-2">
+                          <div><h4 className="mb-3 text-fs-sm font-bold">{ticket.notes?.split("\n")[0] || `Order #${ticket.orderNo ?? ticket.checkNumber ?? ticket.number}`}</h4><dl className="space-y-2">{info.map(([label, value]) => <div key={label} className="flex justify-between gap-3 text-fs-xs"><dt className="text-muted-foreground">{label}</dt><dd className="min-w-0 break-words text-right">{value}</dd></div>)}</dl></div>
+                          <div><h4 className="mb-3 flex flex-wrap justify-between gap-2 text-fs-sm font-bold"><span>Bill Summary</span><span>Total Amount: {money(ticket.total)}</span></h4><dl className="space-y-2">{bill.map(([label, value]) => <div key={label} className="flex justify-between gap-3 text-fs-xs"><dt className="text-muted-foreground">{label}</dt><dd className="min-w-0 break-words text-right">{value}</dd></div>)}</dl></div>
+                        </div>
+                        <div className="mt-4"><h4 className="mb-1 text-fs-sm font-bold">Notes</h4><p className="break-words text-fs-xs text-muted-foreground">{ticket.notes || "No notes"}</p></div>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="overflow-x-auto">
+                          <table className="w-full min-w-80 text-fs-xs">
+                            <thead className="bg-surface-muted"><tr>{["Dish Name", "Qty", "Add - Ons", "Price"].map((label, i) => <th key={label} className={cn("px-2 py-2 font-bold", i === 0 ? "text-left" : i === 3 ? "text-right" : "text-center")}>{label}</th>)}</tr></thead>
+                            <tbody>{ticket.lines.map((line, index) => <tr key={`${line.id}-${index}`} className="border-b border-border"><td className="max-w-40 break-words px-2 py-3">{line.name}{line.notes ? <p className="mt-1 text-muted-foreground">{line.notes}</p> : null}</td><td className="px-2 py-3 text-center">{line.qty}</td><td className="max-w-40 break-words px-2 py-3 text-center text-muted-foreground">{line.modifiers?.join(", ") || "—"}</td><td className="px-2 py-3 text-right tabular-nums">{money(line.price * line.qty * (1 - (line.discountPercent ?? 0) / 100))}{line.discountPercent ? <span className="block text-muted-foreground">−{line.discountPercent}%</span> : null}</td></tr>)}</tbody>
+                          </table>
+                        </div>
+                        <dl className="mt-2 space-y-2 text-fs-xs">
+                          <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Item Total</dt><dd>{row.items} items · {money(itemTotal)}</dd></div>
+                          {Math.abs(row.spent - itemTotal) > 0.005 ? <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Adjustments</dt><dd>{money(row.spent - itemTotal)}</dd></div> : null}
+                          <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Tip</dt><dd>{money(row.tips)}</dd></div>
+                          <div className="flex justify-between gap-3 border-t border-border pt-2 font-bold"><dt>Total Amount</dt><dd>{money(ticket.total)}</dd></div>
+                          <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Paid</dt><dd>{money(paid)}</dd></div>
+                          {paid < ticket.total ? <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Balance Due</dt><dd>{money(ticket.total - paid)}</dd></div> : null}
+                          {ticket.payments?.map((payment, index) => <div key={`${payment.no}-${index}`} className="flex justify-between gap-3"><dt className="min-w-0 break-words text-muted-foreground">{payment.method} · {payment.at}{payment.ref ? ` · ${payment.ref}` : ""}</dt><dd className="shrink-0">{money(payment.amount)}</dd></div>)}
+                          {ticket.refund ? <div className="flex justify-between gap-3 text-destructive"><dt>Refund · {ticket.refund.reason}</dt><dd>{money(ticket.refund.amount)}</dd></div> : null}
+                        </dl>
+                      </div>
+                    </div>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       ) : (
         <p className="py-4 text-fs-sm text-muted-foreground">No order history available.</p>
       )}
