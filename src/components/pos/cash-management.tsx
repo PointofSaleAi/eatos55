@@ -10,21 +10,18 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 import { employees } from "@/lib/demo-data";
 import { formatMoney } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
-import { moneyDigitsToAmount, popMoneyDigit, pushMoneyDigit } from "@/lib/money-entry";
+import { amountToMoneyDigits, moneyDigitsToAmount } from "@/lib/money-entry";
 import { PAY_IN_REASONS, PAY_OUT_REASONS, todayKey, useCashManagement } from "@/lib/cash-management";
+import { MoneyInput as RegisterMoneyInput } from "@/components/pos/money-input";
 import { cn } from "@/lib/utils";
 
 /** Cash-register style text input: digits fill from the right. */
 function MoneyInput({ digits, onChange, label, autoFocus }: { digits: string; onChange: (d: string) => void; label: string; autoFocus?: boolean }) {
-  return (
-    <input aria-label={label} inputMode="numeric" autoFocus={autoFocus} value={formatMoney(moneyDigitsToAmount(digits))}
-      className="min-h-11 min-w-0 flex-1 bg-transparent text-right t-value outline-none"
-      onKeyDown={(e) => {
-        if (/^\d$/.test(e.key)) { e.preventDefault(); onChange(pushMoneyDigit(digits, e.key)); }
-        else if (e.key === "Backspace") { e.preventDefault(); onChange(popMoneyDigit(digits)); }
-      }}
-      onChange={(e) => onChange(pushMoneyDigit("", e.target.value.replace(/\D/g, "")))} />
-  );
+  return <span className="flex min-w-0 flex-1 items-center justify-end gap-1"><span className="t-value">$</span>
+    <RegisterMoneyInput aria-label={label} autoFocus={autoFocus} value={moneyDigitsToAmount(digits)}
+      onChange={(value) => onChange(amountToMoneyDigits(Number(value)))} placeholder="0.00"
+      className="min-h-11 w-24 min-w-0 bg-transparent text-right t-value outline-none" />
+  </span>;
 }
 
 const th = "px-3 py-2 t-caption font-medium text-muted-foreground";
@@ -32,7 +29,7 @@ const td = "px-3 py-3 t-value";
 
 export function CashManagement() {
   const navigate = useNavigate();
-  const { settings, session, canManageSettings } = usePos();
+  const { settings, session } = usePos();
   const cash = useCashManagement();
   const me = session.name || "Manager";
   const [digits, setDigits] = useState("");
@@ -46,7 +43,7 @@ export function CashManagement() {
   const logs = cash.state.logs.filter((l) => l.date === date);
 
   if (view) return <PayScreen kind={view} amount={amount} onBack={() => setView(null)}
-    onDone={(emp, reason, note) => { cash.record(view, amount, emp, reason, note); setDigits(""); setView(null); toast.success(view === "in" ? "Pay in recorded" : "Pay out recorded"); }} tips={cash.state.tips} />;
+    onDone={(emp, reason, note) => { try { cash.record(view, amount, emp, reason, note); setDigits(""); setDate(todayKey()); setView(null); toast.success(view === "in" ? "Pay in recorded" : "Pay out recorded"); } catch (error) { toast.error(error instanceof Error ? error.message : "Unable to record cash entry"); } }} tips={cash.state.tips} />;
 
   const needAmount = (kind: "in" | "out") => {
     if (!cash.state.tillOpen) { toast.error("Open the till balance first"); return; }
@@ -54,7 +51,6 @@ export function CashManagement() {
     if (kind === "out" && amount > cash.estimated) { toast.error("Pay out is more than the cash in drawer"); return; }
     setView(kind);
   };
-  const disabled = !canManageSettings;
 
   return <>
     <SubHeader title="Cash Management" backLabel="Payments" onBack={() => navigate({ to: "/settings/payments" })} />
@@ -79,11 +75,10 @@ export function CashManagement() {
           {([["Pay In", () => needAmount("in"), false], ["Pay Out", () => needAmount("out"), false],
             ["Open Till Balance", () => { setTillDigits(""); setTillOpen(true); }, cash.state.tillOpen],
             ["Close", () => setCloseConfirm(true), !cash.state.tillOpen]] as const).map(([label, fn, off], i) =>
-            <Button key={label} variant="ghost" disabled={disabled || off} onClick={fn}
+            <Button key={label} variant="ghost" disabled={off} onClick={fn}
               className={cn("min-h-12 rounded-none border-border t-row whitespace-normal hover:bg-muted", i % 2 === 1 && "border-l", i >= 2 && "border-t sm:border-t-0", i === 2 && "sm:border-l")}>{label}</Button>)}
         </div>
       </GroupCard>
-      {disabled && <Caption>Only managers can use cash management.</Caption>}
 
       <GroupLabel>Cash Logs</GroupLabel>
       <GroupCard>
@@ -121,7 +116,7 @@ export function CashManagement() {
           {tillDigits && <Button variant="ghost" size="icon" aria-label="Clear amount" onClick={() => setTillDigits("")}><XCircle className="text-muted-foreground" /></Button>}
         </div>
         <div className="grid grid-cols-2 gap-2"><Button variant="outline" onClick={() => setTillOpen(false)}>Back</Button>
-          <Button disabled={!tillDigits} onClick={() => { setTillOpen(false); setDisclaimer(true); }}>Yes</Button></div>
+          <Button onClick={() => { setTillOpen(false); setDisclaimer(true); }}>Yes</Button></div>
       </DialogContent>
     </Dialog>
     <Dialog open={disclaimer} onOpenChange={setDisclaimer}>
@@ -129,15 +124,15 @@ export function CashManagement() {
         <DialogTitle className="text-center">Disclaimer</DialogTitle>
         <DialogDescription className="text-center">Please note, once the open till balance has been added it cannot be adjusted. Should you require to adjust, you will need to close the drawer first and re-select open till balance.</DialogDescription>
         <div className="grid grid-cols-2 gap-2"><Button variant="outline" onClick={() => setDisclaimer(false)}>No</Button>
-          <Button onClick={() => { cash.openTill(moneyDigitsToAmount(tillDigits), me); setDisclaimer(false); toast.success(`Till opened with ${formatMoney(moneyDigitsToAmount(tillDigits))}`); }}>Yes</Button></div>
+          <Button onClick={() => { try { cash.openTill(moneyDigitsToAmount(tillDigits), me); setDisclaimer(false); setDate(todayKey()); toast.success(`Till opened with ${formatMoney(moneyDigitsToAmount(tillDigits))}`); } catch (error) { toast.error(error instanceof Error ? error.message : "Unable to open till"); } }}>Yes</Button></div>
       </DialogContent>
     </Dialog>
     <Dialog open={closeConfirm} onOpenChange={setCloseConfirm}>
       <DialogContent className="w-[calc(100%-2rem)] max-w-sm rounded-lg">
-        <DialogTitle className="text-center">Close Drawer</DialogTitle>
-        <DialogDescription className="text-center">{formatMoney(cash.estimated)} will be recorded as the closing balance.</DialogDescription>
-        <div className="grid grid-cols-2 gap-2"><Button variant="outline" onClick={() => setCloseConfirm(false)}>Cancel</Button>
-          <Button onClick={() => { cash.closeDrawer(me); setCloseConfirm(false); toast.success("Drawer closed successfully"); }}>Close Drawer</Button></div>
+        <DialogTitle className="text-center">Are you sure you want to close this drawer?</DialogTitle>
+        <DialogDescription className="text-center">You should close the drawer at the end of the day. Before closing the drawer ensure that tips entitled are paid to the employees. Once the drawer is closed, you’ll not be able to pay-out the tips.</DialogDescription>
+        <div className="grid grid-cols-2 gap-2"><Button variant="outline" onClick={() => setCloseConfirm(false)}>No</Button>
+          <Button onClick={() => { try { cash.closeDrawer(me); setDigits(""); setDate(todayKey()); setCloseConfirm(false); toast.success("Drawer closed successfully"); } catch (error) { toast.error(error instanceof Error ? error.message : "Unable to close drawer"); } }}>Yes</Button></div>
       </DialogContent>
     </Dialog>
   </>;
@@ -171,15 +166,15 @@ function PayScreen({ kind, amount, onBack, onDone, tips }: {
         <Button variant="outline" size="icon" className="size-11" aria-label="Sort by name" onClick={() => setAsc((v) => !v)}><ArrowDownUp /></Button>
       </div>
       <GroupCard className="mt-3">
-        <div className="grid grid-cols-[1fr_auto_auto] gap-3 border-b border-border px-4 py-2 t-caption text-muted-foreground"><span>Name</span><span className="w-20 text-right">Cash Tips</span><span className="w-24 text-right">Other Amount</span></div>
-        {list.map((e) => <button key={e.id} type="button" onClick={() => setEmp(e.id)} aria-pressed={emp === e.id}
-          className="grid min-h-11 w-full grid-cols-[1fr_auto_auto] items-center gap-3 border-b border-border px-4 py-2 text-left last:border-0 hover:bg-muted">
-          <span className="t-row">{e.name}</span><span className="w-20 text-right t-value">{(tips[e.id] ?? 0).toFixed(2)}</span>
-          <span className="flex w-24 items-center justify-end gap-1 t-value">0.00{emp === e.id && <Check className="size-4" />}</span></button>)}
+        <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-2 border-b border-border px-4 py-2 t-caption text-muted-foreground"><span>Name</span><span className="w-16 sm:w-20 text-right">Cash Tips</span><span className="w-20 sm:w-24 text-right">Other Amount</span></div>
+        {list.map((e) => <Button variant="ghost" key={e.id} type="button" onClick={() => setEmp(e.id)} aria-pressed={emp === e.id}
+          className="grid h-auto min-h-11 w-full rounded-none whitespace-normal grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 border-b border-border px-4 py-2 text-left last:border-0 hover:bg-muted">
+          <span className="min-w-0 break-words t-row">{e.name}</span><span className="w-16 sm:w-20 text-right t-value">{(tips[e.id] ?? 0).toFixed(2)}</span>
+          <span className="flex w-20 sm:w-24 items-center justify-end gap-1 t-value">0.00{emp === e.id && <Check className="size-4" />}</span></Button>)}
       </GroupCard>
       <GroupLabel>{kind === "in" ? "Reason for the pay in" : "Reason for the payout"}</GroupLabel>
-      <GroupCard>{reasons.map((r) => <button key={r} type="button" onClick={() => setReason(r)} aria-pressed={reason === r}
-        className={cn(settingsRowClass, "w-full text-left hover:bg-muted")}><span className="flex-1 t-row">{r}</span>{reason === r && <Check className="size-4" />}</button>)}</GroupCard>
+      <GroupCard>{reasons.map((r) => <Button variant="ghost" key={r} type="button" onClick={() => setReason(r)} aria-pressed={reason === r}
+        className={cn(settingsRowClass, "h-auto rounded-none w-full text-left hover:bg-muted")}><span className="flex-1 t-row">{r}</span>{reason === r && <Check className="size-4" />}</Button>)}</GroupCard>
       <GroupLabel>Notes</GroupLabel>
       <GroupCard><textarea aria-label="Notes" placeholder={reason === "Other" ? "Add a note (required)" : "Add a note"} value={note} onChange={(e) => setNote(e.target.value)} rows={3} className="w-full resize-none bg-transparent px-4 py-3 t-value outline-none" /></GroupCard>
     </ScreenBody>

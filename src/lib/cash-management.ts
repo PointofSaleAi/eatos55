@@ -11,9 +11,6 @@ export const PAY_OUT_REASONS = ["Tips", "Cash Refund", "Cash Out", "Delivery", "
 export function todayKey(d = new Date()) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
-function nowTime() {
-  return new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
-}
 
 function seed(): CashState {
   const date = todayKey();
@@ -32,7 +29,7 @@ const listeners = new Set<() => void>();
 function read(): CashState {
   if (state) return state;
   try { const raw = localStorage.getItem(KEY); state = raw ? JSON.parse(raw) : seed(); } catch { state = seed(); }
-  return state!;
+  return state ?? seed();
 }
 const SERVER = seed();
 function write(next: CashState) {
@@ -44,32 +41,58 @@ function write(next: CashState) {
 /** Cash expected in the drawer since the till was opened. */
 export function estimatedCash(s: CashState) {
   if (!s.tillOpen) return 0;
-  const date = todayKey();
-  const openIdx = s.logs.findIndex((l) => l.reason === "Open Till" && l.date === date);
+  const openIdx = s.logs.findIndex((l) => l.reason === "Open Till");
   const since = openIdx === -1 ? [] : s.logs.slice(0, openIdx);
-  return s.openingTill + since.reduce((sum, l) => sum + l.payIn - l.payOut, 0);
+  return Math.round((s.openingTill + since.reduce((sum, l) => sum + l.payIn - l.payOut, 0)) * 100) / 100;
+}
+
+export type CashAction =
+  | { kind: "open"; amount: number; name: string }
+  | { kind: "in" | "out"; amount: number; employee: { id: string; name: string }; reason: string; note: string }
+  | { kind: "close"; name: string };
+
+/** Atomic demo transitions also protect against stale or repeated actions. */
+export function applyCashAction(cur: CashState, action: CashAction, at = new Date()): CashState {
+  const entry = (row: Omit<CashLog, "id" | "date" | "time">): CashLog => ({
+    ...row, id: crypto.randomUUID(), date: todayKey(at),
+    time: at.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
+  });
+  if (action.kind === "open") {
+    if (cur.tillOpen) throw new Error("Close the drawer before adjusting the opening balance");
+    if (!Number.isFinite(action.amount) || action.amount < 0) throw new Error("Enter a valid opening amount");
+    const amount = Math.round(action.amount * 100) / 100;
+    return { ...cur, tillOpen: true, openingTill: amount, logs: [entry({ name: action.name, reason: "Open Till", payIn: amount, payOut: 0 }), ...cur.logs] };
+  }
+  if (!cur.tillOpen) throw new Error("Open the till balance first");
+  if (action.kind === "close") {
+    const remaining = estimatedCash(cur);
+    return { ...cur, tillOpen: false, openingTill: 0, previousClose: remaining, logs: [entry({ name: action.name, reason: "Close Drawer", payIn: 0, payOut: remaining }), ...cur.logs] };
+  }
+  if (!Number.isFinite(action.amount) || action.amount <= 0) throw new Error("Enter an amount first");
+  const amount = Math.round(action.amount * 100) / 100;
+  if (action.kind === "out" && amount > estimatedCash(cur)) throw new Error("Pay out is more than the cash in drawer");
+  const reasons = action.kind === "in" ? PAY_IN_REASONS : PAY_OUT_REASONS;
+  if (!action.employee.id || !action.employee.name || !reasons.includes(action.reason)) throw new Error("Select an employee and a reason");
+  const note = action.note.trim();
+  if (action.reason === "Other" && !note) throw new Error("Add a note for Other");
+  const tips = { ...cur.tips };
+  if (action.reason === "Tips") tips[action.employee.id] = Math.max(0, Math.round(((tips[action.employee.id] ?? 0) + (action.kind === "in" ? amount : -amount)) * 100) / 100);
+  return { ...cur, tips, logs: [entry({ name: action.employee.name, reason: action.reason, payIn: action.kind === "in" ? amount : 0, payOut: action.kind === "out" ? amount : 0, ...(note ? { note } : {}) }), ...cur.logs] };
 }
 
 export function useCashManagement() {
   const s = useSyncExternalStore((l) => { listeners.add(l); return () => listeners.delete(l); }, read, () => SERVER);
-  const log = (entry: Omit<CashLog, "id" | "date" | "time">) => ({ ...entry, id: `${Date.now()}`, date: todayKey(), time: nowTime() });
   return {
     state: s,
     estimated: estimatedCash(s),
     openTill(amount: number, name: string) {
-      const cur = read();
-      write({ ...cur, tillOpen: true, openingTill: amount, logs: [log({ name, reason: "Open Till", payIn: amount, payOut: 0 }), ...cur.logs] });
+      write(applyCashAction(read(), { kind: "open", amount, name }));
     },
     record(kind: "in" | "out", amount: number, employee: { id: string; name: string }, reason: string, note: string) {
-      const cur = read();
-      const tips = { ...cur.tips };
-      if (reason === "Tips") tips[employee.id] = Math.max(0, (tips[employee.id] ?? 0) + (kind === "in" ? amount : -amount));
-      write({ ...cur, tips, logs: [log({ name: employee.name, reason, payIn: kind === "in" ? amount : 0, payOut: kind === "out" ? amount : 0, ...(note ? { note } : {}) }), ...cur.logs] });
+      write(applyCashAction(read(), { kind, amount, employee, reason, note }));
     },
     closeDrawer(name: string) {
-      const cur = read();
-      const remaining = estimatedCash(cur);
-      write({ ...cur, tillOpen: false, openingTill: 0, previousClose: remaining, logs: [log({ name, reason: "Close Drawer", payIn: 0, payOut: remaining }), ...cur.logs] });
+      write(applyCashAction(read(), { kind: "close", name }));
     },
   };
 }
