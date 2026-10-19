@@ -12,7 +12,7 @@
 - Subdirectories may carry their own `AGENTS.md`; read the nearest one before changing files there.
 - SubHeader accepts an optional local back callback for inline editors so returning to a list does not leave the current settings destination.
 - Keep root error boundaries typed with TanStack Router's `ErrorComponentProps` because router upgrades expose boundary errors as `unknown`.
-- Dashboard and four-square Menu share the shift overview; the header chevron owns settings. Lists share destinations and isSettingsDestinationVisible for consistent session-based visibility.
+- Dashboard and four-square Menu share the shift overview; the header chevron owns settings. Lists share destinations, isSettingsDestinationVisible and settingsDestinations (A→Z) so nav visibility and order always match.
 - Shared DialogContent and SheetContent never render outside-corner X controls; use their outside-dismissal callbacks, and give custom overlays cancel-only dismissal so closing cannot commit an action.
 - DeviceFrame renders a blank themed surface until mounted and all saved state (session, settings, floor) is loaded; layout hooks use useSyncExternalStore over matchMedia, so no phone-frame or protected-screen flash on load.
 - Shared React contexts come from pinnedContext (globalThis registry) and main screens preload after sign-in (router defaultPreload intent + useWarmMainScreens): live preview updates can't split contexts, and first visits or PIN unlock don't stall.
