@@ -47,6 +47,7 @@ import { GuestVisitBooking } from "@/components/pos/guest-visit-booking";
 import { SwipeRow, type SwipeRowHandle } from "@/components/pos/swipe-row";
 import { formatPhoneFor as formatPhoneRaw, isValidPhoneFor, phoneCountries, phoneCountryByName, defaultPhoneCountry } from "@/lib/phone";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import type { GuestVisit } from "@/lib/guest-reservation";
 import googleFeedbackLogo from "@/assets/feedback-google.png.asset.json";
 import eatosFeedbackLogo from "@/assets/feedback-eatos.png.asset.json";
@@ -632,8 +633,11 @@ function VisitEditor({ visits, onBook, onRemove }: { visits: Visit[]; onBook: ()
       <CalendarClock className="size-4 shrink-0 text-muted-foreground" />
       <span className="min-w-0 flex-1 break-words text-fs-sm"><span className="font-bold">{visit.description || "No Description"}</span><span className="text-muted-foreground"> · {visit.date} · {visit.time}{visit.table ? ` · ${visit.table}` : ""}{visit.party ? ` · ${visit.party} guests` : ""}</span></span>
       <Button type="button" variant="ghost" size="icon" aria-label="Remove visit" onClick={() => onRemove(visit)}><X /></Button>
-    </li>)}</ul> : <p className="text-fs-sm">No Upcoming Visits</p>}
-    <div className="flex justify-end"><DarkPill onClick={onBook}>Book A Visit</DarkPill></div>
+    </li>)}</ul> : null}
+    <div className="flex items-center justify-between gap-3">
+      {!visits.length ? <p className="min-w-0 text-fs-sm">No Upcoming Visits</p> : <span />}
+      <DarkPill className="shrink-0" onClick={onBook}>Book A Visit</DarkPill>
+    </div>
   </div>;
 }
 
@@ -657,6 +661,8 @@ function MiniStat({ value, label, className }: { value: string | number; label: 
 
 /** The Profile tab: guest identity, spend stats, loyalty, visits, items and notes. */
 function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }) {
+  const [itemSort, setItemSort] = useState<"name" | "frequency">("frequency");
+  const [itemSortAsc, setItemSortAsc] = useState(false);
   const [extras, setExtras] = useState<Extras>(() => loadExtras(guest.id));
   const update = (patch: Partial<Extras>) =>
     setExtras((prev) => {
@@ -677,7 +683,13 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
   for (const ticket of guest.tickets) {
     for (const line of ticket.lines) itemTotals.set(line.name, (itemTotals.get(line.name) ?? 0) + line.qty);
   }
-  const mostOrdered = [...itemTotals.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const allMostOrdered = [...itemTotals.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  const mostOrdered = allMostOrdered.slice(0, 5);
+  const sortedItems = [...allMostOrdered].sort((a, b) => (itemSort === "name" ? a[0].localeCompare(b[0]) : a[1] - b[1] || a[0].localeCompare(b[0])) * (itemSortAsc ? 1 : -1));
+  const sortItems = (column: "name" | "frequency") => {
+    setItemSortAsc(itemSort === column ? !itemSortAsc : column === "name");
+    setItemSort(column);
+  };
 
   return (
     <div className="space-y-5">
@@ -754,9 +766,29 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
           <SectionCard
             label="Most Ordered Items"
             action={
-              <button type="button" aria-label="Most ordered items options" className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground">
-                <MoreHorizontal className="size-4" />
-              </button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button type="button" variant="ghost" size="icon" aria-label="Most ordered items options" className="size-7 rounded-full bg-muted text-muted-foreground hover:text-foreground">
+                    <MoreHorizontal className="size-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="w-[calc(100%-2rem)] max-w-xl overflow-hidden rounded-lg p-0">
+                  <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+                    <DialogTitle className="flex-1 text-center text-fs-lg">Most Ordered Items</DialogTitle>
+                    <DialogClose asChild><Button variant="ghost" size="icon" aria-label="Close most ordered items" className="shrink-0 rounded-full bg-muted"><X className="size-4" /></Button></DialogClose>
+                  </div>
+                  <DialogDescription className="sr-only">All dishes ordered by this guest and their frequency.</DialogDescription>
+                  <div className="max-h-[65dvh] overflow-y-auto px-4 pb-4">
+                    <table className="w-full text-fs-sm">
+                      <thead className="sticky top-0 bg-surface"><tr className="border-b border-border">
+                        <th scope="col" aria-sort={itemSort === "name" ? itemSortAsc ? "ascending" : "descending" : "none"} className="text-left"><Button variant="ghost" onClick={() => sortItems("name")} className="justify-start px-3">Dish Name<PaySort className="size-3" /></Button></th>
+                        <th scope="col" aria-sort={itemSort === "frequency" ? itemSortAsc ? "ascending" : "descending" : "none"} className="text-right"><Button variant="ghost" onClick={() => sortItems("frequency")} className="px-3">Frequency<PaySort className="size-3" /></Button></th>
+                      </tr></thead>
+                      <tbody>{sortedItems.length ? sortedItems.map(([name, count]) => <tr key={name} className="border-b border-border odd:bg-surface even:bg-surface-muted"><td className="break-words px-3 py-4">{name}</td><td className="px-3 py-4 text-right tabular-nums">{count}</td></tr>) : <tr><td colSpan={2} className="p-4 text-muted-foreground">No items ordered yet.</td></tr>}</tbody>
+                    </table>
+                  </div>
+                </DialogContent>
+              </Dialog>
             }
           >
             {mostOrdered.length ? (
@@ -981,10 +1013,16 @@ function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number })
             </button>
           ))}
         </div>
-        <span className="hidden text-muted-foreground sm:block" title="Reservation and visit history for this guest">
-          <Info className="size-4" />
-          <span className="sr-only">Reservation and visit history for this guest</span>
-        </span>
+        <Popover>
+          <PopoverTrigger asChild><Button type="button" variant="ghost" size="icon" aria-label="Reservation information" className="size-8 shrink-0 rounded-full text-muted-foreground"><Info className="size-4" /></Button></PopoverTrigger>
+          <PopoverContent side="right" align="start" className="w-80 max-w-[calc(100vw-2rem)] rounded-lg p-4">
+            <ul className="space-y-2 text-fs-xs text-muted-foreground">
+              <li className="flex items-start gap-3"><span className="mt-1 size-2.5 shrink-0 rounded-full bg-tile-blue" /><span>Blue represents official events or gatherings.</span></li>
+              <li className="flex items-start gap-3"><span className="mt-1 size-2.5 shrink-0 rounded-full bg-tile-pink" /><span>Pink signifies engagement, anniversary, and dates.</span></li>
+              <li className="flex items-start gap-3"><span className="mt-1 size-2.5 shrink-0 rounded-full bg-tile-yellow" /><span>Yellow signifies fun celebration, birthday, Christmas, New Year.</span></li>
+            </ul>
+          </PopoverContent>
+        </Popover>
       </div>
 
       <section aria-label="Reservations summary">
