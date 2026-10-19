@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { MoneyInput } from "@/components/pos/money-input";
 import { useMemo, useState, type ReactNode } from "react";
-import { AlertCircle, CheckSquare, ChevronRight, Copy, Plus, Search, Trash2 } from "lucide-react";
+import { AlertCircle, CheckSquare, ChevronRight, Copy, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, settingsRowClass } from "@/components/pos/settings-rows";
@@ -38,10 +38,10 @@ export function DiscountSettings() {
   const categories = useMemo(discountCategories, []);
   const [draft, setDraft] = useState<DiscountRule | null>(null);
   const [touched, setTouched] = useState(false);
+  const [warned, setWarned] = useState(false);
   const [picker, setPicker] = useState<"categories" | "products" | null>(null);
   const [typeOpen, setTypeOpen] = useState(false);
   const [confirmExit, setConfirmExit] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [copyFrom, setCopyFrom] = useState<number | null>(null);
@@ -60,8 +60,9 @@ export function DiscountSettings() {
       updateSettings({ discountRules: discounts.some(d => d.id === clean.id) ? discounts.map(d => d.id === clean.id ? clean : d) : [...discounts, clean] });
     }
   };
-  const close = () => { setDraft(null); setTouched(false); setConfirmExit(false); setConfirmDelete(false); };
-  const back = () => { if (draft && !exists && (draft.name || draft.value) && !discountValid(draft)) { setTouched(true); setConfirmExit(true); } else close(); };
+  const close = () => { setDraft(null); setTouched(false); setWarned(false); setConfirmExit(false); };
+  // First back on a half-filled new discount highlights the missing fields; a second back asks to confirm discarding it.
+  const back = () => { if (draft && !exists && (draft.name || draft.value) && !discountValid(draft)) { if (!warned) { setTouched(true); setWarned(true); return; } setConfirmExit(true); return; } close(); };
   const errors = draft ? discountErrors(draft) : { name: "", value: "", schedule: "" };
   const show = (k: keyof typeof errors) => (touched || exists) && errors[k] ? errors[k] : "";
 
@@ -79,12 +80,12 @@ export function DiscountSettings() {
     <SubHeader title={exists ? "Edit Discount" : "Add Discount"} backLabel="Discounts" onBack={back} />
     <ScreenBody className="py-4">
       <GroupCard>
-        <div className={cn(settingsRowClass, "flex-wrap")}>
+        <div className={cn(settingsRowClass, "flex-wrap", show("name") && "rounded-md ring-1 ring-destructive")}>
           <label htmlFor="disc-name" className="t-row">Name</label>
           <Input id="disc-name" placeholder="Required" maxLength={60} disabled={!canManageSettings} value={draft.name} onBlur={() => setTouched(true)} onChange={e => update({ name: e.target.value })} className="min-w-0 flex-1 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" />
           {show("name") && <ErrorLine text={show("name")} />}
         </div>
-        {!draft.open && <div className={cn(settingsRowClass, "flex-wrap")}>
+        {!draft.open && <div className={cn(settingsRowClass, "flex-wrap", show("value") && "rounded-md ring-1 ring-destructive")}>
           <label htmlFor="disc-value" className="t-row">Discount</label>
           <div className="flex min-w-0 flex-1 items-center justify-end gap-1">{draft.type === "Amount" && <span className="t-value text-muted-foreground">$</span>}{draft.type === "Amount" ? <MoneyInput id="disc-value" placeholder="Required" disabled={!canManageSettings} value={draft.value} onBlur={() => setTouched(true)} onChange={value => update({ value })} className="w-28 bg-transparent text-right t-value outline-none placeholder:text-muted-foreground" /> : <Input id="disc-value" inputMode="decimal" placeholder="Required" disabled={!canManageSettings} value={draft.value} onBlur={() => setTouched(true)} onChange={e => update({ value: e.target.value.replace(/[^\d.]/g, "") })} className="w-28 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" />}{draft.type === "Percentage" && <span className="t-value text-muted-foreground">%</span>}</div>
           {show("value") && <ErrorLine text={show("value")} />}
@@ -137,10 +138,7 @@ export function DiscountSettings() {
         </GroupCard>
       </>}
 
-      {exists && canManageSettings && <div className="mt-6 flex flex-wrap items-center justify-end gap-2">
-        {confirmDelete ? <><span className="t-caption text-muted-foreground">Delete this discount?</span><Button variant="outline" onClick={() => setConfirmDelete(false)}>Cancel</Button><Button variant="destructive" onClick={() => { updateSettings({ discountRules: discounts.filter(d => d.id !== draft.id) }); toast.success("Discount deleted"); close(); }}>Delete</Button></> : <Button variant="outline" onClick={() => setConfirmDelete(true)}><Trash2 />Delete Discount</Button>}
-      </div>}
-      {!exists && touched && !discountValid(draft) && <p className="mt-4 t-caption text-muted-foreground">The discount saves automatically once the name and value are filled in.</p>}
+      {!exists && touched && !discountValid(draft) && <p className="mt-4 t-caption text-muted-foreground">The discount saves automatically once the name and value are filled in. Tap Back again to discard it.</p>}
     </ScreenBody>
     {picker === "categories" && <Picker title="Applicable Categories" options={categories} selected={draft.categories} onChange={v => update({ categories: v })} onClose={() => { setPicker(null); if (!draft.categories.length) update({ categoriesOn: false }); }} />}
     {picker === "products" && <Picker title="Applicable Product" options={products} selected={draft.products} onChange={v => update({ products: v })} onClose={() => setPicker(null)} />}
