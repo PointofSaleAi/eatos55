@@ -256,6 +256,11 @@ export function useSectionPane(): {
         : {}),
     };
   }
+  // Guestbook hides the settings nav and owns the whole panel with its own
+  // two-pane layout (guest list left, guest details right).
+  if (p === "/settings/guestbook") {
+    return null;
+  }
   if (p.startsWith("/settings") || p.startsWith("/system")) {
     return {
       // The settings pane owns its width so it can collapse to icons.
