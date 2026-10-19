@@ -923,13 +923,16 @@ function GuestDetail({ guest }: { guest: GuestRow }) {
       const strip = pane.querySelector<HTMLElement>('[role="tablist"][aria-label="Guest sections"]');
       const target = pane.querySelector<HTMLElement>('[data-tab="reservations"]');
       const toggle = pane.querySelector<HTMLElement>('[role="tablist"][aria-label="Reservations view"]');
+      const info = pane.querySelector<HTMLElement>('[data-resv-toggle] span[title]');
       if (!strip || !target) {
         setResvIndent(0);
         return;
       }
       const stripRect = strip.getBoundingClientRect();
       const wanted = target.getBoundingClientRect().left - stripRect.left - 4;
-      const room = pane.getBoundingClientRect().right - stripRect.left - (toggle?.getBoundingClientRect().width ?? 0);
+      // Keep the whole row (toggle, gap, info icon) inside the pane.
+      const used = (toggle?.getBoundingClientRect().width ?? 0) + (info ? 8 + info.getBoundingClientRect().width : 0);
+      const room = pane.getBoundingClientRect().right - stripRect.left - used;
       const next = Math.max(0, Math.min(wanted, room));
       setResvIndent((current) => (Math.abs(current - next) < 1 ? current : next));
     };
