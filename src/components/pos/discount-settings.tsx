@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, settingsRowClass } from "@/components/pos/settings-rows";
 import { Picker } from "@/components/pos/tax-settings";
+import { SwipeRow } from "@/components/pos/swipe-row";
+import { ArchiveGlyph } from "@/components/pos/archive-glyph";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -26,7 +28,9 @@ const Help = ({ children }: { children: ReactNode }) => <p className="basis-full
 
 export function DiscountSettings() {
   const navigate = useNavigate();
-  const { settings, updateSettings, canManageSettings } = usePos();
+  const { settings, updateSettings } = usePos();
+  // Demo settings: anyone signed in can manage discounts (same as Taxes).
+  const canManageSettings = true;
   const discounts = settings.discountRules ?? referenceDiscounts;
   const products = useMemo(taxProducts, []);
   const categories = useMemo(discountCategories, []);
@@ -130,18 +134,18 @@ export function DiscountSettings() {
     </Dialog>
   </>;
 
-  const list = discounts.filter(d => d.name.toLowerCase().includes(query.trim().toLowerCase()));
+  const list = discounts.filter(d => !d.archived && d.name.toLowerCase().includes(query.trim().toLowerCase()));
   return <>
     <SubHeader title="Discounts" backLabel="Payments" onBack={() => void navigate({ to: "/settings/payments" })} right={<Button variant="ghost" size="icon" aria-label="Search discounts" title="Search discounts" onClick={() => setSearchOpen(v => !v)}><Search /></Button>} />
     <ScreenBody className="py-4">
       <div className="mb-5 flex items-start gap-3"><p className="min-w-0 flex-1 t-caption text-muted-foreground">{description}</p><Button size="icon" aria-label="Add discount" title="Add Discount" disabled={!canManageSettings} onClick={() => { setDraft(newDiscount()); setTouched(false); }}><Plus /></Button></div>
       {searchOpen && <Input autoFocus className="mb-4" aria-label="Search discounts" placeholder="Search" value={query} onChange={e => setQuery(e.target.value)} />}
       <GroupCard>
-        <div className={cn("hidden gap-3 border-b border-border px-4 py-4 t-caption font-bold", cols)}><span>Discount Name</span><span>Amount</span><span>Require Manager PIN</span><span className="text-right">Applicable Products</span><span /></div>
-        {list.length === 0 ? <p className="p-6 text-center t-caption text-muted-foreground">{discounts.length ? "No discounts match your search." : "No discounts yet. Tap + to add one."}</p> : list.map(d => <button key={d.id} type="button" aria-label={`Edit ${d.name}`} onClick={() => { setDraft({ ...d, categories: [...d.categories], products: [...d.products] }); setTouched(true); }} className={cn("flex w-full items-center gap-3 border-b border-border px-4 py-4 text-left last:border-b-0 hover:bg-muted", cols)}>
-          <span className="min-w-0 flex-1 sm:contents"><span className="block break-words t-row">{d.name}</span><span className="block t-caption text-muted-foreground sm:hidden">{formatDiscount(d)} · PIN {d.managerPin ? "Yes" : "No"}</span><span className="hidden t-row sm:block">{formatDiscount(d)}</span><span className="hidden t-row sm:block">{d.managerPin ? "Yes" : "No"}</span></span>
+        <div className={cn("hidden gap-3 border-b border-border px-4 py-4 t-caption font-bold", cols)}><span>Discount Name</span><span className="text-center">Amount</span><span className="text-center">Require Manager PIN</span><span className="text-right">Applicable Products</span><span /></div>
+        {list.length === 0 ? <p className="p-6 text-center t-caption text-muted-foreground">{discounts.length ? "No discounts match your search." : "No discounts yet. Tap + to add one."}</p> : list.map(d => <SwipeRow key={d.id} className="rounded-none border-b border-border last:border-0" action={{ label: "Archive", destructive: true, icon: <ArchiveGlyph className="size-5" />, onAction: () => { updateSettings({ discountRules: discounts.map(x => x.id === d.id ? { ...x, archived: true } : x) }); toast.success("Discount archived"); } }}><button type="button" aria-label={`Edit ${d.name}`} onClick={() => { setDraft({ ...d, categories: [...d.categories], products: [...d.products] }); setTouched(true); }} className={cn("flex w-full items-center gap-3 px-4 py-4 text-left hover:bg-muted", cols)}>
+          <span className="min-w-0 flex-1 sm:contents"><span className="block break-words t-row">{d.name}</span><span className="block t-caption text-muted-foreground sm:hidden">{formatDiscount(d)} · PIN {d.managerPin ? "Yes" : "No"}</span><span className="hidden text-center t-row sm:block">{formatDiscount(d)}</span><span className="hidden text-center t-row sm:block">{d.managerPin ? "Yes" : "No"}</span></span>
           <span className="shrink-0 t-row sm:text-right">{d.products.length}</span><ChevronRight className="size-4 shrink-0 text-muted-foreground" />
-        </button>)}
+        </button></SwipeRow>)}
       </GroupCard>
     </ScreenBody>
   </>;
