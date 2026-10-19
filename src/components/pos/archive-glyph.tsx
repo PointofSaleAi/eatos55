@@ -23,16 +23,3 @@ export function ArchiveGlyph({ className }: { className?: string | undefined }) 
     />
   );
 }
-
-/**
- * Content for a revealed swipe strip: the mark above the word, so the action
- * stays readable while every screen shows the same drawing.
- */
-export function ArchiveSwipeAction({ archived }: { archived: boolean }) {
-  return (
-    <span className="flex flex-col items-center gap-1">
-      <ArchiveGlyph className="size-5" />
-      <span className="t-caption font-extrabold">{archived ? "Restore" : "Archive"}</span>
-    </span>
-  );
-}

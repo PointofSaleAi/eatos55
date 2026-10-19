@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { Check, ChevronRight, Plus, Search, XCircle } from "lucide-react";
-import { ArchiveGlyph, ArchiveSwipeAction } from "@/components/pos/archive-glyph";
+import { ArchiveGlyph } from "@/components/pos/archive-glyph";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, settingsRowClass } from "@/components/pos/settings-rows";
@@ -56,7 +56,7 @@ function CategoryList({ archived, onOpen, onArchive, onBackFromArchive }: { arch
           <span className={th}>Category Name</span><span className={cn(th, "text-center")}>Parent</span><span className={cn(th, "text-center")}>Category Position</span><span className={cn(th, "text-right")}>Course</span><span />
         </div>
         {list.map((c) => <SwipeRow key={c.id} className="rounded-none border-b border-border last:border-0"
-          action={{ label: archived ? "Restore" : "Archive", destructive: !archived, icon: <ArchiveSwipeAction archived={archived} />, onAction: () => { patch(c.id, { archived: !archived }); toast.success(archived ? "Category restored" : "Category archived"); } }}>
+          action={{ label: archived ? "Restore" : "Archive", destructive: !archived, icon: <ArchiveGlyph className="size-5" />, onAction: () => { patch(c.id, { archived: !archived }); toast.success(archived ? "Category restored" : "Category archived"); } }}>
           <button type="button" onClick={() => onOpen(c.id)} className="w-full bg-surface px-4 py-2 text-left hover:bg-muted">
             <div className={cn(cols, "hidden min-h-10 sm:grid")}>
               <span className="min-w-0 break-words t-row">{c.name}</span>
@@ -155,9 +155,9 @@ function CategoryEditor({ id, onBack }: { id: string | null; onBack: () => void 
         <Row label="Products" value={draft.products.length || "Select Products"} sub={draft.products.join(", ") || undefined} onClick={() => setPopup("products")} />
       </GroupCard>
       {saved && <GroupCard className="mt-4">
-        <Button variant="ghost" className={cn(settingsRowClass, "h-auto justify-center rounded-none", !draft.archived && "text-destructive")}
+        <Button variant="ghost" aria-label={draft.archived ? "Restore category" : "Archive category"} title={draft.archived ? "Restore category" : "Archive category"} className={cn(settingsRowClass, "h-auto justify-center rounded-none", !draft.archived && "text-destructive")}
           onClick={() => { patch(draft.id, { archived: !draft.archived }); toast.success(draft.archived ? "Category restored" : "Category archived"); onBack(); }}>
-          <ArchiveGlyph className="size-4" />{draft.archived ? "Restore Category" : "Archive Category"}</Button>
+          <ArchiveGlyph className="size-4" /></Button>
       </GroupCard>}
       <Caption>Changes save automatically. Demo only — doesn't change New Order or printing.</Caption>
     </ScreenBody>
