@@ -120,11 +120,22 @@ export function DiscountSettings() {
         {draft.scheduled && <>
           {inputRow("disc-start-date", "Start Date", draft.startDate, v => update({ startDate: v }), "date")}
           {inputRow("disc-end-date", "End Date", draft.endDate, v => update({ endDate: v }), "date")}
-          {inputRow("disc-start-time", "Start Time", draft.startTime, v => update({ startTime: v }), "time")}
-          {inputRow("disc-end-time", "End Time", draft.endTime, v => update({ endTime: v }), "time")}
           {errors.schedule && <div className="px-4 pb-3"><ErrorLine text={errors.schedule} /></div>}
         </>}
       </GroupCard>
+
+      {draft.scheduled && <>
+        <p className="mb-2 mt-6 px-1 t-caption font-semibold text-muted-foreground">Select Time</p>
+        <GroupCard>
+          <div className="grid grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)_minmax(0,1fr)_2.25rem] items-center gap-2 border-b border-border px-2 py-4 t-caption font-bold"><span>Days</span><span>Start Time</span><span>End Time</span><span /></div>
+          {days.map((day, index) => <div key={scheduleDays[index]} className={cn("grid grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)_minmax(0,1fr)_2.25rem] items-center gap-2 border-b border-border px-2 py-3 last:border-b-0", index % 2 === 0 && "bg-muted/40")}>
+            <label className="flex min-w-0 flex-wrap items-center gap-2 t-caption"><Checkbox className="rounded-full" aria-label={scheduleDays[index]} disabled={!canManageSettings} checked={day.enabled} onCheckedChange={enabled => updateDay(index, { enabled: enabled === true })} /><span className="break-words">{scheduleDays[index]}</span></label>
+            <Input type="time" aria-label={`${scheduleDays[index]} start time`} disabled={!canManageSettings} className="min-w-0 px-1 t-caption" value={day.start} onChange={event => updateDay(index, { start: event.target.value })} />
+            <Input type="time" aria-label={`${scheduleDays[index]} end time`} disabled={!canManageSettings} className="min-w-0 px-1 t-caption" value={day.end} onChange={event => updateDay(index, { end: event.target.value })} />
+            <Button variant="ghost" size="icon" className="size-9" aria-label={`Copy ${scheduleDays[index]} times`} title={`Copy ${scheduleDays[index]} times`} disabled={!canManageSettings} onClick={() => { setCopyFrom(index); setCopyTargets([]); setDayQuery(""); }}><Copy className="size-4" /></Button>
+          </div>)}
+        </GroupCard>
+      </>}
 
       {exists && canManageSettings && <div className="mt-6 flex flex-wrap items-center justify-end gap-2">
         {confirmDelete ? <><span className="t-caption text-muted-foreground">Delete this discount?</span><Button variant="outline" onClick={() => setConfirmDelete(false)}>Cancel</Button><Button variant="destructive" onClick={() => { updateSettings({ discountRules: discounts.filter(d => d.id !== draft.id) }); toast.success("Discount deleted"); close(); }}>Delete</Button></> : <Button variant="outline" onClick={() => setConfirmDelete(true)}><Trash2 />Delete Discount</Button>}
