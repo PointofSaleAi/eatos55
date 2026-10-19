@@ -4,7 +4,7 @@
 - [x] Rework the Guestbook guest list with initials avatars, a New Guest popover, sort and archive/restore with per-row actions; verified on phone, tablet and desktop
 
 # Roadmap
-- [ ] Replace Cash Management drawer navigation with an available-drawer dropdown and verify saved selection across layouts
+- [x] Replace Cash Management drawer navigation with an available-drawer dropdown; selection and reload persistence verified on phone, tablet and desktop
 - [x] Allow Pay In without opening the till balance; saved cash and logs verified after reload on phone, tablet and desktop, with 10 cash tests passing
 - [x] Complete demo Cash Management pay in, pay out, opening till and closing flows; balances, logs, notes, cancellation and saved state verified on phone, tablet and desktop
 - [x] Align the empty upcoming visit row, open all most-ordered items with sorting, and show the reservation info legend; verified phone, tablet and desktop
