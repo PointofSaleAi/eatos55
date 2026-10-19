@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { usePos } from "@/lib/pos-store";
 import { cn } from "@/lib/utils";
 import { SwipeRow } from "@/components/pos/swipe-row";
-import { ArchiveGlyph, ArchiveSwipeAction } from "@/components/pos/archive-glyph";
+import { ArchiveGlyph } from "@/components/pos/archive-glyph";
 import { formatTaxAmount, newTax, referenceTaxes, taxApplicableTo, taxErrors, taxProducts, taxValid, type TaxRule, type TaxType } from "@/lib/tax-settings";
 
 const description = "Taxes are levies imposed on financial transactions or income, collected by government authorities to fund public services and infrastructure.";
@@ -116,11 +116,11 @@ export function TaxSettings() {
   return <>
     <SubHeader title={showArchived ? "Archived Taxes" : "Taxes"} backLabel={showArchived ? "Taxes" : "Payments"} onBack={() => showArchived ? setShowArchived(false) : void navigate({ to: "/settings/payments" })} right={<Button variant="ghost" size="icon" aria-label="Search taxes" title="Search taxes" onClick={() => setSearchOpen(v => !v)}><Search /></Button>} />
     <ScreenBody className="py-4">
-      <div className="mb-5 flex items-start gap-3"><p className="min-w-0 flex-1 t-caption text-muted-foreground">{description}</p>{!showArchived && <><Button variant="outline" size="icon" aria-label="Archived taxes" title="Archived taxes" onClick={() => setShowArchived(true)}><ArchiveGlyph className="size-4" /></Button><Button size="icon" aria-label="Add tax" title="Add Tax" onClick={() => { setDraft(newTax()); setTouched(false); }}><Plus /></Button></>}</div>
+      <div className="mb-5 flex items-start gap-3"><p className="min-w-0 flex-1 t-caption text-muted-foreground">{description}</p>{!showArchived && <Button size="icon" aria-label="Add tax" title="Add Tax" onClick={() => { setDraft(newTax()); setTouched(false); }}><Plus /></Button>}</div>
       {searchOpen && <Input autoFocus className="mb-4" aria-label="Search taxes" placeholder="Search" value={query} onChange={e => setQuery(e.target.value)} />}
       <GroupCard>
         <div className="hidden grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_1rem] gap-3 border-b border-border px-4 py-4 t-caption font-bold sm:grid"><span>Tax Name</span><span>Amount</span><span>Type</span><span className="text-right">Applicable To</span><span /></div>
-        {list.length === 0 ? <p className="p-6 text-center t-caption text-muted-foreground">{showArchived ? "No archived taxes." : query ? "No taxes match your search." : "No taxes yet. Tap + to add one."}</p> : list.map(t => <SwipeRow key={t.id} className="rounded-none border-b border-border last:border-0" action={{ label: showArchived ? "Restore" : "Archive", destructive: !showArchived, icon: <ArchiveSwipeAction archived={showArchived} />, onAction: () => toggleArchive(t) }}><button type="button" aria-label={`Edit ${t.name}`} onClick={() => { setDraft({ ...t, applicableTo: [...t.applicableTo], products: [...t.products] }); setTouched(true); }} className="flex w-full items-center gap-3 px-4 py-4 text-left hover:bg-muted sm:grid sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_1rem]">
+        {list.length === 0 ? <p className="p-6 text-center t-caption text-muted-foreground">{showArchived ? "No archived taxes." : query ? "No taxes match your search." : "No taxes yet. Tap + to add one."}</p> : list.map(t => <SwipeRow key={t.id} className="rounded-none border-b border-border last:border-0" action={{ label: showArchived ? "Restore" : "Archive", destructive: !showArchived, icon: <ArchiveGlyph className="size-5" />, onAction: () => toggleArchive(t) }}><button type="button" aria-label={`Edit ${t.name}`} onClick={() => { setDraft({ ...t, applicableTo: [...t.applicableTo], products: [...t.products] }); setTouched(true); }} className="flex w-full items-center gap-3 px-4 py-4 text-left hover:bg-muted sm:grid sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_1rem]">
           <span className="min-w-0 flex-1 sm:contents"><span className="block break-words t-row">{t.name}</span><span className="block t-caption text-muted-foreground sm:hidden">{formatTaxAmount(t.amount, 1)} · {t.type}</span><span className="hidden t-row sm:block">{formatTaxAmount(t.amount, 1)}</span><span className="hidden t-row sm:block">{t.type}</span></span>
           <span className="shrink-0 t-row sm:text-right">{t.applicableTo.length}</span><ChevronRight className="size-4 shrink-0 text-muted-foreground" />
         </button></SwipeRow>)}
