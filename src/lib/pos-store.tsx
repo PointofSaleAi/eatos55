@@ -899,13 +899,13 @@ export type GuestEvent = {
 };
 export type Guest = {
   name: string;
-  firstName?: string;
-  middleName?: string;
-  lastName?: string;
-  customerSince?: string;
-  dateOfBirth?: string;
-  anniversary?: string;
-  photo?: string;
+  firstName?: string | undefined;
+  middleName?: string | undefined;
+  lastName?: string | undefined;
+  customerSince?: string | undefined;
+  dateOfBirth?: string | undefined;
+  anniversary?: string | undefined;
+  photo?: string | undefined;
   phone: string;
   partySize: number;
   email?: string | undefined;
