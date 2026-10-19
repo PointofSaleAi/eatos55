@@ -1,4 +1,6 @@
+- [x] Use the uploaded archive mark on the guestbook archive controls over a neutral grey surface (swipe action and toolbar toggle); verified phone, tablet and desktop in light and dark
 - [x] Make General's Language, Currency and Tax Alias rows display-only (value shown, no chevron, no navigation) and remove their unreachable detail screens; verified phone, tablet and desktop
+
 - [x] Rework the Guestbook guest list with initials avatars, a New Guest popover, sort and archive/restore with per-row actions; verified on phone, tablet and desktop
 
 # Roadmap

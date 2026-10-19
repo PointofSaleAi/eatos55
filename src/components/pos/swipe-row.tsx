@@ -6,9 +6,12 @@ export type SwipeAction = {
   label: string;
   onAction: () => void;
   destructive?: boolean;
+  /** Neutral grey strip instead of the red or dark one, for reversible housekeeping. */
+  muted?: boolean;
   /** Optional icon shown in the revealed strip instead of the label text; the label stays the accessible name. */
   icon?: ReactNode;
 };
+
 
 /**
  * Row with an optional swipe-left action. Works with touch and with a mouse or
@@ -64,10 +67,13 @@ export const SwipeRow = forwardRef<SwipeRowHandle, {
         style={{ width: -dx + 16, visibility: dx === 0 ? "hidden" : "visible" }}
         className={cn(
           "absolute inset-y-0 right-0 grid place-items-center rounded-[inherit] pl-4 text-fs-sm font-extrabold",
-          action.destructive
-            ? "bg-destructive text-destructive-foreground"
-            : "bg-primary text-primary-foreground",
+          action.muted
+            ? "bg-action-grey text-action-grey-foreground"
+            : action.destructive
+              ? "bg-destructive text-destructive-foreground"
+              : "bg-primary text-primary-foreground",
         )}
+
       >
         {action.icon ?? action.label}
       </button>
