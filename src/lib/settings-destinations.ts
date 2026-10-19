@@ -30,3 +30,12 @@ export const settingsGroups: SettingsDestination[][] = [
     { to: "/system/customer-support", label: "Customer Support", icon: Headset, color: "red" },
   ],
 ];
+
+/**
+ * Every top-level destination in one list, ordered A→Z by the label the
+ * navigation shows. The sidebar and the portrait settings hub both render this
+ * so the two never disagree about where an option sits.
+ */
+export const settingsDestinations: SettingsDestination[] = settingsGroups
+  .flat()
+  .sort((a, b) => a.label.localeCompare(b.label, "en", { sensitivity: "base" }));

@@ -1,7 +1,7 @@
 import { Link, Navigate, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { Bell, ChevronRight, LogOut, Mic, Search, Settings2 } from "lucide-react";
-import { isSettingsDestinationVisible, settingsGroups } from "@/lib/settings-destinations";
+import { isSettingsDestinationVisible, settingsDestinations } from "@/lib/settings-destinations";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ScreenBody, useWideLayout } from "@/components/pos/shell";
@@ -56,9 +56,9 @@ function SettingsHub() {
 
   const groups = useMemo<Row[][]>(
     () => [
-      ...settingsGroups.map((group) => group
+      settingsDestinations
         .filter((row) => isSettingsDestinationVisible(row, session, canManageSettings))
-        .map((row) => ({ title: row.label, icon: row.icon, color: row.color, to: row.to }))),
+        .map((row) => ({ title: row.label, icon: row.icon, color: row.color, to: row.to })),
       [
         {
           title: "Switch User",
