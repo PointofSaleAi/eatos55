@@ -385,7 +385,7 @@ function SectionCard({ label, action, children }: { label: string; action?: Reac
 }
 
 /** Dark pill used for the reference-style actions (New Order, Add, Book A Visit…). */
-function DarkPill({ children, onClick, className }: { children: ReactNode; onClick?: () => void; className?: string }) {
+function DarkPill({ children, onClick, className }: { children: ReactNode; onClick?: () => void; className?: string | undefined }) {
   return (
     <button
       type="button"
