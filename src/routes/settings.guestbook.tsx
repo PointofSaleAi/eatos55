@@ -1215,7 +1215,7 @@ function HistoryTab({ guest }: { guest: GuestRow }) {
               const info: [string, string][] = [["Arrived at", ticket.arrivedAt || "—"], ["Leave at", ticket.closed ? ticket.payments?.at(-1)?.at ?? "—" : "—"], ["Seated at", ticket.table || "—"], ["People", String(ticket.seats)], ["Server", ticket.server || "—"], ["Order Type", row.type], ["Revenue Centre", ticket.revenueCenter || "—"]];
               const bill: [string, string][] = [["Confirmation No.", String(ticket.checkNumber ?? ticket.number)], ["Order No.", String(ticket.orderNo ?? "—")], ["Payment Mode", ticket.payments?.map((p) => p.method).join(", ") || ticket.paymentType || "—"], ["Transaction ID", ticket.payments?.map((p) => p.ref).filter(Boolean).join(", ") || "—"], ["Time", ticket.payments?.at(-1)?.at ?? "—"], ["Payment", ticket.refund ? "Refunded" : ticket.closed ? "Completed" : statusMeta[ticket.status].label]];
               return (
-                <li key={ticket.id} className="overflow-hidden rounded-lg border-l-2 border-ring bg-surface">
+                <li key={ticket.id} className="overflow-hidden rounded-lg border-l-2 border-border bg-surface">
                   <Button variant="ghost" aria-label={`Order ${ticket.orderNo ?? ticket.checkNumber ?? ticket.number}: ${row.name}`} aria-expanded={expanded} aria-controls={detailId} onClick={() => setOpen(expanded ? null : ticket.id)} className={cn(cols, "h-auto min-h-16 w-full rounded-none px-3 py-3 text-left font-normal whitespace-normal")}>
                     <span className="border-r border-border pr-2 text-center text-fs-xs"><span className="block font-bold">{date?.day ?? "—"}</span>{date?.month ?? ""}</span>
                     <span className="min-w-0 break-words text-fs-sm font-semibold">{ticket.lines.length > 3 ? `${ticket.lines[0]?.name} +${ticket.lines.length - 1} more` : row.name}<span className="mt-1 block text-fs-xs font-normal text-muted-foreground @2xl:hidden">{row.type} · {row.items} items · Tips {money(row.tips)}</span></span>
@@ -1242,7 +1242,7 @@ function HistoryTab({ guest }: { guest: GuestRow }) {
                           </table>
                         </div>
                         <dl className="mt-2 space-y-2 text-fs-xs">
-                          <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Item Total</dt><dd>{row.items} × {money(itemTotal)}</dd></div>
+                          <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Item Total</dt><dd>{row.items} items · {money(itemTotal)}</dd></div>
                           {Math.abs(row.spent - itemTotal) > 0.005 ? <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Adjustments</dt><dd>{money(row.spent - itemTotal)}</dd></div> : null}
                           <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Tip</dt><dd>{money(row.tips)}</dd></div>
                           <div className="flex justify-between gap-3 border-t border-border pt-2 font-bold"><dt>Total Amount</dt><dd>{money(ticket.total)}</dd></div>
