@@ -2,6 +2,8 @@ import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CreditCard as PayCard, Banknote as PayCash, Gift as PayGift, Award as PayPoints, ChevronDown as PayDown, ArrowUpDown as PaySort } from "lucide-react";
 import {
+  Archive,
+  ArchiveRestore,
   ArrowLeft,
   Armchair,
   Banknote,
@@ -10,6 +12,7 @@ import {
   CalendarClock,
   CalendarX,
   Car,
+  Check,
   ChevronRight,
   Clock,
   Frown,
@@ -28,7 +31,6 @@ import {
   Table2,
   Tag,
   UserRound,
-  Users,
   Utensils,
   UtensilsCrossed,
   X,
@@ -37,7 +39,7 @@ import { Button } from "@/components/ui/button";
 import { ScreenBody, SubHeader, useWideLayout } from "@/components/pos/shell";
 import { PaneEmpty, SplitPane } from "@/components/pos/split-pane";
 import { usePos } from "@/lib/pos-store";
-import { guestDirectory, guestOrderPatch } from "@/lib/guestbook";
+import { guestDirectory, guestOrderPatch, mockEmail, mockPhone, type DirectoryEntry } from "@/lib/guestbook";
 import { money, statusMeta } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { brand } from "@/lib/brand";
