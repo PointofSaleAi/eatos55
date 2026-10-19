@@ -1,5 +1,5 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   ArrowLeft,
   Armchair,
@@ -55,19 +55,78 @@ type GuestRow = ReturnType<typeof guestDirectory>[number];
 
 /** Demo guest extras (tags, allergies, notes, booked visits) kept on the device only. */
 const EXTRAS_KEY = "eatos.pos.guestbook-extras";
+/** A booked visit: date, time and the optional note / party / table it was booked under. */
+type Visit = {
+  date: string;
+  time: string;
+  description?: string | undefined;
+  party?: number | undefined;
+  table?: string | undefined;
+};
 type Extras = {
   tags: string[];
   allergies: string[];
   notes: Record<string, string>;
-  visits: { date: string; time: string }[];
+  visits: Visit[];
 };
 const emptyExtras = (): Extras => ({ tags: [], allergies: [], notes: {}, visits: [] });
+
+/** Demo reservations seeded once per guest so the Reservations tab opens with real history. */
+const SEED_KEY = "eatos.pos.guestbook-seeded";
+const RESERVATION_NOTES = ["Birthday dinner", "Anniversary celebration", "Business lunch", "Window table requested", "High chair needed", "Quiet corner please", "Tasting menu for guests", "Date night", "Family Sunday lunch", "Team dinner after work"];
+const RESERVATION_TABLES = ["T1", "T2", "EC226", "P4", "B7", "V3"];
+const RESERVATION_PLAN = [
+  { offset: -9, time: "19:30" },
+  { offset: -23, time: "13:00" },
+  { offset: -38, time: "20:15" },
+  { offset: 4, time: "19:00" },
+  { offset: 12, time: "20:30" },
+];
+const textSeed = (text: string) => [...text].reduce((total, char) => total + char.charCodeAt(0), 0);
+const shiftDate = (iso: string, days: number) => {
+  const day = new Date(`${iso}T12:00:00`);
+  day.setDate(day.getDate() + days);
+  return day.toISOString().slice(0, 10);
+};
+const seedVisits = (id: string): Visit[] => {
+  const seed = textSeed(id);
+  const today = new Date().toISOString().slice(0, 10);
+  return RESERVATION_PLAN.map((entry, index) => ({
+    date: shiftDate(today, entry.offset),
+    time: entry.time,
+    description: RESERVATION_NOTES[(seed + index) % RESERVATION_NOTES.length] ?? "No Description",
+    party: 1 + ((seed + index) % 5),
+    table: RESERVATION_TABLES[(seed + index) % RESERVATION_TABLES.length] ?? undefined,
+  }));
+};
+const alreadySeeded = (id: string) => {
+  try {
+    return (JSON.parse(localStorage.getItem(SEED_KEY) ?? "[]") as string[]).includes(id);
+  } catch {
+    return false;
+  }
+};
+const markSeeded = (id: string) => {
+  try {
+    const list = (JSON.parse(localStorage.getItem(SEED_KEY) ?? "[]") as string[]).filter((item) => item !== id);
+    localStorage.setItem(SEED_KEY, JSON.stringify([...list, id]));
+  } catch {
+    // Demo-only storage: ignore write failures.
+  }
+};
 /** Preset tags offered in the Tags popup, matching the guestbook reference. */
 const TAG_OPTIONS = ["VIP", "BIRTHDAY", "REGULAR", "SMOKER", "NON-SMOKER", "VEGETARIAN", "HIGH CHAIR", "VEGAN", "PATIO REQUIRED", "FRIEND OF OWNER"];
 const loadExtras = (id: string): Extras => {
   try {
     const all = JSON.parse(localStorage.getItem(EXTRAS_KEY) ?? "{}") as Record<string, Extras>;
-    return { ...emptyExtras(), ...all[id] };
+    const stored: Extras = { ...emptyExtras(), ...all[id] };
+    if (!alreadySeeded(id)) {
+      stored.visits = [...stored.visits, ...seedVisits(id)];
+      all[id] = stored;
+      localStorage.setItem(EXTRAS_KEY, JSON.stringify(all));
+      markSeeded(id);
+    }
+    return stored;
   } catch {
     return emptyExtras();
   }
