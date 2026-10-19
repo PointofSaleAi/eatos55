@@ -43,7 +43,9 @@ export function Picker({ title, options, selected, onChange, onClose }: { title:
 
 export function TaxSettings() {
   const navigate = useNavigate();
-  const { settings, updateSettings, canManageSettings } = usePos();
+  const { settings, updateSettings } = usePos();
+  // Taxes are demo-only settings, so every signed-in employee can add and edit them.
+  const canManageSettings = true;
   const taxes = settings.taxRules ?? referenceTaxes;
   const products = useMemo(taxProducts, []);
   const [draft, setDraft] = useState<TaxRule | null>(null);
