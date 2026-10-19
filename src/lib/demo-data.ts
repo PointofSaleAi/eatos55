@@ -398,7 +398,7 @@ export const initialTickets: Ticket[] = [
     total: 42.5, date: DEFAULT_TICKET_DATE, arrivedAt: "5:42 PM", arrivedMinutesAgo: 4,
     status: "payment", mode: "dine-in", lines: [line("m1", 2), line("m11"), line("m14", 2)], server: "Elizer Cruz",
     checkNumber: 1060, tips: 0, revenueCenter: "Main dining", paymentType: "Card",
-    payments: [{ no: "1", method: "Card", amount: 20, at: "5:44 PM", ref: "TXN-88421" }],
+    payments: [{ no: "1", method: "Card", amount: 20, at: "5:44 PM", ref: "TXN-88421" }, { no: "2", method: "Loyalty", amount: 8, at: "5:45 PM" }],
   },
   {
     id: "t-1061", orderNo: 10261, number: 19, label: "Omar F.", seats: 1,
