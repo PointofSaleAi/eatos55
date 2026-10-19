@@ -1,4 +1,6 @@
+- [x] Make General's Language, Currency and Tax Alias rows display-only (value shown, no chevron, no navigation) and remove their unreachable detail screens; verified phone, tablet and desktop
 - [x] Rework the Guestbook guest list with initials avatars, a New Guest popover, sort and archive/restore with per-row actions; verified on phone, tablet and desktop
+
 # Roadmap
 - [x] Align the empty upcoming visit row, open all most-ordered items with sorting, and show the reservation info legend; verified phone, tablet and desktop
 - [x] Center Add Tags and push Allergy Add and Book A Visit to the right edge of their cards on the guest profile; verified on phone, tablet and desktop
