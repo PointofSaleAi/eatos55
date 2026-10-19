@@ -38,6 +38,8 @@ import { guestDirectory, guestOrderPatch } from "@/lib/guestbook";
 import { money, statusMeta } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { brand } from "@/lib/brand";
+import { GuestVisitBooking } from "@/components/pos/guest-visit-booking";
+import type { GuestVisit } from "@/lib/guest-reservation";
 
 export const Route = createFileRoute("/settings/guestbook")({
   head: () => ({ meta: [
@@ -485,86 +487,16 @@ function NoteRow({
   );
 }
 
-/** Inline visit booking: pick a date and time, saved to the guest's demo record. */
-function VisitEditor({ visits, onAdd, onRemove }: { visits: Visit[]; onAdd: (visit: Visit) => void; onRemove: (visit: Visit) => void }) {
-  const [adding, setAdding] = useState(false);
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [description, setDescription] = useState("");
-  return (
-    <div className="space-y-3">
-      {visits.length ? (
-        <ul className="divide-y divide-border">
-          {visits.map((visit, index) => (
-            <li key={`${visit.date}-${visit.time}-${index}`} className="flex items-center gap-3 py-2 first:pt-0 last:pb-0">
-              <CalendarClock className="size-4 shrink-0 text-muted-foreground" />
-              <span className="min-w-0 flex-1 truncate text-fs-sm">
-                <span className="font-bold">{visit.description || "No Description"}</span>
-                <span className="text-muted-foreground"> · {visit.date || "Unset date"}{visit.time ? ` · ${visit.time}` : ""}</span>
-              </span>
-              <button type="button" aria-label="Remove visit" className="text-muted-foreground hover:text-foreground" onClick={() => onRemove(visit)}>
-                <X className="size-4" />
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-fs-sm">No Upcoming Visits</p>
-      )}
-      {adding ? (
-        <div className="flex flex-wrap items-center gap-2">
-          <input
-            type="text"
-            aria-label="Visit description"
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="min-h-tap w-full rounded-lg border border-border bg-transparent px-3 text-fs-sm outline-none sm:w-60"
-          />
-          <input
-            type="date"
-            aria-label="Visit date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="min-h-tap rounded-lg border border-border bg-transparent px-3 text-fs-sm outline-none"
-          />
-          <input
-            type="time"
-            aria-label="Visit time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-            className="min-h-tap rounded-lg border border-border bg-transparent px-3 text-fs-sm outline-none"
-          />
-          <DarkPill
-            onClick={() => {
-              if (date || time) onAdd({ date, time, description: description.trim() || undefined });
-              setDate("");
-              setTime("");
-              setDescription("");
-              setAdding(false);
-            }}
-          >
-            Add
-          </DarkPill>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="min-h-tap rounded-pill"
-            onClick={() => {
-              setDate("");
-              setTime("");
-              setDescription("");
-              setAdding(false);
-            }}
-          >
-            Cancel
-          </Button>
-        </div>
-      ) : (
-        <DarkPill onClick={() => setAdding(true)}>Book A Visit</DarkPill>
-      )}
-    </div>
-  );
+/** Upcoming visits and the entry point to table-based booking. */
+function VisitEditor({ visits, onBook, onRemove }: { visits: Visit[]; onBook: () => void; onRemove: (visit: Visit) => void }) {
+  return <div className="space-y-3">
+    {visits.length ? <ul className="divide-y divide-border">{visits.map((visit, index) => <li key={`${visit.date}-${visit.time}-${index}`} className="flex items-center gap-3 py-2 first:pt-0 last:pb-0">
+      <CalendarClock className="size-4 shrink-0 text-muted-foreground" />
+      <span className="min-w-0 flex-1 break-words text-fs-sm"><span className="font-bold">{visit.description || "No Description"}</span><span className="text-muted-foreground"> · {visit.date} · {visit.time}{visit.table ? ` · ${visit.table}` : ""}{visit.party ? ` · ${visit.party} guests` : ""}</span></span>
+      <Button type="button" variant="ghost" size="icon" aria-label="Remove visit" onClick={() => onRemove(visit)}><X /></Button>
+    </li>)}</ul> : <p className="text-fs-sm">No Upcoming Visits</p>}
+    <DarkPill onClick={onBook}>Book A Visit</DarkPill>
+  </div>;
 }
 
 function StatCell({ value, label }: { value: string; label: string }) {
@@ -586,7 +518,7 @@ function MiniStat({ value, label, className }: { value: string | number; label: 
 }
 
 /** The Profile tab: guest identity, spend stats, loyalty, visits, items and notes. */
-function GuestProfile({ guest }: { guest: GuestRow }) {
+function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }) {
   const [extras, setExtras] = useState<Extras>(() => loadExtras(guest.id));
   const update = (patch: Partial<Extras>) =>
     setExtras((prev) => {
@@ -736,7 +668,7 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
             <div className="min-w-0 flex-1">
               <VisitEditor
                 visits={extras.visits.filter((visit) => visit.date >= new Date().toISOString().slice(0, 10))}
-                onAdd={(visit) => update({ visits: [...extras.visits, visit] })}
+                onBook={onBook}
                 onRemove={(visit) => update({ visits: extras.visits.filter((item) => item !== visit) })}
               />
             </div>
@@ -991,7 +923,7 @@ const GUEST_TABS: { id: GuestTab; label: string }[] = [
   { id: "history", label: "Order History" },
 ];
 
-function GuestDetail({ guest }: { guest: GuestRow }) {
+function GuestDetail({ guest, onBook }: { guest: GuestRow; onBook: () => void }) {
   const router = useRouter();
   const { setGuest } = usePos();
   const [tab, setTab] = useState<GuestTab>("profile");
@@ -1060,7 +992,7 @@ function GuestDetail({ guest }: { guest: GuestRow }) {
         </DarkPill>
       </div>
 
-      {tab === "profile" ? <GuestProfile guest={guest} /> : null}
+      {tab === "profile" ? <GuestProfile guest={guest} onBook={onBook} /> : null}
       {tab === "reservations" ? <ReservationsTab guest={guest} indent={resvIndent} /> : null}
       {tab === "payments" ? <PaymentsTab guest={guest} /> : null}
       {tab === "feedback" ? <FeedbackTab /> : null}
@@ -1074,9 +1006,19 @@ function Guestbook() {
   const wide = useWideLayout();
   const { tickets, guest } = usePos();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [booking, setBooking] = useState(false);
   const records = useMemo(() => guestDirectory(tickets, guest), [tickets, guest]);
   const selected = records.find((row) => row.id === selectedId);
   const goSettings = () => router.navigate({ to: "/settings" });
+
+  if (booking && selected) {
+    const book = (visit: GuestVisit) => {
+      const extras = loadExtras(selected.id);
+      saveExtras(selected.id, { ...extras, visits: [...extras.visits, visit] });
+      setBooking(false);
+    };
+    return <GuestVisitBooking name={selected.name} phone={selected.phone} onCancel={() => setBooking(false)} onBook={book} />;
+  }
 
   if (wide) {
     // The guestbook owns the whole panel: a "Guestbook" header with a back
@@ -1094,7 +1036,7 @@ function Guestbook() {
       >
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <SubHeader title={selected.name} />
-          <ScreenBody><GuestDetail guest={selected} /></ScreenBody>
+          <ScreenBody><GuestDetail key={selected.id} guest={selected} onBook={() => setBooking(true)} /></ScreenBody>
         </div>
       </SplitPane>
     ) : (
@@ -1121,7 +1063,7 @@ function Guestbook() {
           <Button variant="ghost" size="icon" aria-label="Back to guests" title="Back to guests" onClick={() => setSelectedId(null)}><ArrowLeft className="size-5" /></Button>
           <h2 className="min-w-0 break-words text-fs-xl font-bold">{selected.name}</h2>
         </div>
-        <GuestDetail guest={selected} />
+        <GuestDetail key={selected.id} guest={selected} onBook={() => setBooking(true)} />
       </div> : <GuestList records={records} selectedId={null} onSelect={setSelectedId} />}
     </ScreenBody>
   </>;
