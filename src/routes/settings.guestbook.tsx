@@ -45,7 +45,7 @@ import { cn } from "@/lib/utils";
 import { brand } from "@/lib/brand";
 import { GuestVisitBooking } from "@/components/pos/guest-visit-booking";
 import { SwipeRow, type SwipeRowHandle } from "@/components/pos/swipe-row";
-import { formatPhoneFor, isValidPhoneFor, phoneCountries, phoneCountryByName, defaultPhoneCountry } from "@/lib/phone";
+import { formatPhoneFor as formatPhoneRaw, isValidPhoneFor, phoneCountries, phoneCountryByName, defaultPhoneCountry } from "@/lib/phone";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { GuestVisit } from "@/lib/guest-reservation";
 import googleFeedbackLogo from "@/assets/feedback-google.png.asset.json";
@@ -1642,6 +1642,11 @@ function SavedCard({ kind, v }: { kind: "Vehicle Details" | "Address"; v: FormVa
       <p className="break-words text-fs-xs text-muted-foreground">{vehicle ? [v.number, v.color].filter(Boolean).join(" · ") : [v.street, v.city, `${v.state ?? ""} ${v.zip ?? ""}`.trim()].filter(Boolean).join(", ")}</p>
     </div>
   </div>;
+}
+
+/** Guest phone fields accept at most 10 digits, formatted for the chosen country. */
+function formatPhoneFor(country: Parameters<typeof formatPhoneRaw>[0], raw: string) {
+  return formatPhoneRaw(country, raw.replace(/\D/g, "").slice(0, 10));
 }
 
 function CountrySelect({ value, onChange, boxed }: { value: string; onChange: (name: string) => void; boxed?: boolean }) {
