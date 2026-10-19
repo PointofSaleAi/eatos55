@@ -6,6 +6,7 @@ export type DiscountRule = {
   individual: boolean; categoriesOn: boolean; categories: string[]; products: string[];
   managerPin: boolean; onlyShowName: boolean; open: boolean;
   scheduled: boolean; startDate: string; endDate: string; startTime: string; endTime: string;
+  archived?: boolean;
 };
 
 export const discountCategories = (): string[] => Array.from(new Set(menu.map(m => m.category))).sort((a, b) => a.localeCompare(b));
