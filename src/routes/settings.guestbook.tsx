@@ -998,7 +998,8 @@ const GUEST_TABS: { id: GuestTab; label: string }[] = [
 function GuestDetail({ guest, onBook }: { guest: GuestRow; onBook: () => void }) {
   const router = useRouter();
   const { setGuest } = usePos();
-  const [tab, setTab] = useState<GuestTab>("profile");
+  const [tab, setTabRaw] = useState<GuestTab>("profile");
+  const setTab = (t: GuestTab) => { console.log("SET_TAB", t, new Error().stack); setTabRaw(t); };
   const [resvIndent, setResvIndent] = useState(0);
   const paneRef = useRef<HTMLDivElement>(null);
   // Starting an order from a profile attaches that guest, so the New Order
@@ -1029,6 +1030,7 @@ function GuestDetail({ guest, onBook }: { guest: GuestRow; onBook: () => void })
       const used = (toggle?.getBoundingClientRect().width ?? 0) + (infoWidth ? 8 + infoWidth : 0);
       const room = pane.getBoundingClientRect().right - stripRect.left - used;
       const next = Math.max(0, Math.min(wanted, room));
+      console.log("SET_INDENT", next);
       setResvIndent((current) => (Math.abs(current - next) < 1 ? current : next));
     };
     measure();
