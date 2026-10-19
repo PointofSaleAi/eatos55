@@ -11,22 +11,22 @@ export function isSettingsDestinationVisible(row: Pick<SettingsDestination, "to"
 /** Shared destinations for the header menu, settings hub and settings sidebar. */
 export const settingsGroups: SettingsDestination[][] = [
   [
+    { to: "/settings/control-center", label: "Control Center", icon: SmartphoneNfc, color: "violet" },
     { to: "/settings/general", label: "General", icon: UserRoundCog, color: "green" },
     { to: "/settings/guestbook", label: "Guestbook", icon: BookUser, color: "slate" },
     { to: "/settings/login-screen", label: "Login Screen", icon: Images, color: "blue" },
-    { to: "/settings/control-center", label: "Control Center", icon: SmartphoneNfc, color: "violet" },
     { to: "/settings/menu", label: "Menu", icon: Utensils, color: "orange" },
     { to: "/settings/payments", label: "Payments", icon: Wallet, color: "indigo" },
-    { to: "/settings/workforce", label: "Workforce", icon: Briefcase, color: "purple" },
     { to: "/settings/reports", label: "Sales", icon: FileText, color: "slate" },
+    { to: "/settings/workforce", label: "Workforce", icon: Briefcase, color: "purple" },
     { to: "/settings/more", label: "Advanced", icon: SlidersHorizontal, color: "slate", manager: true },
   ],
   [
-    { to: "/settings/network", label: "Network", icon: Wifi, color: "sky" },
     { to: "/settings/hardware", label: "Hardware", icon: Tablet, color: "violet" },
+    { to: "/settings/network", label: "Network", icon: Wifi, color: "sky" },
   ],
   [
-    { to: "/settings/notifications", label: "Notifications", icon: Bell, color: "grey" },
     { to: "/system/customer-support", label: "Customer Support", icon: Headset, color: "red" },
+    { to: "/settings/notifications", label: "Notifications", icon: Bell, color: "grey" },
   ],
 ];
