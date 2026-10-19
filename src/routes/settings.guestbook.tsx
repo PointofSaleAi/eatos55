@@ -204,6 +204,25 @@ const saveExtras = (id: string, extras: Extras) => {
   }
 };
 
+/** Demo directory actions — guests added here and archived ids, kept on the device only. */
+const DIRECTORY_KEY = "eatos.pos.guestbook-directory";
+type DirectoryStore = { added: DirectoryEntry[]; archived: string[] };
+const emptyDirectory = (): DirectoryStore => ({ added: [], archived: [] });
+const loadDirectory = (): DirectoryStore => {
+  try {
+    return { ...emptyDirectory(), ...(JSON.parse(localStorage.getItem(DIRECTORY_KEY) ?? "{}") as DirectoryStore) };
+  } catch {
+    return emptyDirectory();
+  }
+};
+const saveDirectory = (store: DirectoryStore) => {
+  try {
+    localStorage.setItem(DIRECTORY_KEY, JSON.stringify(store));
+  } catch {
+    // Demo-only storage: ignore write failures.
+  }
+};
+
 const initials = (name: string) =>
   name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase() ?? "").join("") || "?";
 
