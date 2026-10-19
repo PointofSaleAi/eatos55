@@ -466,6 +466,8 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
           <TagEditor
             values={extras.tags}
             addLabel="Add Tags"
+            tone="dark"
+            preset={TAG_OPTIONS}
             onAdd={(value) => update({ tags: [...extras.tags, value] })}
             onRemove={(value) => update({ tags: extras.tags.filter((tag) => tag !== value) })}
           />
