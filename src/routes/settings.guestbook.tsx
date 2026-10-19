@@ -294,7 +294,7 @@ function GuestList({
   onSelect,
   onArchive,
   onRestore,
-  onAdd,
+  onOpenAdd,
   className,
 }: {
   records: GuestRow[];
@@ -303,14 +303,12 @@ function GuestList({
   onSelect: (id: string) => void;
   onArchive: (id: string) => void;
   onRestore: (id: string) => void;
-  onAdd: (input: { name: string; email?: string | undefined; phone?: string | undefined }) => void;
+  onOpenAdd: () => void;
   className?: string | undefined;
 }) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<"az" | "za" | "recent">("az");
   const [archivedView, setArchivedView] = useState(false);
-  const [adding, setAdding] = useState(false);
-  const [draft, setDraft] = useState({ name: "", email: "", phone: "" });
   const q = query.trim().toLowerCase();
   const pool = archivedView ? archivedRecords : records;
   const latestDate = (row: GuestRow) => row.tickets.reduce((latest, ticket) => (ticket.date > latest ? ticket.date : latest), "");
@@ -321,13 +319,6 @@ function GuestList({
     return [...list].sort((a, b) => latestDate(b).localeCompare(latestDate(a)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pool, q, sort]);
-  const submit = () => {
-    if (!draft.name.trim()) return;
-    onAdd({ name: draft.name, email: draft.email.trim() || undefined, phone: draft.phone.trim() || undefined });
-    setDraft({ name: "", email: "", phone: "" });
-    setAdding(false);
-    setArchivedView(false);
-  };
   return (
     <div className={cn("flex min-h-0 w-full flex-1 flex-col", className)}>
       <label className="mb-3 flex min-h-ctl-md shrink-0 items-center gap-3 rounded-pill border border-border bg-surface px-4">
@@ -335,20 +326,9 @@ function GuestList({
         <input type="search" aria-label="Search guests" placeholder="Search guests" value={query} onChange={(e) => setQuery(e.target.value)} className="min-h-tap min-w-0 flex-1 bg-transparent outline-none" />
       </label>
       <div className="mb-3 flex items-center gap-1.5">
-        <Popover open={adding} onOpenChange={setAdding}>
-          <PopoverTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label="Add new guest" title="Add new guest" className="rounded-full bg-foreground text-background hover:bg-foreground/90 hover:text-background">
-              <Plus className="size-4" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent align="start" className="w-72 space-y-2">
-            <p className="text-fs-sm font-bold">New Guest</p>
-            <input aria-label="Guest name" placeholder="Full name" value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} className="min-h-tap w-full rounded-lg border border-border bg-transparent px-3 text-fs-sm outline-none focus:border-foreground" />
-            <input aria-label="Guest email" placeholder="Email (optional)" value={draft.email} onChange={(e) => setDraft((d) => ({ ...d, email: e.target.value }))} className="min-h-tap w-full rounded-lg border border-border bg-transparent px-3 text-fs-sm outline-none focus:border-foreground" />
-            <input aria-label="Guest phone" placeholder="Phone (optional)" value={draft.phone} onChange={(e) => setDraft((d) => ({ ...d, phone: e.target.value }))} className="min-h-tap w-full rounded-lg border border-border bg-transparent px-3 text-fs-sm outline-none focus:border-foreground" />
-            <Button className="w-full" disabled={!draft.name.trim()} onClick={submit}>Add Guest</Button>
-          </PopoverContent>
-        </Popover>
+        <Button variant="ghost" size="icon" aria-label="Add new guest" title="Add new guest" onClick={onOpenAdd} className="rounded-full bg-foreground text-background hover:bg-foreground/90 hover:text-background">
+          <Plus className="size-4" />
+        </Button>
         <Button variant={archivedView ? "secondary" : "ghost"} size="icon" aria-label={archivedView ? "Show active guests" : "Show archived guests"} aria-pressed={archivedView} onClick={() => setArchivedView((v) => !v)} title={archivedView ? "Show active guests" : "Show archived guests"} className="rounded-full">
           <Archive className="size-4" />
         </Button>
@@ -395,7 +375,7 @@ function SectionCard({ label, action, children }: { label: string; action?: Reac
   return (
     <section aria-label={label}>
       <div className="mb-2 flex items-center justify-between gap-2">
-        <h3 className="text-fs-sm font-bold uppercase tracking-wide text-muted-foreground">{label}</h3>
+        <h3 className="text-fs-xs font-bold uppercase tracking-wide text-muted-foreground">{label}</h3>
         {action ?? null}
       </div>
       <div className="rounded-xl border border-border bg-surface p-4">{children}</div>
@@ -1001,7 +981,7 @@ function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number })
       </div>
 
       <section aria-label="Reservations summary">
-        <h3 className="mb-3 text-fs-sm font-bold uppercase tracking-wide text-muted-foreground">Summary</h3>
+        <h3 className="mb-3 text-fs-sm font-bold uppercase tracking-wide tet-muted-foreground">Summary</h3>
         <div className="grid gap-2 rounded-xl border border-border bg-surface p-2 sm:grid-cols-2 xl:grid-cols-4">
           <ReservationsCell icon={<CalendarClock className="size-5" />} value={booked.length} label="Reservations" />
           <ReservationsCell icon={<CalendarCheck className="size-5" />} value={upcoming.length} label="Upcoming Visits" />
@@ -1119,7 +1099,7 @@ function PaymentsTab({ guest }: { guest: GuestRow }) {
   return (
     <section aria-label="Payments" className="@container space-y-4">
       <div>
-        <h3 className="mb-2 text-fs-sm font-bold uppercase tracking-wide text-muted-foreground">Summary</h3>
+        <h3 className="mb-2 text-fs-sm font-bold uppercase tracking-wide tet-muted-foreground">Summary</h3>
         <div className="grid grid-cols-2 gap-2 rounded-xl border border-border bg-surface p-2 @xl:grid-cols-4">
           {cards.map(([label, icon, value]) => (
             <div key={label} className="flex items-center gap-3 rounded-lg bg-surface-muted p-3">
@@ -1310,7 +1290,7 @@ function HistoryTab({ guest }: { guest: GuestRow }) {
   return (
     <section aria-label="Order history" className="@container space-y-4">
       <div>
-        <h3 className="mb-2 text-fs-sm font-bold uppercase tracking-wide text-muted-foreground">Summary</h3>
+        <h3 className="mb-2 text-fs-sm font-bold uppercase tracking-wide tet-muted-foreground">Summary</h3>
         <div className="grid grid-cols-2 gap-2 rounded-xl border border-border bg-surface p-2 @xl:grid-cols-3 @3xl:grid-cols-5">
           {cards.map(([label, icon, value]) => (
             <div key={label} className="flex items-center gap-3 rounded-lg bg-surface-muted p-3">
@@ -1514,8 +1494,13 @@ function Guestbook() {
   // guest is picked for you; phones still open on the list.
   const [selectedId, setSelectedId] = useState<string | null>(() => (wide ? records[0]?.id ?? null : null));
   const [booking, setBooking] = useState(false);
+  const [addingGuest, setAddingGuest] = useState(false);
   const selected = records.find((row) => row.id === selectedId);
   const goSettings = () => router.navigate({ to: "/settings" });
+
+  if (addingGuest) {
+    return <NewGuestPage onCancel={() => setAddingGuest(false)} onSave={(input) => { addGuest(input); setAddingGuest(false); }} />;
+  }
 
   if (booking && selected) {
     const book = (visit: GuestVisit) => {
@@ -1536,7 +1521,7 @@ function Guestbook() {
         list={
           <>
             {listHeader}
-            <GuestList records={records} archivedRecords={archivedRecords} selectedId={selected.id} className="px-3 py-3 lg:px-4" onSelect={(id) => setSelectedId(id === selected.id ? null : id)} onArchive={archiveGuest} onRestore={restoreGuest} onAdd={addGuest} />
+            <GuestList records={records} archivedRecords={archivedRecords} selectedId={selected.id} className="px-3 py-3 lg:px-4" onSelect={(id) => setSelectedId(id === selected.id ? null : id)} onArchive={archiveGuest} onRestore={restoreGuest} onOpenAdd={() => setAddingGuest(true)} />
           </>
         }
       >
@@ -1550,7 +1535,7 @@ function Guestbook() {
         list={
           <>
             {listHeader}
-            <GuestList records={records} archivedRecords={archivedRecords} selectedId={null} className="px-3 py-3 lg:px-4" onSelect={setSelectedId} onArchive={archiveGuest} onRestore={restoreGuest} onAdd={addGuest} />
+            <GuestList records={records} archivedRecords={archivedRecords} selectedId={null} className="px-3 py-3 lg:px-4" onSelect={setSelectedId} onArchive={archiveGuest} onRestore={restoreGuest} onOpenAdd={() => setAddingGuest(true)} />
           </>
         }
       >
@@ -1570,7 +1555,55 @@ function Guestbook() {
           <h2 className="min-w-0 break-words text-fs-xl font-bold">{selected.name}</h2>
         </div>
         <GuestDetail key={selected.id} guest={selected} onBook={() => setBooking(true)} />
-      </div> : <GuestList records={records} archivedRecords={archivedRecords} selectedId={null} onSelect={setSelectedId} onArchive={archiveGuest} onRestore={restoreGuest} onAdd={addGuest} />}
+      </div> : <GuestList records={records} archivedRecords={archivedRecords} selectedId={null} onSelect={setSelectedId} onArchive={archiveGuest} onRestore={restoreGuest} onOpenAdd={() => setAddingGuest(true)} />}
+    </ScreenBody>
+  </>;
+}
+
+/** Full-page Add Guest form (reference layout, app theme). Demo-only: saves to the device guest directory. */
+function NewGuestPage({ onCancel, onSave }: { onCancel: () => void; onSave: (input: { name: string; email?: string | undefined; phone?: string | undefined }) => void }) {
+  const [f, setF] = useState({ first: "", last: "", phone: "", email: "", dob: "", since: "", anniversary: "", note: "" });
+  const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF((d) => ({ ...d, [k]: e.target.value }));
+  const valid = f.first.trim() && f.last.trim() && f.phone.replace(/\D/g, "").length >= 10 && /.+@.+\..+/.test(f.email);
+  const row = "flex min-h-ctl-md items-center justify-between gap-3 border-b border-border py-2 last:border-b-0";
+  const input = "min-w-0 flex-1 bg-transparent text-right text-fs-sm outline-none placeholder:text-muted-foreground";
+  const req = <span className="text-destructive"> *</span>;
+  return <>
+    <SubHeader title="New Guest" backLabel="Guestbook" onBack={onCancel} />
+    <ScreenBody>
+      <div className="w-full space-y-6">
+        <div className="grid gap-4 md:grid-cols-[6rem_minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="relative mx-auto grid size-24 place-items-center rounded-full bg-surface-muted text-muted-foreground"><Users className="size-9" /></div>
+          <div className="rounded-xl border border-border bg-surface px-4">
+            <label className={row}><span className="text-fs-sm font-bold">First Name{req}</span><input aria-label="First name" placeholder="Enter" value={f.first} onChange={set("first")} className={input} /></label>
+            <label className={row}><span className="text-fs-sm font-bold">Last Name{req}</span><input aria-label="Last name" placeholder="Enter" value={f.last} onChange={set("last")} className={input} /></label>
+            <label className={row}><span className="text-fs-sm font-bold">Phone{req}</span><span className="rounded-md bg-surface-muted px-2 py-1 text-fs-xs">🇺🇸 +1</span><input aria-label="Phone" inputMode="tel" placeholder="(XXX) XXX-XXXX" value={f.phone} onChange={set("phone")} className={input} /></label>
+            <label className={row}><span className="text-fs-sm font-bold">Email{req}</span><input aria-label="Email" type="email" placeholder="email@example.com" value={f.email} onChange={set("email")} className={input} /></label>
+          </div>
+          <div className="self-start rounded-xl border border-border bg-surface px-4">
+            {([["dob", "Date of Birth"], ["since", "Customer Since"], ["anniversary", "Anniversary"]] as const).map(([k, l]) => (
+              <label key={k} className={row}><span className="text-fs-sm font-bold">{l}</span><input aria-label={l} type="date" value={f[k]} onChange={set(k)} className={cn(input, "max-w-40")} /></label>
+            ))}
+          </div>
+        </div>
+        <section>
+          <h3 className="mb-2 text-fs-xs font-bold uppercase tracking-wide text-muted-foreground">Note</h3>
+          <div className="rounded-xl border border-border bg-surface p-4">
+            <textarea aria-label="Note" placeholder="Optional" maxLength={250} rows={2} value={f.note} onChange={set("note")} className="w-full resize-none bg-transparent text-fs-sm outline-none placeholder:text-muted-foreground" />
+            <p className="text-right text-fs-xs text-muted-foreground">{250 - f.note.length}</p>
+          </div>
+        </section>
+        <div className="grid gap-6 sm:grid-cols-2">
+          {["Vehicle Details", "Address"].map((t) => <section key={t}>
+            <h3 className="mb-2 text-fs-sm font-bold">{t}</h3>
+            <button type="button" className="grid h-24 w-full max-w-xs place-items-center rounded-xl border-2 border-dashed border-border text-fs-xs text-muted-foreground hover:bg-muted"><span className="grid place-items-center gap-1"><Plus className="size-5" />{t === "Address" ? "Add Address" : "Add Vehicle"}</span></button>
+          </section>)}
+        </div>
+        <div className="flex justify-end gap-2">
+          <Button variant="ghost" onClick={onCancel}>Cancel</Button>
+          <Button disabled={!valid} onClick={() => onSave({ name: `${f.first.trim()} ${f.last.trim()}`, email: f.email.trim(), phone: f.phone.trim() })}>Add Guest</Button>
+        </div>
+      </div>
     </ScreenBody>
   </>;
 }
