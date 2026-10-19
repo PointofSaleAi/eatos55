@@ -319,11 +319,11 @@ function GuestList({
       {visible.length ? (
         <ul className="min-h-0 min-w-0 flex-1 divide-y divide-border overflow-y-auto border-y border-border">
           {visible.map((row) => (
-            <li key={row.id} className="relative">
+            <li key={row.id} className="flex items-center gap-1">
               <Button
                 variant="ghost"
                 className={cn(
-                  "h-auto min-h-ctl-lg w-full justify-start gap-3 rounded-none py-4 pl-2 pr-12 text-foreground hover:bg-muted",
+                  "h-auto min-h-ctl-lg w-full min-w-0 flex-1 justify-start gap-3 rounded-none px-2 py-4 text-foreground hover:bg-muted",
                   row.id === selectedId && "bg-muted",
                 )}
                 onClick={() => onSelect(row.id)}
@@ -337,7 +337,7 @@ function GuestList({
               </Button>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" size="icon" aria-label={`Actions for ${row.name}`} className="absolute right-9 top-1/2 size-7 -translate-y-1/2 rounded-full text-muted-foreground hover:bg-muted">
+                  <Button variant="ghost" size="icon" aria-label={`Actions for ${row.name}`} className="mr-1 size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted">
                     <MoreHorizontal className="size-4" />
                   </Button>
                 </PopoverTrigger>
