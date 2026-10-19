@@ -1620,15 +1620,15 @@ const VEHICLE_COLORS = ["Black", "White", "Silver", "Grey", "Red", "Blue", "Gree
 
 /** Collapsible New Vehicle / New Address form inside the New Guest page (demo-only). */
 function InlineForm({ kind, onClose }: { kind: "Vehicle Details" | "Address"; onClose: () => void }) {
-  const [v, setV] = useState<Record<string, string>>({ label: "Home" });
-  const set = (k: string) => (e: { target: { value: string } }) => setV((d) => ({ ...d, [k]: e.target.value }));
+  const [v, setV] = useState<Partial<Record<"number" | "type" | "color" | "brand" | "label" | "phone" | "street" | "city" | "state" | "zip" | "country", string>>>({ label: "Home" });
+  const set = (k: "color" | "brand" | "label" | "phone" | "street" | "city" | "state" | "zip" | "country") => (e: { target: { value: string } }) => setV((d) => ({ ...d, [k]: e.target.value }));
   const field = "min-h-ctl-md w-full rounded-lg border border-border bg-surface-muted px-3 text-fs-sm outline-none placeholder:text-muted-foreground focus:border-foreground disabled:opacity-60";
   const L = ({ t, r, children }: { t: string; r?: boolean; children: ReactNode }) => <label className="block space-y-1.5"><span className="text-fs-xs font-bold text-muted-foreground">{t}{r ? <span className="text-destructive">*</span> : null}</span>{children}</label>;
   const vehicle = kind === "Vehicle Details";
   return (
     <div className="rounded-xl border border-border bg-surface">
       <button type="button" onClick={onClose} aria-label="Collapse form" className="flex w-full items-center justify-between border-b border-border px-4 py-3 text-fs-sm font-bold">
-        {vehicle ? "New Vehicle" : "New Address"}<ChevronUp className="size-4" />
+        {vehicle ? "New Vehicle" : "New Address"}<ChevronDown className="size-4 rotate-180" />
       </button>
       <div className="space-y-3 p-4">
         {vehicle ? <>
