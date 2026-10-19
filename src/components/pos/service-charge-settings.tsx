@@ -136,10 +136,10 @@ export function ServiceChargeSettings() {
       <div className="mb-5 flex items-start gap-3"><p className="min-w-0 flex-1 t-caption text-muted-foreground">{description}</p><Button size="icon" aria-label="Add service charge" title="Add Service Charge" disabled={!canManageSettings} onClick={() => { setDraft(newServiceCharge()); setTouched(false); }}><Plus /></Button></div>
       <GroupCard>
         <div className={cn("hidden gap-3 border-b border-border px-4 py-4 t-caption font-bold", cols)}><span>Service Charge Name</span><span>Amount</span><span className="text-right">Tax Applicable</span><span /></div>
-        {list.length === 0 ? <p className="p-6 text-center t-caption text-muted-foreground">{charges.length ? "No service charges match your search." : "No service charges yet. Tap + to add one."}</p> : list.map(c => <button key={c.id} type="button" aria-label={`Edit ${c.name}`} onClick={() => { setDraft({ ...c, taxes: [...c.taxes], orderTypes: [...c.orderTypes] }); setTouched(true); }} className={cn("flex w-full items-center gap-3 border-b border-border px-4 py-4 text-left last:border-b-0 hover:bg-muted", cols)}>
+        {list.length === 0 ? <p className="p-6 text-center t-caption text-muted-foreground">{charges.length ? "No service charges match your search." : "No service charges yet. Tap + to add one."}</p> : list.map(c => <SwipeRow key={c.id} className="rounded-none border-b border-border last:border-0" action={{ label: "Archive", destructive: true, icon: <ArchiveGlyph className="size-5" />, onAction: () => { updateSettings({ serviceChargeRules: charges.map(x => x.id === c.id ? { ...x, archived: true } : x) }); toast.success("Service charge archived"); } }}><button type="button" aria-label={`Edit ${c.name}`} onClick={() => { setDraft({ ...c, taxes: [...c.taxes], orderTypes: [...c.orderTypes] }); setTouched(true); }} className={cn("flex w-full items-center gap-3 px-4 py-4 text-left hover:bg-muted", cols)}>
           <span className="min-w-0 flex-1 sm:contents"><span className="block break-words t-row">{c.name}</span><span className="block t-caption text-muted-foreground sm:hidden">{formatServiceCharge(c)}</span><span className="hidden t-row sm:block">{formatServiceCharge(c)}</span></span>
           <span className="shrink-0 t-row sm:text-right">{c.taxes.length}</span><ChevronRight className="size-4 shrink-0 text-muted-foreground" />
-        </button>)}
+        </button></SwipeRow>)}
       </GroupCard>
     </ScreenBody>
   </>;
