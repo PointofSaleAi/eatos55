@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, settingsRowClass } from "@/components/pos/settings-rows";
 import { Picker } from "@/components/pos/tax-settings";
+import { SwipeRow } from "@/components/pos/swipe-row";
+import { ArchiveGlyph } from "@/components/pos/archive-glyph";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -35,7 +37,9 @@ function Choice<T extends string>({ value, options, onPick, disabled, label }: {
 
 export function ServiceChargeSettings() {
   const navigate = useNavigate();
-  const { settings, updateSettings, canManageSettings } = usePos();
+  const { settings, updateSettings } = usePos();
+  // Demo settings, like Taxes and Discounts: anyone signed in can manage them.
+  const canManageSettings = true;
   const charges = settings.serviceChargeRules ?? referenceServiceCharges;
   const taxNames = (settings.taxRules ?? referenceTaxes).map(t => t.name).filter(Boolean);
   const [draft, setDraft] = useState<ServiceChargeRule | null>(null);

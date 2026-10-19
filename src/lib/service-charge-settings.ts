@@ -4,6 +4,7 @@ export type ServiceChargeRule = {
   id: string; name: string; value: string; type: ServiceChargeAmountType;
   onlyShowName: boolean; taxes: string[]; orderTypes: string[];
   appliedAs: ServiceChargeAppliedAs; autoApply: boolean; minSeats: number;
+  archived?: boolean;
 };
 
 export const serviceChargeOrderTypes = ["Restaurant", "Take Out", "Banquet", "Delivery", "Drive Thru"];
