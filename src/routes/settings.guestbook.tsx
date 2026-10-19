@@ -741,7 +741,7 @@ function ReservationsCell({ icon, value, label }: { icon: ReactNode; value: stri
 }
 
 /** Reservations tab: Upcoming/Recent toggle, summary strip and visit rows. */
-function ReservationsTab({ guest }: { guest: GuestRow }) {
+function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number }) {
   const [view, setView] = useState<"upcoming" | "recent">("recent");
   const extras = useMemo(() => loadExtras(guest.id), [guest.id]);
   const today = new Date().toISOString().slice(0, 10);
@@ -755,14 +755,19 @@ function ReservationsTab({ guest }: { guest: GuestRow }) {
     return { party: 1 + (seed % 4), table: `${initials(guest.name).slice(0, 2)}${100 + (seed % 900)}` };
   };
 
-  const upcomingRows = upcoming.map((visit, index) => {
+  const rowFor = (visit: Visit, index: number) => {
     const parts = dateParts(visit.date) ?? { day: "--", month: "" };
-    return { ...parts, time: formatTime(visit.time), ...demoDetails(visit, index) };
-  });
-  const pastBooked = booked.filter((visit) => visit.date < today).reverse().map((visit, index) => {
-    const parts = dateParts(visit.date) ?? { day: "--", month: "" };
-    return { ...parts, time: formatTime(visit.time), ...demoDetails(visit, index) };
-  });
+    const demo = demoDetails(visit, index);
+    return {
+      ...parts,
+      time: formatTime(visit.time),
+      description: visit.description ?? null,
+      party: visit.party ?? demo.party,
+      table: visit.table ?? demo.table,
+    };
+  };
+  const upcomingRows = upcoming.map((visit, index) => rowFor(visit, index));
+  const pastBooked = booked.filter((visit) => visit.date < today).reverse().map((visit, index) => rowFor(visit, index));
   // Recent visits come from the guest's real checks, joined by any booked past visits.
   const recentRows = [
     ...pastBooked,
@@ -770,6 +775,7 @@ function ReservationsTab({ guest }: { guest: GuestRow }) {
       day: dateParts(ticket.date)?.day ?? "--",
       month: dateParts(ticket.date)?.month ?? "",
       time: ticket.arrivedAt || null,
+      description: null,
       party: ticket.seats,
       table: ticket.table ?? null,
     })),
@@ -778,7 +784,7 @@ function ReservationsTab({ guest }: { guest: GuestRow }) {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2" style={indent ? { paddingLeft: `${indent}px` } : undefined}>
         <div role="tablist" aria-label="Reservations view" className="flex items-center rounded-pill bg-surface-muted p-1">
           {([["upcoming", "Upcoming Visits"], ["recent", "Recent Visits"]] as const).map(([id, label]) => (
             <button
@@ -815,7 +821,7 @@ function ReservationsTab({ guest }: { guest: GuestRow }) {
       {rows.length ? (
         <ul className="space-y-3">
           {rows.map((row, index) => (
-            <VisitRow key={`${row.day}-${row.month}-${row.time ?? "t"}-${index}`} day={row.day} month={row.month} time={row.time} party={row.party} table={row.table} />
+            <VisitRow key={`${row.day}-${row.month}-${row.time ?? "t"}-${index}`} day={row.day} month={row.month} time={row.time} party={row.party} table={row.table} description={row.description} />
           ))}
         </ul>
       ) : (
@@ -899,20 +905,43 @@ function GuestDetail({ guest }: { guest: GuestRow }) {
   const router = useRouter();
   const { setGuest } = usePos();
   const [tab, setTab] = useState<GuestTab>("profile");
+  const [resvIndent, setResvIndent] = useState(0);
+  const paneRef = useRef<HTMLDivElement>(null);
   // Starting an order from a profile attaches that guest, so the New Order
   // screen opens with their name, phone, email and address already filled in.
-  const startOrder = () => {
-    setGuest(guestOrderPatch(guest));
-    router.navigate({ to: "/order/new" });
-  };
+  // The Reservations view toggle sits under the "Reservations" tab: measure that tab's
+  // left edge so the two line up at any width, and never shift the toggle past the pane.
+  useEffect(() => {
+    const pane = paneRef.current;
+    if (!pane) return;
+    const measure = () => {
+      const strip = pane.querySelector<HTMLElement>('[role="tablist"][aria-label="Guest sections"]');
+      const target = pane.querySelector<HTMLElement>('[data-tab="reservations"]');
+      const toggle = pane.querySelector<HTMLElement>('[role="tablist"][aria-label="Reservations view"]');
+      if (!strip || !target) {
+        setResvIndent(0);
+        return;
+      }
+      const stripRect = strip.getBoundingClientRect();
+      const wanted = target.getBoundingClientRect().left - stripRect.left - 4;
+      const room = pane.getBoundingClientRect().right - stripRect.left - (toggle?.getBoundingClientRect().width ?? 0);
+      const next = Math.max(0, Math.min(wanted, room));
+      setResvIndent((current) => (Math.abs(current - next) < 1 ? current : next));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(pane);
+    return () => observer.disconnect();
+  }, [tab]);
 
   return (
-    <div className="w-full space-y-5">
+    <div ref={paneRef} className="w-full space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div role="tablist" aria-label="Guest sections" className="flex min-w-0 items-center gap-1 overflow-x-auto rounded-pill bg-surface-muted p-1">
           {GUEST_TABS.map((entry) => (
             <button
               key={entry.id}
+              data-tab={entry.id}
               type="button"
               role="tab"
               aria-selected={tab === entry.id}
@@ -933,7 +962,7 @@ function GuestDetail({ guest }: { guest: GuestRow }) {
       </div>
 
       {tab === "profile" ? <GuestProfile guest={guest} /> : null}
-      {tab === "reservations" ? <ReservationsTab guest={guest} /> : null}
+      {tab === "reservations" ? <ReservationsTab guest={guest} indent={resvIndent} /> : null}
       {tab === "payments" ? <PaymentsTab guest={guest} /> : null}
       {tab === "feedback" ? <FeedbackTab /> : null}
       {tab === "history" ? <HistoryTab guest={guest} /> : null}
