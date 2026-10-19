@@ -1,13 +1,17 @@
 import { menu } from "@/lib/demo-data";
 
 export type DiscountType = "Percentage" | "Amount";
+export type DiscountDay = { enabled: boolean; start: string; end: string };
 export type DiscountRule = {
   id: string; name: string; value: string; type: DiscountType;
   individual: boolean; categoriesOn: boolean; categories: string[]; products: string[];
   managerPin: boolean; onlyShowName: boolean; open: boolean;
   scheduled: boolean; startDate: string; endDate: string; startTime: string; endTime: string;
+  days?: DiscountDay[];
   archived?: boolean;
 };
+
+export const defaultDiscountDays = (): DiscountDay[] => Array.from({ length: 7 }, () => ({ enabled: false, start: "00:00", end: "23:59" }));
 
 export const discountCategories = (): string[] => Array.from(new Set(menu.map(m => m.category))).sort((a, b) => a.localeCompare(b));
 

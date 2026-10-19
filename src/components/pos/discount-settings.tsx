@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { MoneyInput } from "@/components/pos/money-input";
 import { useMemo, useState, type ReactNode } from "react";
-import { AlertCircle, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
+import { AlertCircle, CheckSquare, ChevronRight, Copy, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { GroupCard, settingsRowClass } from "@/components/pos/settings-rows";
