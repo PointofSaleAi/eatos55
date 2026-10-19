@@ -59,3 +59,36 @@ export function guestDirectory(tickets: Ticket[], current: Guest): DirectoryEntr
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((row) => ({ ...row, email: row.email || mockEmail(row.name), phone: row.phone || mockPhone(row.name) }));
 }
+
+/**
+ * Guest a New Order inherits when it is started from a Guestbook profile.
+ * Every identity field is listed on purpose: a previous guest's details must
+ * not stay attached just because setGuest merges a patch.
+ */
+export function guestOrderPatch(entry: DirectoryEntry): Guest {
+  return {
+    name: entry.name,
+    phone: entry.phone,
+    email: entry.email,
+    address: entry.address,
+    partySize: 1,
+    firstName: undefined,
+    middleName: undefined,
+    lastName: undefined,
+    customerSince: undefined,
+    dateOfBirth: undefined,
+    anniversary: undefined,
+    photo: undefined,
+    notes: undefined,
+    vehicle: undefined,
+    addressStreet: undefined,
+    addressUnit: undefined,
+    addressCity: undefined,
+    addressState: undefined,
+    addressZipCode: undefined,
+    event: undefined,
+    scheduledAt: undefined,
+    customLabel: undefined,
+  };
+}
+
