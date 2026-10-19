@@ -48,6 +48,7 @@ export function TaxSettings() {
   const products = useMemo(taxProducts, []);
   const [draft, setDraft] = useState<TaxRule | null>(null);
   const [touched, setTouched] = useState(false);
+  const [warned, setWarned] = useState(false);
   const [picker, setPicker] = useState<"to" | "products" | null>(null);
   const [typeOpen, setTypeOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -64,7 +65,9 @@ export function TaxSettings() {
       updateSettings({ taxRules: taxes.some(t => t.id === clean.id) ? taxes.map(t => t.id === clean.id ? clean : t) : [...taxes, clean] });
     }
   };
-  const back = () => { setDraft(null); setTouched(false); setConfirmDelete(false); };
+  const close = () => { setDraft(null); setTouched(false); setWarned(false); setConfirmDelete(false); };
+  // First back on an incomplete new tax shows what is missing; a second back discards it.
+  const back = () => { if (draft && !exists && !taxValid(draft) && !warned && canManageSettings) { setTouched(true); setWarned(true); return; } close(); };
   const errors = draft ? taxErrors(draft) : { name: "", amount: "", type: "" };
   const show = (key: keyof typeof errors) => (touched || exists) ? errors[key] : "";
 
@@ -79,12 +82,12 @@ export function TaxSettings() {
       <GroupCard>
         <div className={cn(settingsRowClass, "flex-wrap")}>
           <label htmlFor="tax-name" className="t-row">Name</label>
-          <Input id="tax-name" placeholder="Required" maxLength={60} disabled={!canManageSettings} value={draft.name} onBlur={() => setTouched(true)} onChange={e => update({ name: e.target.value })} className="min-w-0 flex-1 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" />
+          <Input id="tax-name" placeholder="Required" maxLength={60} disabled={!canManageSettings} value={draft.name} onBlur={() => setTouched(true)} onChange={e => update({ name: e.target.value })} className="min-w-0 flex-1 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" /><ChevronRight aria-hidden className="size-4 shrink-0 text-muted-foreground" />
           {show("name") && <div className="basis-full"><ErrorLine text={show("name")} /></div>}
         </div>
         <div className={cn(settingsRowClass, "flex-wrap")}>
           <label htmlFor="tax-amount" className="t-row">Amount</label>
-          <div className="flex min-w-0 flex-1 items-center justify-end gap-1"><Input id="tax-amount" inputMode="decimal" placeholder="0.00" disabled={!canManageSettings} value={draft.amount} onBlur={() => setTouched(true)} onChange={e => update({ amount: e.target.value.replace(/[^\d.]/g, "") })} className="w-28 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" /><span className="t-value text-muted-foreground">%</span></div>
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-1"><Input id="tax-amount" inputMode="decimal" placeholder="0.00" disabled={!canManageSettings} value={draft.amount} onBlur={() => setTouched(true)} onChange={e => update({ amount: e.target.value.replace(/[^\d.]/g, "") })} className="w-28 border-0 bg-transparent text-right shadow-none t-value focus-visible:ring-0" /><span className="t-value text-muted-foreground">%</span><ChevronRight aria-hidden className="size-4 shrink-0 text-muted-foreground" /></div>
           {show("amount") && <div className="basis-full"><ErrorLine text={show("amount")} /></div>}
         </div>
         <div className={cn(settingsRowClass, "flex-wrap")}>
@@ -99,9 +102,9 @@ export function TaxSettings() {
       </GroupCard>
       <GroupCard className="mt-6">{summaryRow("Applicable Products", draft.products, () => setPicker("products"))}</GroupCard>
       {exists && canManageSettings && <div className="mt-6 flex flex-wrap items-center justify-end gap-2">
-        {confirmDelete ? <><span className="t-caption text-muted-foreground">Delete this tax?</span><Button variant="outline" onClick={() => setConfirmDelete(false)}>Cancel</Button><Button variant="destructive" onClick={() => { updateSettings({ taxRules: taxes.filter(t => t.id !== draft.id) }); toast.success("Tax deleted"); back(); }}>Delete</Button></> : <Button variant="outline" onClick={() => setConfirmDelete(true)}><Trash2 />Delete Tax</Button>}
+        {confirmDelete ? <><span className="t-caption text-muted-foreground">Delete this tax?</span><Button variant="outline" onClick={() => setConfirmDelete(false)}>Cancel</Button><Button variant="destructive" onClick={() => { updateSettings({ taxRules: taxes.filter(t => t.id !== draft.id) }); toast.success("Tax deleted"); close(); }}>Delete</Button></> : <Button variant="outline" onClick={() => setConfirmDelete(true)}><Trash2 />Delete Tax</Button>}
       </div>}
-      {!exists && touched && !taxValid(draft) && <p className="mt-4 t-caption text-muted-foreground">The tax saves automatically once the name, amount and type are filled in.</p>}
+      {!exists && touched && !taxValid(draft) && <p className="mt-4 t-caption text-muted-foreground">The tax saves automatically once the name, amount and type are filled in. Tap Back again to discard it.</p>}
     </ScreenBody>
     {picker === "to" && <Picker title="Applicable To" options={taxApplicableTo} selected={draft.applicableTo} onChange={v => update({ applicableTo: v })} onClose={() => setPicker(null)} />}
     {picker === "products" && <Picker title="Applicable Product" options={products} selected={draft.products} onChange={v => update({ products: v })} onClose={() => setPicker(null)} />}
