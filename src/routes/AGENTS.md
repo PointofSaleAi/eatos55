@@ -1,0 +1,1 @@
+- Guestbook feedback uses original source assets and row-local expansion state so opening one review never expands neighboring reviews.

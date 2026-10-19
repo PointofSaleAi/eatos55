@@ -45,6 +45,11 @@ import { GuestVisitBooking } from "@/components/pos/guest-visit-booking";
 import { SwipeRow, type SwipeRowHandle } from "@/components/pos/swipe-row";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { GuestVisit } from "@/lib/guest-reservation";
+import googleFeedbackLogo from "@/assets/feedback-google.png.asset.json";
+import eatosFeedbackLogo from "@/assets/feedback-eatos.png.asset.json";
+import yelpFeedbackLogo from "@/assets/feedback-yelp.png.asset.json";
+import zagatFeedbackLogo from "@/assets/feedback-zagat.png.asset.json";
+import orderosFeedbackLogo from "@/assets/feedback-orderos.png.asset.json";
 
 export const Route = createFileRoute("/settings/guestbook")({
   head: () => ({ meta: [
@@ -1046,8 +1051,15 @@ function PaymentsTab({ guest }: { guest: GuestRow }) {
   );
 }
 
-/** Demo review sources; the wordmarks render as styled text, not image logos. */
+/** Original source artwork supplied for the feedback screen. */
 const FEEDBACK_SOURCES = ["Google", "eatos", "yelp", "ZAGAT", "ordéros"] as const;
+const FEEDBACK_LOGOS = {
+  Google: googleFeedbackLogo.url,
+  eatos: eatosFeedbackLogo.url,
+  yelp: yelpFeedbackLogo.url,
+  ZAGAT: zagatFeedbackLogo.url,
+  ordéros: orderosFeedbackLogo.url,
+};
 const FEEDBACK_REVIEWS = [
   "Good Food lives up to its name, offering a delightful dining experience in downtown. The cozy ambiance and friendly staff create a welcoming atmosphere, while the menu impresses with its variety and quality.",
   "The service was prompt and attentive, making our evening enjoyable. Highly recommend the tasting menu and the warm attention from the staff.",
@@ -1063,7 +1075,7 @@ type FeedbackRow = {
   time: string;
   text: string;
   source: (typeof FEEDBACK_SOURCES)[number];
-  reviewer?: string | undefined;
+  serverName: string;
   liked: boolean;
 };
 
@@ -1073,85 +1085,53 @@ const buildFeedback = (guestId: string): FeedbackRow[] => {
   const today = new Date().toISOString().slice(0, 10);
   return FEEDBACK_OFFSETS.map((offset, index) => {
     const local = (seed + index * 7) % 100;
-    const text = FEEDBACK_REVIEWS[(seed + index) % FEEDBACK_REVIEWS.length] ?? FEEDBACK_REVIEWS[0]!;
+    const text = FEEDBACK_REVIEWS[(seed + index) % FEEDBACK_REVIEWS.length] ?? "The Steak is Raw";
     return {
       id: `${guestId}-${index}`,
       date: shiftDate(today, -offset),
       time: `${String(1 + (local % 12)).padStart(2, "0")}:${String(10 + (local % 50)).padStart(2, "0")}:00`,
       text,
       source: FEEDBACK_SOURCES[(seed + index) % FEEDBACK_SOURCES.length] ?? "Google",
-      reviewer: (seed + index) % 3 === 0 ? FEEDBACK_REVIEWERS[(seed + index) % FEEDBACK_REVIEWERS.length] : undefined,
+      serverName: FEEDBACK_REVIEWERS[(seed + index) % FEEDBACK_REVIEWERS.length] ?? "Christo Phill",
       liked: !/raw/i.test(text),
     };
   });
 };
 
-/** Small text wordmark for a feedback source, matching the reference screen. */
-function SourceLogo({ name }: { name: string }) {
-  if (name === "Google") {
-    return (
-      <span aria-hidden className="text-fs-sm font-bold tracking-tight">
-        <span style={{ color: "#4285F4" }}>G</span>
-        <span style={{ color: "#EA4335" }}>o</span>
-        <span style={{ color: "#FBBC05" }}>o</span>
-        <span style={{ color: "#4285F4" }}>g</span>
-        <span style={{ color: "#34A853" }}>l</span>
-        <span style={{ color: "#EA4335" }}>e</span>
-      </span>
-    );
-  }
-  if (name === "yelp") {
-    return (
-      <span aria-hidden className="text-fs-sm font-black lowercase tracking-tight text-foreground">
-        yelp<span style={{ color: "#D32323" }}>✶</span>
-      </span>
-    );
-  }
-  if (name === "ZAGAT") {
-    return <span aria-hidden className="text-fs-sm font-bold tracking-[0.18em]" style={{ color: "#C8102E" }}>ZAGAT</span>;
-  }
-  if (name === "eatos") {
-    return <span aria-hidden className="text-fs-sm font-black lowercase tracking-tight text-foreground">eatos</span>;
-  }
-  return <span aria-hidden className="text-fs-sm font-bold italic tracking-tight text-foreground">ordéros</span>;
+function SourceLogo({ name }: { name: FeedbackRow["source"] }) {
+  return <img src={FEEDBACK_LOGOS[name]} alt={name} className={cn("h-5 w-12 object-contain sm:h-6 sm:w-16", (name === "eatos" || name === "ordéros") && "dark:invert")} />;
 }
 
 function FeedbackRow({ row }: { row: FeedbackRow }) {
   const [open, setOpen] = useState(false);
   const day = new Date(`${row.date}T12:00:00`);
-  const Rating = row.liked ? Smile : Frown;
-  const long = row.text.length > 60;
+  const contentId = `feedback-${row.id}`;
   return (
-    <li className="flex items-start gap-3 rounded-xl border border-border bg-surface p-3">
-      <div aria-hidden className="w-11 shrink-0 rounded-lg border border-border bg-surface-muted py-1.5 text-center leading-tight">
+    <li className="flex items-start gap-2 rounded-xl border border-border bg-surface px-2 py-2 sm:gap-3 sm:px-3">
+      <div aria-hidden className="w-10 shrink-0 border-r border-border py-1 text-center leading-tight sm:w-12">
         <span className="block text-fs-sm font-bold">{String(day.getDate()).padStart(2, "0")}</span>
         <span className="block text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
           {day.toLocaleDateString("en-US", { month: "short" })}
         </span>
       </div>
-      <div aria-hidden className="flex shrink-0 flex-col items-center gap-1 pt-0.5">
-        <Rating className="size-4 text-muted-foreground" />
-        <span className="grid size-4 place-items-center rounded-full border border-border text-[10px] font-bold leading-none">
-          {row.liked ? 5 : 1}
-        </span>
+      <div aria-label={row.liked ? "Positive feedback" : "Negative feedback"} className="flex shrink-0 items-center gap-0.5 pt-3">
+        <Frown className={cn("size-4", row.liked ? "text-muted-foreground/40" : "text-muted-foreground")} />
+        <Smile className={cn("size-4", row.liked ? "text-muted-foreground" : "text-muted-foreground/40")} />
       </div>
-      <MessageSquareText aria-hidden className="mt-1 size-4 shrink-0 text-muted-foreground" />
-      <p className={cn("min-w-0 flex-1 pt-0.5 text-fs-sm leading-relaxed", !open && "line-clamp-2")}>
-        {row.text}
-        {long ? (
-          <button
-            type="button"
-            onClick={() => setOpen((value) => !value)}
-            className="ml-1 inline font-bold text-foreground underline-offset-2 hover:underline"
-          >
+      <div className="min-w-0 flex-1 pt-2">
+        <div className="flex min-w-0 items-start gap-1.5">
+          <MessageSquareText aria-hidden className="mt-1 hidden size-3.5 shrink-0 text-muted-foreground sm:block" />
+          <p id={contentId} className={cn("min-w-0 flex-1 text-fs-sm leading-relaxed", open ? "break-words" : "truncate")}>{row.text}</p>
+          <Button type="button" variant="ghost" size="sm" aria-expanded={open} aria-controls={contentId} onClick={() => setOpen((value) => !value)} className="h-auto min-h-0 shrink-0 rounded-sm px-1 py-0.5 text-fs-sm font-bold">
             {open ? "Less" : "More"}
-          </button>
-        ) : null}
-      </p>
-      <div className="flex shrink-0 flex-col items-end gap-1 text-fs-xs text-muted-foreground">
-        <span className="flex items-center gap-1"><Clock className="size-3" />{row.time}</span>
-        {row.reviewer ? <span className="flex items-center gap-1"><UserRound className="size-3" />{row.reviewer}</span> : <SourceLogo name={row.source} />}
+          </Button>
+        </div>
+        {open ? <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-fs-xs text-muted-foreground">
+          <span className="flex items-center gap-1"><Clock className="size-3 shrink-0" />{row.time}</span>
+          <span className="flex items-center gap-1"><UserRound className="size-3 shrink-0" />Server: {row.serverName}</span>
+        </div> : null}
       </div>
+      <div className="flex shrink-0 items-center justify-end pt-2.5"><SourceLogo name={row.source} /></div>
     </li>
   );
 }
