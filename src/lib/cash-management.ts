@@ -38,12 +38,12 @@ function write(next: CashState) {
   listeners.forEach((l) => l());
 }
 
-/** Cash expected in the drawer since the till was opened. */
+/** Cash since the last close, including pay-ins made before opening the till. */
 export function estimatedCash(s: CashState) {
-  if (!s.tillOpen) return 0;
-  const openIdx = s.logs.findIndex((l) => l.reason === "Open Till");
-  const since = openIdx === -1 ? [] : s.logs.slice(0, openIdx);
-  return Math.round((s.openingTill + since.reduce((sum, l) => sum + l.payIn - l.payOut, 0)) * 100) / 100;
+  const closeIdx = s.logs.findIndex((l) => l.reason === "Close Drawer");
+  const since = closeIdx === -1 ? s.logs : s.logs.slice(0, closeIdx);
+  const movements = since.filter((l) => l.reason !== "Open Till");
+  return Math.round(((s.tillOpen ? s.openingTill : 0) + movements.reduce((sum, l) => sum + l.payIn - l.payOut, 0)) * 100) / 100;
 }
 
 export type CashAction =
@@ -63,7 +63,7 @@ export function applyCashAction(cur: CashState, action: CashAction, at = new Dat
     const amount = Math.round(action.amount * 100) / 100;
     return { ...cur, tillOpen: true, openingTill: amount, logs: [entry({ name: action.name, reason: "Open Till", payIn: amount, payOut: 0 }), ...cur.logs] };
   }
-  if (!cur.tillOpen) throw new Error("Open the till balance first");
+  if (!cur.tillOpen && action.kind !== "in") throw new Error("Open the till balance first");
   if (action.kind === "close") {
     const remaining = estimatedCash(cur);
     return { ...cur, tillOpen: false, openingTill: 0, previousClose: remaining, logs: [entry({ name: action.name, reason: "Close Drawer", payIn: 0, payOut: remaining }), ...cur.logs] };

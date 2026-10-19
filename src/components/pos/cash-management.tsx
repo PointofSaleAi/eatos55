@@ -46,7 +46,7 @@ export function CashManagement() {
     onDone={(emp, reason, note) => { try { cash.record(view, amount, emp, reason, note); setDigits(""); setDate(todayKey()); setView(null); toast.success(view === "in" ? "Pay in recorded" : "Pay out recorded"); } catch (error) { toast.error(error instanceof Error ? error.message : "Unable to record cash entry"); } }} tips={cash.state.tips} />;
 
   const needAmount = (kind: "in" | "out") => {
-    if (!cash.state.tillOpen) { toast.error("Open the till balance first"); return; }
+    if (kind === "out" && !cash.state.tillOpen) { toast.error("Open the till balance first"); return; }
     if (amount <= 0) { toast.error("Enter an amount first"); return; }
     if (kind === "out" && amount > cash.estimated) { toast.error("Pay out is more than the cash in drawer"); return; }
     setView(kind);
