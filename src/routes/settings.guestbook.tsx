@@ -802,7 +802,7 @@ function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number })
             </button>
           ))}
         </div>
-        <span className="text-muted-foreground" title="Reservation and visit history for this guest">
+        <span className="hidden text-muted-foreground sm:block" title="Reservation and visit history for this guest">
           <Info className="size-4" />
           <span className="sr-only">Reservation and visit history for this guest</span>
         </span>
