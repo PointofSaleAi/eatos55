@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Keep Guestbook feedback on one line, reveal full text/time/server only through More, and use uploaded source logos; verified phone, tablet and desktop
 - [x] Open table selection from Guestbook Book A Visit and save future guest reservations; verified saving and readback on phone, tablet and desktop
 - [x] Rebuild the Guestbook Feedback tab with sample review rows (date badge, rating icons, More/Less expansion, time, source wordmarks, reviewer); verified on desktop and phone
 - [x] Remove the duplicated guest-count/status and order-type/table/revenue-centre rows from the landscape Tickets cart header; verified on desktop, wide, landscape tablet, portrait tablet and phone
