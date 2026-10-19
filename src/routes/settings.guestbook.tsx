@@ -883,6 +883,7 @@ function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number })
               return (
                 <li key={row.key}>
                   <SwipeRow
+                    ref={rowRef}
                     className="rounded-xl"
                     action={{
                       label: "No show",
@@ -892,7 +893,11 @@ function ReservationsTab({ guest, indent }: { guest: GuestRow; indent: number })
                       },
                     }}
                   >
-                    <Popover open={menu === row.key} onOpenChange={(open) => setMenu(open ? row.key : null)}>
+                    <Popover open={menu === row.key} onOpenChange={(open) => {
+                      // A swipe release leaves a click behind; it must not open the row menu.
+                      if (open && rowRef.current?.wasDragged()) return;
+                      setMenu(open ? row.key : null);
+                    }}>
                       <PopoverTrigger asChild>
                         <button type="button" className="group w-full text-left">
                           <VisitRow day={row.day} month={row.month} time={row.time} party={row.party} table={row.table} description={row.description} noShow={noShow} />
