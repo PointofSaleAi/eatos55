@@ -298,7 +298,9 @@ function VisitEditor({ visits, onAdd, onRemove }: { visits: Extras["visits"]; on
             </li>
           ))}
         </ul>
-      ) : null}
+      ) : (
+        <p className="text-fs-sm">No Upcoming Visits</p>
+      )}
       {adding ? (
         <div className="flex flex-wrap items-center gap-2">
           <input
