@@ -1,12 +1,14 @@
 import { useNavigate } from "@tanstack/react-router";
 import { tableAlign } from "@/components/ui/table";
 import { useMemo, useState } from "react";
-import { ArrowDownUp, Check, ChevronRight, Search, XCircle } from "lucide-react";
+import { ArrowDownUp, Check, ChevronDown, Search, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, GroupLabel, settingsRowClass } from "@/components/pos/settings-rows";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu";
+import { defaultHardwareConnections, referenceDrawers } from "@/lib/hardware-connections";
 import { employees } from "@/lib/demo-data";
 import { formatMoney } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
@@ -29,7 +31,9 @@ const td = "px-3 py-3 t-value";
 
 export function CashManagement() {
   const navigate = useNavigate();
-  const { settings, session } = usePos();
+  const { settings, session, updateSettings } = usePos();
+  const drawerPreferences = { ...defaultHardwareConnections, ...settings.hardwareConnections };
+  const drawers = [...referenceDrawers, ...drawerPreferences.addedDrawers];
   const cash = useCashManagement();
   const me = session.name || "Manager";
   const [digits, setDigits] = useState("");
@@ -57,9 +61,20 @@ export function CashManagement() {
     <ScreenBody className="py-4">
       <Caption>Cash Management involves optimizing the handling of cash flows, liquidity, and investments to enhance financial efficiency and stability.</Caption>
       <GroupCard className="mt-3">
-        <Button variant="ghost" className={`${settingsRowClass} h-auto justify-start rounded-none whitespace-normal`} onClick={() => navigate({ to: "/settings/detail/$topic", params: { topic: "cash-drawer" } })}>
-          <span className="min-w-0 flex-1 text-left t-row">Cash Drawer</span><span className="t-value text-muted-foreground">{settings.cashDrawerAssigned}</span><ChevronRight />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" aria-label="Select cash drawer" className={`${settingsRowClass} h-auto w-full justify-start rounded-none whitespace-normal`}>
+              <span className="min-w-0 flex-1 text-left t-row">Cash Drawer</span><span className="max-w-[55%] break-words text-right t-value text-muted-foreground">{settings.cashDrawerAssigned}</span><ChevronDown className="shrink-0" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-72 max-w-[calc(100vw-2rem)]">
+            <DropdownMenuRadioGroup value={settings.cashDrawerAssigned} onValueChange={(name) => updateSettings({ cashDrawerAssigned: name })}>
+              {drawers.map((drawer) => <DropdownMenuRadioItem key={drawer.id} value={drawer.name} className="min-h-11">
+                <span className="min-w-0 break-words"><span className="block t-row">{drawer.name}</span><span className="block t-caption text-muted-foreground">{drawer.type}</span></span>
+              </DropdownMenuRadioItem>)}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </GroupCard>
       <GroupCard className="mt-4">
         {[["Previous Day's Closing Balance", cash.state.previousClose], ["Estimated Cash in Drawer", cash.estimated], ["Opening Till Balance", cash.state.openingTill]].map(([l, v]) =>
