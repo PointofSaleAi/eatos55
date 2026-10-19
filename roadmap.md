@@ -107,5 +107,6 @@
 - [x] Add swipe-left "No show" on guestbook reservation rows with tap-menu parity, undo, persistence and the Profile no-show count; verified on phone, tablet and desktop
 - [x] Open the guestbook with the first guest already selected on wide layouts, and make the reservation left swipe reveal only the "No show" button (undo stays in the tap menu); verified on phone, tablet and desktop
 - [x] Guest list: drop the per-row ⋯ menu for a swipe-revealed red Archive icon (ArchiveRestore in the archived view), make Add New Guest a bare `+`, and move the archived toggle next to it; verified on phone, tablet and desktop
+- [x] Use the uploaded archive-box mark for archive *and* restore on every POS settings screen that has the action (Menus, Categories, Modifiers, Add-Ons, Products, Default Modifiers, Groups, Schedule Information, Timed Pricing, Workforce Employees, Guestbook) — toolbar toggle, swipe-revealed action and editor button — through one shared `ArchiveGlyph`; verified on phone, tablet and desktop, light and dark
 
 - Reservation no-show swipe works with touch and mouse drag: SwipeRow drives both through pointer events (touch is no longer ignored), the row content sits above the revealed action (`z-10`) and `wasDragged()` stops a swipe release from opening the row tap menu.
