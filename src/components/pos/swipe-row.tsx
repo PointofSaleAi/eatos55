@@ -55,9 +55,11 @@ export const SwipeRow = forwardRef<SwipeRowHandle, {
           haptic(action.destructive ? "error" : "medium");
           action.onAction();
         }}
-        style={{ width }}
+        // Fill only the revealed strip (plus an overlap under the row's rounded
+        // edge) and stay hidden at rest, so no colour peeks out of row corners.
+        style={{ width: Math.min(width, -dx + 16), visibility: dx === 0 ? "hidden" : "visible" }}
         className={cn(
-          "absolute inset-y-0 right-0 grid place-items-center text-fs-sm font-extrabold",
+          "absolute inset-y-0 right-0 grid place-items-center rounded-[inherit] pl-4 text-fs-sm font-extrabold",
           action.destructive
             ? "bg-destructive text-destructive-foreground"
             : "bg-primary text-primary-foreground",
