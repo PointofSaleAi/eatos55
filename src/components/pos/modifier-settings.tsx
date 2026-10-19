@@ -1,7 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import { MoneyInput } from "@/components/pos/money-input";
 import { useState, type ReactNode } from "react";
-import { Archive, ChevronRight, Minus, Plus, Search, XCircle } from "lucide-react";
+import { ChevronRight, Minus, Plus, Search, XCircle } from "lucide-react";
+import { ArchiveGlyph, ArchiveSwipeAction } from "@/components/pos/archive-glyph";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, GroupLabel, settingsRowClass } from "@/components/pos/settings-rows";
@@ -59,7 +60,7 @@ function ModifierList({ c, archived, onOpen, onArchive, onBackFromArchive }: { c
         <Button variant="ghost" onClick={() => { setSearching(false); setQ(""); }}>Cancel</Button></div>}
       <div className="flex items-start gap-3">
         <p className="min-w-0 flex-1 t-caption text-muted-foreground">{c.intro}</p>
-        {!archived && <><Button variant="outline" size="icon" aria-label={`Archived ${c.many.toLowerCase()}`} onClick={onArchive}><Archive /></Button>
+        {!archived && <><Button variant="outline" size="icon" aria-label={`Archived ${c.many.toLowerCase()}`} onClick={onArchive}><ArchiveGlyph className="size-4" /></Button>
           <Button size="icon" aria-label={`Add ${c.one.toLowerCase()}`} onClick={() => onOpen(null)}><Plus /></Button></>}
       </div>
       <GroupCard className="mt-4">
@@ -69,7 +70,7 @@ function ModifierList({ c, archived, onOpen, onArchive, onBackFromArchive }: { c
         {list.map((m) => {
           const s = summary(m);
           return <SwipeRow key={m.id} className="rounded-none border-b border-border last:border-0"
-            action={{ label: archived ? "Restore" : "Archive", destructive: !archived, onAction: () => { patch(m.id, { archived: !archived }); toast.success(`${c.one} ${archived ? "restored" : "archived"}`); } }}>
+            action={{ label: archived ? "Restore" : "Archive", destructive: !archived, icon: <ArchiveSwipeAction archived={archived} />, onAction: () => { patch(m.id, { archived: !archived }); toast.success(`${c.one} ${archived ? "restored" : "archived"}`); } }}>
             <button type="button" onClick={() => onOpen(m.id)} className="w-full bg-surface px-4 py-2 text-left hover:bg-muted">
               <div className={cn(cols, "hidden min-h-10 sm:grid")}>
                 <span className="min-w-0 break-words t-row">{m.name}</span>
@@ -207,7 +208,7 @@ function ModifierEditor({ c, id, onBack }: { c: Copy; id: string | null; onBack:
       {saved && <GroupCard className="mt-4">
         <Button variant="ghost" className={cn(settingsRowClass, "h-auto justify-center rounded-none", !draft.archived && "text-destructive")}
           onClick={() => { patch(draft.id, { archived: !draft.archived }); toast.success(`${c.one} ${draft.archived ? "restored" : "archived"}`); onBack(); }}>
-          {draft.archived ? `Restore ${c.one}` : `Archive ${c.one}`}</Button>
+          <ArchiveGlyph className="size-4" />{draft.archived ? `Restore ${c.one}` : `Archive ${c.one}`}</Button>
       </GroupCard>}
       <Caption>Changes save automatically. Demo only — doesn't change New Order or prices.</Caption>
     </ScreenBody>

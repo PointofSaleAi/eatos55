@@ -1,7 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import { tableAlign } from "@/components/ui/table";
 import { useMemo, useState, type ReactNode } from "react";
-import { Archive, ChevronDown, ChevronRight, ChevronUp, Circle, CircleCheck, Copy, GripVertical, Plus, Search, XCircle } from "lucide-react";
+import { ChevronDown, ChevronRight, ChevronUp, Circle, CircleCheck, Copy, GripVertical, Plus, Search, XCircle } from "lucide-react";
+import { ArchiveGlyph, ArchiveSwipeAction } from "@/components/pos/archive-glyph";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, settingsRowClass } from "@/components/pos/settings-rows";
@@ -44,7 +45,7 @@ function MenuList({ archived, onOpen, onArchive, onBackFromArchive }: { archived
         <Button variant="ghost" onClick={() => { setSearching(false); setQ(""); }}>Cancel</Button></div>}
       <div className="flex items-start gap-3">
         <p className="min-w-0 flex-1 t-caption text-muted-foreground">Menu featuring a fusion of bold flavors and fresh ingredients. From savory starters to decadent desserts, each dish is meticulously crafted to satisfy your culinary cravings.</p>
-        {!archived && <><Button variant="outline" size="icon" aria-label="Archived menus" onClick={onArchive}><Archive /></Button>
+        {!archived && <><Button variant="outline" size="icon" aria-label="Archived menus" onClick={onArchive}><ArchiveGlyph className="size-4" /></Button>
           <Button size="icon" aria-label="Add menu" onClick={() => onOpen(null)}><Plus /></Button></>}
       </div>
       <GroupCard className="mt-4">
@@ -54,7 +55,7 @@ function MenuList({ archived, onOpen, onArchive, onBackFromArchive }: { archived
         {list.map((m) => {
           const d = menuDates(m);
           return <SwipeRow key={m.id} className="border-b border-border last:border-0"
-            action={{ label: archived ? "Restore" : "Archive", destructive: !archived, onAction: () => { patch(m.id, { archived: !archived }); toast.success(archived ? "Menu restored" : "Menu archived"); } }}>
+            action={{ label: archived ? "Restore" : "Archive", destructive: !archived, icon: <ArchiveSwipeAction archived={archived} />, onAction: () => { patch(m.id, { archived: !archived }); toast.success(archived ? "Menu restored" : "Menu archived"); } }}>
             <div className="grid min-h-12 grid-cols-[minmax(0,1.4fr)_4rem_minmax(0,1fr)_minmax(0,1fr)_1.25rem] items-center gap-2 bg-surface px-4 py-2 hover:bg-muted">
               <button type="button" className="min-w-0 break-words text-left t-row" onClick={() => onOpen(m.id)}>{m.name}</button>
               <Switch className="justify-self-center" aria-label={`${m.name} status`} checked={m.active} disabled={archived} onCheckedChange={(active) => patch(m.id, { active })} />
@@ -151,7 +152,7 @@ function MenuEditor({ id, onBack }: { id: string | null; onBack: () => void }) {
         <Row label="Revenue Centers" value={draft.revenueCenters.length} sub={draft.revenueCenters.join(", ") || undefined} onClick={() => setPopup({ kind: "revenue" })} />
       </GroupCard>
       {existing && <Button variant="outline" className="mt-6 min-h-ctl-lg w-full" onClick={() => { save({ ...draft, archived: !draft.archived }); toast.success(draft.archived ? "Menu restored" : "Menu archived"); onBack(); }}>
-        {draft.archived ? "Restore Menu" : "Archive Menu"}</Button>}
+        <ArchiveGlyph className="size-4" />{draft.archived ? "Restore Menu" : "Archive Menu"}</Button>}
       <Caption>Changes save automatically. Demo only — menus don't change what New Order sells.</Caption>
     </ScreenBody>
 

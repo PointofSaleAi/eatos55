@@ -1,10 +1,9 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CreditCard as PayCard, Banknote as PayCash, Gift as PayGift, Award as PayPoints, ChevronDown as PayDown, ArrowUpDown as PaySort, House as Home, Camera, Pencil, Trash2 } from "lucide-react";
-import archiveGlyphAsset from "@/assets/archive-glyph.png.asset.json";
+import { ArchiveGlyph } from "@/components/pos/archive-glyph";
 
 import {
-  ArchiveRestore,
   ArrowLeft,
   Armchair,
   Banknote,
@@ -238,24 +237,6 @@ const initialsTone = (name: string) => {
   return tones[[...name].reduce((a, c) => a + c.charCodeAt(0), 0) % tones.length];
 };
 
-/** The uploaded archive mark, tinted by the surrounding text colour so it follows the theme. */
-function ArchiveGlyph({ className }: { className?: string | undefined }) {
-  const mask = `url(${archiveGlyphAsset.url})`;
-  return (
-    <span
-      aria-hidden="true"
-      className={cn("inline-block shrink-0 bg-current", className)}
-      style={{
-        maskImage: mask,
-        WebkitMaskImage: mask,
-        maskSize: "contain",
-        WebkitMaskSize: "contain",
-        maskRepeat: "no-repeat",
-        WebkitMaskRepeat: "no-repeat",
-      }}
-    />
-  );
-}
 
 
 /** One guest row: swipe left to archive the guest (or restore them in the archived view). */
@@ -282,7 +263,7 @@ function GuestListRow({
       action={{
         label: archived ? "Restore to list" : "Archive guest",
         muted: !archived,
-        icon: archived ? <ArchiveRestore className="size-5" /> : <ArchiveGlyph className="size-5" />,
+        icon: <ArchiveGlyph className="size-5" />,
         onAction: () => (archived ? onRestore(row.id) : onArchive(row.id)),
       }}
 
