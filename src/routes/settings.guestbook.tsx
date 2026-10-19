@@ -160,11 +160,14 @@ function DarkPill({ children, onClick }: { children: ReactNode; onClick?: () => 
 function TagEditor({
   values,
   addLabel,
+  tone = "ghost",
   onAdd,
   onRemove,
 }: {
   values: string[];
   addLabel: string;
+  /** "dark" renders the reference-style pill; "ghost" a quiet inline control. */
+  tone?: "ghost" | "dark";
   onAdd: (value: string) => void;
   onRemove: (value: string) => void;
 }) {
@@ -215,6 +218,8 @@ function TagEditor({
           placeholder={addLabel}
           className="min-h-tap min-w-40 flex-1 bg-transparent text-fs-sm outline-none"
         />
+      ) : tone === "dark" ? (
+        <DarkPill onClick={() => setAdding(true)}>{addLabel}</DarkPill>
       ) : (
         <Button
           variant="ghost"
