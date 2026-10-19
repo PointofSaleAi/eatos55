@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { Archive, ArchiveRestore, ChevronRight, Copy, Plus, Search, CheckSquare } from "lucide-react";
+import { ChevronRight, Copy, Plus, Search, CheckSquare } from "lucide-react";
+import { ArchiveGlyph } from "@/components/pos/archive-glyph";
 import { toast } from "sonner";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, settingsRowClass } from "@/components/pos/settings-rows";
@@ -61,16 +62,16 @@ export function ScheduleInformation() {
         </GroupCard>
         {error && <p role="alert" className="mt-4 t-caption text-destructive">{error}</p>}
         <div className="mt-6 flex flex-wrap justify-end gap-2">
-          {schedules.some(schedule => schedule.id === draft.id) && canManageSettings && <Button variant="outline" onClick={() => setArchiveTarget(draft)}>{draft.archived ? <ArchiveRestore /> : <Archive />}{draft.archived ? "Restore" : "Archive"}</Button>}
+          {schedules.some(schedule => schedule.id === draft.id) && canManageSettings && <Button variant="outline" onClick={() => setArchiveTarget(draft)}><ArchiveGlyph className="size-4" />{draft.archived ? "Restore" : "Archive"}</Button>}
           <Button variant="outline" onClick={() => { setDraft(null); setError(""); }}>Cancel</Button><Button disabled={!canManageSettings} onClick={save}>Save</Button>
         </div>
       </> : <>
-        <div className="mb-5 flex items-center gap-3"><div className="min-w-0 flex-1"><p className="t-caption text-muted-foreground">Manage and create the different operating schedules of your restaurant</p>{archived && <p className="mt-2 t-row font-bold">Archived Schedules</p>}</div><Button variant={archived ? "default" : "outline"} size="icon" aria-label={archived ? "Show active schedules" : "Show archived schedules"} title={archived ? "Show active schedules" : "Archive"} onClick={() => setArchived(value => !value)}><Archive /></Button><Button size="icon" aria-label="Add new schedule" title="Add New" disabled={!canManageSettings} onClick={() => openDraft({ id: `schedule-${crypto.randomUUID()}`, name: "", startDate: "", endDate: "", archived: false, days: emptyScheduleDays() })}><Plus /></Button></div>
+        <div className="mb-5 flex items-center gap-3"><div className="min-w-0 flex-1"><p className="t-caption text-muted-foreground">Manage and create the different operating schedules of your restaurant</p>{archived && <p className="mt-2 t-row font-bold">Archived Schedules</p>}</div><Button variant={archived ? "default" : "outline"} size="icon" aria-label={archived ? "Show active schedules" : "Show archived schedules"} title={archived ? "Show active schedules" : "Archive"} onClick={() => setArchived(value => !value)}><ArchiveGlyph className="size-4" /></Button><Button size="icon" aria-label="Add new schedule" title="Add New" disabled={!canManageSettings} onClick={() => openDraft({ id: `schedule-${crypto.randomUUID()}`, name: "", startDate: "", endDate: "", archived: false, days: emptyScheduleDays() })}><Plus /></Button></div>
         {searchOpen && <div className="relative mb-4"><Search className="absolute left-3 top-3 size-4 text-muted-foreground" /><Input autoFocus aria-label="Search schedules" placeholder="Search" value={query} onChange={event => setQuery(event.target.value)} className="pl-10" /></div>}
         <GroupCard>
           <div className="hidden grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_1rem] gap-3 border-b border-border px-4 py-4 t-caption font-bold sm:grid"><span>Name</span><span>Start Date</span><span>End Date</span><span className="text-right">Days</span><span /></div>
           {visible.map(schedule => <div key={schedule.id} className="relative overflow-hidden border-b border-border last:border-b-0">
-            {canManageSettings && revealedId === schedule.id && <Button variant="ghost" className="absolute inset-y-0 right-0 h-full w-24 flex-col gap-1 rounded-none bg-muted text-foreground" aria-label={`${schedule.archived ? "Restore" : "Archive"} ${schedule.name}`} onClick={() => setArchiveTarget(schedule)}>{schedule.archived ? <ArchiveRestore className="size-5" /> : <Archive className="size-5" />}<span className="t-caption">{schedule.archived ? "Restore" : "Archive"}</span></Button>}
+            {canManageSettings && revealedId === schedule.id && <Button variant="ghost" className="absolute inset-y-0 right-0 h-full w-24 flex-col gap-1 rounded-none bg-muted text-foreground" aria-label={`${schedule.archived ? "Restore" : "Archive"} ${schedule.name}`} onClick={() => setArchiveTarget(schedule)}><ArchiveGlyph className="size-5" /><span className="t-caption">{schedule.archived ? "Restore" : "Archive"}</span></Button>}
             <Button variant="ghost" aria-expanded={revealedId === schedule.id} className={`relative grid h-auto w-full touch-pan-y grid-cols-[minmax(0,1fr)_1rem] gap-3 rounded-none bg-surface px-4 py-4 text-left whitespace-normal transition-transform duration-200 motion-reduce:transition-none sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.2fr)_1rem] ${revealedId === schedule.id ? "-translate-x-24" : "translate-x-0"}`}
               onPointerDown={event => { if (!canManageSettings || (event.pointerType === "mouse" && event.button !== 0)) return; swipe.current = { id: schedule.id, x: event.clientX, y: event.clientY, horizontal: false }; }}
               onPointerMove={event => {
