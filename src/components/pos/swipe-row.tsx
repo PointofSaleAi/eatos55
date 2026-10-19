@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { haptic } from "@/lib/haptics";
 
@@ -12,16 +12,17 @@ export type SwipeAction = {
  * Row with an optional swipe-left action. Works with touch and with a mouse or
  * trackpad drag, and keeps vertical scrolling. Every swipe action must also be
  * reachable by tap elsewhere in the UI, so nothing is swipe-only.
+ *
+ * `wasDragged()` tells a caller whether the last interaction was a drag, so a
+ * row's tap control can ignore the click a swipe release leaves behind.
  */
-export function SwipeRow({
-  children,
-  action,
-  className,
-}: {
+export type SwipeRowHandle = { wasDragged: () => boolean };
+
+export const SwipeRow = forwardRef<SwipeRowHandle, {
   children: ReactNode;
   action?: SwipeAction | undefined;
   className?: string | undefined;
-}) {
+}>(function SwipeRow({ children, action, className }, ref) {
   const [dx, setDx] = useState(0);
   const startX = useRef<number | null>(null);
   const startY = useRef<number | null>(null);
@@ -29,6 +30,8 @@ export function SwipeRow({
   const locked = useRef(false);
   const dragging = useRef(false);
   const width = 96;
+
+  useImperativeHandle(ref, () => ({ wasDragged: () => dragging.current }), []);
 
   if (!action) return <div className={className}>{children}</div>;
 
