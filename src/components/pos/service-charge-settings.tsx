@@ -128,7 +128,7 @@ export function ServiceChargeSettings() {
     </Dialog>
   </>;
 
-  const list = charges.filter(c => c.name.toLowerCase().includes(query.trim().toLowerCase()));
+  const list = charges.filter(c => !c.archived && c.name.toLowerCase().includes(query.trim().toLowerCase()));
   return <>
     <SubHeader title="Service Charge" backLabel="Payments" onBack={() => void navigate({ to: "/settings/payments" })} right={<Button variant="ghost" size="icon" aria-label="Search service charges" title="Search service charges" onClick={() => { setSearchOpen(v => !v); setQuery(""); }}><Search /></Button>} />
     <ScreenBody className="py-4">
