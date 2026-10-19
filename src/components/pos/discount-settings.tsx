@@ -44,7 +44,12 @@ export function DiscountSettings() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [copyFrom, setCopyFrom] = useState<number | null>(null);
+  const [copyTargets, setCopyTargets] = useState<number[]>([]);
+  const [dayQuery, setDayQuery] = useState("");
   const exists = !!draft && discounts.some(d => d.id === draft.id);
+  const days = draft && draft.days?.length === 7 ? draft.days : defaultDiscountDays();
+  const updateDay = (index: number, patch: Partial<DiscountDay>) => { if (draft) update({ days: days.map((d, i) => i === index ? { ...d, ...patch } : d) }); };
 
   const update = (patch: Partial<DiscountRule>) => {
     if (!draft || !canManageSettings) return;
