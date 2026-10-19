@@ -572,7 +572,7 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
           <div className="bg-surface"><StatCell value={money(avgTip)} label="Average Tip" /></div>
         </div>
 
-        <div className="grid gap-3 @xl:gap-4 @lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="grid gap-3 @xl:gap-4 @lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)]">
           <div className="rounded-xl border border-border bg-surface p-3 @xl:p-4">
             <dl className="divide-y divide-border">
               {[
@@ -590,7 +590,7 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
           </div>
           <div className="rounded-xl border border-border bg-surface p-3 @xl:p-4">
             <h4 className="text-fs-sm font-bold uppercase tracking-wide text-muted-foreground">Loyalty</h4>
-            <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 @xl:gap-x-4">
+            <div className="mt-3 grid grid-cols-1 gap-y-2 @xl:grid-cols-2 @xl:gap-x-4 @xl:gap-y-3">
               <MiniStat value={0} label="Earned" />
               <MiniStat value={0} label="Redeemed" />
               <MiniStat value={0} label="Available" />
@@ -599,7 +599,7 @@ function GuestProfile({ guest, onBook }: { guest: GuestRow; onBook: () => void }
           </div>
           <div className="rounded-xl border border-border bg-surface p-3 @xl:p-4">
             <h4 className="text-fs-sm font-bold uppercase tracking-wide text-muted-foreground">Visits</h4>
-            <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 @xl:gap-x-4">
+            <div className="mt-3 grid grid-cols-1 gap-y-2 @xl:grid-cols-2 @xl:gap-x-4 @xl:gap-y-3">
               <MiniStat value={orders.length} label="Total" />
               <MiniStat value={extras.visits.length} label="Upcoming" />
               <MiniStat value={0} label="Canceled" />
