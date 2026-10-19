@@ -1,14 +1,11 @@
 import type { LucideIcon } from "lucide-react";
-import { brand } from "@/lib/brand";
 import {
   BadgePercent,
   Boxes,
   CalendarClock,
-  CircleDollarSign,
   CircleDot,
   Coins,
   CreditCard,
-  Globe,
   Grid2x2,
   HandCoins,
   Inbox,
@@ -16,7 +13,7 @@ import {
   Layers,
   LayoutList,
   PencilRuler,
-  Percent,
+
   Printer,
   Receipt,
   ReceiptText,
@@ -107,39 +104,6 @@ export const settingsDetails: Record<string, DetailScreen> = {
       { kind: "text", label: "Start Time", field: "restaurantStartTime" },
       { kind: "text", label: "End Time", field: "restaurantEndTime" },
       { kind: "choice", label: "Day and Week Start / end", field: "restaurantDayBoundary", options: ["Same Day", "Next Day"] },
-    ],
-  },
-  language: {
-    title: "Language",
-    backLabel: "General",
-    icon: Globe,
-    rows: [{ kind: "choice", label: "Language", field: "language", options: ["English"] }],
-    note: "Additional language packs are installed from Back Office.",
-  },
-  currency: {
-    title: "Currency",
-    backLabel: "General",
-    icon: CircleDollarSign,
-    rows: [
-      {
-        kind: "choice",
-        label: "Currency",
-        field: "currency",
-        options: brand.currencyOptions,
-      },
-    ],
-  },
-  "tax-alias": {
-    title: "Tax Alias",
-    backLabel: "General",
-    icon: Percent,
-    rows: [
-      {
-        kind: "choice",
-        label: "Alias shown on receipts",
-        field: "taxAlias",
-        options: ["Tax", "VAT", "GST"],
-      },
     ],
   },
   "schedule-info": {

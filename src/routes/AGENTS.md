@@ -1,3 +1,4 @@
 - Guestbook feedback uses original source assets and row-local expansion state so opening one review never expands neighboring reviews.
 - Guestbook order history derives summaries and expandable visit, bill and item details from the selected guest's saved tickets; it remains read-only and never loads a ticket into the order draft.
 - Guestbook most-ordered item popups derive the complete dish-frequency list from selected-guest tickets; sorting is local and read-only, while reservation legends use a shared Popover for safe dismissal across layouts.
+- General settings keeps Language, Currency and Tax Alias as static value rows with no detail screens, while Device Name, Restaurant Information, End Of Day and About stay navigable.
