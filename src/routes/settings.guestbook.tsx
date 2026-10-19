@@ -1185,11 +1185,11 @@ function HistoryTab({ guest }: { guest: GuestRow }) {
     <section aria-label="Order history" className="@container space-y-4">
       <div>
         <h3 className="mb-2 text-fs-sm font-bold uppercase tracking-wide text-muted-foreground">Summary</h3>
-        <div className="grid grid-cols-2 gap-2 @lg:grid-cols-3 @3xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 rounded-xl border border-border bg-surface p-2 @xl:grid-cols-3 @3xl:grid-cols-5">
           {cards.map(([label, icon, value]) => (
-            <div key={label} className="flex min-w-0 items-center gap-2 rounded-lg bg-surface-muted p-3">
-              <span className="grid size-8 shrink-0 place-items-center rounded-full bg-surface [&_svg]:size-4">{icon}</span>
-              <div className="min-w-0"><p className="break-words text-fs-sm font-bold">{value}</p><p className="text-fs-xs text-muted-foreground">{label}</p></div>
+            <div key={label} className="flex items-center gap-3 rounded-lg bg-surface-muted p-3">
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-surface [&_svg]:size-4">{icon}</span>
+              <div className="min-w-0"><p className="break-words font-bold">{value}</p><p className="text-fs-xs text-muted-foreground">{label}</p></div>
             </div>
           ))}
         </div>
