@@ -156,9 +156,9 @@ function Editor({ id, onBack }: { id: string | null; onBack: () => void }) {
       </GroupCard>
       <GroupLabel>MODIFIER GROUP ADVANCED</GroupLabel>
       <GroupCard>{advanced}</GroupCard>
-      {stored && <Button variant="outline" className="mt-6 w-full" onClick={() => {
+      {stored && <Button variant="outline" aria-label={stored.archived ? "Restore group" : "Archive group"} title={stored.archived ? "Restore group" : "Archive group"} className="mt-6 w-full" onClick={() => {
         patch(stored.id, { archived: !stored.archived }); toast.success(`Group ${stored.archived ? "restored" : "archived"}`); onBack();
-      }}><ArchiveGlyph className="size-4" />{stored.archived ? "Restore" : "Archive"}</Button>}
+      }}><ArchiveGlyph className="size-4" /></Button>}
     </ScreenBody>
 
     <Dialog open={popup === "type"} onOpenChange={(o) => { if (!o) setPopup(null); }}>

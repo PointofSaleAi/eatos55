@@ -155,9 +155,9 @@ function CategoryEditor({ id, onBack }: { id: string | null; onBack: () => void 
         <Row label="Products" value={draft.products.length || "Select Products"} sub={draft.products.join(", ") || undefined} onClick={() => setPopup("products")} />
       </GroupCard>
       {saved && <GroupCard className="mt-4">
-        <Button variant="ghost" className={cn(settingsRowClass, "h-auto justify-center rounded-none", !draft.archived && "text-destructive")}
+        <Button variant="ghost" aria-label={draft.archived ? "Restore category" : "Archive category"} title={draft.archived ? "Restore category" : "Archive category"} className={cn(settingsRowClass, "h-auto justify-center rounded-none", !draft.archived && "text-destructive")}
           onClick={() => { patch(draft.id, { archived: !draft.archived }); toast.success(draft.archived ? "Category restored" : "Category archived"); onBack(); }}>
-          <ArchiveGlyph className="size-4" />{draft.archived ? "Restore Category" : "Archive Category"}</Button>
+          <ArchiveGlyph className="size-4" /></Button>
       </GroupCard>}
       <Caption>Changes save automatically. Demo only — doesn't change New Order or printing.</Caption>
     </ScreenBody>

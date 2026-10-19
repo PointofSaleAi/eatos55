@@ -215,9 +215,9 @@ function ProductEditor({ id, onBack }: { id: string | null; onBack: () => void }
       </GroupCard>
 
       {saved && <GroupCard className="mt-4">
-        <Button variant="ghost" className={cn(settingsRowClass, "h-auto justify-center rounded-none", !draft.archived && "text-destructive")}
+        <Button variant="ghost" aria-label={draft.archived ? "Restore product" : "Archive product"} title={draft.archived ? "Restore product" : "Archive product"} className={cn(settingsRowClass, "h-auto justify-center rounded-none", !draft.archived && "text-destructive")}
           onClick={() => { patch(draft.id, { archived: !draft.archived }); toast.success(`Product ${draft.archived ? "restored" : "archived"}`); onBack(); }}>
-          <ArchiveGlyph className="size-4" />{draft.archived ? "Restore Product" : "Archive Product"}</Button>
+          <ArchiveGlyph className="size-4" /></Button>
       </GroupCard>}
       <Caption>Changes save automatically. Demo only — doesn't change New Order, prices, printing or taxes.</Caption>
     </ScreenBody>

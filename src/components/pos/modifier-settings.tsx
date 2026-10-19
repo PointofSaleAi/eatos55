@@ -206,9 +206,9 @@ function ModifierEditor({ c, id, onBack }: { c: Copy; id: string | null; onBack:
       </GroupCard>
 
       {saved && <GroupCard className="mt-4">
-        <Button variant="ghost" className={cn(settingsRowClass, "h-auto justify-center rounded-none", !draft.archived && "text-destructive")}
+        <Button variant="ghost" aria-label={draft.archived ? `Restore ${c.one.toLowerCase()}` : `Archive ${c.one.toLowerCase()}`} title={draft.archived ? `Restore ${c.one.toLowerCase()}` : `Archive ${c.one.toLowerCase()}`} className={cn(settingsRowClass, "h-auto justify-center rounded-none", !draft.archived && "text-destructive")}
           onClick={() => { patch(draft.id, { archived: !draft.archived }); toast.success(`${c.one} ${draft.archived ? "restored" : "archived"}`); onBack(); }}>
-          <ArchiveGlyph className="size-4" />{draft.archived ? `Restore ${c.one}` : `Archive ${c.one}`}</Button>
+          <ArchiveGlyph className="size-4" /></Button>
       </GroupCard>}
       <Caption>Changes save automatically. Demo only — doesn't change New Order or prices.</Caption>
     </ScreenBody>
