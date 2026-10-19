@@ -18,6 +18,7 @@ import {
   Star,
   StickyNote,
   Tag,
+  Users,
   Utensils,
   UtensilsCrossed,
   X,
@@ -251,7 +252,7 @@ function NoteRow({
   return (
     <div className="border-b border-border py-3 last:border-b-0">
       <div className="flex items-center gap-2.5">
-        {icon}
+        <Icon />
         <span className="font-bold">{title}</span>
       </div>
       {editing ? (
@@ -381,6 +382,7 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
   const tips = orders.reduce((sum, ticket) => sum + (ticket.tips ?? 0), 0);
   const avgTip = orders.length ? tips / orders.length : 0;
   const lastVisit = orders[0]?.date ?? "-";
+  const firstVisit = orders[orders.length - 1]?.date ?? "-";
 
   const itemTotals = new Map<string, number>();
   for (const ticket of guest.tickets) {
@@ -421,7 +423,7 @@ function GuestProfile({ guest }: { guest: GuestRow }) {
             <dl className="divide-y divide-border">
               {[
                 ["Loyalty No.", "-"],
-                ["Since", orders.length ? orders[orders.length - 1].date : "-"],
+                ["Since", firstVisit],
                 ["Birthday", "-"],
                 ["Anniversary", "-"],
               ].map(([label, value]) => (
