@@ -1,6 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { CreditCard as PayCard, Banknote as PayCash, Gift as PayGift, Award as PayPoints, ChevronDown as PayDown, ArrowUpDown as PaySort } from "lucide-react";
+import { CreditCard as PayCard, Banknote as PayCash, Gift as PayGift, Award as PayPoints, ChevronDown as PayDown, ArrowUpDown as PaySort, House as Home } from "lucide-react";
 import {
   Archive,
   ArchiveRestore,
