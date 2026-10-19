@@ -1563,6 +1563,7 @@ function Guestbook() {
 /** Full-page Add Guest form (reference layout, app theme). Demo-only: saves to the device guest directory. */
 function NewGuestPage({ onCancel, onSave }: { onCancel: () => void; onSave: (input: { name: string; email?: string | undefined; phone?: string | undefined }) => void }) {
   const [open, setOpen] = useState<Record<string, boolean>>({});
+  const [saved, setSaved] = useState<{ "Vehicle Details": FormValues[]; Address: FormValues[] }>({ "Vehicle Details": [], Address: [] });
   const [f, setF] = useState({ first: "", last: "", phone: "", email: "", dob: "", since: "", anniversary: "", note: "" });
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF((d) => ({ ...d, [k]: e.target.value }));
   const valid = f.first.trim() && f.last.trim() && f.phone.replace(/\D/g, "").length >= 10 && /.+@.+\..+/.test(f.email);
@@ -1570,7 +1571,7 @@ function NewGuestPage({ onCancel, onSave }: { onCancel: () => void; onSave: (inp
   const input = "min-w-0 flex-1 bg-transparent text-right text-fs-sm outline-none placeholder:text-muted-foreground";
   const req = <span className="text-destructive"> *</span>;
   return <>
-    <SubHeader title="New Guest" backLabel="Guestbook" onBack={onCancel} />
+    <SubHeader title="New Guest" backLabel="Guestbook" onBack={() => (valid ? onSave({ name: `${f.first.trim()} ${f.last.trim()}`, email: f.email.trim(), phone: f.phone.trim() }) : onCancel())} />
     <ScreenBody>
       <div className="w-full space-y-6">
         <div className="grid gap-4 md:grid-cols-[6rem_minmax(0,1fr)_minmax(0,1fr)]">
@@ -1597,14 +1598,14 @@ function NewGuestPage({ onCancel, onSave }: { onCancel: () => void; onSave: (inp
         <div className="grid gap-6 sm:grid-cols-2">
           {(["Vehicle Details", "Address"] as const).map((t) => <section key={t}>
             <h3 className="mb-2 text-fs-sm font-bold">{t}</h3>
-            {open[t] ? <InlineForm kind={t} onClose={() => setOpen((o) => ({ ...o, [t]: false }))} /> :
-            <button type="button" onClick={() => setOpen((o) => ({ ...o, [t]: true }))} className="grid h-24 w-full max-w-xs place-items-center rounded-xl border-2 border-dashed border-border text-fs-xs text-muted-foreground hover:bg-muted"><span className="grid place-items-center gap-1"><Plus className="size-5" />{t === "Address" ? "Add Address" : "Add Vehicle"}</span></button>}
+            <div className="grid gap-3 @container sm:grid-cols-2">
+              {saved[t].map((v, i) => <SavedCard key={i} kind={t} v={v} />)}
+              {open[t] ? <div className="sm:col-span-2"><InlineForm kind={t} onClose={(v) => { setOpen((o) => ({ ...o, [t]: false })); if (v) setSaved((d) => ({ ...d, [t]: [...d[t], v] })); }} /></div> :
+              <button type="button" onClick={() => setOpen((o) => ({ ...o, [t]: true }))} className="grid min-h-24 w-full place-items-center rounded-xl border-2 border-dashed border-border text-fs-xs text-muted-foreground hover:bg-muted"><span className="grid place-items-center gap-1"><Plus className="size-5" />{t === "Address" ? "Add Address" : "Add Vehicle"}</span></button>}
+            </div>
           </section>)}
         </div>
-        <div className="flex justify-end gap-2">
-          <Button variant="ghost" onClick={onCancel}>Cancel</Button>
-          <Button disabled={!valid} onClick={() => onSave({ name: `${f.first.trim()} ${f.last.trim()}`, email: f.email.trim(), phone: f.phone.trim() })}>Add Guest</Button>
-        </div>
+        <p className="text-fs-xs text-muted-foreground">Saved automatically when you go back once name, phone and email are filled. Demo only.</p>
       </div>
     </ScreenBody>
   </>;
@@ -1618,19 +1619,46 @@ const VEHICLE_BRANDS: Record<string, string[]> = {
 };
 const VEHICLE_COLORS = ["Black", "White", "Silver", "Grey", "Red", "Blue", "Green"];
 
+type FormValues = Partial<Record<"number" | "type" | "color" | "brand" | "label" | "phone" | "street" | "city" | "state" | "zip" | "country", string>>;
+const DEMO_ADDRESSES = [
+  { street: "350 Fifth Avenue", city: "New York", state: "NY", zip: "10118", country: "United States" },
+  { street: "1600 Amphitheatre Parkway", city: "Mountain View", state: "CA", zip: "94043", country: "United States" },
+  { street: "233 S Wacker Drive", city: "Chicago", state: "IL", zip: "60606", country: "United States" },
+  { street: "1 Ocean Drive", city: "Miami Beach", state: "FL", zip: "33139", country: "United States" },
+  { street: "400 Broad Street", city: "Seattle", state: "WA", zip: "98109", country: "United States" },
+  { street: "100 Congress Avenue", city: "Austin", state: "TX", zip: "78701", country: "United States" },
+  { street: "500 Fifth Avenue", city: "New York", state: "NY", zip: "10110", country: "United States" },
+  { street: "200 Santa Monica Pier", city: "Santa Monica", state: "CA", zip: "90401", country: "United States" },
+];
+
+function SavedCard({ kind, v }: { kind: "Vehicle Details" | "Address"; v: FormValues }) {
+  const vehicle = kind === "Vehicle Details";
+  return <div className="flex min-h-24 items-center gap-4 rounded-xl border border-border bg-surface p-4">
+    {vehicle ? <Car className="size-5 shrink-0 text-muted-foreground" /> : <Home className="size-5 shrink-0 text-muted-foreground" />}
+    <div className="min-w-0">
+      <p className="break-words text-fs-sm font-bold">{vehicle ? [v.brand, v.type].filter(Boolean).join(" ") : v.label}</p>
+      <p className="break-words text-fs-xs text-muted-foreground">{vehicle ? [v.number, v.color].filter(Boolean).join(" · ") : [v.street, v.city, `${v.state ?? ""} ${v.zip ?? ""}`.trim()].filter(Boolean).join(", ")}</p>
+    </div>
+  </div>;
+}
+
 function L({ t, r, children }: { t: string; r?: boolean; children: ReactNode }) {
   return <label className="block space-y-1.5"><span className="text-fs-xs font-bold text-muted-foreground">{t}{r ? <span className="text-destructive">*</span> : null}</span>{children}</label>;
 }
 
 /** Collapsible New Vehicle / New Address form inside the New Guest page (demo-only). */
-function InlineForm({ kind, onClose }: { kind: "Vehicle Details" | "Address"; onClose: () => void }) {
-  const [v, setV] = useState<Partial<Record<"number" | "type" | "color" | "brand" | "label" | "phone" | "street" | "city" | "state" | "zip" | "country", string>>>({ label: "Home" });
+function InlineForm({ kind, onClose }: { kind: "Vehicle Details" | "Address"; onClose: (v?: FormValues) => void }) {
+  const [v, setV] = useState<FormValues>({ label: "Home" });
+  const [suggest, setSuggest] = useState(false);
+  const q = (v.street ?? "").trim().toLowerCase();
+  const matches = q ? DEMO_ADDRESSES.filter((a) => `${a.street} ${a.city} ${a.state} ${a.zip}`.toLowerCase().includes(q)).slice(0, 5) : [];
+  const complete = kind === "Vehicle Details" ? !!(v.number?.trim() && v.brand) : !!(v.street?.trim() && v.city?.trim() && v.state?.trim() && v.zip?.trim());
   const set = (k: "color" | "brand" | "label" | "phone" | "street" | "city" | "state" | "zip" | "country") => (e: { target: { value: string } }) => setV((d) => ({ ...d, [k]: e.target.value }));
   const field = "min-h-ctl-md w-full rounded-lg border border-border bg-surface-muted px-3 text-fs-sm outline-none placeholder:text-muted-foreground focus:border-foreground disabled:opacity-60";
   const vehicle = kind === "Vehicle Details";
   return (
     <div className="rounded-xl border border-border bg-surface">
-      <button type="button" onClick={onClose} aria-label="Collapse form" className="flex w-full items-center justify-between border-b border-border px-4 py-3 text-fs-sm font-bold">
+      <button type="button" onClick={() => onClose(complete ? v : undefined)} aria-label="Collapse form" className="flex w-full items-center justify-between border-b border-border px-4 py-3 text-fs-sm font-bold">
         {vehicle ? "New Vehicle" : "New Address"}<PayDown className="size-4 rotate-180" />
       </button>
       <div className="space-y-3 p-4">
@@ -1642,7 +1670,10 @@ function InlineForm({ kind, onClose }: { kind: "Vehicle Details" | "Address"; on
         </> : <>
           <L t="Label"><select aria-label="Address label" value={v.label} onChange={set("label")} className={field}>{["Home", "Work", "Other"].map((x) => <option key={x}>{x}</option>)}</select></L>
           <L t="Phone Number"><div className="flex gap-2"><span className="grid min-h-ctl-md shrink-0 place-items-center rounded-lg border border-border bg-surface-muted px-3 text-fs-sm">🇺🇸 +1</span><input aria-label="Address phone" inputMode="tel" placeholder="(201) 555-0123" value={v.phone ?? ""} onChange={set("phone")} className={field} /></div></L>
-          <L t="Street Address" r><input aria-label="Street address" placeholder="Start typing an address..." value={v.street ?? ""} onChange={set("street")} className={field} /></L>
+          <div className="relative"><L t="Street Address" r><input aria-label="Street address" autoComplete="off" placeholder="Start typing an address..." value={v.street ?? ""} onFocus={() => setSuggest(true)} onBlur={() => setTimeout(() => setSuggest(false), 150)} onChange={(e) => { set("street")(e); setSuggest(true); }} className={field} /></L>
+            {suggest && matches.length ? <ul role="listbox" aria-label="Address suggestions" className="absolute inset-x-0 top-full z-20 mt-1 overflow-hidden rounded-lg border border-border bg-surface shadow-lg">
+              {matches.map((a) => <li key={a.street + a.zip}><button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => { setV((d) => ({ ...d, ...a })); setSuggest(false); }} className="flex w-full items-start gap-2 px-3 py-2 text-left text-fs-sm hover:bg-muted"><MapPin className="mt-0.5 size-4 shrink-0 text-muted-foreground" /><span><span className="block">{a.street}</span><span className="block text-fs-xs text-muted-foreground">{a.city}, {a.state} {a.zip}, {a.country}</span></span></button></li>)}
+            </ul> : null}</div>
           <div className="grid grid-cols-2 gap-3">
             <L t="City" r><input aria-label="City" placeholder="City" value={v.city ?? ""} onChange={set("city")} className={field} /></L>
             <L t="State" r><input aria-label="State" placeholder="State" value={v.state ?? ""} onChange={set("state")} className={field} /></L>
