@@ -183,38 +183,34 @@ export function SettingsNavList() {
             </div>
           </Link>
         ) : null}
-        {anyMatches ? (
-          visibleGroups.map((group, i) =>
-            group.length === 0 ? null : (
-              <ul key={i} className="mb-3 overflow-hidden rounded-row border border-border bg-background">
-                {group.map((l) => {
-                  const active = pathname === l.to || pathname.startsWith(`${l.to}/`);
-                  return (
-                    <li key={l.to} className="border-b border-border last:border-b-0">
-                      <Link
-                        to={l.to}
-                        preload="intent"
-                        title={l.label}
-                        className={cn(
-                          "flex min-h-tap items-center gap-3 px-3 py-2.5 t-row transition-colors",
-                          collapsed && "justify-center px-0",
-                          active ? "bg-accent/15 text-accent" : "text-foreground hover:bg-muted",
-                        )}
-                      >
-                        <l.icon className={cn("size-5 shrink-0", active ? "" : "text-accent")} />
-                        {collapsed ? null : (
-                          <>
-                            <span className="min-w-0 flex-1 truncate">{l.label}</span>
-                            <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
-                          </>
-                        )}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            ),
-          )
+        {visibleDestinations.length > 0 ? (
+          <ul className="mb-3 overflow-hidden rounded-row border border-border bg-background">
+            {visibleDestinations.map((l) => {
+              const active = pathname === l.to || pathname.startsWith(`${l.to}/`);
+              return (
+                <li key={l.to} className="border-b border-border last:border-b-0">
+                  <Link
+                    to={l.to}
+                    preload="intent"
+                    title={l.label}
+                    className={cn(
+                      "flex min-h-tap items-center gap-3 px-3 py-2.5 t-row transition-colors",
+                      collapsed && "justify-center px-0",
+                      active ? "bg-accent/15 text-accent" : "text-foreground hover:bg-muted",
+                    )}
+                  >
+                    <l.icon className={cn("size-5 shrink-0", active ? "" : "text-accent")} />
+                    {collapsed ? null : (
+                      <>
+                        <span className="min-w-0 flex-1 truncate">{l.label}</span>
+                        <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+                      </>
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         ) : q ? (
           <div className="px-4 py-10 text-center">
             <p className="t-row font-bold text-foreground">No settings found</p>
