@@ -126,22 +126,20 @@ function MenuEditor({ id, onBack }: { id: string | null; onBack: () => void }) {
           {c.enabled && <>
             <Row label="Start Date" value={fmtDate(c.start)} error={err === "Please select start date" ? err : null} onClick={() => { setTemp(c.start); setPopup({ kind: "date", ch, field: "start" }); }} />
             <Row label="End Date" value={fmtDate(c.end)} error={err && err !== "Please select start date" ? err : null} onClick={() => { setTemp(c.end || c.start); setPopup({ kind: "date", ch, field: "end" }); }} />
-            <div className="overflow-x-auto">
-              <table className={cn("w-full min-w-[22rem]", tableAlign)}>
+            <table className={cn("w-full", tableAlign)}>
                 <thead><tr className="border-b border-border"><th className={th}>Days</th><th className={th}>Start Time</th><th className={th}>End Time</th><th className="w-12" /></tr></thead>
                 <tbody>{WEEKDAYS.map((day, i) => {
                   const s = c.days[i]!;
                   const setDay = (p: Partial<typeof s>) => setCh(ch, { days: c.days.map((d, j) => (j === i ? { ...d, ...p } : d)) });
                   return <tr key={day} className="border-b border-border last:border-0">
-                    <td className="px-3 py-1"><button type="button" aria-pressed={s.on} aria-label={`${day} ${s.on ? "on" : "off"}`} onClick={() => setDay({ on: !s.on })} className="flex min-h-11 items-center gap-2 t-caption font-semibold uppercase">
+                    <td className="px-3 py-1"><button type="button" aria-pressed={s.on} aria-label={`${day} ${s.on ? "on" : "off"}`} onClick={() => setDay({ on: !s.on })} className="flex min-h-11 items-center gap-2 whitespace-nowrap t-caption font-semibold uppercase">
                       {s.on ? <CircleCheck className="size-4" /> : <Circle className="size-4 text-muted-foreground" />}{day}</button></td>
-                    {(["start", "end"] as const).map((f) => <td key={f} className="px-3 py-1"><button type="button" aria-label={`${day} ${f} time`} className="min-h-11 rounded-md px-1 t-value hover:bg-muted"
+                    {(["start", "end"] as const).map((f) => <td key={f} className="px-3 py-1"><button type="button" aria-label={`${day} ${f} time`} className="min-h-11 whitespace-nowrap rounded-md px-1 t-value hover:bg-muted"
                       onClick={() => { setTemp(s[f]); setPopup({ kind: "time", ch, day: i, field: f }); }}>{s[f]}</button></td>)}
                     <td className="px-2"><Button variant="ghost" size="icon" aria-label={`Copy ${day} times`} onClick={() => setPopup({ kind: "copy", ch, day: i })}><Copy className="size-4" /></Button></td>
                   </tr>;
                 })}</tbody>
               </table>
-            </div>
           </>}
         </GroupCard>;
       })}
