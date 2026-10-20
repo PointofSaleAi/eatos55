@@ -52,8 +52,7 @@ export const Route = createFileRoute("/order/new")({
 // Measure browser-rendered words, not just line counts: a single long word
 // must fit horizontally before a larger typography step can be selected.
 const nameSizes = ["text-fs-sm", "text-fs-base", "text-fs-lg"] as const;
-// Photo tiles carry a smaller name so the picture keeps the visual weight.
-const nameSizesWithImage = ["text-fs-xs"] as const;
+// Photo tiles render a small single-line truncated name instead.
 function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [string, ...string[]] }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [sizeClass, setSizeClass] = useState<string>(steps[0]);
@@ -463,7 +462,7 @@ function NewOrder() {
               >
                 {item.image ? <img src={item.image} alt={item.name} className="-mx-3 -mt-3 mb-2 aspect-[4/3] w-bleed-x max-w-none object-cover" /> : null}
                 <span className="block w-full min-w-0 max-w-full font-extrabold leading-tight text-foreground">
-                  <FitName name={item.name} steps={item.image ? nameSizesWithImage : nameSizes} />
+                  {item.image ? <span className="block w-full min-w-0 truncate text-fs-xs leading-tight" title={item.name}>{item.name}</span> : <FitName name={item.name} steps={nameSizes} />}
                   {typeof item.stock === "number" && !item.outOfStock ? (
                     <span
                       title={`${item.stock} in stock`}
