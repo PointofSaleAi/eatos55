@@ -116,7 +116,83 @@ function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [
   return (
     <span
       ref={ref}
-      className={cn("block w-full min-w-0 max-w-full leading-tight [overflow-wrap:anywhere]", sizeClass)}
+      className={cn("block w-full min-w-0 max-w-full leading-tight", sizeClass)}
+    >
+      {name}
+    </span>
+  );
+}
+
+// Photo tiles: one line only, ellipsis when it cannot fit, and the font size
+// steps down with the available width so words are never broken mid-word.
+const photoNameSizes = ["text-fs-base", "text-fs-sm", "text-fs-xs"] as const;
+function LineFitName({ name, steps = photoNameSizes }: { name: string; steps?: readonly [string, ...string[]] }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [cls, setCls] = useState<string>(steps[0]);
+  const [fits, setFits] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let raf = 0;
+    let disposed = false;
+    let lastWidth = 0;
+    const probe = document.createElement("span");
+    probe.textContent = name;
+    probe.setAttribute("aria-hidden", "true");
+    Object.assign(probe.style, {
+      position: "fixed",
+      visibility: "hidden",
+      pointerEvents: "none",
+      display: "block",
+      whiteSpace: "nowrap",
+      fontFamily: getComputedStyle(el).fontFamily,
+      fontWeight: getComputedStyle(el).fontWeight,
+      letterSpacing: "0px",
+    });
+    document.body.appendChild(probe);
+    const measure = () => {
+      if (disposed) return;
+      const width = el.getBoundingClientRect().width;
+      if (!(width > 0) || width === lastWidth) return;
+      lastWidth = width;
+      probe.style.width = "auto";
+      let chosen = steps[steps.length - 1];
+      let chosenFits = false;
+      for (const step of steps) {
+        probe.className = step;
+        if (probe.scrollWidth <= Math.ceil(width)) {
+          chosen = step;
+          chosenFits = true;
+          break;
+        }
+      }
+      setCls(chosen);
+      setFits(chosenFits);
+    };
+    const schedule = (force = false) => {
+      if (disposed) return;
+      if (force) lastWidth = 0;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(measure);
+    };
+    schedule();
+    document.fonts?.ready.then(() => schedule(true)).catch(() => {});
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(el);
+    return () => {
+      disposed = true;
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      probe.remove();
+    };
+  }, [name, steps]);
+
+  return (
+    <span
+      ref={ref}
+      title={name}
+      className={cn("block w-full min-w-0 max-w-full leading-tight", cls, !fits && "truncate")}
     >
       {name}
     </span>
@@ -460,9 +536,9 @@ function NewOrder() {
                   item.outOfStock && "opacity-50",
                 )}
               >
-                {item.image ? <img src={item.image} alt={item.name} className="-mx-3 -mt-3 mb-2 aspect-[4/3] w-bleed-x max-w-none object-cover" /> : null}
+                {item.image ? <img src={item.image} alt={item.name} className="-mx-3 -mt-3 mb-2 aspect-[16/9] w-bleed-x max-w-none object-cover" /> : null}
                 <span className="block w-full min-w-0 max-w-full font-extrabold leading-tight text-foreground">
-                  {item.image ? <span className="block w-full min-w-0 truncate text-fs-xs leading-tight" title={item.name}>{item.name}</span> : <FitName name={item.name} steps={nameSizes} />}
+                  {item.image ? <LineFitName name={item.name} /> : <FitName name={item.name} steps={nameSizes} />}
                   {typeof item.stock === "number" && !item.outOfStock ? (
                     <span
                       title={`${item.stock} in stock`}
