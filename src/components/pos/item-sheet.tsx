@@ -111,6 +111,21 @@ export function ItemSheet({
   const [sort, setSort] = useState<"az" | "za" | "lohi" | "hilo">("az");
   const [sortOpen, setSortOpen] = useState(false);
   const { dragStyle, handleProps } = useSheetDrag(dismiss);
+  // Never let the popup shrink while one product is open; resets for the next product.
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const [lockedHeight, setLockedHeight] = useState(0);
+  useLayoutEffect(() => {
+    setLockedHeight(0);
+  }, [item]);
+  useLayoutEffect(() => {
+    const el = sheetRef.current;
+    if (!el || !item || view !== "order") return;
+    const grow = () => setLockedHeight((h) => Math.max(h, el.offsetHeight));
+    grow();
+    const ro = new ResizeObserver(grow);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [item, view]);
 
   useEffect(() => {
     if (!item) return;
@@ -247,7 +262,8 @@ export function ItemSheet({
       >
         <SheetContent
           side="bottom"
-          style={dragStyle}
+          ref={sheetRef}
+          style={{ ...dragStyle, minHeight: lockedHeight || undefined }}
           className="mx-auto flex max-h-[min(78dvh,42rem)] w-full max-w-sheet flex-col rounded-t-sheet border-0 bg-surface p-0"
         >
           {item ? (
@@ -417,8 +433,15 @@ export function ItemSheet({
                   </div>
                 ) : null}
 
-                {tab === "addons" ? (
-                  <div className="flex shrink-0 items-center gap-2 px-4 pt-2.5">
+                {addOns.length ? (
+                  <div
+                    aria-hidden={tab !== "addons" ? true : undefined}
+                    inert={tab !== "addons" ? true : undefined}
+                    className={cn(
+                      "flex shrink-0 items-center gap-2 px-4 pt-2.5",
+                      tab !== "addons" && "invisible",
+                    )}
+                  >
                     <div className="flex h-ctl-md min-w-0 flex-1 items-center gap-2 rounded-pill border border-border bg-surface px-3">
                       <Search className="size-4 shrink-0 text-muted-foreground" />
                       <input
@@ -529,8 +552,15 @@ export function ItemSheet({
                         </div>
                       ) : null}
                     </div>
-                    {query ? null : (
-                    <div className="no-scrollbar flex shrink-0 items-center gap-1.5 overflow-x-auto px-4">
+                    {(
+                    <div
+                      aria-hidden={query ? true : undefined}
+                      inert={query ? true : undefined}
+                      className={cn(
+                        "no-scrollbar flex shrink-0 items-center gap-1.5 overflow-x-auto px-4",
+                        query && "invisible",
+                      )}
+                    >
                       {groups.map((g) => (
                         <button
                           key={g.name}
@@ -607,15 +637,19 @@ export function ItemSheet({
               </div>
 
               <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-2.5">
-                {selectedList.length || requiredMissing.length || openPriceMissing ? (
-                  <p className="pb-1.5 text-fs-xs font-bold text-muted-foreground">
-                    {openPriceMissing
-                      ? "Enter a price for this open-price item"
-                      : requiredMissing.length
-                        ? `Select ${requiredMissing.join(", ")}`
-                        : selectedList.join(" · ")}
-                  </p>
-                ) : null}
+                {/* Always keeps one line of space so picking options never resizes the popup. */}
+                <p
+                  className="truncate pb-1.5 text-fs-xs font-bold leading-5 text-muted-foreground"
+                  title={selectedList.join(" · ") || undefined}
+                >
+                  {openPriceMissing
+                    ? "Enter a price for this open-price item"
+                    : requiredMissing.length
+                      ? `Select ${requiredMissing.join(", ")}`
+                      : selectedList.length
+                        ? selectedList.join(" · ")
+                        : "\u00a0"}
+                </p>
                 <div className="flex items-center gap-2">
                 <button
                   type="button"
