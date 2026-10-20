@@ -189,7 +189,7 @@ export function ItemSheet({
       const rows = Math.ceil(most / cols);
       return `calc(${rows} * 3.5rem + ${rows - 1} * 0.5rem + 1.25rem)`;
     };
-    return { "--opt-h2": h(2), "--opt-h3": h(3), "--opt-h4": h(4) } as React.CSSProperties;
+    return { "--opt-h2": h(2), "--opt-h3": h(3), "--opt-h4": h(4) } as import("react").CSSProperties;
   }, [itemGroups, addOns]);
 
   const modifierTotal = useMemo(
