@@ -1,4 +1,5 @@
 import {
+  Armchair,
   ArrowLeftRight,
   BadgePercent,
   ClipboardList,
@@ -14,6 +15,7 @@ import {
   Receipt,
   RotateCcw,
   Save,
+  Share2,
   Tag,
   Trash2,
   TriangleAlert,
@@ -418,7 +420,7 @@ export function OrderPanel({
               saveGuestName();
               event.currentTarget.blur();
             }}
-            placeholder={tableGroupLabel(activeTable) || "Guest Name"}
+            placeholder="Guest Name"
             aria-label="Guest name"
             className="h-8 min-w-[6.25rem] flex-1 rounded-row border border-transparent bg-transparent px-1 text-fs-sm font-extrabold text-foreground outline-none transition-colors placeholder:text-foreground focus:border-border focus:bg-muted"
           />
