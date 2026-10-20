@@ -294,9 +294,10 @@ function NewOrder() {
     <div
       className={cn(
         "flex min-h-0 flex-1 overflow-hidden bg-background",
-        wide ? "flex-row" : "flex-col",
+        wide ? (panelLeft ? "flex-row-reverse" : "flex-row") : "flex-col",
       )}
     >
+      {wide ? <DropZones x={panelDragX} /> : null}
       {/* Left column: header (menu + category pills) and the product grid. */}
       <div
         className={cn(
