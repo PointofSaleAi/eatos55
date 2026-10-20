@@ -610,10 +610,6 @@
 @utility rounded-card {
   border-radius: 1rem;
 }
-@utility rounded-l-card {
-  border-top-left-radius: 1rem;
-  border-bottom-left-radius: 1rem;
-}
 @utility rounded-row {
   border-radius: 0.75rem;
 }
