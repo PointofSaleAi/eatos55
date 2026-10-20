@@ -640,6 +640,9 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
   // made the revealed Cancel / No VAT buttons impossible to press.
   const xRef = useRef(0);
   const startRef = useRef<{ px: number; py: number; base: number; moved: boolean } | null>(null);
+  // Set when a drag ends: the click the release leaves behind must be swallowed,
+  // not treated as a tap that closes the row.
+  const draggedRef = useRef(false);
   const moveTo = (v: number) => { xRef.current = v; setX(v); };
   const settle = () => {
     const v = xRef.current;
@@ -685,9 +688,15 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
           }
           moveTo(Math.max(-ACTION, Math.min(ACTION, s.base + dx)));
         }}
-        onPointerUp={() => { if (startRef.current?.moved) settle(); startRef.current = null; }}
+        onPointerUp={() => {
+          if (startRef.current?.moved) { draggedRef.current = true; settle(); }
+          startRef.current = null;
+        }}
         onPointerCancel={() => { settle(); startRef.current = null; }}
-        onClickCapture={(e) => { if (xRef.current !== 0) { e.stopPropagation(); e.preventDefault(); moveTo(0); } }}
+        onClickCapture={(e) => {
+          if (draggedRef.current) { draggedRef.current = false; e.stopPropagation(); e.preventDefault(); return; }
+          if (xRef.current !== 0) { e.stopPropagation(); e.preventDefault(); moveTo(0); }
+        }}
       >
         <span className="shrink-0 pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">{l.qty}</span>
         <div className="min-w-0 flex-1">
