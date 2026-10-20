@@ -22,7 +22,7 @@ import {
   Wallet,
 } from "lucide-react";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
@@ -338,7 +338,12 @@ function HeaderAction({
 }
 
 /** Running order area shared by phone, tablet and desktop layouts. */
-export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boolean } & OptionsLayout) {
+export function OrderPanel({
+  wide,
+  onEditLine,
+  dragGrip,
+  ...optionsLayout
+}: { wide: boolean; dragGrip?: ReactNode } & OptionsLayout) {
   const navigate = useNavigate();
   const liveTime = useLiveTime();
   const {
@@ -434,6 +439,9 @@ export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boole
           <span className="shrink-0 whitespace-nowrap text-[0.6875rem] font-bold text-muted-foreground">
             Arrived at {arrivedAt || liveTime}
           </span>
+          {dragGrip ? (
+            <span className="shrink-0">{dragGrip}</span>
+          ) : null}
         </div>
 
         <div className="mt-1.5">

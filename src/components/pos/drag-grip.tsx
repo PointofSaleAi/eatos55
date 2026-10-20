@@ -68,12 +68,11 @@ export function DragGrip({
         onDragPosition(null);
       }}
       className={cn(
-        vertical ? "flex h-12 w-3 shrink-0" : "mx-auto flex h-6 w-10 shrink-0",
-        " touch-none cursor-grab items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:cursor-grabbing",
+        "mx-auto flex h-6 w-10 shrink-0 touch-none cursor-grab items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:cursor-grabbing",
         className,
       )}
     >
-      <span className={cn("grid gap-[2px]", vertical ? "grid-cols-2" : "grid-cols-3")}>
+      <span className="grid grid-cols-3 gap-[2px]">
         {Array.from({ length: 6 }).map((_, i) => (
           <span key={i} className="size-[3px] rounded-full bg-current" />
         ))}
