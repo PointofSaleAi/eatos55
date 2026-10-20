@@ -4,7 +4,6 @@ import {
   BadgePercent,
   ClipboardList,
   Flame,
-  ChevronDown,
   GitMerge,
   Gift,
   Grid2x2,
@@ -637,10 +636,17 @@ export function OrderPanel({
   );
 }
 
+/** Modifier option names cycle through these colors so each reads distinctly. */
+const MODIFIER_COLORS = ["text-tile-blue", "text-tile-violet", "text-tile-orange", "text-tile-green", "text-tile-pink", "text-tile-indigo", "text-tile-magenta", "text-tile-sky"];
+function modifierColor(name: string) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return MODIFIER_COLORS[h % MODIFIER_COLORS.length];
+}
+
 /** Receipt row: swipe left reveals Cancel, swipe right reveals No VAT. */
 function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine; onCancel: () => void; onToggleTax: () => void; onEdit?: (() => void) | undefined }) {
   const ACTION = 88;
-  const [open, setOpen] = useState(false);
   const [x, setX] = useState(0);
   // Drag state lives in refs: pointerup can fire before the last pointermove's
   // state commits, and settling from a stale `x` snapped the row shut — which
@@ -724,24 +730,13 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
           </button>
           {l.taxExempt ? <p className="text-fs-xs font-bold leading-snug text-muted-foreground">No {brand.taxLabel} added</p> : null}
           {l.modifiers?.length ? (
-            <div className="flex items-start gap-1">
-              {open ? (
-                <ul className="min-w-0 flex-1 border-l border-border pl-2">
-                  {l.modifiers.map((m, i) => <li key={i} className="text-fs-xs font-bold leading-snug text-tile-blue">· {m}</li>)}
-                </ul>
-              ) : (
-                <p className="min-w-0 flex-1 truncate text-fs-xs font-bold leading-snug text-tile-blue">{l.modifiers.join(" · ")}</p>
-              )}
-              <button
-                type="button"
-                onClick={() => setOpen((v) => !v)}
-                aria-expanded={open}
-                aria-label={`${open ? "Hide" : "Show"} modifiers for ${l.name}`}
-                className="grid size-6 shrink-0 place-items-center rounded-pill text-muted-foreground hover:bg-muted"
-              >
-                <ChevronDown className={cn("size-4 transition-transform", open && "rotate-180")} />
-              </button>
-            </div>
+            <ul className="mt-0.5 border-l border-border pl-2">
+              {l.modifiers.map((m, i) => (
+                <li key={i} className={cn("text-fs-xs font-bold leading-snug", modifierColor(m))}>
+                  · {m.split(" · ")[1] ?? m}
+                </li>
+              ))}
+            </ul>
           ) : null}
           {l.notes ? <p className="truncate text-fs-xs italic leading-snug text-muted-foreground">{l.notes}</p> : null}
           {l.seat ? (
