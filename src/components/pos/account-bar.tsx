@@ -10,6 +10,8 @@ import {
   Wifi,
   WifiOff,
   MoreHorizontal,
+  Monitor,
+  ChevronDown,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useEffect, useState } from "react";
@@ -154,6 +156,14 @@ export function AccountActions() {
 
   return (
     <div className="relative flex shrink-0 items-center justify-end gap-0.5">
+      <span
+        title="Device connected"
+        className="mr-1 hidden items-center gap-1.5 rounded-pill bg-topbar-foreground/10 px-2.5 py-1.5 text-topbar-foreground lg:flex"
+      >
+        <span aria-hidden className="size-1.5 rounded-full bg-success" />
+        <Monitor className="size-4" />
+        <ChevronDown className="size-3.5 text-topbar-muted" />
+      </span>
       <Button
         type="button"
         variant="ghost"
