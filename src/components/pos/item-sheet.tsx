@@ -179,6 +179,19 @@ export function ItemSheet({
   const pageIndex = Math.min(page, pages - 1);
   const visibleOptions = baseOptions.slice(pageIndex * perPage, pageIndex * perPage + perPage);
 
+  // Reserve grid height for the largest group (per page) so switching groups never resizes the popup.
+  const reservedRows = useMemo(() => {
+    const most = Math.min(
+      perPage,
+      Math.max(1, ...[...itemGroups, ...addOns].map((g) => g.options.length)),
+    );
+    const h = (cols: number) => {
+      const rows = Math.ceil(most / cols);
+      return `calc(${rows} * 3.5rem + ${rows - 1} * 0.5rem + 1.25rem)`;
+    };
+    return { "--opt-h2": h(2), "--opt-h3": h(3), "--opt-h4": h(4) } as React.CSSProperties;
+  }, [itemGroups, addOns]);
+
   const modifierTotal = useMemo(
     () => Object.values(selected).reduce((sum, p) => sum + p, 0),
     [selected],
@@ -486,7 +499,7 @@ export function ItemSheet({
 
                 {activeGroup ? (
                   <>
-                    <div className="flex shrink-0 items-center justify-between gap-2 px-4 pb-1.5 pt-3">
+                    <div className="flex min-h-10 shrink-0 items-center justify-between gap-2 px-4 pb-1.5 pt-3">
                       <p className="text-fs-xs font-bold text-muted-foreground">
                         Additional Modifiers
                       </p>
@@ -540,7 +553,11 @@ export function ItemSheet({
                     </div>
                     )}
 
-                    <div className="grid min-h-0 flex-1 auto-rows-fr grid-cols-2 gap-2 px-4 py-2.5 sm:grid-cols-3 lg:grid-cols-4">
+                    <div
+                      style={reservedRows}
+                      className="grid min-h-[var(--opt-h2)] flex-1 auto-rows-[minmax(3.5rem,auto)] content-start grid-cols-2 gap-2 overflow-y-auto px-4 py-2.5 sm:min-h-[var(--opt-h3)] sm:grid-cols-3 lg:min-h-[var(--opt-h4)] lg:grid-cols-4"
+                    >
+
                       {visibleOptions.map((o) => {
                         const optGroup = groups.find((g) => g.name === o.group) ?? activeGroup;
                         const key = `${o.group} · ${o.name}`;
