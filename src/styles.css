@@ -532,9 +532,9 @@
 @utility px-screen {
   padding-inline: var(--pad-screen);
 }
-/* Fill a padded box's right padding too, so a photo sits flush with its edge. */
-@utility w-bleed-r {
-  width: calc(100% + 0.75rem);
+/* Fill a padded box's side padding too, so a photo runs edge to edge. */
+@utility w-bleed-x {
+  width: calc(100% + 1.5rem);
 }
 
 /* =====================================================================
