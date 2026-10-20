@@ -53,7 +53,7 @@ export const Route = createFileRoute("/order/new")({
 const nameSizes = ["text-fs-sm", "text-fs-base", "text-fs-lg"] as const;
 // Photo tiles carry a smaller name so the picture keeps the visual weight.
 const nameSizesWithImage = ["text-fs-xs"] as const;
-function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly string[] }) {
+function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [string, ...string[]] }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [sizeClass, setSizeClass] = useState<string>(steps[0]);
 
