@@ -457,7 +457,7 @@ function NewOrder() {
                   item.outOfStock && "opacity-50",
                 )}
               >
-                {item.image ? <img src={item.image} alt={item.name} className="-mr-3 mb-2 aspect-[4/3] w-full rounded-l-card object-contain object-right" /> : null}
+                {item.image ? <img src={item.image} alt={item.name} className="-mr-3 mb-2 aspect-[4/3] w-[calc(100%+0.75rem)] rounded-l-card object-contain object-right" /> : null}
                 <span className="block w-full min-w-0 max-w-full font-extrabold leading-tight text-foreground">
                   <FitName name={item.name} steps={item.image ? nameSizesWithImage : nameSizes} />
                   {typeof item.stock === "number" && !item.outOfStock ? (
