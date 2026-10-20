@@ -27,9 +27,7 @@ export function DragGrip({
   onMove,
   onDragPosition,
   className,
-  vertical = false,
 }: {
-  vertical?: boolean;
   label: string;
   onMove: (side: Side) => void;
   onDragPosition: (x: number | null) => void;

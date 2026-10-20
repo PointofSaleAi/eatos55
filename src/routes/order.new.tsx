@@ -539,17 +539,18 @@ function NewOrder() {
 
         )}
       >
-        {wide ? (
-          <DragGrip
-            vertical
-            label="order panel"
-            onMove={setOrderPanelSide}
-            onDragPosition={setPanelDragX}
-            className={cn("absolute top-1/2 z-10 -translate-y-1/2", panelLeft ? "right-0" : "left-0")}
-          />
-        ) : null}
         <OrderPanel
           wide={wide}
+          dragGrip={
+            wide ? (
+              <DragGrip
+                label="order panel"
+                onMove={setOrderPanelSide}
+                onDragPosition={setPanelDragX}
+                className="h-7 w-7 shrink-0 rounded-full"
+              />
+            ) : null
+          }
           onEditLine={editCartLine}
           customItemOpen={customItemOpen}
           moreOpen={moreOpen}
