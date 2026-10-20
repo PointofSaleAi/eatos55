@@ -532,6 +532,10 @@
 @utility px-screen {
   padding-inline: var(--pad-screen);
 }
+/* Fill a padded box's right padding too, so a photo sits flush with its edge. */
+@utility w-bleed-r {
+  width: calc(100% + 0.75rem);
+}
 
 /* =====================================================================
    Visual contract: one type ramp, one spacing rhythm, one set of shapes.
