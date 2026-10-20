@@ -633,7 +633,7 @@ export function OrderPanel({
 }
 
 /** Receipt row: swipe left reveals Cancel, swipe right reveals No VAT. */
-function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine; onCancel: () => void; onToggleTax: () => void; onEdit?: () => void }) {
+function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine; onCancel: () => void; onToggleTax: () => void; onEdit?: (() => void) | undefined }) {
   const ACTION = 88;
   const [x, setX] = useState(0);
   const [start, setStart] = useState<{ px: number; py: number; base: number; moved: boolean } | null>(null);
