@@ -609,7 +609,7 @@ function FloorPlan() {
                     <div
                       key={t.id}
                       className={cn(
-                        "overflow-hidden rounded-card border bg-surface text-left",
+                        "flex flex-col overflow-hidden rounded-card border bg-surface text-left",
                         isPicked ? "border-primary ring-2 ring-primary" : "border-border",
                       )}
                     >
@@ -617,9 +617,9 @@ function FloorPlan() {
                         type="button"
                         onClick={() => openTable(t)}
                         title={shown}
-                        className="block w-full transition-transform active:scale-[0.98]"
+                        className="flex w-full flex-1 flex-col transition-transform active:scale-[0.98]"
                       >
-                        <div className="relative grid h-tile place-items-center">
+                        <div className="relative grid min-h-tile flex-1 place-items-center">
                           <div
                             className={cn(
                               "grid size-[76px] place-items-center border-2 font-bold text-foreground",
