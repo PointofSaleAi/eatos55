@@ -533,7 +533,7 @@ function NewOrder() {
           showCart ? "" : "hidden",
           wide
             ? moreOpen && docked
-              ? cn("w-[21rem] shrink-0 border-border bg-surface lg:w-[24rem]", panelLeft ? "border-r" : "border-l")
+              ? cn("w-[24rem] shrink-0 border-border bg-surface lg:w-[24rem]", panelLeft ? "border-r" : "border-l")
               : cn("w-[24rem] shrink-0 border-border bg-surface 2xl:w-[26rem]", panelLeft ? "border-r" : "border-l")
             : "min-w-0 flex-1 bg-surface",
 
