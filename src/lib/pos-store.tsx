@@ -996,6 +996,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
   const [activeTable, setActiveTable] = useState<string | null>(null);
   const [floor, setFloor] = useState<string>("Ground Floor");
   const [guest, setGuestState] = useState<Guest>({ name: "", phone: "", partySize: 1 });
+  const [activeSeat, setActiveSeat] = useState<number | null>(null);
   const [orderType, setOrderType] = useState<ServiceOrderType>("Dine In");
   const [tableStates, setTableStates] = useState<Record<string, TableState>>({});
   const [tableSince, setTableSince] = useState<Record<string, string>>({});
@@ -1736,13 +1737,15 @@ export function PosProvider({ children }: { children: ReactNode }) {
         const qty = opts?.qty ?? 1;
         const price = opts?.price ?? item.price;
         const mods = opts?.modifiers ?? [];
-        const lineId = mods.length || opts?.notes ? `${item.id}-${Date.now()}` : item.id;
+        // Same item for different seats stays on separate lines.
+        const lineId = mods.length || opts?.notes ? `${item.id}-${Date.now()}` : activeSeat ? `${item.id}-s${activeSeat}` : item.id;
         setCart((list) => {
           const found = list.find((l) => l.id === lineId);
           if (found) {
             return list.map((l) => (l.id === lineId ? { ...l, qty: l.qty + qty } : l));
           }
           const created: CartLine = { id: lineId, name: item.name, price, qty };
+          if (activeSeat) created.seat = activeSeat;
           if (opts?.notes) created.notes = opts.notes;
           if (mods.length) created.modifiers = mods;
           if (opts?.discountPercent) created.discountPercent = opts.discountPercent;
@@ -1805,7 +1808,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
             return next;
           }),
         ),
-      clearCart: () => setCart([]),
+      clearCart: () => { setCart([]); setActiveSeat(null); },
       cancelOrder: () => {
         setDraftOwner(null);
         setServiceChargeFlat(0);
