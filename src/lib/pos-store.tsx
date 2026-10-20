@@ -2141,6 +2141,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
 
 
     guest,
+    activeSeat,
+    setActiveSeat,
     orderType,
     noTax,
     comped,
