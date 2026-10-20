@@ -157,7 +157,7 @@ function LineFitName({ name, steps = photoNameSizes }: { name: string; steps?: r
       if (!(width > 0) || width === lastWidth) return;
       lastWidth = width;
       probe.style.width = "auto";
-      let chosen = steps[steps.length - 1];
+      let chosen: string = steps[steps.length - 1] ?? steps[0];
       let chosenFits = false;
       for (const step of steps) {
         probe.className = step;
