@@ -51,9 +51,11 @@ export const Route = createFileRoute("/order/new")({
 // Measure browser-rendered words, not just line counts: a single long word
 // must fit horizontally before a larger typography step can be selected.
 const nameSizes = ["text-fs-sm", "text-fs-base", "text-fs-lg"] as const;
-function FitName({ name }: { name: string }) {
+// Photo tiles carry a smaller name so the picture keeps the visual weight.
+const nameSizesWithImage = ["text-fs-xs"] as const;
+function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly string[] }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [sizeClass, setSizeClass] = useState<(typeof nameSizes)[number]>("text-fs-sm");
+  const [sizeClass, setSizeClass] = useState<string>(steps[0]);
 
   useEffect(() => {
     const el = ref.current;
@@ -83,11 +85,11 @@ function FitName({ name }: { name: string }) {
       if (!(width > 0) || width === lastWidth) return;
       lastWidth = width;
       probe.style.width = `${width}px`;
-      probe.className = "text-fs-sm leading-tight";
+      probe.className = `${steps[0]} leading-tight`;
       const lines = () => Math.round(probe.getBoundingClientRect().height / parseFloat(getComputedStyle(probe).lineHeight));
       const baseline = lines();
-      let chosen: (typeof nameSizes)[number] = "text-fs-sm";
-      for (const step of nameSizes) {
+      let chosen = steps[0];
+      for (const step of steps) {
         probe.className = `${step} leading-tight`;
         if (probe.scrollWidth <= Math.ceil(width) && lines() <= baseline) chosen = step;
       }
@@ -109,7 +111,7 @@ function FitName({ name }: { name: string }) {
       ro.disconnect();
       probe.remove();
     };
-  }, [name]);
+  }, [name, steps]);
 
   return (
     <span
@@ -451,13 +453,13 @@ function NewOrder() {
                   toast.success(`${item.name} added`);
                 }}
                 className={cn(
-                  "relative flex min-h-tile min-w-0 flex-col justify-between rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
+                  "relative flex min-h-tile min-w-0 flex-col justify-between overflow-hidden rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
                   item.outOfStock && "opacity-50",
                 )}
               >
-                {item.image ? <img src={item.image} alt={item.name} className="mb-2 aspect-[4/3] w-full rounded-card object-contain" /> : null}
+                {item.image ? <img src={item.image} alt={item.name} className="-mr-3 mb-2 aspect-[4/3] w-full rounded-l-card object-contain object-right" /> : null}
                 <span className="block w-full min-w-0 max-w-full font-extrabold leading-tight text-foreground">
-                  <FitName name={item.name} />
+                  <FitName name={item.name} steps={item.image ? nameSizesWithImage : nameSizes} />
                   {typeof item.stock === "number" && !item.outOfStock ? (
                     <span
                       title={`${item.stock} in stock`}
