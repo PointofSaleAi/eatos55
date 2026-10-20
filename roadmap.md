@@ -4,8 +4,8 @@
 - [x] Rework the Guestbook guest list with initials avatars, a New Guest popover, sort and archive/restore with per-row actions; verified on phone, tablet and desktop
 
 # Roadmap
-- [ ] Replace the device pill with the uploaded Local Host icon immediately after Maya AI and verify all layouts
-- [ ] Allow dragging side navigation left/right while preserving phone navigation; verify both sides and cancellation
+- [x] Replace the device pill with the uploaded Local Host icon immediately after Maya AI; verified desktop, tablet and phone menu
+- [x] Allow dragging side navigation left/right while preserving phone navigation; verified both sides, cancelled drops, expansion and screen switching
 - [x] Remove the archive button from every Menu settings editor (menu, category, modifier, add-on, product, default-modifier, group); archiving stays only as the list left-swipe, verified phone, tablet and desktop
 - [x] Hide Login Screen settings entries unless a manager is clocked in; actual manager clock-in and hidden states verified on phone, tablet and desktop
 - [x] Replace Cash Management drawer navigation with an available-drawer dropdown; selection and reload persistence verified on phone, tablet and desktop
