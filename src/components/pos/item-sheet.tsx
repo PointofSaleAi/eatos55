@@ -112,20 +112,21 @@ export function ItemSheet({
   const [sortOpen, setSortOpen] = useState(false);
   const { dragStyle, handleProps } = useSheetDrag(dismiss);
   // Never let the popup shrink while one product is open; resets for the next product.
-  const sheetRef = useRef<HTMLDivElement>(null);
+  // A callback ref is used because the sheet mounts in a portal after this component renders.
+  const [sheetEl, sheetRef] = useState<HTMLDivElement | null>(null);
   const [lockedHeight, setLockedHeight] = useState(0);
+  const itemKey = item?.id ?? null;
   useLayoutEffect(() => {
     setLockedHeight(0);
-  }, [item]);
+  }, [itemKey]);
   useLayoutEffect(() => {
-    const el = sheetRef.current;
-    if (!el || !item || view !== "order") return;
-    const grow = () => setLockedHeight((h) => Math.max(h, el.offsetHeight));
+    if (!sheetEl || !itemKey || view !== "order") return;
+    const grow = () => setLockedHeight((h) => Math.max(h, sheetEl.offsetHeight));
     grow();
     const ro = new ResizeObserver(grow);
-    ro.observe(el);
+    ro.observe(sheetEl);
     return () => ro.disconnect();
-  }, [item, view]);
+  }, [sheetEl, itemKey, view]);
 
   useEffect(() => {
     if (!item) return;
