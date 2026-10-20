@@ -16,6 +16,7 @@ import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { useWideLayout } from "@/components/pos/shell";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { OrderPanel } from "@/components/pos/order-panel";
+import { DragGrip, DropZones, setOrderPanelSide, useOrderPanelSide } from "@/components/pos/drag-grip";
 import { itemNeedsSheet, liveMenu, menu as baseMenu, menus, money, type CartLine, type MenuItem } from "@/lib/demo-data";
 import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
@@ -151,6 +152,8 @@ function NewOrder() {
   const [moreOpen, setMoreOpen] = useState(false);
   const [customItemOpen, setCustomItemOpen] = useState(false);
   const [railHost, setRailHost] = useState<HTMLElement | null>(null);
+  const panelLeft = useOrderPanelSide() === "left";
+  const [panelDragX, setPanelDragX] = useState<number | null>(null);
   const docked = wide && landscape;
   // Long-press on a tile always opens the item sheet, even for simple items.
   const longPress = useRef<number | null>(null);
@@ -530,12 +533,15 @@ function NewOrder() {
           showCart ? "" : "hidden",
           wide
             ? moreOpen && docked
-              ? "w-[21rem] shrink-0 border-l border-border bg-surface lg:w-[24rem]"
-              : "w-[24rem] shrink-0 border-l border-border bg-surface 2xl:w-[26rem]"
+              ? cn("w-[21rem] shrink-0 border-border bg-surface lg:w-[24rem]", panelLeft ? "border-r" : "border-l")
+              : cn("w-[24rem] shrink-0 border-border bg-surface 2xl:w-[26rem]", panelLeft ? "border-r" : "border-l")
             : "min-w-0 flex-1 bg-surface",
 
         )}
       >
+        {wide ? (
+          <DragGrip label="order panel" onMove={setOrderPanelSide} onDragPosition={setPanelDragX} className="mt-1" />
+        ) : null}
         <OrderPanel
           wide={wide}
           onEditLine={editCartLine}
@@ -563,7 +569,7 @@ function NewOrder() {
 
 
 
-      {moreOpen && docked ? <aside ref={setRailHost} className="w-[5.75rem] shrink-0 overflow-hidden border-l border-border bg-surface" /> : null}
+      {moreOpen && docked ? <aside ref={setRailHost} className={cn("w-[5.75rem] shrink-0 overflow-hidden border-border bg-surface", panelLeft ? "border-r" : "border-l")} /> : null}
 
       {/* Phone, menu tab: keep the running total and Charge one tap away. */}
       {!wide && tab === "menu" && totals.count > 0 ? (
