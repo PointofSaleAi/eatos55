@@ -306,7 +306,7 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
   );
 }
 
-function HeaderAction({
+export function HeaderAction({
   label,
   icon: Icon,
   active,
