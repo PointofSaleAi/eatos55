@@ -3,7 +3,7 @@ import {
   BadgePercent,
   ClipboardList,
   Flame,
-  Footprints,
+  ChevronDown,
   GitMerge,
   Gift,
   Grid2x2,
