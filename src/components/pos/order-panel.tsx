@@ -3,7 +3,7 @@ import {
   BadgePercent,
   ClipboardList,
   Flame,
-  Footprints,
+  ChevronDown,
   GitMerge,
   Gift,
   Grid2x2,
@@ -467,8 +467,6 @@ export function OrderPanel({
               <span className="flex shrink-0 items-center gap-1.5 rounded-pill bg-foreground px-2.5 py-1 text-fs-xs font-extrabold text-background">
                 <Grid2x2 className="size-3.5" aria-hidden />
                 <span className="max-w-16 truncate">{tableGroupLabel(activeTable) ?? activeTable}</span>
-                <Footprints className="size-3.5" aria-hidden />
-                {arrivedAt || liveTime}
               </span>
             ) : null}
           </div>
@@ -635,6 +633,7 @@ export function OrderPanel({
 /** Receipt row: swipe left reveals Cancel, swipe right reveals No VAT. */
 function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine; onCancel: () => void; onToggleTax: () => void; onEdit?: (() => void) | undefined }) {
   const ACTION = 88;
+  const [open, setOpen] = useState(false);
   const [x, setX] = useState(0);
   const [start, setStart] = useState<{ px: number; py: number; base: number; moved: boolean } | null>(null);
   const settle = (v: number) => setX(v <= -ACTION / 2 ? -ACTION : v >= ACTION / 2 ? ACTION : 0);
@@ -678,7 +677,7 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
         onPointerCancel={() => { settle(x); setStart(null); }}
         onClickCapture={(e) => { if (x !== 0) { e.stopPropagation(); e.preventDefault(); setX(0); } }}
       >
-        <span className="shrink-0 pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">{l.qty} ea</span>
+        <span className="shrink-0 pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">{l.qty}</span>
         <button
           type="button"
           disabled={!onEdit}
@@ -694,9 +693,24 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
             </span>
           </div>
           {l.taxExempt ? <p className="text-fs-xs font-bold leading-snug text-muted-foreground">No {brand.taxLabel} added</p> : null}
-          {l.modifiers?.length ? <p className="truncate text-fs-xs font-bold uppercase leading-snug text-tile-blue">{l.modifiers.join(", ")}</p> : null}
+          {l.modifiers?.length && open ? (
+            <ul className="mt-0.5 border-l border-border pl-2">
+              {l.modifiers.map((m, i) => <li key={i} className="text-fs-xs font-bold leading-snug text-tile-blue">· {m}</li>)}
+            </ul>
+          ) : null}
           {l.notes ? <p className="truncate text-fs-xs italic leading-snug text-muted-foreground">{l.notes}</p> : null}
         </button>
+        {l.modifiers?.length ? (
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-label={`${open ? "Hide" : "Show"} modifiers for ${l.name}`}
+            className="grid size-6 shrink-0 place-items-center rounded-pill text-muted-foreground hover:bg-muted"
+          >
+            <ChevronDown className={cn("size-4 transition-transform", open && "rotate-180")} />
+          </button>
+        ) : null}
       </div>
     </li>
   );
