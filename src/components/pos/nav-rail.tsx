@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Lock } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { EMark, Wordmark } from "@/components/pos/brand";
 import { formatVersionLabel } from "@/lib/demo-data";
 import { railPrimary } from "@/lib/nav-destinations";
@@ -19,8 +20,14 @@ const active =
  * shown as an outlined cell, and the eatOS mark plus version pinned at the
  * bottom. Manager Controls, Clock Out and Sign Out live in the pull-down pad.
  */
-export function NavRail() {
+export function NavRail({ side, onMove, onDragPosition }: {
+  side: "left" | "right";
+  onMove: (side: "left" | "right") => void;
+  onDragPosition: (x: number | null) => void;
+}) {
   const [expanded, setExpanded] = useState(false);
+  const drag = useRef<{ startX: number; moved: boolean } | null>(null);
+  const suppressClick = useRef(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { settings, session } = usePos();
 
@@ -54,29 +61,69 @@ export function NavRail() {
   return (
     <nav
       aria-label="Main"
+      data-side={side}
       onClick={(e) => {
         if (e.target === e.currentTarget) toggle();
       }}
       onPointerDown={onRailPointerDown}
       className={cn(
-        "my-2 ml-2 hidden shrink-0 flex-col gap-3.5 rounded-2xl border border-shell-foreground/10 bg-shell pt-2 pb-[calc(0.5rem+var(--sab,0px))] transition-[width] duration-200 md:flex",
+        "my-2 hidden shrink-0 flex-col gap-3.5 rounded-2xl border border-shell-foreground/10 bg-shell pt-2 pb-[calc(0.5rem+var(--sab,0px))] transition-[width] duration-200 motion-reduce:transition-none md:flex",
+        side === "right" ? "order-last mr-2" : "ml-2",
         expanded ? "w-48" : "w-[4.25rem]",
       )}
     >
-      {/* Grip handle: toggles the rail */}
-      <button
+      {/* Click to expand; drag to either screen edge to move the rail. */}
+      <Button
         type="button"
-        onClick={toggle}
+        variant="ghost"
+        size="icon"
+        title="Drag navigation to either side; arrow keys move it"
+        onClick={() => {
+          if (suppressClick.current) { suppressClick.current = false; return; }
+          toggle();
+        }}
+        onKeyDown={(event) => {
+          if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+          event.preventDefault();
+          onMove(event.key === "ArrowLeft" ? "left" : "right");
+        }}
+        onPointerDown={(event) => {
+          if (event.button !== 0) return;
+          event.stopPropagation();
+          suppressClick.current = false;
+          drag.current = { startX: event.clientX, moved: false };
+          event.currentTarget.setPointerCapture(event.pointerId);
+        }}
+        onPointerMove={(event) => {
+          const current = drag.current;
+          if (!current) return;
+          if (Math.abs(event.clientX - current.startX) > 12) current.moved = true;
+          if (current.moved) onDragPosition(event.clientX);
+        }}
+        onPointerUp={(event) => {
+          const current = drag.current;
+          drag.current = null;
+          onDragPosition(null);
+          if (!current?.moved) return;
+          suppressClick.current = true;
+          if (event.clientX <= 120) onMove("left");
+          else if (event.clientX >= window.innerWidth - 120) onMove("right");
+        }}
+        onPointerCancel={() => {
+          suppressClick.current = Boolean(drag.current?.moved);
+          drag.current = null;
+          onDragPosition(null);
+        }}
         aria-label={expanded ? "Collapse navigation" : "Expand navigation"}
         aria-expanded={expanded}
-        className="mx-auto flex h-7 w-10 items-center justify-center text-shell-foreground/50 transition-colors hover:text-shell-foreground"
+        className="mx-auto flex h-7 w-10 touch-none cursor-grab items-center justify-center rounded-md text-shell-foreground/50 transition-colors hover:bg-shell-foreground/10 hover:text-shell-foreground active:cursor-grabbing"
       >
         <span className="grid grid-cols-3 gap-[2px]">
           {Array.from({ length: 6 }).map((_, i) => (
             <span key={i} className="size-[3px] rounded-full bg-current" />
           ))}
         </span>
-      </button>
+      </Button>
 
       {/* Lock the terminal */}
       <div className={cn("flex px-2", expanded ? "" : "justify-center")}>

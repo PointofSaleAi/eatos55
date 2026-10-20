@@ -140,6 +140,8 @@ export function useWideLayout() {
  */
 export function DeviceFrame({ children }: { children: ReactNode }) {
   const [navOpen, setNavOpen] = useState(false);
+  const [railSide, setRailSide] = useState<"left" | "right">("left");
+  const [railDragX, setRailDragX] = useState<number | null>(null);
   const closeNav = useCallback(() => setNavOpen(false), []);
   const navCtx = useMemo(() => ({ open: () => setNavOpen(true) }), []);
   const appChrome = useAppChrome();
@@ -193,7 +195,13 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
                 {/* Full-width dark top bar spans the rail in landscape, per design. */}
                 {appChrome ? <ClockPullDown /> : null}
                 <div className="relative flex min-h-0 min-w-0 flex-1">
-                  {landscape ? <NavRail /> : null}
+                  {landscape ? <NavRail side={railSide} onMove={setRailSide} onDragPosition={setRailDragX} /> : null}
+                  {landscape && railDragX !== null ? (
+                    <>
+                      <div aria-hidden className={cn("pointer-events-none absolute inset-y-2 left-2 z-50 w-24 rounded-lg border-2 border-dashed border-shell-foreground/40 bg-shell/20", railDragX <= 120 && "border-primary bg-primary/15")} />
+                      <div aria-hidden className={cn("pointer-events-none absolute inset-y-2 right-2 z-50 w-24 rounded-lg border-2 border-dashed border-shell-foreground/40 bg-shell/20", railDragX >= window.innerWidth - 120 && "border-primary bg-primary/15")} />
+                    </>
+                  ) : null}
                   <div
                     className="relative flex min-h-0 min-w-0 flex-1 flex-col pt-[var(--sat,0px)]"
                     style={{
