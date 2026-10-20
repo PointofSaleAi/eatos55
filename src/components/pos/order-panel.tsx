@@ -527,7 +527,7 @@ export function OrderPanel({
             <p className="text-fs-sm font-bold text-muted-foreground">Let's create an order</p>
           </div>
         ) : (
-          <ul className="divide-y divide-border/60">
+          <ul>
             {cart.map((l) => (
               <SwipeLine
                 key={l.id}
@@ -553,23 +553,23 @@ export function OrderPanel({
             : "pb-[calc(0.5rem+var(--kb-inset,0px)+var(--tabs-h,0px))]",
         )}
       >
-        <dl className="text-fs-sm">
-          <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
+        <dl className="text-fs-xs">
+          <div className="flex items-center justify-between py-0 font-bold text-muted-foreground">
             <dt>Sub Total</dt>
             <dd className="tabular-nums">{money(totals.subtotal)}</dd>
           </div>
-          <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
+          <div className="flex items-center justify-between py-0 font-bold text-muted-foreground">
             <dt>{brand.taxLabel}{noTax ? " (exempt)" : ""}</dt>
             <dd className="tabular-nums">{money(totals.tax)}</dd>
           </div>
           {orderDiscountPercent > 0 || totals.discount > 0 ? (
-            <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
+            <div className="flex items-center justify-between py-0 font-bold text-muted-foreground">
               <dt>Discount{orderDiscountName ? ` · ${orderDiscountName}` : ""}</dt>
               <dd className="tabular-nums">-{money(totals.discount)}</dd>
             </div>
           ) : null}
           {serviceChargePercent > 0 || totals.serviceCharge > 0 ? (
-            <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
+            <div className="flex items-center justify-between py-0 font-bold text-muted-foreground">
               <dt>Service Charge{serviceChargeName ? ` · ${serviceChargeName}` : ""}</dt>
               <dd className="tabular-nums">{money(totals.serviceCharge)}</dd>
             </div>
@@ -580,7 +580,7 @@ export function OrderPanel({
           </div>
         </dl>
 
-        <div className="mt-1.5 grid grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-2">
+        <div className="mt-1 grid grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-2">
           <button
             type="button"
             disabled={!totals.count}
@@ -590,9 +590,9 @@ export function OrderPanel({
               if (!totals.count) return;
               toast.success("Order saved");
             }}
-            className="grid min-h-ctl-lg w-12 shrink-0 place-items-center rounded-row bg-muted text-foreground transition-colors hover:bg-secondary disabled:opacity-40"
+            className="grid min-h-ctl-sm w-12 shrink-0 place-items-center rounded-row bg-muted text-foreground transition-colors hover:bg-secondary disabled:opacity-40"
           >
-            <Save className="size-5" />
+            <Save className="size-4.5" />
           </button>
           <button
             type="button"
@@ -601,7 +601,7 @@ export function OrderPanel({
               fireTicket();
               toast.success("Order fired to the kitchen");
             }}
-            className="flex min-h-ctl-lg shrink-0 items-center justify-center gap-1.5 rounded-row bg-tile-orange px-3 text-fs-sm font-extrabold uppercase text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="flex min-h-ctl-sm shrink-0 items-center justify-center gap-1.5 rounded-row bg-tile-orange px-3 text-fs-sm font-extrabold uppercase text-white transition-opacity hover:opacity-90 disabled:opacity-40"
           >
             <Flame className="size-4 shrink-0" />
             Fire
@@ -610,7 +610,7 @@ export function OrderPanel({
             type="button"
             disabled={!totals.count}
             onClick={() => navigate({ to: "/payment/method" })}
-            className="min-h-ctl-lg min-w-0 truncate rounded-row bg-accent px-3 text-fs-sm font-extrabold uppercase text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
+            className="min-h-ctl-sm min-w-0 truncate rounded-row bg-accent px-3 text-fs-sm font-extrabold uppercase text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
           >
             Charge {money(totals.total)}
           </button>
@@ -693,6 +693,9 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
             </span>
           </div>
           {l.taxExempt ? <p className="text-fs-xs font-bold leading-snug text-muted-foreground">No {brand.taxLabel} added</p> : null}
+          {l.modifiers?.length && !open ? (
+            <p className="truncate text-fs-xs font-bold leading-snug text-tile-blue">{l.modifiers.join(" · ")}</p>
+          ) : null}
           {l.modifiers?.length && open ? (
             <ul className="mt-0.5 border-l border-border pl-2">
               {l.modifiers.map((m, i) => <li key={i} className="text-fs-xs font-bold leading-snug text-tile-blue">· {m}</li>)}
