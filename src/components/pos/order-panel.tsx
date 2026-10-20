@@ -554,22 +554,22 @@ export function OrderPanel({
         )}
       >
         <dl className="text-fs-xs">
-          <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
+          <div className="flex items-center justify-between py-0 font-bold text-muted-foreground">
             <dt>Sub Total</dt>
             <dd className="tabular-nums">{money(totals.subtotal)}</dd>
           </div>
-          <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
+          <div className="flex items-center justify-between py-0 font-bold text-muted-foreground">
             <dt>{brand.taxLabel}{noTax ? " (exempt)" : ""}</dt>
             <dd className="tabular-nums">{money(totals.tax)}</dd>
           </div>
           {orderDiscountPercent > 0 || totals.discount > 0 ? (
-            <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
+            <div className="flex items-center justify-between py-0 font-bold text-muted-foreground">
               <dt>Discount{orderDiscountName ? ` · ${orderDiscountName}` : ""}</dt>
               <dd className="tabular-nums">-{money(totals.discount)}</dd>
             </div>
           ) : null}
           {serviceChargePercent > 0 || totals.serviceCharge > 0 ? (
-            <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground">
+            <div className="flex items-center justify-between py-0 font-bold text-muted-foreground">
               <dt>Service Charge{serviceChargeName ? ` · ${serviceChargeName}` : ""}</dt>
               <dd className="tabular-nums">{money(totals.serviceCharge)}</dd>
             </div>
