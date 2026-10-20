@@ -451,48 +451,50 @@ export function OrderPanel({
           <CartHeaderActions {...optionsLayout} onAddGuest={() => setAddGuestOpen(true)} />
         </div>
 
-        {/* Service type and the table / arrival chip share one scrolling row */}
-        {!addGuestOpen && (showTypeStrip || showTableChip) ? (
+        {/* Service type strip; the table number now sits with the order number */}
+        {!addGuestOpen && showTypeStrip ? (
           <div className="mt-2 flex items-center gap-2">
-            {showTypeStrip ? (
-              <OrderTypeStrip
-                className="min-w-0 flex-1"
-                value={orderType}
-                onSelect={(t) => {
-                  setOrderType(t);
-                  setTypeForSheet(t);
-                  setGuestOpen(true);
-                }}
-              />
-            ) : null}
-            {showTableChip ? (
-              <span className="flex shrink-0 items-center gap-1.5 rounded-pill bg-foreground px-2.5 py-1 text-fs-xs font-extrabold text-background">
-                <Grid2x2 className="size-3.5" aria-hidden />
-                <span className="max-w-16 truncate">{tableGroupLabel(activeTable) ?? activeTable}</span>
-              </span>
-            ) : null}
+            <OrderTypeStrip
+              className="min-w-0 flex-1"
+              value={orderType}
+              onSelect={(t) => {
+                setOrderType(t);
+                setTypeForSheet(t);
+                setGuestOpen(true);
+              }}
+            />
           </div>
         ) : null}
 
         {/* Seat picker for table orders: new items are assigned to the chosen seat */}
         {!addGuestOpen && showTableChip ? <SeatPicker /> : null}
 
-        {/* Order number, notes shortcut and server share one row */}
-        {!addGuestOpen ? <div className="mt-1.5 flex items-center justify-between gap-2 text-fs-xs font-bold uppercase text-muted-foreground">
-          <span className="shrink-0">Order# {orderNumber ?? "--"}</span>
-          <span className="flex min-w-0 items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => setNotesOpen(true)}
-              aria-label="Order notes"
-              title="Order notes"
-              className="grid size-7 shrink-0 place-items-center rounded-pill bg-muted text-muted-foreground transition-colors hover:bg-secondary"
-            >
-              <NotebookPen className="size-3.5" />
-            </button>
-            <span className="truncate">{orderOwner}</span>
-          </span>
-        </div> : null}
+        {/* Order number and table on the left, server centred in the middle, notes on the right */}
+        {!addGuestOpen ? (
+          <div className="mt-1.5 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 text-fs-xs font-bold uppercase text-muted-foreground">
+            <span className="flex min-w-0 items-center gap-2">
+              <span className="shrink-0">Order# {orderNumber ?? "--"}</span>
+              {showTableChip ? (
+                <span className="flex min-w-0 items-center gap-1 text-foreground">
+                  <Grid2x2 className="size-3 shrink-0" aria-hidden />
+                  <span className="truncate">{tableGroupLabel(activeTable) ?? activeTable}</span>
+                </span>
+              ) : null}
+            </span>
+            <span className="max-w-full min-w-0 truncate text-center">{orderOwner}</span>
+            <span className="flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() => setNotesOpen(true)}
+                aria-label="Order notes"
+                title="Order notes"
+                className="grid size-7 shrink-0 place-items-center rounded-pill bg-muted text-muted-foreground transition-colors hover:bg-secondary"
+              >
+                <NotebookPen className="size-3.5" />
+              </button>
+            </span>
+          </div>
+        ) : null}
 
         {!addGuestOpen && notesOpen ? (
           <label className="mt-1.5 flex items-center gap-2 rounded-row bg-muted px-3">
