@@ -175,7 +175,7 @@ export function AccountActions() {
         onClick={() => navigate({ to: "/settings/detail/$topic", params: { topic: "servers" } })}
         className={cn(iconBtn, "hidden md:inline-flex")}
       >
-        <img src={localHostAsset.url} alt="" className="h-6 w-7 object-contain invert" />
+        <img src={localHostAsset.url} alt="" className="h-6 w-7 object-contain" />
       </Button>
       <Button
         type="button"
@@ -232,7 +232,7 @@ export function AccountActions() {
         <PopoverContent align="end" side="bottom" className="w-52 p-1">
           {[
             { label: "Maya AI", icon: <AiMark className="size-5 rounded-full" />, run: () => window.dispatchEvent(new CustomEvent("pos:open-dashboard")) },
-            { label: "Local Host", icon: <img src={localHostAsset.url} alt="" className="size-5 object-contain dark:invert" />, run: () => navigate({ to: "/settings/detail/$topic", params: { topic: "servers" } }) },
+            { label: "Local Host", icon: <img src={localHostAsset.url} alt="" className="size-5 object-contain invert dark:invert-0" />, run: () => navigate({ to: "/settings/detail/$topic", params: { topic: "servers" } }) },
             { label: "Refresh", icon: <RotateCw className="size-4" />, run: () => toast.success("Tickets refreshed") },
             { label: "Support", icon: <Headphones className="size-4" />, run: () => navigate({ to: "/system/customer-support" }) },
             { label: "What's New", icon: <Bell className="size-4" />, run: openNews, dot: !seen },
