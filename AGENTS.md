@@ -22,7 +22,7 @@
 - Add Guest replaces only the cart body in OrderPanel and saves through the shared current-order guest state, preserving products and cart actions while editing.
 - Guest addresses retain both structured U.S. fields and a formatted compatibility string so Add Guest and service-order forms stay synchronized.
 - Every Tap to Pay surface (checkout, settings rows, reader list, home reminder, route guards) goes through `useTapToPayAvailable` / `useTapToPayTenderVisible` in `src/lib/device.ts`, combining the iPhone check with the phone-layout check, so no screen re-offers Tap to Pay on tablet or web.
-- Product-card names use width-constrained browser measurements and semantic typography steps, with emergency word wrapping rather than truncation, so long words cannot overflow on resize.
+- Product-card names step font size with available width via measured steps; never break words mid-word (word-boundary wrapping; photo tiles ellipsize).
 - Public access routes own responsive widths; the shell never constrains account or recovery content.
 - Demo password recovery stays in ephemeral route-local step state and never persists passwords or claims real code delivery.
 - Demo signup uses transient route-local steps and only enters the demo session after code verification; setup credentials are never persisted or used for employee authentication.
