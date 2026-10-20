@@ -532,6 +532,10 @@
 @utility px-screen {
   padding-inline: var(--pad-screen);
 }
+/* Fill a padded box's side padding too, so a photo runs edge to edge. */
+@utility w-bleed-x {
+  width: calc(100% + 1.5rem);
+}
 
 /* =====================================================================
    Visual contract: one type ramp, one spacing rhythm, one set of shapes.
