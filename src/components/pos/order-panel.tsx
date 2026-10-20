@@ -22,7 +22,7 @@ import {
   Wallet,
 } from "lucide-react";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
@@ -635,13 +635,24 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
   const ACTION = 88;
   const [open, setOpen] = useState(false);
   const [x, setX] = useState(0);
-  const [start, setStart] = useState<{ px: number; py: number; base: number; moved: boolean } | null>(null);
-  const settle = (v: number) => setX(v <= -ACTION / 2 ? -ACTION : v >= ACTION / 2 ? ACTION : 0);
+  // Drag state lives in refs: pointerup can fire before the last pointermove's
+  // state commits, and settling from a stale `x` snapped the row shut — which
+  // made the revealed Cancel / No VAT buttons impossible to press.
+  const xRef = useRef(0);
+  const startRef = useRef<{ px: number; py: number; base: number; moved: boolean } | null>(null);
+  // Set when a drag ends: the click the release leaves behind must be swallowed,
+  // not treated as a tap that closes the row.
+  const draggedRef = useRef(false);
+  const moveTo = (v: number) => { xRef.current = v; setX(v); };
+  const settle = () => {
+    const v = xRef.current;
+    moveTo(v <= -ACTION / 2 ? -ACTION : v >= ACTION / 2 ? ACTION : 0);
+  };
   return (
     <li className="relative overflow-hidden py-0">
       <button
         type="button"
-        onClick={() => { setX(0); onToggleTax(); }}
+        onClick={() => { moveTo(0); onToggleTax(); }}
         aria-label={l.taxExempt ? `Add ${brand.taxLabel} to ${l.name}` : `No ${brand.taxLabel} for ${l.name}`}
         tabIndex={x > 0 ? 0 : -1}
         className="absolute inset-y-0 left-0 grid place-items-center bg-foreground px-2 text-fs-xs font-bold text-background"
@@ -651,7 +662,7 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
       </button>
       <button
         type="button"
-        onClick={() => { setX(0); onCancel(); }}
+        onClick={() => { moveTo(0); onCancel(); }}
         aria-label={`Cancel ${l.name}`}
         tabIndex={x < 0 ? 0 : -1}
         className="absolute inset-y-0 right-0 grid place-items-center bg-destructive px-2 text-fs-xs font-bold uppercase text-destructive-foreground"
@@ -660,22 +671,32 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
         Cancel
       </button>
       <div
-        className={cn("relative flex touch-pan-y items-start gap-1.5 bg-surface py-1 pr-0.5", !start && "transition-transform")}
+        className={cn("relative flex touch-pan-y items-start gap-1.5 bg-surface py-1 pr-0.5", !startRef.current && "transition-transform")}
         style={{ transform: `translateX(${x}px)` }}
-        onPointerDown={(e) => setStart({ px: e.clientX, py: e.clientY, base: x, moved: false })}
+        onPointerDown={(e) => {
+          if (e.pointerType === "mouse" && e.button !== 0) return;
+          startRef.current = { px: e.clientX, py: e.clientY, base: xRef.current, moved: false };
+        }}
         onPointerMove={(e) => {
-          if (!start) return;
-          const dx = e.clientX - start.px;
-          if (!start.moved) {
-            if (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(e.clientY - start.py)) return;
-            setStart({ ...start, moved: true });
+          const s = startRef.current;
+          if (!s) return;
+          const dx = e.clientX - s.px;
+          if (!s.moved) {
+            if (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(e.clientY - s.py)) return;
+            s.moved = true;
             (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
           }
-          setX(Math.max(-ACTION, Math.min(ACTION, start.base + dx)));
+          moveTo(Math.max(-ACTION, Math.min(ACTION, s.base + dx)));
         }}
-        onPointerUp={() => { if (start?.moved) settle(x); setStart(null); }}
-        onPointerCancel={() => { settle(x); setStart(null); }}
-        onClickCapture={(e) => { if (x !== 0) { e.stopPropagation(); e.preventDefault(); setX(0); } }}
+        onPointerUp={() => {
+          if (startRef.current?.moved) { draggedRef.current = true; settle(); }
+          startRef.current = null;
+        }}
+        onPointerCancel={() => { settle(); startRef.current = null; }}
+        onClickCapture={(e) => {
+          if (draggedRef.current) { draggedRef.current = false; e.stopPropagation(); e.preventDefault(); return; }
+          if (xRef.current !== 0) { e.stopPropagation(); e.preventDefault(); moveTo(0); }
+        }}
       >
         <span className="shrink-0 pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">{l.qty}</span>
         <div className="min-w-0 flex-1">
