@@ -1540,6 +1540,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
 
       guest,
       setGuest: (patch) => setGuestState((g) => ({ ...g, ...patch })),
+      activeSeat,
+      setActiveSeat,
       orderType,
       setOrderType,
       startOrder: (table, partySize) => {
