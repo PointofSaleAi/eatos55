@@ -406,7 +406,7 @@ export function OrderPanel({
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="shrink-0 border-b border-border px-4 pb-2 pt-2">
-        <div className="flex w-full flex-nowrap items-center gap-x-2 py-1">
+        <div className="flex w-full flex-nowrap items-center gap-x-1.5 py-1">
           <input
             type="text"
             value={guestName}
@@ -434,7 +434,7 @@ export function OrderPanel({
             }}
             placeholder="(XXX) XXX-XXXX"
             aria-label="Guest mobile number"
-            className="h-8 min-w-[7.25rem] flex-1 rounded-row border border-transparent bg-transparent px-1 text-fs-xs font-bold text-muted-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-border focus:bg-muted focus:text-foreground"
+            className="h-8 min-w-[6.5rem] flex-1 rounded-row border border-transparent bg-transparent px-1 text-fs-xs font-bold text-muted-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-border focus:bg-muted focus:text-foreground"
           />
           <span className="shrink-0 whitespace-nowrap text-[0.6875rem] font-bold text-muted-foreground">
             Arrived at {arrivedAt || liveTime}
