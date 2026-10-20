@@ -355,7 +355,8 @@ export function OrderPanel({
     orderType,
     setOrderType,
     cart,
-    changeQty,
+    removeLine,
+    toggleLineTax,
     totals,
     noTax,
     comped,
@@ -530,57 +531,13 @@ export function OrderPanel({
         ) : (
           <ul className="divide-y divide-border/60">
             {cart.map((l) => (
-              <li key={l.id} className="py-1">
-                <div className="flex items-start gap-1.5 pr-0.5">
-
-                  <button
-                    type="button"
-                    onClick={() => changeQty(l.id, 1)}
-                    aria-label={`Add one ${l.name}`}
-                    title={`Add one ${l.name}`}
-                    className="grid size-6 shrink-0 place-items-center rounded-md bg-muted text-fs-xs font-extrabold tabular-nums text-foreground transition-colors hover:bg-secondary"
-                  >
-                    {l.qty}
-                  </button>
-                  <button
-                    type="button"
-                    disabled={l.custom || !onEditLine}
-                    onClick={() => onEditLine?.(l)}
-                    aria-label={l.custom ? undefined : `Edit ${l.name}`}
-                    className="min-w-0 flex-1 rounded-md text-left enabled:hover:bg-muted/60 disabled:cursor-default"
-                  >
-                    <div className="flex min-h-6 items-center gap-2">
-                      <span className="min-w-0 flex-1 truncate text-fs-sm font-bold leading-snug text-foreground">
-                        {l.name}
-                      </span>
-                      <span className="flex shrink-0 items-baseline gap-1.5 text-fs-sm font-bold tabular-nums text-foreground">
-                        {l.discountPercent ? (
-                          <s className="text-fs-xs text-muted-foreground">{money(l.price * l.qty)}</s>
-                        ) : null}
-                        {money(l.price * l.qty * (1 - (l.discountPercent ?? 0) / 100))}
-                      </span>
-                    </div>
-                    {l.modifiers?.length ? (
-                      <p className="truncate text-fs-xs font-bold uppercase leading-snug text-tile-blue">
-                        {l.modifiers.join(", ")}
-                      </p>
-                    ) : null}
-                    {l.notes ? (
-                      <p className="truncate text-fs-xs italic leading-snug text-muted-foreground">
-                        {l.notes}
-                      </p>
-                    ) : null}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => changeQty(l.id, -1)}
-                    aria-label={`Remove one ${l.name}`}
-                    className="grid size-6 shrink-0 place-items-center rounded-pill text-fs-sm font-bold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                  >
-                    &minus;
-                  </button>
-                </div>
-              </li>
+              <SwipeLine
+                key={l.id}
+                line={l}
+                onCancel={() => removeLine(l.id)}
+                onToggleTax={() => toggleLineTax(l.id)}
+                onEdit={l.custom || !onEditLine ? undefined : () => onEditLine(l)}
+              />
             ))}
           </ul>
         )}
@@ -672,5 +629,75 @@ export function OrderPanel({
         }}
       />
     </div>
+  );
+}
+
+/** Receipt row: swipe left reveals Cancel, swipe right reveals No VAT. */
+function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine; onCancel: () => void; onToggleTax: () => void; onEdit?: (() => void) | undefined }) {
+  const ACTION = 88;
+  const [x, setX] = useState(0);
+  const [start, setStart] = useState<{ px: number; py: number; base: number; moved: boolean } | null>(null);
+  const settle = (v: number) => setX(v <= -ACTION / 2 ? -ACTION : v >= ACTION / 2 ? ACTION : 0);
+  return (
+    <li className="relative overflow-hidden py-0">
+      <button
+        type="button"
+        onClick={() => { setX(0); onToggleTax(); }}
+        aria-label={l.taxExempt ? `Add ${brand.taxLabel} to ${l.name}` : `No ${brand.taxLabel} for ${l.name}`}
+        tabIndex={x > 0 ? 0 : -1}
+        className="absolute inset-y-0 left-0 grid place-items-center bg-foreground px-2 text-fs-xs font-bold text-background"
+        style={{ width: ACTION }}
+      >
+        {l.taxExempt ? `Add ${brand.taxLabel}` : `No ${brand.taxLabel}`}
+      </button>
+      <button
+        type="button"
+        onClick={() => { setX(0); onCancel(); }}
+        aria-label={`Cancel ${l.name}`}
+        tabIndex={x < 0 ? 0 : -1}
+        className="absolute inset-y-0 right-0 grid place-items-center bg-destructive px-2 text-fs-xs font-bold uppercase text-destructive-foreground"
+        style={{ width: ACTION }}
+      >
+        Cancel
+      </button>
+      <div
+        className={cn("relative flex touch-pan-y items-start gap-1.5 bg-surface py-1 pr-0.5", !start && "transition-transform")}
+        style={{ transform: `translateX(${x}px)` }}
+        onPointerDown={(e) => setStart({ px: e.clientX, py: e.clientY, base: x, moved: false })}
+        onPointerMove={(e) => {
+          if (!start) return;
+          const dx = e.clientX - start.px;
+          if (!start.moved) {
+            if (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(e.clientY - start.py)) return;
+            setStart({ ...start, moved: true });
+            (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+          }
+          setX(Math.max(-ACTION, Math.min(ACTION, start.base + dx)));
+        }}
+        onPointerUp={() => { if (start?.moved) settle(x); setStart(null); }}
+        onPointerCancel={() => { settle(x); setStart(null); }}
+        onClickCapture={(e) => { if (x !== 0) { e.stopPropagation(); e.preventDefault(); setX(0); } }}
+      >
+        <span className="shrink-0 pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">{l.qty} ea</span>
+        <button
+          type="button"
+          disabled={!onEdit}
+          onClick={onEdit}
+          aria-label={onEdit ? `Edit ${l.name}` : undefined}
+          className="min-w-0 flex-1 rounded-md text-left enabled:hover:bg-muted/60 disabled:cursor-default"
+        >
+          <div className="flex min-h-6 items-center gap-2">
+            <span className="min-w-0 flex-1 truncate text-fs-sm font-bold leading-snug text-foreground">{l.name}</span>
+            <span className="flex shrink-0 items-baseline gap-1.5 text-fs-sm font-bold tabular-nums text-foreground">
+              {l.discountPercent ? <s className="text-fs-xs text-muted-foreground">{money(l.price * l.qty)}</s> : null}
+              {money(l.price * l.qty * (1 - (l.discountPercent ?? 0) / 100))}
+            </span>
+          </div>
+          {l.taxExempt ? <p className="text-fs-xs font-bold leading-snug text-muted-foreground">No {brand.taxLabel} added</p> : null}
+          {l.modifiers?.length ? <p className="truncate text-fs-xs font-bold uppercase leading-snug text-tile-blue">{l.modifiers.join(", ")}</p> : null}
+          {l.notes ? <p className="truncate text-fs-xs italic leading-snug text-muted-foreground">{l.notes}</p> : null}
+        </button>
+      </div>
+    </li>
   );
 }

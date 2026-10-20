@@ -785,6 +785,7 @@ type Store = {
   addGiftCardLine: (number: string, amount: number) => void;
   changeQty: (id: string, delta: number) => void;
   removeLine: (id: string) => void;
+  toggleLineTax: (id: string) => void;
   /** Rewrites an existing cart line from the product window (never adds a copy). */
   updateLine: (
     id: string,
@@ -1785,6 +1786,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
             .filter((l) => l.qty > 0),
         ),
       removeLine: (id) => setCart((list) => list.filter((l) => l.id !== id)),
+      toggleLineTax: (id) => setCart((list) => list.map((l) => (l.id === id ? { ...l, taxExempt: !l.taxExempt } : l))),
       updateLine: (id, opts) =>
         setCart((list) =>
           list.map((l) => {
