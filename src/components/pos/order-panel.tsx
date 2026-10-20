@@ -22,7 +22,7 @@ import {
   Wallet,
 } from "lucide-react";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
@@ -338,7 +338,12 @@ function HeaderAction({
 }
 
 /** Running order area shared by phone, tablet and desktop layouts. */
-export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boolean } & OptionsLayout) {
+export function OrderPanel({
+  wide,
+  onEditLine,
+  dragGrip,
+  ...optionsLayout
+}: { wide: boolean; dragGrip?: ReactNode } & OptionsLayout) {
   const navigate = useNavigate();
   const liveTime = useLiveTime();
   const {
@@ -401,7 +406,7 @@ export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boole
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="shrink-0 border-b border-border px-4 pb-2 pt-2">
-        <div className="flex w-full flex-nowrap items-center gap-x-2 py-1">
+        <div className="flex w-full flex-nowrap items-center gap-x-1 py-1">
           <input
             type="text"
             value={guestName}
@@ -414,7 +419,7 @@ export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boole
             }}
             placeholder={tableGroupLabel(activeTable) || "Guest Name"}
             aria-label="Guest name"
-            className="h-8 min-w-[6.75rem] flex-1 rounded-row border border-transparent bg-transparent px-1 text-fs-sm font-extrabold text-foreground outline-none transition-colors placeholder:text-foreground focus:border-border focus:bg-muted"
+            className="h-8 min-w-[6.25rem] flex-1 rounded-row border border-transparent bg-transparent px-1 text-fs-sm font-extrabold text-foreground outline-none transition-colors placeholder:text-foreground focus:border-border focus:bg-muted"
           />
           <input
             type="tel"
@@ -434,6 +439,9 @@ export function OrderPanel({ wide, onEditLine, ...optionsLayout }: { wide: boole
           <span className="shrink-0 whitespace-nowrap text-[0.6875rem] font-bold text-muted-foreground">
             Arrived at {arrivedAt || liveTime}
           </span>
+          {dragGrip ? (
+            <span className="shrink-0">{dragGrip}</span>
+          ) : null}
         </div>
 
         <div className="mt-1.5">

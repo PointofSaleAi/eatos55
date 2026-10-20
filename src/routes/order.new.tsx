@@ -533,23 +533,24 @@ function NewOrder() {
           showCart ? "" : "hidden",
           wide
             ? moreOpen && docked
-              ? cn("w-[21rem] shrink-0 border-border bg-surface lg:w-[24rem]", panelLeft ? "border-r" : "border-l")
+              ? cn("w-[24rem] shrink-0 border-border bg-surface lg:w-[24rem]", panelLeft ? "border-r" : "border-l")
               : cn("w-[24rem] shrink-0 border-border bg-surface 2xl:w-[26rem]", panelLeft ? "border-r" : "border-l")
             : "min-w-0 flex-1 bg-surface",
 
         )}
       >
-        {wide ? (
-          <DragGrip
-            vertical
-            label="order panel"
-            onMove={setOrderPanelSide}
-            onDragPosition={setPanelDragX}
-            className={cn("absolute top-1/2 z-10 -translate-y-1/2", panelLeft ? "right-0" : "left-0")}
-          />
-        ) : null}
         <OrderPanel
           wide={wide}
+          dragGrip={
+            wide ? (
+              <DragGrip
+                label="order panel"
+                onMove={setOrderPanelSide}
+                onDragPosition={setPanelDragX}
+                className="size-5 shrink-0 rounded-full"
+              />
+            ) : null
+          }
           onEditLine={editCartLine}
           customItemOpen={customItemOpen}
           moreOpen={moreOpen}
