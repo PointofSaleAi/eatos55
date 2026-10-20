@@ -30,7 +30,7 @@ import { useVoiceSearch } from "@/lib/voice-search";
  * when the name itself wraps to two lines and the last line has room, the
  * price rides inline at the end of that line instead.
  */
-function OptionLabel({ name, price, stock }: { name: string; price: number; stock?: number }) {
+function OptionLabel({ name, price, stock }: { name: string; price: number; stock?: number | undefined }) {
   const nameRef = useRef<HTMLSpanElement>(null);
   const [multiline, setMultiline] = useState(false);
   useLayoutEffect(() => {
