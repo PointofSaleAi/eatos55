@@ -1,4 +1,5 @@
 # Settings screens (also `src/routes/settings.*`)
+- ModifierOption stock is a presentation-only demo count for physical choices; ItemSheet shows remaining quantities without changing checkout, selection or live inventory, and untracked preparation instructions omit counts.
 - DeviceFrame owns per-session rail placement; the NavRail grip uses pointer capture for edge drops and arrow keys for accessible placement, preserving rail expansion, routed content and phone bottom tabs.
 - Cash Management uses atomic demo drawer transitions for signed-in staff, validates amounts and till state in the store, preserves cross-midnight cash, and stays separate from checkout and hardware.
 
