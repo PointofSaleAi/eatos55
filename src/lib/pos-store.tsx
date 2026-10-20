@@ -752,6 +752,9 @@ type Store = {
 
   guest: Guest;
   setGuest: (patch: Partial<Guest>) => void;
+  /** Seat the next added items belong to on a table order; null means ALL. */
+  activeSeat: number | null;
+  setActiveSeat: (seat: number | null) => void;
   orderType: ServiceOrderType;
   setOrderType: (t: ServiceOrderType) => void;
   openTicket: (id: string) => void;
