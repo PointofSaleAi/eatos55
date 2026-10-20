@@ -27,7 +27,9 @@ export function DragGrip({
   onMove,
   onDragPosition,
   className,
+  vertical = false,
 }: {
+  vertical?: boolean;
   label: string;
   onMove: (side: Side) => void;
   onDragPosition: (x: number | null) => void;
@@ -68,11 +70,12 @@ export function DragGrip({
         onDragPosition(null);
       }}
       className={cn(
-        "mx-auto flex h-6 w-10 shrink-0 touch-none cursor-grab items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:cursor-grabbing",
+        vertical ? "flex h-12 w-3 shrink-0" : "mx-auto flex h-6 w-10 shrink-0",
+        " touch-none cursor-grab items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:cursor-grabbing",
         className,
       )}
     >
-      <span className="grid grid-cols-3 gap-[2px]">
+      <span className={cn("grid gap-[2px]", vertical ? "grid-cols-2" : "grid-cols-3")}>
         {Array.from({ length: 6 }).map((_, i) => (
           <span key={i} className="size-[3px] rounded-full bg-current" />
         ))}

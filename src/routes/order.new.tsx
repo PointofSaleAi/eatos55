@@ -529,7 +529,7 @@ function NewOrder() {
 
       <aside
         className={cn(
-          "flex min-h-0 flex-col overflow-hidden transition-[width] duration-300",
+          "relative flex min-h-0 flex-col overflow-hidden transition-[width] duration-300",
           showCart ? "" : "hidden",
           wide
             ? moreOpen && docked
@@ -540,7 +540,13 @@ function NewOrder() {
         )}
       >
         {wide ? (
-          <DragGrip label="order panel" onMove={setOrderPanelSide} onDragPosition={setPanelDragX} className="mt-1" />
+          <DragGrip
+            vertical
+            label="order panel"
+            onMove={setOrderPanelSide}
+            onDragPosition={setPanelDragX}
+            className={cn("absolute top-1/2 z-10 -translate-y-1/2", panelLeft ? "right-0" : "left-0")}
+          />
         ) : null}
         <OrderPanel
           wide={wide}
