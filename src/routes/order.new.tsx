@@ -547,7 +547,7 @@ function NewOrder() {
                 label="order panel"
                 onMove={setOrderPanelSide}
                 onDragPosition={setPanelDragX}
-                className="size-6 shrink-0 rounded-full"
+                className="size-5 shrink-0 rounded-full"
               />
             ) : null
           }
