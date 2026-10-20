@@ -230,7 +230,7 @@ export function ShiftDashboard() {
                 </button>
               ))}
             </div>
-            <ul className="no-scrollbar grid max-h-[9.5rem] grid-cols-[repeat(auto-fill,minmax(6.5rem,1fr))] gap-1.5 overflow-y-auto">
+            <ul className="no-scrollbar grid max-h-[9.5rem] grid-cols-[repeat(auto-fill,minmax(7.5rem,1fr))] gap-1.5 overflow-y-auto">
               {floorEntries.map(({ name, state, seats, seatedMinutesAgo }) => {
                 const meta = tableStateMeta[state];
                 const time =
