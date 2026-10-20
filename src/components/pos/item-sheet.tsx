@@ -30,7 +30,7 @@ import { useVoiceSearch } from "@/lib/voice-search";
  * when the name itself wraps to two lines and the last line has room, the
  * price rides inline at the end of that line instead.
  */
-function OptionLabel({ name, price }: { name: string; price: number }) {
+function OptionLabel({ name, price, stock }: { name: string; price: number; stock?: number | undefined }) {
   const nameRef = useRef<HTMLSpanElement>(null);
   const [multiline, setMultiline] = useState(false);
   useLayoutEffect(() => {
@@ -58,6 +58,11 @@ function OptionLabel({ name, price }: { name: string; price: number }) {
           )}
         >
           +{money(price)}
+        </span>
+      ) : null}
+      {typeof stock === "number" ? (
+        <span className="mt-1 block text-fs-xs font-semibold tabular-nums text-muted-foreground">
+          {stock} remaining
         </span>
       ) : null}
     </span>
@@ -254,7 +259,7 @@ export function ItemSheet({
                         <img
                           src={item.image}
                           alt=""
-                          className="size-11 shrink-0 rounded-card border border-border object-cover sm:size-14"
+                          className="size-11 shrink-0 rounded-card border border-border object-contain sm:size-14"
                         />
                       ) : (
                         <span
@@ -342,7 +347,7 @@ export function ItemSheet({
                           <img
                             src={item.image}
                             alt=""
-                            className="h-40 w-full object-cover sm:h-52"
+                            className="h-40 w-full object-contain sm:h-52"
                           />
                         ) : (
                           <span className="grid h-40 w-full place-items-center text-muted-foreground sm:h-52">
@@ -569,7 +574,7 @@ export function ItemSheet({
                                 : "border-border bg-surface text-foreground",
                             )}
                           >
-                            <OptionLabel name={o.name} price={o.price} />
+                            <OptionLabel name={o.name} price={o.price} stock={o.stock} />
                           </button>
                         );
                       })}

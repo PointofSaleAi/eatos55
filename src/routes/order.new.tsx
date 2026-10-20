@@ -455,7 +455,7 @@ function NewOrder() {
                   item.outOfStock && "opacity-50",
                 )}
               >
-
+                {item.image ? <img src={item.image} alt={item.name} className="mb-2 aspect-[4/3] w-full rounded-card object-contain" /> : null}
                 <span className="block w-full min-w-0 max-w-full font-extrabold leading-tight text-foreground">
                   <FitName name={item.name} />
                   {typeof item.stock === "number" && !item.outOfStock ? (

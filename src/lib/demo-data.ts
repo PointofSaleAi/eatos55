@@ -1,4 +1,5 @@
 import { formatMoney } from "@/lib/brand";
+import capricePhoto from "@/assets/caprice-sandwich.png.asset.json";
 
 export type TicketStatus = "ordering" | "preparing" | "payment" | "paid" | "ready";
 
@@ -680,7 +681,7 @@ export const menus: MenuDef[] = [
 
 /** Items for the live-app menus, keyed by the category chips above. */
 export const liveMenu: MenuItem[] = [
-  { id: "bs1", name: "CAPRICE SANDWICH", price: 20, category: "BRUNCH SANDWICHES", description: "Chèvre, tomato and basil folded into an omelette on grilled sourdough, with a side of home fries." },
+  { id: "bs1", name: "CAPRICE SANDWICH", price: 20, category: "BRUNCH SANDWICHES", image: capricePhoto.url, description: "Chèvre, tomato and basil folded into an omelette on grilled sourdough, with a side of home fries." },
   { id: "bs2", name: "CHICKEN CREPE", price: 19, category: "BRUNCH SANDWICHES", stock: 12, description: "Sautéed chicken, spinach and gruyère in a buckwheat crepe, finished with a light cream sauce." },
   { id: "bs3", name: "CHICKEN SANDWICH (POULET)", price: 20, category: "BRUNCH SANDWICHES", description: "Poached chicken, aioli and watercress in a toasted baguette, served with cornichons." },
   { id: "bs4", name: "CROQUE MADAME", price: 21, category: "BRUNCH SANDWICHES", stock: 5, lowStockAt: 5, description: "Paris ham and gruyère on brioche, baked under mornay and topped with a fried egg." },
@@ -719,7 +720,7 @@ export const liveMenu: MenuItem[] = [
   { id: "ds2", name: "PROFITEROLES", price: 14, category: "DESSERTS", description: "Choux puffs filled with vanilla ice cream, topped with warm chocolate." },
 ];
 
-export type ModifierOption = { name: string; price: number };
+export type ModifierOption = { name: string; price: number; /** Demo remaining count; omitted for untracked instructions. */ stock?: number };
 export type ModifierGroup = {
   name: string;
   options: ModifierOption[];
@@ -738,11 +739,11 @@ export const modifierGroups: ModifierGroup[] = [
     name: "Bread",
     select: "single",
     options: [
-      { name: "Baguette", price: 0 },
-      { name: "Foccacia", price: 0 },
-      { name: "Lettuce Wrap", price: 0 },
-      { name: "Sourdough", price: 1 },
-      { name: "Gluten Free Bun", price: 2 },
+      { name: "Baguette", price: 0, stock: 24 },
+      { name: "Foccacia", price: 0, stock: 12 },
+      { name: "Lettuce Wrap", price: 0, stock: 18 },
+      { name: "Sourdough", price: 1, stock: 8 },
+      { name: "Gluten Free Bun", price: 2, stock: 5 },
     ],
   },
   {
@@ -793,20 +794,20 @@ export const modifierGroups: ModifierGroup[] = [
     name: "Sandwiches Sides",
     select: "single",
     options: [
-      { name: "Side Salad", price: 4 },
-      { name: "Fries", price: 5 },
-      { name: "Soup", price: 6 },
-      { name: "Fruit Cup", price: 5 },
+      { name: "Side Salad", price: 4, stock: 16 },
+      { name: "Fries", price: 5, stock: 30 },
+      { name: "Soup", price: 6, stock: 10 },
+      { name: "Fruit Cup", price: 5, stock: 7 },
     ],
   },
   {
     name: "Sides",
     select: "multi",
     options: [
-      { name: "Pickles", price: 1 },
-      { name: "Extra Cheese", price: 2 },
-      { name: "Avocado", price: 4 },
-      { name: "Bacon", price: 4 },
+      { name: "Pickles", price: 1, stock: 25 },
+      { name: "Extra Cheese", price: 2, stock: 20 },
+      { name: "Avocado", price: 4, stock: 6 },
+      { name: "Bacon", price: 4, stock: 14 },
     ],
   },
 ];
