@@ -60,8 +60,62 @@ function TicketDetail() {
   const closed = !!ticket.closed && ticket.status === "paid";
   const refund = ticket.refund;
   const gross = ticket.lines.reduce((s, l) => s + l.price * l.qty, 0);
-  const tax = Math.round(gross * TAX_RATE * 100) / 100;
-  const subTotal = Math.round((gross - tax) * 100) / 100;
+  const baseTax = Math.round(gross * TAX_RATE * 100) / 100;
+  const subTotal = Math.round((gross - baseTax) * 100) / 100;
+  const tax = ticket.noTax ? 0 : baseTax;
+  const discount = ticket.discountPercent ? Math.round(subTotal * ticket.discountPercent) / 100 : 0;
+  const shownTotal = Math.max(0, Math.round((ticket.total - (baseTax - tax) - discount) * 100) / 100);
+  const isPaid = ticket.status === "paid";
+
+  const cancelThisTicket = () => {
+    void (async () => {
+      const ok = await confirm({
+        title: `Cancel order ${ticket.number}?`,
+        message: "This cannot be undone - the ticket leaves the queue.",
+        confirmLabel: "Cancel order",
+        destructive: true,
+      });
+      if (!ok) return;
+      cancelTicket(ticket.id);
+      toast.success(`Order ${ticket.number} cancelled`);
+      navigate({ to: "/tickets" });
+    })();
+  };
+
+  const toggleNoTax = () => {
+    if (ticket.noTax) {
+      patchTicket(ticket.id, { noTax: false });
+      toast.success("Tax applied");
+      return;
+    }
+    void (async () => {
+      const ok = await confirm({
+        title: `Are you sure you want to apply NO ${brand.taxLabel.toUpperCase()}?`,
+        confirmLabel: "Yes",
+        cancelLabel: "No",
+        rowButtons: true,
+      });
+      if (!ok) return;
+      patchTicket(ticket.id, { noTax: true });
+      toast.success("Tax removed from this ticket");
+    })();
+  };
+
+  // Ordering tickets get the full set; paid tickets only transfer, receipt and tax exemption.
+  const ticketActions = closed ? null : (
+    <div className="no-scrollbar flex min-w-0 items-center gap-1 overflow-x-auto" aria-label="Ticket options">
+      {!isPaid ? (
+        <HeaderAction label="Discount" icon={BadgePercent} active={discount > 0} onPress={() => setDiscountOpen(true)} />
+      ) : null}
+      {!isPaid ? (
+        <HeaderAction label="Add Item" icon={Plus} onPress={() => { openTicket(ticket.id); navigate({ to: "/order/new" }); }} />
+      ) : null}
+      <HeaderAction label="Transfer Check" icon={ArrowLeftRight} onPress={() => setTransferOpen(true)} />
+      <HeaderAction label="Customer Receipt" icon={ReceiptText} onPress={() => toast.success("Customer receipt sent to the printer")} />
+      {!isPaid ? <HeaderAction label="Cancel" icon={Trash2} destructive onPress={cancelThisTicket} /> : null}
+      <HeaderAction label={ticket.noTax ? `No ${brand.taxLabel} · On` : `No ${brand.taxLabel}`} icon={Percent} active={!!ticket.noTax} onPress={toggleNoTax} />
+    </div>
+  );
   const payments = ticket.payments ?? [];
   const paid = payments.reduce((s, p) => s + p.amount, 0);
   const paymentsSection = closed ? <ClosedPaymentRows ticket={ticket} onRefund={() => setRefundOpen(true)} /> : payments.length ? (
