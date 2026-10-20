@@ -1,4 +1,5 @@
 import {
+  Armchair,
   ArrowLeftRight,
   BadgePercent,
   ClipboardList,
@@ -14,6 +15,7 @@ import {
   Receipt,
   RotateCcw,
   Save,
+  Share2,
   Tag,
   Trash2,
   TriangleAlert,
@@ -418,7 +420,7 @@ export function OrderPanel({
               saveGuestName();
               event.currentTarget.blur();
             }}
-            placeholder={tableGroupLabel(activeTable) || "Guest Name"}
+            placeholder="Guest Name"
             aria-label="Guest name"
             className="h-8 min-w-[6.25rem] flex-1 rounded-row border border-transparent bg-transparent px-1 text-fs-sm font-extrabold text-foreground outline-none transition-colors placeholder:text-foreground focus:border-border focus:bg-muted"
           />
@@ -471,6 +473,9 @@ export function OrderPanel({
             ) : null}
           </div>
         ) : null}
+
+        {/* Seat picker for table orders: new items are assigned to the chosen seat */}
+        {!addGuestOpen && showTableChip ? <SeatPicker /> : null}
 
         {/* Order number, notes shortcut and server share one row */}
         {!addGuestOpen ? <div className="mt-1.5 flex items-center justify-between gap-2 text-fs-xs font-bold uppercase text-muted-foreground">
@@ -737,8 +742,53 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
             </div>
           ) : null}
           {l.notes ? <p className="truncate text-fs-xs italic leading-snug text-muted-foreground">{l.notes}</p> : null}
+          {l.seat ? (
+            <p className="mt-0.5 flex items-center gap-1 text-fs-xs font-bold leading-snug text-muted-foreground">
+              <Armchair className="size-3.5" aria-hidden />
+              <span className="rounded-sm bg-foreground px-1.5 py-0.5 text-[0.625rem] font-extrabold tabular-nums text-background">{l.seat}</span>
+            </p>
+          ) : null}
         </div>
       </div>
     </li>
+  );
+}
+
+/** Seat selector for table orders: ALL or one seat per guest; new items take the picked seat. */
+function SeatPicker() {
+  const { activeTable, tableSeated, guest, activeSeat, setActiveSeat } = usePos();
+  const seats = Math.max(guest.partySize, activeTable ? (tableSeated[activeTable] ?? 0) : 0, 1);
+  const seatButton = (n: number | null, label: string) => (
+    <button
+      key={label}
+      type="button"
+      onClick={() => setActiveSeat(n)}
+      aria-pressed={activeSeat === n}
+      aria-label={n === null ? "Assign items to all seats" : `Assign items to seat ${n}`}
+      className={cn(
+        "grid h-8 min-w-8 shrink-0 place-items-center rounded-row border px-2 text-fs-xs font-extrabold tabular-nums transition-colors",
+        activeSeat === n
+          ? "border-foreground bg-foreground text-background"
+          : "border-border bg-surface text-foreground hover:bg-muted",
+      )}
+    >
+      {label}
+    </button>
+  );
+  return (
+    <div className="no-scrollbar mt-1.5 flex items-center gap-1.5 overflow-x-auto">
+      <Armchair className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+      {seatButton(null, "ALL")}
+      <button
+        type="button"
+        onClick={() => toast.info("Split by seat is not configured for this location")}
+        aria-label="Split by seat"
+        title="Split by seat"
+        className="grid size-8 shrink-0 place-items-center rounded-row border border-border bg-surface text-muted-foreground transition-colors hover:bg-muted"
+      >
+        <Share2 className="size-3.5" />
+      </button>
+      {Array.from({ length: seats }, (_, i) => seatButton(i + 1, String(i + 1)))}
+    </div>
   );
 }
