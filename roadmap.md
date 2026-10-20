@@ -124,3 +124,4 @@
 - [x] Add Tax flow completed and verified signed-in on desktop and phone (name/amount/type/applicability popups, validation, autosave)
 - [x] Taxes: swipe action shows the archive mark alone with no "Archive" word, and the toolbar archive button is removed so the header keeps only the plus; verified signed-in on desktop and phone
 - [x] Menu settings (Menus, Categories, Modifiers, Add-Ons, Products, Default Modifiers, Groups): swipe strips and editor archive buttons show the archive mark alone with no "Archive"/"Restore" word; verified signed-in on desktop, tablet and phone
+- [x] Table-order seat picker: seat row (ALL + numbered seats) in the order panel for Dine In table orders; new items take the picked seat and show a seat badge; guest name placeholder stays 'Guest Name' (verified desktop + phone)
