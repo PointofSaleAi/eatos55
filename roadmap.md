@@ -4,6 +4,7 @@
 - [x] Rework the Guestbook guest list with initials avatars, a New Guest popover, sort and archive/restore with per-row actions; verified on phone, tablet and desktop
 
 # Roadmap
+- [ ] Reduce Local Host artwork to match toolbar icons, add uploaded Caprice photo and show modifier remaining stock across layouts
 - [x] Replace the device pill with the uploaded Local Host icon immediately after Maya AI; verified desktop, tablet and phone menu
 - [x] Allow dragging side navigation left/right while preserving phone navigation; verified both sides, cancelled drops, expansion and screen switching
 - [x] Remove the archive button from every Menu settings editor (menu, category, modifier, add-on, product, default-modifier, group); archiving stays only as the list left-swipe, verified phone, tablet and desktop
