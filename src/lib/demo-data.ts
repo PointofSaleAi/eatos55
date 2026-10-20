@@ -89,6 +89,11 @@ export type Ticket = {
   refund?: { reason: string; at: string; amount: number };
   /** Check number printed on the guest copy. */
   checkNumber?: number;
+  /** Demo order discount applied from the ticket screen. */
+  discountName?: string;
+  discountPercent?: number;
+  /** Tax removed from the whole ticket from the ticket screen. */
+  noTax?: boolean;
   /** Tips recorded against the ticket. */
   tips?: number;
   revenueCenter?: string;

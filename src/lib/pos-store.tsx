@@ -698,6 +698,8 @@ type Store = {
   visibleTickets: (tab: TicketStatus | "all", opts?: { ignoreDate?: boolean }) => Ticket[];
 
   setTicketStatus: (id: string, status: TicketStatus) => void;
+  /** Demo-only ticket adjustments (discount, tax exemption) from the ticket screen. */
+  patchTicket: (id: string, patch: Partial<Pick<Ticket, "discountName" | "discountPercent" | "noTax">>) => void;
   addTip: (id: string, amount: number) => void;
   transferTickets: (ids: string[], server: string) => void;
   closeTickets: (ids: string[]) => void;
@@ -1382,6 +1384,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
       },
       setTicketStatus: (id, status) =>
         setTickets((list) => list.map((t) => (t.id === id ? { ...t, status } : t))),
+      patchTicket: (id, patch) =>
+        setTickets((list) => list.map((t) => (t.id === id ? { ...t, ...patch } : t))),
       transferTickets: (ids, server) =>
         setTickets((list) =>
           list.map((t) =>

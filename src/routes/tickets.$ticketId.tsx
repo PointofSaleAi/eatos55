@@ -1,5 +1,8 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
-import { ChevronDown, Printer, Trash2 } from "lucide-react";
+import { ArrowLeftRight, BadgePercent, ChevronDown, Percent, Plus, Printer, ReceiptText, Trash2 } from "lucide-react";
+import { HeaderAction } from "@/components/pos/order-panel";
+import { DiscountSheet } from "@/components/pos/discount-sheet";
+import { TransferCheckDialog } from "@/components/pos/transfer-check-dialog";
 import { Fragment, useState } from "react";
 import { brand } from "@/lib/brand";
 import { toast } from "sonner";
@@ -34,12 +37,14 @@ export const Route = createFileRoute("/tickets/$ticketId")({
 function TicketDetail() {
   const { ticketId } = useParams({ from: "/tickets/$ticketId" });
   const navigate = useNavigate();
-  const { tickets, session, openTicket, addTip, cancelTicket, closeTicket, refundTicket } = usePos();
+  const { tickets, session, openTicket, addTip, cancelTicket, closeTicket, refundTicket, patchTicket, transferTickets } = usePos();
   const confirm = useConfirm();
   const ticket = tickets.find((t) => t.id === ticketId);
   const [tipOpen, setTipOpen] = useState(false);
   const [paidOpen, setPaidOpen] = useState(false);
   const [refundOpen, setRefundOpen] = useState(false);
+  const [discountOpen, setDiscountOpen] = useState(false);
+  const [transferOpen, setTransferOpen] = useState(false);
   const landscape = useLandscapeWide();
   const Footer = landscape ? Fragment : ScreenFooter;
 
@@ -60,8 +65,62 @@ function TicketDetail() {
   const closed = !!ticket.closed && ticket.status === "paid";
   const refund = ticket.refund;
   const gross = ticket.lines.reduce((s, l) => s + l.price * l.qty, 0);
-  const tax = Math.round(gross * TAX_RATE * 100) / 100;
-  const subTotal = Math.round((gross - tax) * 100) / 100;
+  const baseTax = Math.round(gross * TAX_RATE * 100) / 100;
+  const subTotal = Math.round((gross - baseTax) * 100) / 100;
+  const tax = ticket.noTax ? 0 : baseTax;
+  const discount = ticket.discountPercent ? Math.round(subTotal * ticket.discountPercent) / 100 : 0;
+  const shownTotal = Math.max(0, Math.round((ticket.total - (baseTax - tax) - discount) * 100) / 100);
+  const isPaid = ticket.status === "paid";
+
+  const cancelThisTicket = () => {
+    void (async () => {
+      const ok = await confirm({
+        title: `Cancel order ${ticket.number}?`,
+        message: "This cannot be undone - the ticket leaves the queue.",
+        confirmLabel: "Cancel order",
+        destructive: true,
+      });
+      if (!ok) return;
+      cancelTicket(ticket.id);
+      toast.success(`Order ${ticket.number} cancelled`);
+      navigate({ to: "/tickets" });
+    })();
+  };
+
+  const toggleNoTax = () => {
+    if (ticket.noTax) {
+      patchTicket(ticket.id, { noTax: false });
+      toast.success("Tax applied");
+      return;
+    }
+    void (async () => {
+      const ok = await confirm({
+        title: `Are you sure you want to apply NO ${brand.taxLabel.toUpperCase()}?`,
+        confirmLabel: "Yes",
+        cancelLabel: "No",
+        rowButtons: true,
+      });
+      if (!ok) return;
+      patchTicket(ticket.id, { noTax: true });
+      toast.success("Tax removed from this ticket");
+    })();
+  };
+
+  // Ordering tickets get the full set; paid tickets only transfer, receipt and tax exemption.
+  const ticketActions = closed ? null : (
+    <div className="no-scrollbar flex min-w-0 items-center gap-1 overflow-x-auto" aria-label="Ticket options">
+      {!isPaid ? (
+        <HeaderAction label="Discount" icon={BadgePercent} active={discount > 0} onPress={() => setDiscountOpen(true)} />
+      ) : null}
+      {!isPaid ? (
+        <HeaderAction label="Add Item" icon={Plus} onPress={() => { openTicket(ticket.id); navigate({ to: "/order/new" }); }} />
+      ) : null}
+      <HeaderAction label="Transfer Check" icon={ArrowLeftRight} onPress={() => setTransferOpen(true)} />
+      <HeaderAction label="Customer Receipt" icon={ReceiptText} onPress={() => toast.success("Customer receipt sent to the printer")} />
+      {!isPaid ? <HeaderAction label="Cancel" icon={Trash2} destructive onPress={cancelThisTicket} /> : null}
+      <HeaderAction label={ticket.noTax ? "No Service Tax · On" : "No Service Tax"} icon={Percent} active={!!ticket.noTax} onPress={toggleNoTax} />
+    </div>
+  );
   const payments = ticket.payments ?? [];
   const paid = payments.reduce((s, p) => s + p.amount, 0);
   const paymentsSection = closed ? <ClosedPaymentRows ticket={ticket} onRefund={() => setRefundOpen(true)} /> : payments.length ? (
@@ -101,6 +160,7 @@ function TicketDetail() {
               <span className="shrink-0">Order# {ticket.orderNo ?? ticket.number} · Check {ticket.checkNumber ?? ticket.number}</span>
               <span className="min-w-0 truncate" title={`${ticket.server} · ${session.role}`}>{ticket.server}</span>
             </div>
+            {ticketActions ? <div className="mt-2">{ticketActions}</div> : null}
             {ticket.roomNumber ? <p className="mt-2 text-fs-xs text-muted-foreground">Room {ticket.roomNumber}{ticket.bookingNumber ? ` · Booking ${ticket.bookingNumber}` : ""}{roomProofLabel(ticket) ? ` · ${roomProofLabel(ticket)}` : ticket.signedBill ? " · signed bill posted" : ""}</p> : null}
             {ticket.notes ? <p className="mt-2 whitespace-pre-wrap text-fs-xs italic text-muted-foreground">{ticket.notes}</p> : null}
           </div>
@@ -127,8 +187,9 @@ function TicketDetail() {
             <dl className="text-fs-sm">
               <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground"><dt>Sub Total</dt><dd className="tabular-nums">{money(subTotal)}</dd></div>
               <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground"><dt>{brand.taxLabel}</dt><dd className="tabular-nums">{money(tax)}</dd></div>
+              {discount > 0 ? <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground"><dt>Discount{ticket.discountName ? ` · ${ticket.discountName}` : ""}</dt><dd className="tabular-nums">-{money(discount)}</dd></div> : null}
               {ticket.tips ? <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground"><dt>Tips</dt><dd className="tabular-nums">{money(ticket.tips)}</dd></div> : null}
-              <div className="flex items-center justify-between pt-0.5 text-fs-lg font-extrabold text-foreground"><dt>Total</dt><dd className="tabular-nums">{money(ticket.total)}</dd></div>
+              <div className="flex items-center justify-between pt-0.5 text-fs-lg font-extrabold text-foreground"><dt>Total</dt><dd className="tabular-nums">{money(shownTotal)}</dd></div>
             </dl>
           </div>
         </>
@@ -147,6 +208,7 @@ function TicketDetail() {
         }
       />
       <ScreenBody hug>
+        {ticketActions ? <div className="mb-3">{ticketActions}</div> : null}
         <Card className="p-4">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
             <div className="min-w-0">
@@ -205,10 +267,11 @@ function TicketDetail() {
         <Card className="mt-3 px-4 py-3">
           <Row label="Sub Total" value={money(subTotal)} />
           <Row label={brand.taxLabel} value={money(tax)} />
+          {discount > 0 ? <Row label={`Discount${ticket.discountName ? ` · ${ticket.discountName}` : ""}`} value={`-${money(discount)}`} /> : null}
           {ticket.tips ? <Row label="Tips" value={money(ticket.tips)} /> : null}
           <div className="mt-2 flex items-center justify-between border-t border-border pt-2">
             <span className="text-fs-sm font-extrabold text-foreground">Total</span>
-            <span className="text-fs-lg font-extrabold text-foreground">{money(ticket.total)}</span>
+            <span className="text-fs-lg font-extrabold text-foreground">{money(shownTotal)}</span>
           </div>
         </Card>
 
@@ -261,20 +324,7 @@ function TicketDetail() {
                 variant="outline"
                 aria-label="Cancel order"
                 className={cn("h-12 shrink-0 border-destructive/40 text-destructive", landscape ? "w-12 rounded-row" : "w-14 rounded-pill")}
-                onClick={() => {
-                  void (async () => {
-                    const ok = await confirm({
-                      title: `Cancel order ${ticket.number}?`,
-                      message: "This cannot be undone - the ticket leaves the queue.",
-                      confirmLabel: "Cancel order",
-                      destructive: true,
-                    });
-                    if (!ok) return;
-                    cancelTicket(ticket.id);
-                    toast.success(`Order ${ticket.number} cancelled`);
-                    navigate({ to: "/tickets" });
-                  })();
-                }}
+                onClick={cancelThisTicket}
               >
                 <Trash2 className="size-5" />
               </Button>
@@ -295,6 +345,22 @@ function TicketDetail() {
       </Footer>
       </div>
 
+
+      <DiscountSheet
+        open={discountOpen}
+        selected={ticket.discountName ?? null}
+        onClose={() => setDiscountOpen(false)}
+        onPick={(d) => {
+          patchTicket(ticket.id, { discountName: d.name, discountPercent: d.percent });
+          setDiscountOpen(false);
+          toast.success(`${d.name} applied`);
+        }}
+      />
+      {transferOpen ? <TransferCheckDialog currentOwner={ticket.server} onClose={() => setTransferOpen(false)} onTransfer={(owner) => {
+        transferTickets([ticket.id], owner);
+        setTransferOpen(false);
+        toast.success(`Check transferred to ${owner}`);
+      }} /> : null}
 
       <RefundReasonDialog
         open={refundOpen}
