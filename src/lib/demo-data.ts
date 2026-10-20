@@ -40,6 +40,8 @@ export type CartLine = {
   discountPercent?: number;
   /** Gift card loads are not taxed. */
   taxExempt?: boolean;
+  /** Seat number the item was ordered for on a table order. */
+  seat?: number;
 };
 
 /** Demo gift cards: number -> starting balance. Balances live in the POS store. */
