@@ -1,3 +1,4 @@
+- [x] Move the cart line's modifiers expand arrow below the price, onto the add-ons/modifiers line; placement, expansion and collapse verified on desktop, tablet and phone
 - [x] Move the order panel between left and right by dragging its grip (placed after the arrival time in the header row), with the menu flipping sides; verified grip placement, both drag directions, cancelled drops and header fit on desktop, tablet and phone
 - [x] Run product-tile photos edge to edge across the card's top band and shrink the name on photo tiles; verified flush right edge, clean corners, small name, unchanged text-only tiles and adding to the order on phone, tablet and desktop
 - [x] Use the uploaded archive mark on the guestbook archive controls over a neutral grey surface (swipe action and toolbar toggle); verified phone, tablet and desktop in light and dark
