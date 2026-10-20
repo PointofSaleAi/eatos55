@@ -1,4 +1,5 @@
 # Settings screens (also `src/routes/settings.*`)
+- DeviceFrame owns per-session rail placement; the NavRail grip uses pointer capture for edge drops and arrow keys for accessible placement, preserving rail expansion, routed content and phone bottom tabs.
 - Cash Management uses atomic demo drawer transitions for signed-in staff, validates amounts and till state in the store, preserves cross-midnight cash, and stays separate from checkout and hardware.
 
 - Tickets opts into non-expanding reference-style cards only in wide landscape split panes; route-driven selection and a minimum cart width preserve readable columns without changing default cards or portrait widths. The landscape detail header must not repeat what the selected card already shows (guests, order type, table, revenue centre, status), so it carries only guest, phone, arrival time, order/check numbers, server and room or note lines.

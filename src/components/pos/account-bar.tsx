@@ -10,9 +10,8 @@ import {
   Wifi,
   WifiOff,
   MoreHorizontal,
-  Monitor,
-  ChevronDown,
 } from "lucide-react";
+import localHostAsset from "@/assets/local-host.png.asset.json";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useEffect, useState } from "react";
 import { AiMark } from "@/components/pos/dashboard/eatos-ai-chat";
@@ -156,14 +155,6 @@ export function AccountActions() {
 
   return (
     <div className="relative flex shrink-0 items-center justify-end gap-0.5">
-      <span
-        title="Device connected"
-        className="mr-1 hidden items-center gap-1.5 rounded-pill bg-topbar-foreground/10 px-2.5 py-1.5 text-topbar-foreground lg:flex"
-      >
-        <span aria-hidden className="size-1.5 rounded-full bg-success" />
-        <Monitor className="size-4" />
-        <ChevronDown className="size-3.5 text-topbar-muted" />
-      </span>
       <Button
         type="button"
         variant="ghost"
@@ -174,6 +165,17 @@ export function AccountActions() {
         className={cn(iconBtn, "hidden md:inline-flex")}
       >
         <AiMark className="size-7 rounded-full" />
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        aria-label="Local Host"
+        title="Local Host"
+        onClick={() => navigate({ to: "/settings/detail/$topic", params: { topic: "servers" } })}
+        className={cn(iconBtn, "hidden md:inline-flex")}
+      >
+        <img src={localHostAsset.url} alt="" className="h-6 w-7 object-contain" />
       </Button>
       <Button
         type="button"
@@ -230,6 +232,7 @@ export function AccountActions() {
         <PopoverContent align="end" side="bottom" className="w-52 p-1">
           {[
             { label: "Maya AI", icon: <AiMark className="size-5 rounded-full" />, run: () => window.dispatchEvent(new CustomEvent("pos:open-dashboard")) },
+            { label: "Local Host", icon: <img src={localHostAsset.url} alt="" className="size-5 object-contain invert dark:invert-0" />, run: () => navigate({ to: "/settings/detail/$topic", params: { topic: "servers" } }) },
             { label: "Refresh", icon: <RotateCw className="size-4" />, run: () => toast.success("Tickets refreshed") },
             { label: "Support", icon: <Headphones className="size-4" />, run: () => navigate({ to: "/system/customer-support" }) },
             { label: "What's New", icon: <Bell className="size-4" />, run: openNews, dot: !seen },
