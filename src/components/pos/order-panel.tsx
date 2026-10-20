@@ -678,42 +678,45 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
         onClickCapture={(e) => { if (x !== 0) { e.stopPropagation(); e.preventDefault(); setX(0); } }}
       >
         <span className="shrink-0 pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">{l.qty}</span>
-        <button
-          type="button"
-          disabled={!onEdit}
-          onClick={onEdit}
-          aria-label={onEdit ? `Edit ${l.name}` : undefined}
-          className="min-w-0 flex-1 rounded-md text-left enabled:hover:bg-muted/60 disabled:cursor-default"
-        >
-          <div className="flex min-h-6 items-center gap-2">
-            <span className="min-w-0 flex-1 truncate text-fs-sm font-bold leading-snug text-foreground">{l.name}</span>
-            <span className="flex shrink-0 items-baseline gap-1.5 text-fs-sm font-bold tabular-nums text-foreground">
-              {l.discountPercent ? <s className="text-fs-xs text-muted-foreground">{money(l.price * l.qty)}</s> : null}
-              {money(l.price * l.qty * (1 - (l.discountPercent ?? 0) / 100))}
-            </span>
-          </div>
-          {l.taxExempt ? <p className="text-fs-xs font-bold leading-snug text-muted-foreground">No {brand.taxLabel} added</p> : null}
-          {l.modifiers?.length && !open ? (
-            <p className="truncate text-fs-xs font-bold leading-snug text-tile-blue">{l.modifiers.join(" · ")}</p>
-          ) : null}
-          {l.modifiers?.length && open ? (
-            <ul className="mt-0.5 border-l border-border pl-2">
-              {l.modifiers.map((m, i) => <li key={i} className="text-fs-xs font-bold leading-snug text-tile-blue">· {m}</li>)}
-            </ul>
-          ) : null}
-          {l.notes ? <p className="truncate text-fs-xs italic leading-snug text-muted-foreground">{l.notes}</p> : null}
-        </button>
-        {l.modifiers?.length ? (
+        <div className="min-w-0 flex-1">
           <button
             type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            aria-label={`${open ? "Hide" : "Show"} modifiers for ${l.name}`}
-            className="grid size-6 shrink-0 place-items-center rounded-pill text-muted-foreground hover:bg-muted"
+            disabled={!onEdit}
+            onClick={onEdit}
+            aria-label={onEdit ? `Edit ${l.name}` : undefined}
+            className="w-full rounded-md text-left enabled:hover:bg-muted/60 disabled:cursor-default"
           >
-            <ChevronDown className={cn("size-4 transition-transform", open && "rotate-180")} />
+            <div className="flex min-h-6 items-center gap-2">
+              <span className="min-w-0 flex-1 truncate text-fs-sm font-bold leading-snug text-foreground">{l.name}</span>
+              <span className="flex shrink-0 items-baseline gap-1.5 text-fs-sm font-bold tabular-nums text-foreground">
+                {l.discountPercent ? <s className="text-fs-xs text-muted-foreground">{money(l.price * l.qty)}</s> : null}
+                {money(l.price * l.qty * (1 - (l.discountPercent ?? 0) / 100))}
+              </span>
+            </div>
           </button>
-        ) : null}
+          {l.taxExempt ? <p className="text-fs-xs font-bold leading-snug text-muted-foreground">No {brand.taxLabel} added</p> : null}
+          {l.modifiers?.length ? (
+            <div className="flex items-start gap-1">
+              {open ? (
+                <ul className="min-w-0 flex-1 border-l border-border pl-2">
+                  {l.modifiers.map((m, i) => <li key={i} className="text-fs-xs font-bold leading-snug text-tile-blue">· {m}</li>)}
+                </ul>
+              ) : (
+                <p className="min-w-0 flex-1 truncate text-fs-xs font-bold leading-snug text-tile-blue">{l.modifiers.join(" · ")}</p>
+              )}
+              <button
+                type="button"
+                onClick={() => setOpen((v) => !v)}
+                aria-expanded={open}
+                aria-label={`${open ? "Hide" : "Show"} modifiers for ${l.name}`}
+                className="grid size-6 shrink-0 place-items-center rounded-pill text-muted-foreground hover:bg-muted"
+              >
+                <ChevronDown className={cn("size-4 transition-transform", open && "rotate-180")} />
+              </button>
+            </div>
+          ) : null}
+          {l.notes ? <p className="truncate text-fs-xs italic leading-snug text-muted-foreground">{l.notes}</p> : null}
+        </div>
       </div>
     </li>
   );
