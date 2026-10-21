@@ -422,15 +422,9 @@ export function ItemSheet({
                   </div>
                 ) : null}
 
-                {addOns.length ? (
-                  <div
-                    aria-hidden={tab !== "addons" ? true : undefined}
-                    inert={tab !== "addons" ? true : undefined}
-                    className={cn(
-                      "flex shrink-0 items-center gap-2 px-4 pt-2.5",
-                      tab !== "addons" && "invisible",
-                    )}
-                  >
+                {addOns.length && tab === "addons" ? (
+                  <div className="flex shrink-0 items-center gap-2 px-4 pt-2.5">
+
                     <div className="flex h-ctl-md min-w-0 flex-1 items-center gap-2 rounded-pill border border-border bg-surface px-3">
                       <Search className="size-4 shrink-0 text-muted-foreground" />
                       <input
@@ -507,7 +501,7 @@ export function ItemSheet({
 
                 {activeGroup ? (
                   <>
-                    <div className="flex min-h-10 shrink-0 items-center gap-2 px-4 pb-1.5 pt-3">
+                    <div className="flex min-h-8 shrink-0 items-center gap-2 px-4 pb-1 pt-1.5">
                       <p className="text-fs-xs font-bold text-muted-foreground">
                         Additional Modifiers
                       </p>
@@ -535,8 +529,19 @@ export function ItemSheet({
                     </div>
 
                     <div
-                      style={reservedRows}
-                      className="grid min-h-[var(--opt-h2)] flex-1 auto-rows-[minmax(3.5rem,auto)] content-start grid-cols-2 gap-2 overflow-y-auto px-4 py-2.5 sm:min-h-[var(--opt-h3)] sm:grid-cols-3 lg:min-h-[var(--opt-h4)] lg:grid-cols-4"
+                      style={
+                        {
+                          ...reservedRows,
+                          // The Add-Ons search row is only rendered on that tab, so the
+                          // grid takes the same space back here — the popup never resizes.
+                          "--opt-extra":
+                            addOns.length && tab === "item"
+                              ? "calc(0.625rem + var(--ctl-md))"
+                              : "0rem",
+                        } as import("react").CSSProperties
+                      }
+                      className="grid min-h-[calc(var(--opt-h2)_+_var(--opt-extra))] flex-1 auto-rows-[minmax(3.5rem,auto)] content-start grid-cols-2 gap-2 overflow-y-auto px-4 py-2.5 sm:min-h-[calc(var(--opt-h3)_+_var(--opt-extra))] sm:grid-cols-3 lg:min-h-[calc(var(--opt-h4)_+_var(--opt-extra))] lg:grid-cols-4"
+
                     >
 
                       {visibleOptions.map((o) => {
