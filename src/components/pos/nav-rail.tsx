@@ -1,5 +1,4 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Lock } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { EMark, Wordmark } from "@/components/pos/brand";
@@ -125,18 +124,6 @@ export function NavRail({ side, onMove, onDragPosition }: {
         </span>
       </Button>
 
-      {/* Lock the terminal */}
-      <div className={cn("flex px-2", expanded ? "" : "justify-center")}>
-        <Link
-          to="/access/clock-in"
-          title="Lock terminal"
-          aria-label="Lock terminal"
-          className={cn(cell, rest, expanded ? "flex-1 px-2" : "size-11 justify-center px-0")}
-        >
-          <Lock className="size-5 shrink-0" />
-          {expanded ? <span className="min-w-0 flex-1 truncate">Lock terminal</span> : null}
-        </Link>
-      </div>
 
       {/* Venue / revenue center: opens the Dashboard */}
       <div className={cn("flex items-center gap-2 px-2", expanded ? "" : "justify-center")}>
@@ -191,7 +178,7 @@ export function NavRail({ side, onMove, onDragPosition }: {
                   isActive(l.to) ? active : rest,
                 )}
               >
-                <l.icon className="size-6 shrink-0" />
+                <l.icon className="size-8 shrink-0" />
                 {expanded ? <span className="min-w-0 flex-1 truncate">{l.label}</span> : null}
               </Link>
             </li>
