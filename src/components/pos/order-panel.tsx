@@ -655,9 +655,23 @@ function modifierStyle(raw: string) {
   return { color: "text-mod-option", mark: "•", name };
 }
 
+/** Course chips carry the course name above the item, one colour per course. */
+function courseChipClass(name: string) {
+  const n = name.toLowerCase();
+  if (n.startsWith("dessert")) return "bg-tile-pink";
+  if (n.startsWith("appetizer") || n.startsWith("starter")) return "bg-tile-green";
+  if (n.startsWith("main")) return "bg-tile-blue";
+  if (n.startsWith("hold")) return "bg-tile-slate";
+  return "bg-tile-violet";
+}
+
 /** Receipt row: swipe left reveals Cancel, swipe right reveals No VAT. */
 function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine; onCancel: () => void; onToggleTax: () => void; onEdit?: (() => void) | undefined }) {
   const ACTION = 88;
+  // The chosen course leaves the modifier list and becomes the coloured chip
+  // above the item name instead.
+  const course = l.modifiers?.find((m) => m.startsWith("Course · "))?.slice("Course · ".length);
+  const otherMods = course ? l.modifiers?.filter((m) => !m.startsWith("Course · ")) : l.modifiers;
   const [x, setX] = useState(0);
   // Drag state lives in refs: pointerup can fire before the last pointermove's
   // state commits, and settling from a stale `x` snapped the row shut — which
@@ -724,21 +738,33 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
         }}
       >
         <span className="shrink-0 pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">{l.qty}</span>
-          <button
-            type="button"
-            disabled={!onEdit}
-            onClick={onEdit}
-            aria-label={onEdit ? `Edit ${l.name}` : undefined}
-            className="min-w-0 flex-1 rounded-md text-left enabled:hover:bg-muted/60 disabled:cursor-default"
-          >
-            <div className="flex min-h-6 items-center gap-2">
-              <span className="min-w-0 flex-1 truncate text-fs-sm font-bold leading-snug text-foreground">{l.name}</span>
-              <span className="flex shrink-0 items-baseline gap-1.5 text-fs-sm font-bold tabular-nums text-foreground">
-                {l.discountPercent ? <s className="text-fs-xs text-muted-foreground">{money(l.price * l.qty)}</s> : null}
-                {money(l.price * l.qty * (1 - (l.discountPercent ?? 0) / 100))}
+          <div className="min-w-0 flex-1">
+            {course ? (
+              <span
+                className={cn(
+                  "mb-0.5 inline-block max-w-full truncate rounded-md px-2 py-0.5 text-[0.65rem] font-bold leading-tight text-white",
+                  courseChipClass(course),
+                )}
+              >
+                {course}
               </span>
-            </div>
-          </button>
+            ) : null}
+            <button
+              type="button"
+              disabled={!onEdit}
+              onClick={onEdit}
+              aria-label={onEdit ? `Edit ${l.name}` : undefined}
+              className="w-full min-w-0 rounded-md text-left enabled:hover:bg-muted/60 disabled:cursor-default"
+            >
+              <div className="flex min-h-6 items-center gap-2">
+                <span className="min-w-0 flex-1 truncate text-fs-sm font-bold leading-snug text-foreground">{l.name}</span>
+                <span className="flex shrink-0 items-baseline gap-1.5 text-fs-sm font-bold tabular-nums text-foreground">
+                  {l.discountPercent ? <s className="text-fs-xs text-muted-foreground">{money(l.price * l.qty)}</s> : null}
+                  {money(l.price * l.qty * (1 - (l.discountPercent ?? 0) / 100))}
+                </span>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
       {l.taxExempt ? (
@@ -760,9 +786,9 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
           </Popover>
         </p>
       ) : null}
-          {l.modifiers?.length ? (
+          {otherMods?.length ? (
             <ul className="mt-0.5 ml-0.5 border-l border-border pl-2">
-              {l.modifiers.map((m, i) => {
+              {otherMods.map((m, i) => {
                 const { color, mark, name } = modifierStyle(m);
                 return (
                   <li key={i} className={cn("mod-line relative flex items-start gap-1 py-px font-normal leading-snug", color)}>

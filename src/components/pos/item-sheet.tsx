@@ -92,7 +92,7 @@ export function ItemSheet({
   editLine?: CartLine | null;
 }) {
   useBackDismiss(!!item, dismiss);
-  const { addItem, updateLine, settings } = usePos();
+  const { addItem, updateLine, settings, orderType, activeTable } = usePos();
   const announce = useAnnounce();
   const [qty, setQty] = useState(1);
   const [price, setPrice] = useState(item?.price ?? 0);
@@ -160,9 +160,17 @@ export function ItemSheet({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item, editLine]);
 
+  // Course is a table-order choice: the group only appears on dine-in orders
+  // that have a table assigned.
+  const isTableOrder = orderType === "Dine In" && Boolean(activeTable);
   const itemGroups = useMemo(
-    () => (item ? itemModifierGroups(item, settings.productModifierRules) : []),
-    [item, settings.productModifierRules],
+    () =>
+      item
+        ? itemModifierGroups(item, settings.productModifierRules).filter(
+            (g) => isTableOrder || g.name !== "Course",
+          )
+        : [],
+    [item, settings.productModifierRules, isTableOrder],
   );
   const addOns = useMemo(
     () => (item ? itemAddOnGroups(item, settings.productModifierRules) : []),
