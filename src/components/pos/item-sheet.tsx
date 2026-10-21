@@ -457,7 +457,9 @@ export function ItemSheet({
                         aria-label={`Sort add-ons, currently ${SORT_LABELS[sort]}`}
                         aria-expanded={sortOpen}
                         className={cn(
-                          "grid h-ctl-md w-10 place-items-center rounded-pill border transition-colors",
+                          // A full circle: width equals the search field's height, so the
+                          // two share the same vertical bounds and the row reads as one unit.
+                          "grid size-[var(--ctl-md)] place-items-center rounded-full border transition-colors",
                           sortOpen || sort !== "az"
                             ? "border-accent bg-accent/10 text-foreground"
                             : "border-border text-muted-foreground hover:text-foreground",
