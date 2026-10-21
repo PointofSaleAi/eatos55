@@ -554,6 +554,25 @@ export function OrderPanel({
       {/* Footer: totals and Save / Fire / Charge. Hidden only when the cart is
           empty AND no discount or service charge is applied. */}
       {cart.length > 0 || totals.discount > 0 || totals.serviceCharge > 0 || orderDiscountPercent > 0 || serviceChargePercent > 0 ? (
+      <>
+        {/* The centred handle sits above the divider line and opens the subtotal, tax,
+            discount and service-charge lines; only the running total shows by default. */}
+        <div className="flex shrink-0 justify-center pb-1">
+          <button
+            type="button"
+            aria-expanded={detailsOpen}
+            aria-controls="order-summary-details"
+            aria-label={`${detailsOpen ? "Hide" : "Show"} the subtotal, tax, discount and service charge`}
+            onClick={() => setDetailsOpen((v) => !v)}
+            className="grid h-7 w-14 place-items-center rounded-pill bg-muted text-muted-foreground transition-colors hover:bg-secondary"
+          >
+            {detailsOpen ? (
+              <ChevronDown className="size-4" aria-hidden />
+            ) : (
+              <ChevronUp className="size-4" aria-hidden />
+            )}
+          </button>
+        </div>
       <div
         className={cn(
           "shrink-0 border-t border-border bg-surface px-3 pt-1.5",
@@ -562,24 +581,6 @@ export function OrderPanel({
             : "pb-[calc(0.5rem+var(--kb-inset,0px)+var(--tabs-h,0px))]",
         )}
       >
-        {/* A centred handle above the totals opens the subtotal, tax, discount and
-            service-charge lines; only the running total shows by default. */}
-        <div className="flex justify-center">
-          <button
-            type="button"
-            aria-expanded={detailsOpen}
-            aria-controls="order-summary-details"
-            aria-label={`${detailsOpen ? "Hide" : "Show"} the subtotal, tax, discount and service charge`}
-            onClick={() => setDetailsOpen((v) => !v)}
-            className="grid h-6 w-12 place-items-center rounded-pill text-muted-foreground transition-colors hover:bg-muted"
-          >
-            {detailsOpen ? (
-              <ChevronUp className="size-4" aria-hidden />
-            ) : (
-              <ChevronDown className="size-4" aria-hidden />
-            )}
-          </button>
-        </div>
         <dl id="order-summary-details" hidden={!detailsOpen} className="text-fs-xs">
           <div className="flex items-center justify-between py-0 font-bold text-muted-foreground">
             <dt>Sub Total</dt>
@@ -637,6 +638,7 @@ export function OrderPanel({
           </button>
         </div>
       </div>
+      </>
       ) : null}
       </>}
       <GuestSheet
