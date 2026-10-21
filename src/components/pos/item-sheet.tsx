@@ -352,7 +352,7 @@ export function ItemSheet({
 
                 {view === "info" ? (
                   <>
-                    <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-3">
+                    <div className="sheet-product-info min-h-0 flex-1 overflow-y-auto px-4 pb-3">
                       <div className="flex items-center gap-2">
                         <h3 className="line-clamp-2 min-w-0 flex-1 leading-tight text-fs-base font-extrabold uppercase tracking-[0.02em] text-foreground">
                           {item.name}
@@ -361,7 +361,7 @@ export function ItemSheet({
                           {money(price)}
                         </span>
                       </div>
-                      <div className="mt-2.5 overflow-hidden rounded-card border border-border bg-muted">
+                      <div className="sheet-product-info-media mt-2.5 overflow-hidden rounded-card border border-border bg-muted">
                         {item.image ? (
                           <img
                             src={item.image}

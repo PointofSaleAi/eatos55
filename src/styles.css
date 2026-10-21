@@ -782,6 +782,21 @@ html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-discount {
   height: var(--ctl-md);
 }
 
+/* Product Information fills the same box: the photo grows to take the room and
+   the description sits under it, so no empty band is left inside the dialog. */
+html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-info {
+  display: flex;
+  flex-direction: column;
+}
+html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-info-media {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-info-media .sheet-product-photo {
+  height: 100%;
+  object-fit: cover;
+}
+
 /* Wide layout has a pointer: give rows and tiles a visible hover affordance. */
 @media (hover: hover) and (pointer: fine) {
   html[data-layout="wide"] a:focus-visible,
