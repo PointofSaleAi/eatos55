@@ -746,7 +746,7 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
         {isTableOrder ? (
           <span
             className={cn(
-              "mb-0.5 inline-block max-w-full truncate rounded-md px-2 py-0.5 text-[0.65rem] font-bold leading-tight text-white",
+              "mb-0 inline-block max-w-full truncate rounded-md px-2 py-0.5 align-bottom text-[0.65rem] font-bold leading-tight text-white",
               course ? courseChipClass(course) : "bg-tile-slate",
             )}
           >
