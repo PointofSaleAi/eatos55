@@ -520,7 +520,10 @@ export function ItemSheet({
                             setSearch("");
                           }}
                           className={cn(
-                            "sheet-product-chip h-ctl-sm shrink-0 rounded-pill px-3 text-fs-xs font-bold transition-colors",
+                            // Tabs share the row: each grows to fill the space left by its
+                            // siblings, but never squeezes below its own label (so a long
+                            // list of groups still scrolls sideways).
+                            "sheet-product-chip h-ctl-sm grow shrink-0 basis-auto rounded-pill px-3 text-center text-fs-xs font-bold transition-colors",
                             g.name === activeGroup.name
                               ? "bg-primary text-primary-foreground"
                               : "bg-muted text-muted-foreground hover:bg-secondary",
