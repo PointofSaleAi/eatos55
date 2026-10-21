@@ -469,20 +469,22 @@ export function OrderPanel({
         {/* Seat picker for table orders: new items are assigned to the chosen seat */}
         {!addGuestOpen && showTableChip ? <SeatPicker /> : null}
 
-        {/* Order number and table on the left, server centred in the middle, notes on the right */}
+        {/* Order number on the left, table centred, server name then notes on the right */}
         {!addGuestOpen ? (
-          <div className="mt-1.5 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 text-fs-xs font-bold uppercase text-muted-foreground">
+          <div className="mt-1.5 grid grid-cols-[minmax(0,1fr)_minmax(0,auto)_minmax(0,1fr)] items-center gap-2 text-fs-xs font-bold uppercase text-muted-foreground">
             <span className="flex min-w-0 items-center gap-2">
               <span className="shrink-0">Order# {orderNumber ?? "--"}</span>
-              {showTableChip ? (
-                <span className="flex min-w-0 items-center gap-1 text-foreground">
-                  <Grid2x2 className="size-3 shrink-0" aria-hidden />
-                  <span className="truncate">{tableGroupLabel(activeTable) ?? activeTable}</span>
-                </span>
-              ) : null}
             </span>
-            <span className="max-w-full min-w-0 truncate text-center">{orderOwner}</span>
-            <span className="flex items-center justify-end">
+            {showTableChip ? (
+              <span className="flex min-w-0 items-center justify-center gap-1 text-foreground">
+                <Grid2x2 className="size-3 shrink-0" aria-hidden />
+                <span className="truncate">{tableGroupLabel(activeTable) ?? activeTable}</span>
+              </span>
+            ) : (
+              <span aria-hidden />
+            )}
+            <span className="flex min-w-0 items-center justify-end gap-2">
+              <span className="min-w-0 truncate text-foreground">{orderOwner}</span>
               <button
                 type="button"
                 onClick={() => setNotesOpen(true)}
@@ -744,7 +746,7 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
         {isTableOrder ? (
           <span
             className={cn(
-              "mb-1 inline-block max-w-full truncate rounded-md px-2 py-0.5 text-[0.65rem] font-bold leading-tight text-white",
+              "mb-0.5 inline-block max-w-full truncate rounded-md px-2 py-0.5 text-[0.65rem] font-bold leading-tight text-white",
               course ? courseChipClass(course) : "bg-tile-slate",
             )}
           >
