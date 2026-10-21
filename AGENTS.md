@@ -38,3 +38,4 @@
 - Typed dollar amounts use `MoneyInput` (src/components/pos/money-input.tsx) so every field fills cash-register style from the last decimal, matching the keypads.
 - Products settings are demo-only; only the product-order-options rules affect New Order.
 - DeviceFrame owns rail placement; POS AGENTS.md defines drag rules to preserve navigation.
+- In a swipe-to-reveal row, the opaque row background must sit on the element that translates: any static layer left on top of the reveal buttons hides them (the cart line's `bg-surface` once stayed put and swallowed Cancel / No Tax).
