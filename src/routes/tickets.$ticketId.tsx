@@ -268,7 +268,7 @@ function TicketDetail() {
         <Card className="mt-3 px-4 py-3">
           <Row label="Sub Total" value={money(subTotal)} />
           <Row label={brand.taxLabel} value={money(tax)} />
-          {discount > 0 ? <Row label={`Discount${ticket.discountName ? ` · ${ticket.discountName}` : ""}`} value={`-${money(discount)}`} /> : null}
+          {discount > 0 ? <BreakdownRow className="py-1 text-fs-sm" label="Discount" value={`-${money(discount)}`} negative parts={discountParts(ticket.discountName, discount)} /> : null}
           {ticket.tips ? <Row label="Tips" value={money(ticket.tips)} /> : null}
           <div className="mt-2 flex items-center justify-between border-t border-border pt-2">
             <span className="text-fs-sm font-extrabold text-foreground">Total</span>
