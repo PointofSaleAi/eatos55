@@ -227,6 +227,7 @@ function NewOrder() {
   const [moreOpen, setMoreOpen] = useState(false);
   const [customItemOpen, setCustomItemOpen] = useState(false);
   const [railHost, setRailHost] = useState<HTMLElement | null>(null);
+  const [moreHost, setMoreHost] = useState<HTMLElement | null>(null);
   const panelLeft = useOrderPanelSide() === "left";
   const [panelDragX, setPanelDragX] = useState<number | null>(null);
   const docked = wide && landscape;
@@ -427,6 +428,8 @@ function NewOrder() {
               >
                 <Search className="size-5" />
               </button>
+              {/* The three-dot order options sit right after the search field. */}
+              {wide ? <span ref={setMoreHost} className="contents" /> : null}
             </div>
           )}
         </div>
@@ -602,6 +605,11 @@ function NewOrder() {
         )}
       </div>
 
+      {/* The order options rail sits on the menu side of the summary panel. */}
+      {moreOpen && docked && !panelLeft ? (
+        <aside ref={setRailHost} className="w-[5.75rem] shrink-0 overflow-hidden border-border bg-surface border-l" />
+      ) : null}
+
       <aside
         className={cn(
           "relative flex min-h-0 flex-col overflow-hidden transition-[width] duration-300",
@@ -631,6 +639,7 @@ function NewOrder() {
           moreOpen={moreOpen}
           onMoreOpenChange={setMoreOpen}
           railHost={railHost}
+          moreHost={moreHost}
           docked={docked}
           onCustomItem={() => {
             setMoreOpen(false);
@@ -651,7 +660,9 @@ function NewOrder() {
 
 
 
-      {moreOpen && docked ? <aside ref={setRailHost} className={cn("w-[5.75rem] shrink-0 overflow-hidden border-border bg-surface", panelLeft ? "border-r" : "border-l")} /> : null}
+      {moreOpen && docked && panelLeft ? (
+        <aside ref={setRailHost} className="w-[5.75rem] shrink-0 overflow-hidden border-border bg-surface border-r" />
+      ) : null}
 
       {/* Phone, menu tab: keep the running total and Charge one tap away. */}
       {!wide && tab === "menu" && totals.count > 0 ? (

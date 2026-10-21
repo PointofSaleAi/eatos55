@@ -48,9 +48,9 @@ import { Button } from "@/components/ui/button";
 import { AddGuestForm } from "@/components/pos/add-guest-form";
 import { GiftCardDialog } from "@/components/pos/gift-card-dialog";
 
-type OptionsLayout = { moreOpen: boolean; onMoreOpenChange: (open: boolean) => void; railHost: HTMLElement | null; docked: boolean; onCustomItem: () => void; customItemOpen: boolean; onEditLine?: (line: CartLine) => void };
+type OptionsLayout = { moreOpen: boolean; onMoreOpenChange: (open: boolean) => void; railHost: HTMLElement | null; moreHost: HTMLElement | null; docked: boolean; onCustomItem: () => void; customItemOpen: boolean; onEditLine?: (line: CartLine) => void };
 
-function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCustomItem, customItemOpen, onAddGuest }: OptionsLayout & { onAddGuest: () => void }) {
+function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, moreHost, docked, onCustomItem, customItemOpen, onAddGuest }: OptionsLayout & { onAddGuest: () => void }) {
   const navigate = useNavigate();
   const confirm = useConfirm();
   const {
@@ -124,6 +124,36 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
     ));
   };
 
+  // The three-dot control lives in the panel header, or on wide screens in the toolbar
+  // right after the search field — wherever its host element happens to be.
+  const moreControl = (
+    <Popover open={moreOpen && !docked} onOpenChange={onMoreOpenChange}>
+      <PopoverAnchor asChild>
+        <Button
+          type="button"
+          variant="secondary"
+          size="icon"
+          aria-label="More order options"
+          title="More order options"
+          aria-expanded={moreOpen}
+          onClick={() => onMoreOpenChange(!moreOpen)}
+          className="size-8 shrink-0 rounded-pill"
+        >
+          <MoreHorizontal className="size-4" />
+        </Button>
+      </PopoverAnchor>
+      <PopoverContent
+        align="end"
+        side="bottom"
+        sideOffset={6}
+        onOpenAutoFocus={(event) => event.preventDefault()}
+        className="no-scrollbar max-h-[min(60vh,26rem)] w-[min(16rem,calc(100vw-1.5rem))] overflow-y-auto rounded-row p-1.5"
+      >
+        <div className="flex flex-col gap-0.5">{secondaryActions(false)}</div>
+      </PopoverContent>
+    </Popover>
+  );
+
   return (
     <>
       <div className="flex min-w-0 items-center gap-1">
@@ -162,31 +192,7 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
         />
         <HeaderAction label="No Sale" icon={Wallet} onPress={() => toast.success("Register opened")} />
         </div>
-        <Popover open={moreOpen && !docked} onOpenChange={onMoreOpenChange}>
-          <PopoverAnchor asChild>
-            <Button
-              type="button"
-              variant="secondary"
-              size="icon"
-              aria-label="More order options"
-              title="More order options"
-              aria-expanded={moreOpen}
-              onClick={() => onMoreOpenChange(!moreOpen)}
-              className="size-8 shrink-0 rounded-pill"
-            >
-              <MoreHorizontal className="size-4" />
-            </Button>
-          </PopoverAnchor>
-          <PopoverContent
-            align="end"
-            side="bottom"
-            sideOffset={6}
-            onOpenAutoFocus={(event) => event.preventDefault()}
-            className="no-scrollbar max-h-[min(60vh,26rem)] w-[min(16rem,calc(100vw-1.5rem))] overflow-y-auto rounded-row p-1.5"
-          >
-            <div className="flex flex-col gap-0.5">{secondaryActions(false)}</div>
-          </PopoverContent>
-        </Popover>
+        {moreHost ? createPortal(moreControl, moreHost) : moreControl}
       </div>
 
       {docked && moreOpen && railHost ? createPortal(
