@@ -24,8 +24,6 @@
 
   --text-fs-key: var(--fs-key);
   --text-fs-money: var(--fs-money);
-  /* Modifier / add-on lines under a cart item: smaller than the item name. */
-  --text-fs-mod: var(--fs-mod);
 
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -490,6 +488,12 @@
     --row-h: 3.25rem;
     --gap-sec: 0.5rem;
   }
+}
+
+/* Order-summary modifier lines. The size lives in its own utility because
+   tailwind-merge drops a text-fs-* class whenever a text colour is merged in. */
+@utility mod-line {
+  font-size: var(--fs-mod);
 }
 
 @utility min-h-tap {

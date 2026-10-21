@@ -743,7 +743,7 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
               {l.modifiers.map((m, i) => {
                 const { mark, color, name } = modifierStyle(m);
                 return (
-                  <li key={i} className={cn("relative flex items-start gap-1 py-px text-fs-mod font-normal leading-snug", color)}>
+                  <li key={i} className={cn("mod-line relative flex items-start gap-1 py-px font-normal leading-snug", color)}>
                     <span aria-hidden className="absolute left-0 top-1/2 h-px w-1.5 -translate-x-full bg-border" />
                     <span aria-hidden className="shrink-0">{mark}</span>
                     <span className="min-w-0">{name}</span>
