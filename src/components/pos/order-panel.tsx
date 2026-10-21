@@ -562,8 +562,24 @@ export function OrderPanel({
             : "pb-[calc(0.5rem+var(--kb-inset,0px)+var(--tabs-h,0px))]",
         )}
       >
-        {/* Only the running total shows by default. The arrow on the total row
-            opens the subtotal, tax, discount and service-charge lines above it. */}
+        {/* A centred handle above the totals opens the subtotal, tax, discount and
+            service-charge lines; only the running total shows by default. */}
+        <div className="flex justify-center">
+          <button
+            type="button"
+            aria-expanded={detailsOpen}
+            aria-controls="order-summary-details"
+            aria-label={`${detailsOpen ? "Hide" : "Show"} the subtotal, tax, discount and service charge`}
+            onClick={() => setDetailsOpen((v) => !v)}
+            className="grid h-6 w-12 place-items-center rounded-pill text-muted-foreground transition-colors hover:bg-muted"
+          >
+            {detailsOpen ? (
+              <ChevronUp className="size-4" aria-hidden />
+            ) : (
+              <ChevronDown className="size-4" aria-hidden />
+            )}
+          </button>
+        </div>
         <dl id="order-summary-details" hidden={!detailsOpen} className="text-fs-xs">
           <div className="flex items-center justify-between py-0 font-bold text-muted-foreground">
             <dt>Sub Total</dt>
@@ -574,30 +590,16 @@ export function OrderPanel({
             <dd className="tabular-nums">{money(totals.tax)}</dd>
           </div>
           {orderDiscountPercent > 0 || totals.discount > 0 ? (
-            <BreakdownRow tone="red" label="Discount" value={`-${money(totals.discount)}`} negative parts={discountParts(orderDiscountName, totals.discount)} />
+            <BreakdownRow tone="red" alwaysOpen label="Discount" value={`-${money(totals.discount)}`} negative parts={discountParts(orderDiscountName, totals.discount)} />
           ) : null}
           {serviceChargePercent > 0 || totals.serviceCharge > 0 ? (
-            <BreakdownRow label="Service Charge" value={money(totals.serviceCharge)} parts={serviceChargeParts(serviceChargeName, totals.serviceCharge)} />
+            <BreakdownRow alwaysOpen label="Service Charge" value={money(totals.serviceCharge)} parts={serviceChargeParts(serviceChargeName, totals.serviceCharge)} />
           ) : null}
         </dl>
-        <button
-          type="button"
-          aria-expanded={detailsOpen}
-          aria-controls="order-summary-details"
-          aria-label={`${detailsOpen ? "Hide" : "Show"} the subtotal, tax, discount and service charge`}
-          onClick={() => setDetailsOpen((v) => !v)}
-          className="flex w-full items-center justify-between gap-2 pt-0.5 text-fs-lg font-extrabold text-foreground"
-        >
+        <div className="flex w-full items-center justify-between gap-2 pt-0.5 text-fs-lg font-extrabold text-foreground">
           <span>Total{comped ? " (comped)" : ""}</span>
-          <span className="flex min-w-0 items-center gap-1.5 tabular-nums">
-            <span className="truncate">{money(totals.total)}</span>
-            {detailsOpen ? (
-              <ChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-            ) : (
-              <ChevronUp className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-            )}
-          </span>
-        </button>
+          <span className="min-w-0 truncate tabular-nums">{money(totals.total)}</span>
+        </div>
 
         <div className="mt-1 grid grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-2">
           <button
