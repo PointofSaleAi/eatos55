@@ -787,12 +787,12 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
         </p>
       ) : null}
           {otherMods?.length ? (
-            <ul className="mt-0.5 ml-0.5 border-l border-border pl-2">
+            <ul className="mt-1.5 ml-0.5 border-l border-border pl-2.5">
               {otherMods.map((m, i) => {
                 const { color, mark, name } = modifierStyle(m);
                 return (
-                  <li key={i} className={cn("mod-line relative flex items-start gap-1 py-px font-normal leading-snug", color)}>
-                    <span aria-hidden className="absolute left-0 top-1/2 h-px w-1.5 -translate-x-full bg-border" />
+                  <li key={i} className={cn("mod-line relative flex items-start gap-1.5 py-0.5 font-normal leading-snug", color)}>
+                    <span aria-hidden className="absolute left-0 top-1/2 h-px w-2.5 -translate-x-full bg-border" />
                     <span aria-hidden className="shrink-0 tabular-nums">{mark}</span>
                     <span className="min-w-0">{name}</span>
                   </li>
