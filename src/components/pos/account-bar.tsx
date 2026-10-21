@@ -14,6 +14,7 @@ import {
 import localHostAsset from "@/assets/local-host.png.asset.json";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useEffect, useState } from "react";
+import { useDeviceOnline } from "@/lib/device";
 import { AiMark } from "@/components/pos/dashboard/eatos-ai-chat";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
