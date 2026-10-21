@@ -640,18 +640,18 @@ export function OrderPanel({
 const ADD_ON_GROUPS = new Set(addOnGroups.map((g) => g.name));
 
 /**
- * Per-line styling follows the reference: add-ons are orange, removals red,
- * allergies amber, and plain choices blue. The kind is conveyed by colour
- * alone — no leading mark is printed.
+ * Per-line styling follows the reference: add-ons are orange "+", removals red
+ * "−", allergies amber "−", and plain choices blue "•". The mark and the colour
+ * both carry the kind.
  */
 function modifierStyle(raw: string) {
   const at = raw.indexOf(" · ");
   const group = at === -1 ? "" : raw.slice(0, at);
   const name = at === -1 ? raw : raw.slice(at + 3);
-  if (ADD_ON_GROUPS.has(group)) return { color: "text-mod-extra", name };
-  if (/allerg/i.test(name)) return { color: "text-mod-alert", name };
-  if (/^no\b/i.test(name)) return { color: "text-mod-remove", name };
-  return { color: "text-mod-option", name };
+  if (ADD_ON_GROUPS.has(group)) return { color: "text-mod-extra", mark: "+", name };
+  if (/allerg/i.test(name)) return { color: "text-mod-alert", mark: "−", name };
+  if (/^no\b/i.test(name)) return { color: "text-mod-remove", mark: "−", name };
+  return { color: "text-mod-option", mark: "•", name };
 }
 
 /** Receipt row: swipe left reveals Cancel, swipe right reveals No VAT. */
@@ -744,10 +744,11 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
           {l.modifiers?.length ? (
             <ul className="mt-0.5 ml-0.5 border-l border-border pl-2">
               {l.modifiers.map((m, i) => {
-                const { color, name } = modifierStyle(m);
+                const { color, mark, name } = modifierStyle(m);
                 return (
                   <li key={i} className={cn("mod-line relative flex items-start gap-1 py-px font-normal leading-snug", color)}>
                     <span aria-hidden className="absolute left-0 top-1/2 h-px w-1.5 -translate-x-full bg-border" />
+                    <span aria-hidden className="shrink-0 tabular-nums">{mark}</span>
                     <span className="min-w-0">{name}</span>
                   </li>
                 );
