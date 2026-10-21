@@ -716,8 +716,8 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
         Cancel
       </button>
       <div
-        className="relative touch-pan-y bg-surface py-1 pr-0.5"
-
+        className={cn("relative touch-pan-y bg-surface py-1 pr-0.5", !startRef.current && "transition-transform")}
+        style={{ transform: `translateX(${x}px)` }}
         onPointerDown={(e) => {
           if (e.pointerType === "mouse" && e.button !== 0) return;
           startRef.current = { px: e.clientX, py: e.clientY, base: xRef.current, moved: false };
@@ -753,10 +753,7 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
             {course ?? "No Course"}
           </span>
         ) : null}
-        <div
-          className={cn("flex items-start gap-1.5", !startRef.current && "transition-transform")}
-          style={{ transform: `translateX(${x}px)` }}
-        >
+        <div className="flex items-start gap-1.5">
         <span className="shrink-0 pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">{l.qty}</span>
           <div className="min-w-0 flex-1">
 
