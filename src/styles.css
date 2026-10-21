@@ -741,6 +741,88 @@ html[data-layout="wide"] [role="dialog"].sheet-compact.inset-x-0.bottom-0 {
   max-width: min(var(--sheet-w), calc(100vw - 6rem)) !important;
 }
 
+/* --- Product details: fill the screen with an even margin all round ---
+   The product sheet is the one dialog meant to dominate the screen: it keeps one
+   uniform inset on every side instead of the shared 42rem box, and scales its
+   type, controls and option rows with the viewport so a big screen reads
+   comfortably from across a counter. */
+html[data-layout="wide"] [role="dialog"].sheet-product.bottom-0.inset-x-0 {
+  --dlg-inset: clamp(1.5rem, 3vw, 3.5rem);
+  --fs-xs: clamp(0.875rem, 0.75rem + 0.35vw, 1.125rem);
+  --fs-sm: clamp(1rem, 0.9rem + 0.45vw, 1.45rem);
+  --fs-base: clamp(1.125rem, 1rem + 0.5vw, 1.7rem);
+  --ctl-sm: clamp(3.25rem, 2.9rem + 0.6vw, 4.5rem);
+  --ctl-md: clamp(3.5rem, 3.1rem + 0.7vw, 5rem);
+  --ctl-lg: clamp(3.75rem, 3.3rem + 0.8vw, 5.5rem);
+  width: calc(100vw - 2 * var(--dlg-inset)) !important;
+  max-width: calc(100vw - 2 * var(--dlg-inset)) !important;
+  height: calc(100dvh - 2 * var(--dlg-inset)) !important;
+  max-height: calc(100dvh - 2 * var(--dlg-inset)) !important;
+}
+
+/* The options grid owns whatever height is left: the dialog can no longer resize
+   while picking options, and the cards stretch to fill the panel. */
+html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-grid {
+  min-height: 0 !important;
+  gap: clamp(0.5rem, 0.4vw + 0.4rem, 1rem);
+  grid-auto-rows: minmax(calc(var(--ctl-md) * 1.2), 1fr);
+}
+
+html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-thumb {
+  width: calc(var(--ctl-md) * 1.1);
+  height: calc(var(--ctl-md) * 1.1);
+}
+
+html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-photo {
+  height: clamp(10rem, 26dvh, 20rem);
+}
+
+html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-discount {
+  width: var(--ctl-md);
+  height: var(--ctl-md);
+}
+
+/* Product Information fills the same box: the photo grows to take the room and
+   the description sits under it, so no empty band is left inside the dialog. */
+html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-info {
+  display: flex;
+  flex-direction: column;
+}
+html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-info-media {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-info-media .sheet-product-photo {
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Preflight resets form controls to the inherited font size, which would pin
+   every button and field in this dialog to the page default. Re-apply the size
+   utilities here so the scaled --fs-* tokens above reach the controls too. */
+html[data-layout="wide"] [role="dialog"].sheet-product :is(button, input, select, textarea).text-fs-xs {
+  font-size: var(--fs-xs);
+}
+html[data-layout="wide"] [role="dialog"].sheet-product :is(button, input, select, textarea).text-fs-sm {
+  font-size: var(--fs-sm);
+}
+html[data-layout="wide"] [role="dialog"].sheet-product :is(button, input, select, textarea).text-fs-base {
+  font-size: var(--fs-base);
+}
+
+/* tailwind-merge drops a text-fs-* class whenever the same cn() call also carries
+   a text-<color> class, so the option cards, fields and chips keep their sizes
+   here instead of falling back to the page default. */
+html[data-layout="wide"] [role="dialog"].sheet-product :is(input, select, textarea) {
+  font-size: var(--fs-sm);
+}
+html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-grid button {
+  font-size: var(--fs-sm);
+}
+html[data-layout="wide"] [role="dialog"].sheet-product :is(.sheet-product-tab, .sheet-product-chip) {
+  font-size: var(--fs-xs);
+}
+
 /* Wide layout has a pointer: give rows and tiles a visible hover affordance. */
 @media (hover: hover) and (pointer: fine) {
   html[data-layout="wide"] a:focus-visible,
