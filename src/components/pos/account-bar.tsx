@@ -14,6 +14,7 @@ import {
 import localHostAsset from "@/assets/local-host.png.asset.json";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useEffect, useState } from "react";
+import { useDeviceOnline } from "@/lib/device";
 import { AiMark } from "@/components/pos/dashboard/eatos-ai-chat";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -49,20 +50,9 @@ function useClock() {
   return `${String(h).padStart(2, "0")}:${m} ${suffix}`;
 }
 
-/** True while the device reports no network. */
+/** Shared connectivity check: same-origin probe, not just navigator.onLine. */
 function useOnline() {
-  const [online, setOnline] = useState(true);
-  useEffect(() => {
-    const update = () => setOnline(window.navigator.onLine);
-    update();
-    window.addEventListener("online", update);
-    window.addEventListener("offline", update);
-    return () => {
-      window.removeEventListener("online", update);
-      window.removeEventListener("offline", update);
-    };
-  }, []);
-  return online;
+  return useDeviceOnline();
 }
 
 /** Initials open the app navigation; role and shift time form the status. */

@@ -3,6 +3,45 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { usePos } from "@/lib/pos-store";
 
 /**
+ * navigator.onLine alone reports "offline" on machines whose connectivity
+ * check is blocked (corporate networks, sandboxed preview frames) even though
+ * the app itself is clearly being served. Confirm with a real same-origin
+ * request and only fall back to navigator.onLine when that request fails.
+ */
+export function useDeviceOnline(): boolean {
+  const [online, setOnline] = useState(true);
+  useEffect(() => {
+    let cancelled = false;
+    const probe = async () => {
+      try {
+        await fetch(window.location.href, {
+          method: "HEAD",
+          cache: "no-store",
+          signal: AbortSignal.timeout(8000),
+        });
+        if (!cancelled) setOnline(true);
+        return;
+      } catch {
+        /* unreachable or blocked - fall back to navigator.onLine */
+      }
+      if (!cancelled) setOnline(navigator.onLine);
+    };
+    const update = () => void probe();
+    update();
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+    const interval = window.setInterval(update, 60000);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("online", update);
+      window.removeEventListener("offline", update);
+      window.clearInterval(interval);
+    };
+  }, []);
+  return online;
+}
+
+/**
  * Tap to Pay on iPhone is an iPhone only capability. iPad, Android tablets,
  * Windows machines and desktop browsers must never present it as usable. An
  * iPhone held in landscape renders the tablet/web layout, and Tap to Pay needs
