@@ -50,6 +50,8 @@ export function SplitPayments({
     tableGroupLabel,
     orderDiscountPercent,
     setOrderDiscountPercent,
+    orderDiscountName,
+    setOrderDiscountName,
     setSplitChecks,
     clearSplitChecks,
   } = usePos();
@@ -407,12 +409,11 @@ export function SplitPayments({
 
       <DiscountSheet
         open={discountOpen}
-        selected={null}
+        selected={orderDiscountName}
         onClose={() => setDiscountOpen(false)}
         onPick={(d) => {
           setOrderDiscountPercent(d.percent);
-          setDiscountOpen(false);
-          toast.success(`${d.name} applied`);
+          setOrderDiscountName(d.name);
         }}
       />
 

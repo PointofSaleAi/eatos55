@@ -604,8 +604,7 @@ export function ItemSheet({
         selected={discount?.name ?? null}
         onClose={() => setDiscountOpen(false)}
         onPick={(d) => {
-          setDiscount(d);
-          setDiscountOpen(false);
+          setDiscount(d.name ? d : null);
         }}
       />
     </>

@@ -352,8 +352,6 @@ function TicketDetail() {
         onClose={() => setDiscountOpen(false)}
         onPick={(d) => {
           patchTicket(ticket.id, { discountName: d.name, discountPercent: d.percent });
-          setDiscountOpen(false);
-          toast.success(`${d.name} applied`);
         }}
       />
       {transferOpen ? <TransferCheckDialog currentOwner={ticket.server} onClose={() => setTransferOpen(false)} onTransfer={(owner) => {
