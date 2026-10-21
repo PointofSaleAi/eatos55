@@ -672,6 +672,10 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
   // above the item name instead.
   const course = l.modifiers?.find((m) => m.startsWith("Course · "))?.slice("Course · ".length);
   const otherMods = course ? l.modifiers?.filter((m) => !m.startsWith("Course · ")) : l.modifiers;
+  // Course and seat only mean something on a table order (Dine In with a table).
+  const { orderType, activeTable } = usePos();
+  const isTableOrder = orderType === "Dine In" && Boolean(activeTable);
+
   const [x, setX] = useState(0);
   // Drag state lives in refs: pointerup can fire before the last pointermove's
   // state commits, and settling from a stale `x` snapped the row shut — which
@@ -710,8 +714,8 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
         Cancel
       </button>
       <div
-        className={cn("relative flex touch-pan-y items-start gap-1.5 bg-surface py-1 pr-0.5", !startRef.current && "transition-transform")}
-        style={{ transform: `translateX(${x}px)` }}
+        className="relative touch-pan-y bg-surface py-1 pr-0.5"
+
         onPointerDown={(e) => {
           if (e.pointerType === "mouse" && e.button !== 0) return;
           startRef.current = { px: e.clientX, py: e.clientY, base: xRef.current, moved: false };
@@ -737,18 +741,23 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
           if (xRef.current !== 0) { e.stopPropagation(); e.preventDefault(); moveTo(0); }
         }}
       >
+        {isTableOrder ? (
+          <span
+            className={cn(
+              "mb-1 inline-block max-w-full truncate rounded-md px-2 py-0.5 text-[0.65rem] font-bold leading-tight text-white",
+              course ? courseChipClass(course) : "bg-tile-slate",
+            )}
+          >
+            {course ?? "No Course"}
+          </span>
+        ) : null}
+        <div
+          className={cn("flex items-start gap-1.5", !startRef.current && "transition-transform")}
+          style={{ transform: `translateX(${x}px)` }}
+        >
         <span className="shrink-0 pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">{l.qty}</span>
           <div className="min-w-0 flex-1">
-            {course ? (
-              <span
-                className={cn(
-                  "mb-0.5 inline-block max-w-full truncate rounded-md px-2 py-0.5 text-[0.65rem] font-bold leading-tight text-white",
-                  courseChipClass(course),
-                )}
-              >
-                {course}
-              </span>
-            ) : null}
+
             <button
               type="button"
               disabled={!onEdit}
@@ -757,7 +766,7 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
               className="w-full min-w-0 rounded-md text-left enabled:hover:bg-muted/60 disabled:cursor-default"
             >
               <div className="flex min-h-6 items-center gap-2">
-                <span className="min-w-0 flex-1 truncate text-fs-sm font-bold leading-snug text-foreground">{l.name}</span>
+                <span className="min-w-0 flex-1 text-fs-sm font-bold leading-snug text-foreground">{l.name}</span>
                 <span className="flex shrink-0 items-baseline gap-1.5 text-fs-sm font-bold tabular-nums text-foreground">
                   {l.discountPercent ? <s className="text-fs-xs text-muted-foreground">{money(l.price * l.qty)}</s> : null}
                   {money(l.price * l.qty * (1 - (l.discountPercent ?? 0) / 100))}
@@ -766,7 +775,9 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
             </button>
           </div>
         </div>
+        </div>
       </div>
+
       {l.taxExempt ? (
         <p className="flex items-center gap-1 text-fs-xs font-bold leading-snug text-muted-foreground">
           No {brand.taxLabel} added
@@ -801,12 +812,18 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
             </ul>
           ) : null}
           {l.notes ? <p className="truncate text-fs-xs italic leading-snug text-muted-foreground">{l.notes}</p> : null}
-          {l.seat ? (
+          {isTableOrder ? (
             <p className="mt-0.5 flex items-center gap-1 text-fs-xs font-bold leading-snug text-muted-foreground">
               <Armchair className="size-3.5" aria-hidden />
-              <span className="rounded-sm bg-foreground px-1.5 py-0.5 text-[0.625rem] font-extrabold tabular-nums text-background">{l.seat}</span>
+              <span
+                title={l.seat ? `Seat ${l.seat}` : "This order is for all seats"}
+                className="rounded-sm bg-foreground px-1.5 py-0.5 text-[0.625rem] font-extrabold tabular-nums text-background"
+              >
+                {l.seat ?? "All"}
+              </span>
             </p>
           ) : null}
+
     </li>
   );
 }
