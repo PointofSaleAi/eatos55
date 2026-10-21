@@ -49,20 +49,9 @@ function useClock() {
   return `${String(h).padStart(2, "0")}:${m} ${suffix}`;
 }
 
-/** True while the device reports no network. */
+/** Shared connectivity check: same-origin probe, not just navigator.onLine. */
 function useOnline() {
-  const [online, setOnline] = useState(true);
-  useEffect(() => {
-    const update = () => setOnline(window.navigator.onLine);
-    update();
-    window.addEventListener("online", update);
-    window.addEventListener("offline", update);
-    return () => {
-      window.removeEventListener("online", update);
-      window.removeEventListener("offline", update);
-    };
-  }, []);
-  return online;
+  return useDeviceOnline();
 }
 
 /** Initials open the app navigation; role and shift time form the status. */
