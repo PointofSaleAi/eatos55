@@ -351,7 +351,7 @@ function TicketDetail() {
         selected={ticket.discountName ?? null}
         onClose={() => setDiscountOpen(false)}
         onPick={(d) => {
-          patchTicket(ticket.id, { discountName: d.name || undefined, discountPercent: d.percent });
+          patchTicket(ticket.id, { discountName: d.name, discountPercent: d.percent });
         }}
       />
       {transferOpen ? <TransferCheckDialog currentOwner={ticket.server} onClose={() => setTransferOpen(false)} onTransfer={(owner) => {
