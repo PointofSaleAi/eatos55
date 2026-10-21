@@ -30,7 +30,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
 import { useLiveTime } from "@/lib/use-live-time";
-import { money, type CartLine, type ServiceOrderType } from "@/lib/demo-data";
+import { addOnGroups, money, type CartLine, type ServiceOrderType } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { ServiceChargeSheet } from "@/components/pos/service-charge-sheet";
@@ -636,12 +636,21 @@ export function OrderPanel({
   );
 }
 
-/** Modifier option names cycle through these colors so each reads distinctly. */
-const MODIFIER_COLORS = ["text-tile-blue", "text-tile-violet", "text-tile-orange", "text-tile-green", "text-tile-pink", "text-tile-indigo", "text-tile-magenta", "text-tile-sky"];
-function modifierColor(name: string) {
-  let h = 0;
-  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
-  return MODIFIER_COLORS[h % MODIFIER_COLORS.length];
+/** Add-on groups are the ones that show up as orange "+" extras. */
+const ADD_ON_GROUPS = new Set(addOnGroups.map((g) => g.name));
+
+/**
+ * Per-line styling follows the reference: add-ons are orange "+", removals red
+ * "-", allergies amber "-", and plain choices a blue "•".
+ */
+function modifierStyle(raw: string) {
+  const at = raw.indexOf(" · ");
+  const group = at === -1 ? "" : raw.slice(0, at);
+  const name = at === -1 ? raw : raw.slice(at + 3);
+  if (ADD_ON_GROUPS.has(group)) return { mark: "+", color: "text-mod-extra", name };
+  if (/allerg/i.test(name)) return { mark: "-", color: "text-mod-alert", name };
+  if (/^no\b/i.test(name)) return { mark: "-", color: "text-mod-remove", name };
+  return { mark: "•", color: "text-mod-option", name };
 }
 
 /** Receipt row: swipe left reveals Cancel, swipe right reveals No VAT. */
@@ -730,12 +739,17 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
           </button>
           {l.taxExempt ? <p className="text-fs-xs font-bold leading-snug text-muted-foreground">No {brand.taxLabel} added</p> : null}
           {l.modifiers?.length ? (
-            <ul className="mt-0.5 border-l border-border pl-2">
-              {l.modifiers.map((m, i) => (
-                <li key={i} className={cn("text-fs-xs font-bold leading-snug", modifierColor(m))}>
-                  · {m.split(" · ")[1] ?? m}
-                </li>
-              ))}
+            <ul className="mt-0.5 ml-0.5 border-l border-border pl-2">
+              {l.modifiers.map((m, i) => {
+                const { mark, color, name } = modifierStyle(m);
+                return (
+                  <li key={i} className={cn("relative flex items-start gap-1 py-px text-fs-mod font-normal leading-snug", color)}>
+                    <span aria-hidden className="absolute left-0 top-1/2 h-px w-1.5 -translate-x-full bg-border" />
+                    <span aria-hidden className="shrink-0">{mark}</span>
+                    <span className="min-w-0">{name}</span>
+                  </li>
+                );
+              })}
             </ul>
           ) : null}
           {l.notes ? <p className="truncate text-fs-xs italic leading-snug text-muted-foreground">{l.notes}</p> : null}
