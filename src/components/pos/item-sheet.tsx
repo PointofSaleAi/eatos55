@@ -1,12 +1,5 @@
 import { MoneyInput } from "@/components/pos/money-input";
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  Pencil,
-  Percent,
-  UtensilsCrossed,
-} from "lucide-react";
+import { ArrowUpDown, ChevronDown, Mic, Pencil, Percent, Search, UtensilsCrossed } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
@@ -17,9 +10,12 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { itemAddOnGroups, itemModifierGroups, money, type CartLine, type MenuItem } from "@/lib/demo-data";
 import { useAnnounce } from "@/components/pos/live-region";
 import { haptic } from "@/lib/haptics";
+import { useVoiceSearch } from "@/lib/voice-search";
 import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
+
+const SORT_LABELS = { az: "A to Z", za: "Z to A", lohi: "Price: Low to High", hilo: "Price: High to Low" } as const;
 
 /**
  * Modifier/add-on option label. Price sits on its own second line by default;
