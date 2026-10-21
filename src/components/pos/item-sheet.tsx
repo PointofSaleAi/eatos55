@@ -254,7 +254,7 @@ export function ItemSheet({
           side="bottom"
           ref={sheetRef}
           style={{ ...dragStyle, minHeight: lockedHeight || undefined }}
-          className="mx-auto flex max-h-[min(78dvh,42rem)] w-full max-w-sheet flex-col rounded-t-sheet border-0 bg-surface p-0"
+          className="sheet-product mx-auto flex max-h-[min(78dvh,42rem)] w-full max-w-sheet flex-col rounded-t-sheet border-0 bg-surface p-0"
         >
           {item ? (
             <>
@@ -278,12 +278,12 @@ export function ItemSheet({
                         <img
                           src={item.image}
                           alt=""
-                          className="size-11 shrink-0 rounded-card border border-border object-contain sm:size-14"
+                          className="sheet-product-thumb size-11 shrink-0 rounded-card border border-border object-contain sm:size-14"
                         />
                       ) : (
                         <span
                           aria-hidden
-                          className="grid size-11 shrink-0 place-items-center rounded-card border border-border bg-muted text-muted-foreground sm:size-14"
+                          className="sheet-product-thumb grid size-11 shrink-0 place-items-center rounded-card border border-border bg-muted text-muted-foreground sm:size-14"
                         >
                           <UtensilsCrossed className="size-5" />
                         </span>
@@ -366,10 +366,10 @@ export function ItemSheet({
                           <img
                             src={item.image}
                             alt=""
-                            className="h-40 w-full object-contain sm:h-52"
+                            className="sheet-product-photo h-40 w-full object-contain sm:h-52"
                           />
                         ) : (
-                          <span className="grid h-40 w-full place-items-center text-muted-foreground sm:h-52">
+                          <span className="sheet-product-photo grid h-40 w-full place-items-center text-muted-foreground sm:h-52">
                             <UtensilsCrossed className="size-10" aria-hidden />
                           </span>
                         )}
@@ -544,7 +544,7 @@ export function ItemSheet({
                               : "0rem",
                         } as import("react").CSSProperties
                       }
-                      className="grid min-h-[calc(var(--opt-h2)_+_var(--opt-extra))] flex-1 auto-rows-[minmax(3.5rem,auto)] content-start grid-cols-2 gap-2 overflow-y-auto px-4 pt-2.5 pb-1 sm:min-h-[calc(var(--opt-h3)_+_var(--opt-extra))] sm:grid-cols-3 lg:min-h-[calc(var(--opt-h4)_+_var(--opt-extra))] lg:grid-cols-4"
+                      className="sheet-product-grid grid min-h-[calc(var(--opt-h2)_+_var(--opt-extra))] flex-1 auto-rows-[minmax(3.5rem,auto)] content-start grid-cols-2 gap-2 overflow-y-auto px-4 pt-2.5 pb-1 sm:min-h-[calc(var(--opt-h3)_+_var(--opt-extra))] sm:grid-cols-3 lg:min-h-[calc(var(--opt-h4)_+_var(--opt-extra))] lg:grid-cols-4"
 
                     >
 
@@ -616,7 +616,7 @@ export function ItemSheet({
                   onClick={() => setDiscountOpen(true)}
                   aria-label="Apply discount"
                   className={cn(
-                    "grid size-10 shrink-0 place-items-center rounded-pill border tap-safe",
+                    "sheet-product-discount grid size-10 shrink-0 place-items-center rounded-pill border tap-safe",
                     discount
                       ? "border-accent bg-accent text-accent-foreground"
                       : "border-border text-foreground",
