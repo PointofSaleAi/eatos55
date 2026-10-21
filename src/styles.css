@@ -764,8 +764,11 @@ html[data-layout="wide"] [role="dialog"].sheet-product.bottom-0.inset-x-0 {
    while picking options, and the cards stretch to fill the panel. */
 html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-grid {
   min-height: 0 !important;
-  gap: clamp(0.5rem, 0.4vw + 0.4rem, 1rem);
-  grid-auto-rows: minmax(calc(var(--ctl-md) * 1.2), 1fr);
+  gap: clamp(0.625rem, 0.5vw + 0.45rem, 1.25rem);
+  /* Option cards keep a readable height instead of stretching to fill the panel:
+     they grow only a little past their content, so the picked-items line under the
+     grid stays on screen however few options a group has. */
+  grid-auto-rows: minmax(calc(var(--ctl-md) * 1.05), calc(var(--ctl-md) * 1.7));
 }
 
 html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-thumb {

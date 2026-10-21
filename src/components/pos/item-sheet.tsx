@@ -510,7 +510,7 @@ export function ItemSheet({
                         Additional Modifiers
                       </p>
                     </div>
-                    <div className="no-scrollbar flex shrink-0 items-center gap-1.5 overflow-x-auto px-4">
+                    <div className="no-scrollbar flex shrink-0 items-center gap-3 overflow-x-auto px-4">
                       {groups.map((g) => (
                         <button
                           key={g.name}
@@ -602,7 +602,7 @@ export function ItemSheet({
               <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1rem+var(--kb-inset,0px))]">
                 {/* Always keeps one line of space so picking options never resizes the popup. */}
                 <p
-                  className="truncate text-fs-xs font-bold leading-4 text-muted-foreground"
+                  className="truncate pb-1.5 text-fs-xs font-bold leading-5 text-muted-foreground"
                   title={selectedList.join(" · ") || undefined}
                 >
                   {openPriceMissing
