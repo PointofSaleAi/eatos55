@@ -1,12 +1,5 @@
 import { MoneyInput } from "@/components/pos/money-input";
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  Pencil,
-  Percent,
-  UtensilsCrossed,
-} from "lucide-react";
+import { ArrowUpDown, ChevronDown, Mic, Pencil, Percent, Search, UtensilsCrossed } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
@@ -17,9 +10,12 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { itemAddOnGroups, itemModifierGroups, money, type CartLine, type MenuItem } from "@/lib/demo-data";
 import { useAnnounce } from "@/components/pos/live-region";
 import { haptic } from "@/lib/haptics";
+import { useVoiceSearch } from "@/lib/voice-search";
 import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
+
+const SORT_LABELS = { az: "A to Z", za: "Z to A", lohi: "Price: Low to High", hilo: "Price: High to Low" } as const;
 
 /**
  * Modifier/add-on option label. Price sits on its own second line by default;
@@ -92,11 +88,14 @@ export function ItemSheet({
   const [notes, setNotes] = useState<string[]>([]);
   const [tab, setTab] = useState<"item" | "addons">("item");
   const [group, setGroup] = useState<string>("");
-  const [page, setPage] = useState(0);
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<"az" | "za" | "lohi" | "hilo">("az");
+  const [sortOpen, setSortOpen] = useState(false);
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [discount, setDiscount] = useState<{ name: string; percent: number } | null>(null);
   const [discountOpen, setDiscountOpen] = useState(false);
   const { dragStyle, handleProps } = useSheetDrag(dismiss);
+  const { listening, start: startVoiceSearch } = useVoiceSearch(setSearch);
   // Never let the popup shrink while one product is open; resets for the next product.
   // A callback ref is used because the sheet mounts in a portal after this component renders.
   const [sheetEl, sheetRef] = useState<HTMLDivElement | null>(null);
@@ -165,19 +164,25 @@ export function ItemSheet({
   const groups = tab === "item" ? itemGroups : addOns;
   const activeGroup = groups.find((g) => g.name === group) ?? groups[0];
 
-  // Options are paged instead of scrolled so the sheet always fits its height.
+  // Options scroll inside the reserved grid; perPage only sizes that reserved space.
   const perPage = 8;
+  const query = search.trim().toLowerCase();
   const baseOptions = useMemo(() => {
-    const pool = (activeGroup?.options ?? []).map((o) => ({
-      ...o,
-      group: activeGroup?.name ?? "",
-    }));
-    // Options keep a stable A-Z order.
-    return [...pool].sort((a, b) => a.name.localeCompare(b.name));
-  }, [activeGroup]);
-  const pages = Math.max(1, Math.ceil(baseOptions.length / perPage));
-  const pageIndex = Math.min(page, pages - 1);
-  const visibleOptions = baseOptions.slice(pageIndex * perPage, pageIndex * perPage + perPage);
+    // On Add-Ons, searching looks across every add-on group at once.
+    const pool =
+      tab === "addons" && query
+        ? addOns.flatMap((g) => g.options.map((o) => ({ ...o, group: g.name })))
+        : (activeGroup?.options ?? []).map((o) => ({ ...o, group: activeGroup?.name ?? "" }));
+    const filtered = query ? pool.filter((o) => o.name.toLowerCase().includes(query)) : pool;
+    const sorted = [...filtered].sort((a, b) => {
+      if (sort === "za") return b.name.localeCompare(a.name);
+      if (sort === "lohi") return a.price - b.price || a.name.localeCompare(b.name);
+      if (sort === "hilo") return b.price - a.price || a.name.localeCompare(b.name);
+      return a.name.localeCompare(b.name);
+    });
+    return sorted;
+  }, [tab, query, addOns, activeGroup, sort]);
+  const visibleOptions = baseOptions;
 
   // Reserve grid height for the largest group (per page) so switching groups never resizes the popup.
   const reservedRows = useMemo(() => {
@@ -212,8 +217,10 @@ export function ItemSheet({
     setSelected({});
     setDiscount(null);
     setTab("item");
-    setPage(0);
     setGroup("");
+    setSearch("");
+    setSort("az");
+    setSortOpen(false);
     setEditingPrice(false);
     setView("order");
   };
@@ -398,7 +405,8 @@ export function ItemSheet({
                         type="button"
                         onClick={() => {
                           setTab(t);
-                          setPage(0);
+                          setSearch("");
+                          setSortOpen(false);
                           setGroup((t === "item" ? itemGroups : addOns)[0]?.name ?? "");
                         }}
                         className={cn(
@@ -414,37 +422,95 @@ export function ItemSheet({
                   </div>
                 ) : null}
 
+                {addOns.length ? (
+                  <div
+                    aria-hidden={tab !== "addons" ? true : undefined}
+                    inert={tab !== "addons" ? true : undefined}
+                    className={cn(
+                      "flex shrink-0 items-center gap-2 px-4 pt-2.5",
+                      tab !== "addons" && "invisible",
+                    )}
+                  >
+                    <div className="flex h-ctl-md min-w-0 flex-1 items-center gap-2 rounded-pill border border-border bg-surface px-3">
+                      <Search className="size-4 shrink-0 text-muted-foreground" />
+                      <input
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="Search for Add-Ons"
+                        aria-label="Search add-ons"
+                        className="h-full min-w-0 flex-1 bg-transparent text-fs-sm text-foreground outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={startVoiceSearch}
+                        aria-label="Voice search"
+                        className={cn(
+                          "grid size-7 shrink-0 place-items-center rounded-pill transition-colors",
+                          listening
+                            ? "animate-pulse text-accent"
+                            : "text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        <Mic className="size-4" />
+                      </button>
+                    </div>
+                    <div className="relative shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setSortOpen((o) => !o)}
+                        aria-label={`Sort add-ons, currently ${SORT_LABELS[sort]}`}
+                        aria-expanded={sortOpen}
+                        className={cn(
+                          "grid h-ctl-md w-10 place-items-center rounded-pill border transition-colors",
+                          sortOpen || sort !== "az"
+                            ? "border-accent bg-accent/10 text-foreground"
+                            : "border-border text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        <ArrowUpDown className="size-4" />
+                      </button>
+                      {sortOpen ? (
+                        <>
+                          <button
+                            type="button"
+                            aria-label="Close sort menu"
+                            className="fixed inset-0 z-10 cursor-default"
+                            onClick={() => setSortOpen(false)}
+                          />
+                          <div className="absolute right-0 top-full z-20 mt-1.5 w-40 overflow-hidden rounded-card border border-border bg-surface shadow-lg">
+                            {(Object.keys(SORT_LABELS) as (keyof typeof SORT_LABELS)[]).map(
+                              (key) => (
+                                <button
+                                  key={key}
+                                  type="button"
+                                  onClick={() => {
+                                    setSort(key);
+                                    setSortOpen(false);
+                                  }}
+                                  className={cn(
+                                    "block w-full px-3 py-2 text-left text-fs-sm font-bold transition-colors",
+                                    key === sort
+                                      ? "bg-accent/10 text-foreground"
+                                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                                  )}
+                                >
+                                  {SORT_LABELS[key]}
+                                </button>
+                              ),
+                            )}
+                          </div>
+                        </>
+                      ) : null}
+                    </div>
+                  </div>
+                ) : null}
+
                 {activeGroup ? (
                   <>
-                    <div className="flex min-h-10 shrink-0 items-center justify-between gap-2 px-4 pb-1.5 pt-3">
+                    <div className="flex min-h-10 shrink-0 items-center gap-2 px-4 pb-1.5 pt-3">
                       <p className="text-fs-xs font-bold text-muted-foreground">
                         Additional Modifiers
                       </p>
-                      {pages > 1 ? (
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            type="button"
-                            aria-label="Previous options"
-                            onClick={() => setPage((p) => Math.max(0, p - 1))}
-                            disabled={pageIndex === 0}
-                            className="grid size-7 place-items-center rounded-pill border border-border text-foreground disabled:opacity-40"
-                          >
-                            <ChevronLeft className="size-3.5" />
-                          </button>
-                          <span className="text-fs-xs font-bold text-muted-foreground">
-                            {pageIndex + 1} / {pages}
-                          </span>
-                          <button
-                            type="button"
-                            aria-label="More options"
-                            onClick={() => setPage((p) => Math.min(pages - 1, p + 1))}
-                            disabled={pageIndex >= pages - 1}
-                            className="grid size-7 place-items-center rounded-pill border border-border text-foreground disabled:opacity-40"
-                          >
-                            <ChevronRight className="size-3.5" />
-                          </button>
-                        </div>
-                      ) : null}
                     </div>
                     <div className="no-scrollbar flex shrink-0 items-center gap-1.5 overflow-x-auto px-4">
                       {groups.map((g) => (
@@ -453,7 +519,7 @@ export function ItemSheet({
                           type="button"
                           onClick={() => {
                             setGroup(g.name);
-                            setPage(0);
+                            setSearch("");
                           }}
                           className={cn(
                             "h-ctl-sm shrink-0 rounded-pill px-3 text-fs-xs font-bold transition-colors",
