@@ -754,7 +754,7 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
                 <Info className="size-3.5" aria-hidden />
               </button>
             </PopoverTrigger>
-            <PopoverContent side="right" align="start" className="w-60 max-w-[calc(100vw-2rem)] rounded-lg p-3">
+            <PopoverContent side="right" sideOffset={10} align="start" className="w-60 max-w-[calc(100vw-2rem)] rounded-lg p-3">
               <p className="text-fs-xs font-normal leading-snug text-popover-foreground">No tax added on this product</p>
             </PopoverContent>
           </Popover>
