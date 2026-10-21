@@ -132,7 +132,7 @@
   --fs-key: clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem);
   --fs-money: clamp(1.875rem, 1.3rem + 2.6vw, 3.75rem);
   /* Modifier lines under a cart item: a step below --fs-xs so the item name stays dominant. */
-  --fs-mod: clamp(0.625rem, 0.56rem + 0.3vw, 0.75rem);
+  --fs-mod: clamp(0.6875rem, 0.62rem + 0.32vw, 0.8125rem);
 
   --tap: 2.75rem; /* 44px minimum touch target */
   /* Compact step below --ctl-sm: the order footer (Save / Fire / Charge) and the
