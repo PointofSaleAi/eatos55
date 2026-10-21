@@ -7,6 +7,7 @@ import {
   GitMerge,
   Gift,
   Grid2x2,
+  Info,
   NotebookPen,
   MoreHorizontal,
   X,
@@ -39,7 +40,7 @@ import { formatPhone, GuestSheet } from "@/components/pos/guest-sheet";
 import { OrderTypeStrip } from "@/components/pos/order-type-strip";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
+import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { AddGuestForm } from "@/components/pos/add-guest-form";
 import { GiftCardDialog } from "@/components/pos/gift-card-dialog";
@@ -740,7 +741,25 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
           </button>
         </div>
       </div>
-      {l.taxExempt ? <p className="text-fs-xs font-bold leading-snug text-muted-foreground">No {brand.taxLabel} added</p> : null}
+      {l.taxExempt ? (
+        <p className="flex items-center gap-1 text-fs-xs font-bold leading-snug text-muted-foreground">
+          No {brand.taxLabel} added
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                aria-label="Why is there no tax on this item?"
+                className="grid size-4 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted/60"
+              >
+                <Info className="size-3.5" aria-hidden />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent side="right" sideOffset={10} align="start" className="w-60 max-w-[calc(100vw-2rem)] rounded-lg p-3">
+              <p className="text-fs-xs font-normal leading-snug text-popover-foreground">No tax added on this product</p>
+            </PopoverContent>
+          </Popover>
+        </p>
+      ) : null}
           {l.modifiers?.length ? (
             <ul className="mt-0.5 ml-0.5 border-l border-border pl-2">
               {l.modifiers.map((m, i) => {
