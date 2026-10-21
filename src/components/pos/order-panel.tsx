@@ -671,7 +671,7 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
   // The chosen course leaves the modifier list and becomes the coloured chip
   // above the item name instead.
   const course = l.modifiers?.find((m) => m.startsWith("Course · "))?.slice("Course · ".length);
-  const otherMods = course ? l.modifiers.filter((m) => !m.startsWith("Course · ")) : l.modifiers;
+  const otherMods = course ? l.modifiers?.filter((m) => !m.startsWith("Course · ")) : l.modifiers;
   const [x, setX] = useState(0);
   // Drag state lives in refs: pointerup can fire before the last pointermove's
   // state commits, and settling from a stale `x` snapped the row shut — which
