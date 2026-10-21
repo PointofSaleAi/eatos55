@@ -280,7 +280,7 @@ export function PaymentBill({ room }: { room?: Room | null }) {
         onClose={() => setDiscountOpen(false)}
         onPick={(d) => {
           setOrderDiscountPercent(d.percent);
-          setDiscountName(d.name);
+          setDiscountName(d.name || null);
         }}
       />
     </ReceiptCard>

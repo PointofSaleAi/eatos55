@@ -59,6 +59,7 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
     noTax,
     setNoTax,
     setOrderDiscountPercent,
+    orderDiscountName,
     setOrderDiscountName,
     tickets,
     activeTicketId,
