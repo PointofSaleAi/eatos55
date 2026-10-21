@@ -192,8 +192,10 @@ export function ItemSheet({
     );
     const h = (cols: number) => {
       const rows = Math.ceil(most / cols);
-      return `calc(${rows} * 3.5rem + ${rows - 1} * 0.5rem + 1.25rem)`;
+      // 3.75rem is the real row height once a name and its price stack.
+      return `calc(${rows} * 3.75rem + ${rows - 1} * 0.5rem + 1.25rem)`;
     };
+
     return { "--opt-h2": h(2), "--opt-h3": h(3), "--opt-h4": h(4) } as import("react").CSSProperties;
   }, [itemGroups, addOns]);
 
