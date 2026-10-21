@@ -640,18 +640,18 @@ export function OrderPanel({
 const ADD_ON_GROUPS = new Set(addOnGroups.map((g) => g.name));
 
 /**
- * Per-line styling follows the reference: add-ons are orange, removals red,
- * allergies amber, and plain choices blue. The kind is conveyed by colour
- * alone — no leading mark is printed.
+ * Per-line styling follows the reference: add-ons are orange "+", removals red
+ * "−", allergies amber "−", and plain choices blue "•". The mark and the colour
+ * both carry the kind.
  */
 function modifierStyle(raw: string) {
   const at = raw.indexOf(" · ");
   const group = at === -1 ? "" : raw.slice(0, at);
   const name = at === -1 ? raw : raw.slice(at + 3);
-  if (ADD_ON_GROUPS.has(group)) return { color: "text-mod-extra", name };
-  if (/allerg/i.test(name)) return { color: "text-mod-alert", name };
-  if (/^no\b/i.test(name)) return { color: "text-mod-remove", name };
-  return { color: "text-mod-option", name };
+  if (ADD_ON_GROUPS.has(group)) return { color: "text-mod-extra", mark: "+", name };
+  if (/allerg/i.test(name)) return { color: "text-mod-alert", mark: "−", name };
+  if (/^no\b/i.test(name)) return { color: "text-mod-remove", mark: "−", name };
+  return { color: "text-mod-option", mark: "•", name };
 }
 
 /** Receipt row: swipe left reveals Cancel, swipe right reveals No VAT. */
