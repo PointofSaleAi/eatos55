@@ -519,7 +519,7 @@ export function ItemSheet({
                           type="button"
                           onClick={() => {
                             setGroup(g.name);
-                            setPage(0);
+                            setSearch("");
                           }}
                           className={cn(
                             "h-ctl-sm shrink-0 rounded-pill px-3 text-fs-xs font-bold transition-colors",
