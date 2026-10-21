@@ -1,3 +1,4 @@
+- [x] Show the Course option only on table orders and render the chosen course as a coloured chip above the item name in the order summary; verified hidden without a table, visible and selectable on a table order (pink Dessert chip), and hidden again when editing on takeout across desktop
 - [x] Move the cart line's modifiers expand arrow below the price, onto the add-ons/modifiers line; placement, expansion and collapse verified on desktop, tablet and phone
 - [x] Move the order panel between left and right by dragging its grip (placed after the arrival time in the header row), with the menu flipping sides; verified grip placement, both drag directions, cancelled drops and header fit on desktop, tablet and phone
 - [x] Run product-tile photos edge to edge across the card's top band and shrink the name on photo tiles; verified flush right edge, clean corners, small name, unchanged text-only tiles and adding to the order on phone, tablet and desktop
