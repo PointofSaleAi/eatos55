@@ -768,7 +768,7 @@ html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-grid {
   /* Option cards keep a readable height instead of stretching to fill the panel:
      they grow only a little past their content, so the picked-items line under the
      grid stays on screen however few options a group has. */
-  grid-auto-rows: minmax(calc(var(--ctl-md) * 1.05), calc(var(--ctl-md) * 1.4));
+  grid-auto-rows: minmax(calc(var(--ctl-md) * 1.05), calc(var(--ctl-md) * 1.7));
 }
 
 html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-thumb {
