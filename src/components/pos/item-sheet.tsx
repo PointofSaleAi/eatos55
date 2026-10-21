@@ -544,7 +544,7 @@ export function ItemSheet({
                               : "0rem",
                         } as import("react").CSSProperties
                       }
-                      className="grid min-h-[calc(var(--opt-h2)_+_var(--opt-extra))] flex-1 auto-rows-[minmax(3.5rem,auto)] content-start grid-cols-2 gap-2 overflow-y-auto px-4 py-2.5 sm:min-h-[calc(var(--opt-h3)_+_var(--opt-extra))] sm:grid-cols-3 lg:min-h-[calc(var(--opt-h4)_+_var(--opt-extra))] lg:grid-cols-4"
+                      className="grid min-h-[calc(var(--opt-h2)_+_var(--opt-extra))] flex-1 auto-rows-[minmax(3.5rem,auto)] content-start grid-cols-2 gap-2 overflow-y-auto px-4 pt-2.5 pb-1 sm:min-h-[calc(var(--opt-h3)_+_var(--opt-extra))] sm:grid-cols-3 lg:min-h-[calc(var(--opt-h4)_+_var(--opt-extra))] lg:grid-cols-4"
 
                     >
 
@@ -596,10 +596,10 @@ export function ItemSheet({
 
               </div>
 
-              <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-2.5">
+              <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1rem+var(--kb-inset,0px))]">
                 {/* Always keeps one line of space so picking options never resizes the popup. */}
                 <p
-                  className="truncate pb-1.5 text-fs-xs font-bold leading-5 text-muted-foreground"
+                  className="truncate text-fs-xs font-bold leading-4 text-muted-foreground"
                   title={selectedList.join(" · ") || undefined}
                 >
                   {openPriceMissing
