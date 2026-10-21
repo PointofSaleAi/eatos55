@@ -135,6 +135,9 @@
   --fs-mod: clamp(0.625rem, 0.56rem + 0.3vw, 0.75rem);
 
   --tap: 2.75rem; /* 44px minimum touch target */
+  /* Compact step below --ctl-sm: the order footer (Save / Fire / Charge) and the
+     service-type row (Dine In, Takeout, Delivery) read lighter than other controls. */
+  --ctl-xs: clamp(2.5rem, 2.4rem + 0.4vw, 2.625rem);
   --ctl-sm: clamp(2.75rem, 2.6rem + 0.6vw, 3rem);
   --ctl-md: clamp(2.75rem, 2.55rem + 0.9vw, 3.125rem);
   --ctl-lg: clamp(2.75rem, 2.4rem + 1.6vw, 3.25rem);
@@ -411,6 +414,7 @@
     --fs-2xl: 2.25rem;
     --fs-key: 2.5rem;
     --fs-money: 3.75rem;
+    --ctl-xs: 2.75rem;
     --ctl-sm: 3rem;
     --ctl-md: 3.25rem;
     --ctl-lg: 3.5rem;
@@ -435,6 +439,7 @@
     --fs-2xl: 2.5rem;
     --fs-key: 2.75rem;
     --fs-money: 4rem;
+    --ctl-xs: 3rem;
     --ctl-sm: 3.25rem;
     --ctl-md: 3.5rem;
     --ctl-lg: 3.75rem;
@@ -460,6 +465,7 @@
     --fs-2xl: 2.875rem;
     --fs-key: 3.25rem;
     --fs-money: 4.75rem;
+    --ctl-xs: 3.25rem;
     --ctl-sm: 3.5rem;
     --ctl-md: 3.75rem;
     --ctl-lg: 4.25rem;
@@ -478,6 +484,7 @@
 
 @media (max-height: 620px) {
   :root {
+    --ctl-xs: 2.5rem;
     --ctl-sm: 2.75rem;
     --ctl-md: 2.75rem;
     --ctl-lg: 2.75rem;
@@ -498,6 +505,12 @@
 
 @utility min-h-tap {
   min-height: var(--tap);
+}
+@utility h-ctl-xs {
+  height: var(--ctl-xs);
+}
+@utility min-h-ctl-xs {
+  min-height: var(--ctl-xs);
 }
 @utility h-ctl-sm {
   height: var(--ctl-sm);
