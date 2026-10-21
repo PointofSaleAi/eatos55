@@ -3,6 +3,7 @@ import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { money, serviceChargePresets } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
+import { splitPicked } from "@/components/pos/discount-sheet";
 
 export type ServiceChargePreset = {
   name: string;
@@ -32,11 +33,16 @@ export function ServiceChargeSheet({
   onPick: (preset: ServiceChargePreset | null) => void;
 }) {
   const { dragStyle, handleProps } = useSheetDrag(onClose);
-  const isActive = (percent?: number, amount?: number) => {
-    if (!activeName) return false;
-    return percent != null
-      ? activePercent === percent
-      : activePercent === 0 && Math.abs(activeCharge - (amount ?? 0)) < 0.01;
+  const picked = splitPicked(activeName);
+  const toggle = (name: string) => {
+    const next = picked.includes(name) ? picked.filter((n) => n !== name) : [...picked, name];
+    const chosen = serviceChargePresets.filter((p) => next.includes(p.name));
+    if (!chosen.length) return onPick(null);
+    onPick({
+      name: chosen.map((p) => p.name).join(", "),
+      percent: chosen.reduce((sum, p) => sum + (p.percent ?? 0), 0),
+      amount: chosen.reduce((sum, p) => sum + (p.amount ?? 0), 0),
+    });
   };
 
   return (
@@ -52,17 +58,18 @@ export function ServiceChargeSheet({
             Service Charge
           </SheetTitle>
           <p className="mt-0.5 text-center text-fs-xs font-bold text-muted-foreground">
-            Select a service charge to apply to the current order
+            Select one or more service charges for this order
           </p>
         </SheetHeader>
         <div>
           {serviceChargePresets.map((preset, i) => {
-            const active = isActive(preset.percent, preset.amount);
+            const active = picked.includes(preset.name);
             return (
               <button
                 key={preset.id}
                 type="button"
-                onClick={() => onPick({ ...preset })}
+                aria-pressed={active}
+                onClick={() => toggle(preset.name)}
                 className={cn(
                   "flex w-full items-center gap-3 px-4 py-3.5 text-left",
                   i % 2 === 0 ? "bg-muted/40" : "bg-surface",
@@ -74,7 +81,7 @@ export function ServiceChargeSheet({
                 <span className="shrink-0 text-fs-sm font-bold text-muted-foreground">
                   {preset.percent != null ? `${preset.percent}%` : money(preset.amount ?? 0)}
                 </span>
-                {active ? <Check className="size-5 shrink-0 text-success" /> : null}
+                <Check className={cn("size-5 shrink-0 text-success", active ? "" : "invisible")} />
               </button>
             );
           })}
@@ -89,6 +96,11 @@ export function ServiceChargeSheet({
               </span>
             </button>
           ) : null}
+        </div>
+        <div className="px-4 pt-3">
+          <button type="button" onClick={onClose} className="h-11 w-full rounded-xl bg-primary text-fs-sm font-extrabold text-primary-foreground">
+            Done
+          </button>
         </div>
       </SheetContent>
     </Sheet>

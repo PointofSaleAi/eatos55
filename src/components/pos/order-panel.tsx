@@ -195,12 +195,11 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
 
       <DiscountSheet
         open={discountOpen}
-        selected={null}
+        selected={orderDiscountName}
         onClose={() => setDiscountOpen(false)}
         onPick={(d) => {
           setOrderDiscountName(d.name);
           setOrderDiscountPercent(d.percent);
-          setDiscountOpen(false);
         }}
       />
 
@@ -218,12 +217,7 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, docked, onCus
         onClose={() => setChargeOpen(false)}
         onPick={(preset) => {
           setServiceCharge(preset);
-          setChargeOpen(false);
-          toast.success(
-            preset
-              ? `${preset.name} service charge applied`
-              : "Service charge removed",
-          );
+          if (!preset) setChargeOpen(false);
         }}
       />
 
