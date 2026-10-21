@@ -797,6 +797,19 @@ html[data-layout="wide"] [role="dialog"].sheet-product .sheet-product-info-media
   object-fit: cover;
 }
 
+/* Preflight resets form controls to the inherited font size, which would pin
+   every button and field in this dialog to the page default. Re-apply the size
+   utilities here so the scaled --fs-* tokens above reach the controls too. */
+html[data-layout="wide"] [role="dialog"].sheet-product :is(button, input, select, textarea).text-fs-xs {
+  font-size: var(--fs-xs);
+}
+html[data-layout="wide"] [role="dialog"].sheet-product :is(button, input, select, textarea).text-fs-sm {
+  font-size: var(--fs-sm);
+}
+html[data-layout="wide"] [role="dialog"].sheet-product :is(button, input, select, textarea).text-fs-base {
+  font-size: var(--fs-base);
+}
+
 /* Wide layout has a pointer: give rows and tiles a visible hover affordance. */
 @media (hover: hover) and (pointer: fine) {
   html[data-layout="wide"] a:focus-visible,
