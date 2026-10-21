@@ -2,6 +2,8 @@ import {
   Armchair,
   ArrowLeftRight,
   BadgePercent,
+  ChevronDown,
+  ChevronUp,
   ClipboardList,
   Flame,
   GitMerge,
@@ -378,6 +380,8 @@ export function OrderPanel({
   const [addGuestOpen, setAddGuestOpen] = useState(false);
   const [typeForSheet, setTypeForSheet] = useState<ServiceOrderType | undefined>(undefined);
   const [notesOpen, setNotesOpen] = useState(false);
+  /** Totals stay folded to just the running total until the arrow is tapped. */
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [guestName, setGuestName] = useState(guest.name);
   const [guestPhone, setGuestPhone] = useState(guest.phone);
 
@@ -558,7 +562,9 @@ export function OrderPanel({
             : "pb-[calc(0.5rem+var(--kb-inset,0px)+var(--tabs-h,0px))]",
         )}
       >
-        <dl className="text-fs-xs">
+        {/* Only the running total shows by default. The arrow on the total row
+            opens the subtotal, tax, discount and service-charge lines above it. */}
+        <dl id="order-summary-details" hidden={!detailsOpen} className="text-fs-xs">
           <div className="flex items-center justify-between py-0 font-bold text-muted-foreground">
             <dt>Sub Total</dt>
             <dd className="tabular-nums">{money(totals.subtotal)}</dd>
@@ -573,11 +579,25 @@ export function OrderPanel({
           {serviceChargePercent > 0 || totals.serviceCharge > 0 ? (
             <BreakdownRow label="Service Charge" value={money(totals.serviceCharge)} parts={serviceChargeParts(serviceChargeName, totals.serviceCharge)} />
           ) : null}
-          <div className="flex items-center justify-between pt-0.5 text-fs-lg font-extrabold text-foreground">
-            <dt>Total{comped ? " (comped)" : ""}</dt>
-            <dd className="tabular-nums">{money(totals.total)}</dd>
-          </div>
         </dl>
+        <button
+          type="button"
+          aria-expanded={detailsOpen}
+          aria-controls="order-summary-details"
+          aria-label={`${detailsOpen ? "Hide" : "Show"} the subtotal, tax, discount and service charge`}
+          onClick={() => setDetailsOpen((v) => !v)}
+          className="flex w-full items-center justify-between gap-2 pt-0.5 text-fs-lg font-extrabold text-foreground"
+        >
+          <span>Total{comped ? " (comped)" : ""}</span>
+          <span className="flex min-w-0 items-center gap-1.5 tabular-nums">
+            <span className="truncate">{money(totals.total)}</span>
+            {detailsOpen ? (
+              <ChevronDown className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            ) : (
+              <ChevronUp className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            )}
+          </span>
+        </button>
 
         <div className="mt-1 grid grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-2">
           <button
