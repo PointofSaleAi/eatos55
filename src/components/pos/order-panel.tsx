@@ -640,17 +640,18 @@ export function OrderPanel({
 const ADD_ON_GROUPS = new Set(addOnGroups.map((g) => g.name));
 
 /**
- * Per-line styling follows the reference: add-ons are orange "+", removals red
- * "-", allergies amber "-", and plain choices a blue "•".
+ * Per-line styling follows the reference: add-ons are orange, removals red,
+ * allergies amber, and plain choices blue. The kind is conveyed by colour
+ * alone — no leading mark is printed.
  */
 function modifierStyle(raw: string) {
   const at = raw.indexOf(" · ");
   const group = at === -1 ? "" : raw.slice(0, at);
   const name = at === -1 ? raw : raw.slice(at + 3);
-  if (ADD_ON_GROUPS.has(group)) return { mark: "+", color: "text-mod-extra", name };
-  if (/allerg/i.test(name)) return { mark: "-", color: "text-mod-alert", name };
-  if (/^no\b/i.test(name)) return { mark: "-", color: "text-mod-remove", name };
-  return { mark: "•", color: "text-mod-option", name };
+  if (ADD_ON_GROUPS.has(group)) return { color: "text-mod-extra", name };
+  if (/allerg/i.test(name)) return { color: "text-mod-alert", name };
+  if (/^no\b/i.test(name)) return { color: "text-mod-remove", name };
+  return { color: "text-mod-option", name };
 }
 
 /** Receipt row: swipe left reveals Cancel, swipe right reveals No VAT. */
@@ -671,7 +672,8 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
     moveTo(v <= -ACTION / 2 ? -ACTION : v >= ACTION / 2 ? ACTION : 0);
   };
   return (
-    <li className="relative overflow-hidden py-0">
+    <li className="relative py-0">
+      <div className="relative overflow-hidden">
       <button
         type="button"
         onClick={() => { moveTo(0); onToggleTax(); }}
@@ -721,13 +723,12 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
         }}
       >
         <span className="shrink-0 pt-0.5 text-fs-xs font-extrabold tabular-nums text-foreground">{l.qty}</span>
-        <div className="min-w-0 flex-1">
           <button
             type="button"
             disabled={!onEdit}
             onClick={onEdit}
             aria-label={onEdit ? `Edit ${l.name}` : undefined}
-            className="w-full rounded-md text-left enabled:hover:bg-muted/60 disabled:cursor-default"
+            className="min-w-0 flex-1 rounded-md text-left enabled:hover:bg-muted/60 disabled:cursor-default"
           >
             <div className="flex min-h-6 items-center gap-2">
               <span className="min-w-0 flex-1 truncate text-fs-sm font-bold leading-snug text-foreground">{l.name}</span>
@@ -737,15 +738,16 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
               </span>
             </div>
           </button>
-          {l.taxExempt ? <p className="text-fs-xs font-bold leading-snug text-muted-foreground">No {brand.taxLabel} added</p> : null}
+        </div>
+      </div>
+      {l.taxExempt ? <p className="text-fs-xs font-bold leading-snug text-muted-foreground">No {brand.taxLabel} added</p> : null}
           {l.modifiers?.length ? (
             <ul className="mt-0.5 ml-0.5 border-l border-border pl-2">
               {l.modifiers.map((m, i) => {
-                const { mark, color, name } = modifierStyle(m);
+                const { color, name } = modifierStyle(m);
                 return (
                   <li key={i} className={cn("mod-line relative flex items-start gap-1 py-px font-normal leading-snug", color)}>
                     <span aria-hidden className="absolute left-0 top-1/2 h-px w-1.5 -translate-x-full bg-border" />
-                    <span aria-hidden className="shrink-0">{mark}</span>
                     <span className="min-w-0">{name}</span>
                   </li>
                 );
@@ -759,8 +761,6 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
               <span className="rounded-sm bg-foreground px-1.5 py-0.5 text-[0.625rem] font-extrabold tabular-nums text-background">{l.seat}</span>
             </p>
           ) : null}
-        </div>
-      </div>
     </li>
   );
 }
