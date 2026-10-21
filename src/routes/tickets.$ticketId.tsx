@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router"
 import { ArrowLeftRight, BadgePercent, ChevronDown, Percent, Plus, Printer, ReceiptText, Trash2 } from "lucide-react";
 import { HeaderAction } from "@/components/pos/order-panel";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
+import { BreakdownRow, discountParts } from "@/components/pos/breakdown-row";
 import { TransferCheckDialog } from "@/components/pos/transfer-check-dialog";
 import { Fragment, useState } from "react";
 import { brand } from "@/lib/brand";
@@ -187,7 +188,7 @@ function TicketDetail() {
             <dl className="text-fs-sm">
               <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground"><dt>Sub Total</dt><dd className="tabular-nums">{money(subTotal)}</dd></div>
               <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground"><dt>{brand.taxLabel}</dt><dd className="tabular-nums">{money(tax)}</dd></div>
-              {discount > 0 ? <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground"><dt>Discount{ticket.discountName ? ` · ${ticket.discountName}` : ""}</dt><dd className="tabular-nums">-{money(discount)}</dd></div> : null}
+              {discount > 0 ? <BreakdownRow className="py-0.5" label="Discount" value={`-${money(discount)}`} negative parts={discountParts(ticket.discountName, discount)} /> : null}
               {ticket.tips ? <div className="flex items-center justify-between py-0.5 font-bold text-muted-foreground"><dt>Tips</dt><dd className="tabular-nums">{money(ticket.tips)}</dd></div> : null}
               <div className="flex items-center justify-between pt-0.5 text-fs-lg font-extrabold text-foreground"><dt>Total</dt><dd className="tabular-nums">{money(shownTotal)}</dd></div>
             </dl>
@@ -267,7 +268,7 @@ function TicketDetail() {
         <Card className="mt-3 px-4 py-3">
           <Row label="Sub Total" value={money(subTotal)} />
           <Row label={brand.taxLabel} value={money(tax)} />
-          {discount > 0 ? <Row label={`Discount${ticket.discountName ? ` · ${ticket.discountName}` : ""}`} value={`-${money(discount)}`} /> : null}
+          {discount > 0 ? <BreakdownRow className="py-1 text-fs-sm" label="Discount" value={`-${money(discount)}`} negative parts={discountParts(ticket.discountName, discount)} /> : null}
           {ticket.tips ? <Row label="Tips" value={money(ticket.tips)} /> : null}
           <div className="mt-2 flex items-center justify-between border-t border-border pt-2">
             <span className="text-fs-sm font-extrabold text-foreground">Total</span>

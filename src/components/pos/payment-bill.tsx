@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { BreakdownRow, discountParts, serviceChargeParts } from "@/components/pos/breakdown-row";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { BadgePercent, ChevronRight, NotebookPen, X } from "lucide-react";
@@ -33,6 +34,7 @@ export function PaymentBill({ room }: { room?: Room | null }) {
     orderNotes,
     setOrderNotes,
     setOrderDiscountPercent,
+    serviceChargeName,
   } = usePos();
   const orderNumber = currentOrderNumber;
   const due = Math.max(0, Math.round((totals.total - paidSoFar) * 100) / 100);
@@ -125,14 +127,11 @@ export function PaymentBill({ room }: { room?: Room | null }) {
           <ReceiptRow label="Sub Total" value={money(totals.subtotal)} />
           <ReceiptRow label={`TAX (${Math.round(TAX_RATE * 100)}%)`} value={money(totals.tax)} />
           {totals.serviceCharge ? (
-            <ReceiptRow label="Service Charge" value={money(totals.serviceCharge)} />
+            <BreakdownRow className="text-fs-sm font-normal" label="Service Charge" value={money(totals.serviceCharge)} parts={serviceChargeParts(serviceChargeName, totals.serviceCharge)} />
           ) : null}
           {totals.discount ? (
-            <div className="flex items-center gap-2 text-fs-sm text-accent">
-              <span className="min-w-0 flex-1 truncate">
-                Discount{discountName ? ` · ${discountName}` : ""}
-              </span>
-              <span className="shrink-0 tabular-nums">-{money(totals.discount)}</span>
+            <div className="flex items-start gap-2 text-fs-sm text-accent">
+              <BreakdownRow className="min-w-0 flex-1 font-normal text-accent" label="Discount" value={`-${money(totals.discount)}`} negative parts={discountParts(discountName, totals.discount)} />
               {editable ? (
                 <button
                   type="button"
