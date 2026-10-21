@@ -88,7 +88,9 @@ export function ItemSheet({
   const [notes, setNotes] = useState<string[]>([]);
   const [tab, setTab] = useState<"item" | "addons">("item");
   const [group, setGroup] = useState<string>("");
-  const [page, setPage] = useState(0);
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<"az" | "za" | "lohi" | "hilo">("az");
+  const [sortOpen, setSortOpen] = useState(false);
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [discount, setDiscount] = useState<{ name: string; percent: number } | null>(null);
   const [discountOpen, setDiscountOpen] = useState(false);
