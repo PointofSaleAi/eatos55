@@ -28,6 +28,7 @@ export function BreakdownRow({
   parts,
   negative,
   tone = "default",
+  alwaysOpen = false,
   className,
 }: {
   label: string;
@@ -36,21 +37,24 @@ export function BreakdownRow({
   negative?: boolean;
   /** "red" prints the listed names and amounts in the destructive red. */
   tone?: "default" | "red";
+  /** Lists the parts with no count pill and no click needed — the folded order summary. */
+  alwaysOpen?: boolean;
   className?: string;
 }) {
-  const [open, setOpen] = useState(false);
+  const [show, setShow] = useState(false);
+  const open = alwaysOpen || show;
   return (
     <div className={cn("py-0 font-bold text-muted-foreground", className)}>
       <div className="flex items-center justify-between gap-2">
         <dt className="flex min-w-0 items-center gap-1.5">
           <span>{label}</span>
-          {parts.length ? (
+          {parts.length && !alwaysOpen ? (
             <button
               type="button"
               aria-expanded={open}
               aria-label={`${open ? "Hide" : "Show"} the ${parts.length} applied ${label.toLowerCase()} details`}
               title={`${parts.length} applied`}
-              onClick={() => setOpen((v) => !v)}
+              onClick={() => setShow((v) => !v)}
               className={cn(
                 "grid min-w-6 shrink-0 place-items-center rounded-full px-1.5 py-0.5 text-[0.7em] font-bold leading-none tabular-nums hover:bg-muted",
                 tone === "red" ? "bg-destructive/12 text-destructive" : "bg-muted text-muted-foreground",
