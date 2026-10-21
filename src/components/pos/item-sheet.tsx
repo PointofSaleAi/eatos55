@@ -1,13 +1,10 @@
 import { MoneyInput } from "@/components/pos/money-input";
 import {
-  ArrowUpDown,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Mic,
   Pencil,
   Percent,
-  Search,
   UtensilsCrossed,
 } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -23,7 +20,6 @@ import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
-import { useVoiceSearch } from "@/lib/voice-search";
 
 /**
  * Modifier/add-on option label. Price sits on its own second line by default;
@@ -69,13 +65,6 @@ function OptionLabel({ name, price, stock }: { name: string; price: number; stoc
   );
 }
 
-const SORT_LABELS = {
-  az: "Name A-Z",
-  za: "Name Z-A",
-  lohi: "Price Low-High",
-  hilo: "Price High-Low",
-} as const;
-
 /**
  * Item detail sheet (live app parity): price edit, quantity picker, item notes,
  * Item / Add-Ons tabs with modifier groups, line discount and the ADD button.
@@ -107,9 +96,6 @@ export function ItemSheet({
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [discount, setDiscount] = useState<{ name: string; percent: number } | null>(null);
   const [discountOpen, setDiscountOpen] = useState(false);
-  const [search, setSearch] = useState("");
-  const [sort, setSort] = useState<"az" | "za" | "lohi" | "hilo">("az");
-  const [sortOpen, setSortOpen] = useState(false);
   const { dragStyle, handleProps } = useSheetDrag(dismiss);
   // Never let the popup shrink while one product is open; resets for the next product.
   // A callback ref is used because the sheet mounts in a portal after this component renders.
@@ -239,9 +225,6 @@ export function ItemSheet({
     setPage(0);
     setGroup("");
     setEditingPrice(false);
-    setSearch("");
-    setSort("az");
-    setSortOpen(false);
     setView("order");
   };
 
@@ -259,7 +242,6 @@ export function ItemSheet({
     onClose();
   }
 
-  const { listening, start: startVoiceSearch } = useVoiceSearch(setSearch);
 
   return (
     <>
@@ -442,93 +424,6 @@ export function ItemSheet({
                   </div>
                 ) : null}
 
-                {addOns.length ? (
-                  <div
-                    aria-hidden={tab !== "addons" ? true : undefined}
-                    inert={tab !== "addons" ? true : undefined}
-                    className={cn(
-                      "flex shrink-0 items-center gap-2 px-4 pt-2.5",
-                      tab !== "addons" && "invisible",
-                    )}
-                  >
-                    <div className="flex h-ctl-md min-w-0 flex-1 items-center gap-2 rounded-pill border border-border bg-surface px-3">
-                      <Search className="size-4 shrink-0 text-muted-foreground" />
-                      <input
-                        value={search}
-                        onChange={(e) => {
-                          setSearch(e.target.value);
-                          setPage(0);
-                        }}
-                        placeholder="Search for Add-Ons"
-                        aria-label="Search add-ons"
-                        className="h-full min-w-0 flex-1 bg-transparent text-fs-sm text-foreground outline-none"
-                      />
-                      <button
-                        type="button"
-                        onClick={startVoiceSearch}
-                        aria-label="Voice search"
-                        className={cn(
-                          "grid size-7 shrink-0 place-items-center rounded-pill transition-colors",
-                          listening
-                            ? "animate-pulse text-accent"
-                            : "text-muted-foreground hover:text-foreground",
-                        )}
-                      >
-                        <Mic className="size-4" />
-                      </button>
-                    </div>
-                    <div className="relative shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => setSortOpen((o) => !o)}
-                        aria-label={`Sort add-ons, currently ${SORT_LABELS[sort]}`}
-                        aria-expanded={sortOpen}
-                        className={cn(
-                          "grid size-ctl-md place-items-center rounded-pill border transition-colors",
-                          sortOpen || sort !== "az"
-                            ? "border-accent bg-accent/10 text-foreground"
-                            : "border-border text-muted-foreground hover:text-foreground",
-                        )}
-                      >
-                        <ArrowUpDown className="size-4" />
-                      </button>
-                      {sortOpen ? (
-                        <>
-                          <button
-                            type="button"
-                            aria-label="Close sort menu"
-                            className="fixed inset-0 z-10 cursor-default"
-                            onClick={() => setSortOpen(false)}
-                          />
-                          <div className="absolute right-0 top-full z-20 mt-1.5 w-40 overflow-hidden rounded-card border border-border bg-surface shadow-lg">
-                            {(Object.keys(SORT_LABELS) as (keyof typeof SORT_LABELS)[]).map(
-                              (key) => (
-                                <button
-                                  key={key}
-                                  type="button"
-                                  onClick={() => {
-                                    setSort(key);
-                                    setSortOpen(false);
-                                    setPage(0);
-                                  }}
-                                  className={cn(
-                                    "block w-full px-3 py-2 text-left text-fs-sm font-bold transition-colors",
-                                    key === sort
-                                      ? "bg-accent/10 text-foreground"
-                                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                                  )}
-                                >
-                                  {SORT_LABELS[key]}
-                                </button>
-                              ),
-                            )}
-                          </div>
-                        </>
-                      ) : null}
-                    </div>
-                  </div>
-                ) : null}
-
                 {activeGroup ? (
                   <>
                     <div className="flex min-h-10 shrink-0 items-center justify-between gap-2 px-4 pb-1.5 pt-3">
@@ -561,15 +456,7 @@ export function ItemSheet({
                         </div>
                       ) : null}
                     </div>
-                    {(
-                    <div
-                      aria-hidden={query ? true : undefined}
-                      inert={query ? true : undefined}
-                      className={cn(
-                        "no-scrollbar flex shrink-0 items-center gap-1.5 overflow-x-auto px-4",
-                        query && "invisible",
-                      )}
-                    >
+                    <div className="no-scrollbar flex shrink-0 items-center gap-1.5 overflow-x-auto px-4">
                       {groups.map((g) => (
                         <button
                           key={g.name}
@@ -590,7 +477,6 @@ export function ItemSheet({
                         </button>
                       ))}
                     </div>
-                    )}
 
                     <div
                       style={reservedRows}
@@ -636,7 +522,7 @@ export function ItemSheet({
                       })}
                       {visibleOptions.length === 0 ? (
                         <p className="col-span-full grid place-items-center py-6 text-fs-sm font-bold text-muted-foreground">
-                          No add-ons match “{search.trim()}”
+                          No options available
                         </p>
                       ) : null}
                     </div>
