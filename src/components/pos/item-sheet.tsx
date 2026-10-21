@@ -412,7 +412,7 @@ export function ItemSheet({
                           setGroup((t === "item" ? itemGroups : addOns)[0]?.name ?? "");
                         }}
                         className={cn(
-                          "h-ctl-sm rounded-pill text-fs-xs font-extrabold uppercase transition-colors",
+                          "sheet-product-tab h-ctl-sm rounded-pill text-fs-xs font-extrabold uppercase transition-colors",
                           t === tab
                             ? "bg-primary text-primary-foreground"
                             : "bg-muted text-muted-foreground hover:bg-secondary",
@@ -520,7 +520,7 @@ export function ItemSheet({
                             setSearch("");
                           }}
                           className={cn(
-                            "h-ctl-sm shrink-0 rounded-pill px-3 text-fs-xs font-bold transition-colors",
+                            "sheet-product-chip h-ctl-sm shrink-0 rounded-pill px-3 text-fs-xs font-bold transition-colors",
                             g.name === activeGroup.name
                               ? "bg-primary text-primary-foreground"
                               : "bg-muted text-muted-foreground hover:bg-secondary",
