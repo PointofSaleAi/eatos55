@@ -589,7 +589,7 @@ export function OrderPanel({
               if (!totals.count) return;
               toast.success("Order saved");
             }}
-            className="grid min-h-ctl-sm w-12 shrink-0 place-items-center rounded-row bg-muted text-foreground transition-colors hover:bg-secondary disabled:opacity-40"
+            className="grid min-h-ctl-xs w-12 shrink-0 place-items-center rounded-row bg-muted text-foreground transition-colors hover:bg-secondary disabled:opacity-40"
           >
             <Save className="size-4.5" />
           </button>
@@ -600,7 +600,7 @@ export function OrderPanel({
               fireTicket();
               toast.success("Order fired to the kitchen");
             }}
-            className="flex min-h-ctl-sm shrink-0 items-center justify-center gap-1.5 rounded-row bg-tile-orange px-3 text-fs-sm font-extrabold uppercase text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+            className="flex min-h-ctl-xs shrink-0 items-center justify-center gap-1.5 rounded-row bg-tile-orange px-3 text-fs-sm font-extrabold uppercase text-white transition-opacity hover:opacity-90 disabled:opacity-40"
           >
             <Flame className="size-4 shrink-0" />
             Fire
@@ -609,7 +609,7 @@ export function OrderPanel({
             type="button"
             disabled={!totals.count}
             onClick={() => navigate({ to: "/payment/method" })}
-            className="min-h-ctl-sm min-w-0 truncate rounded-row bg-accent px-3 text-fs-sm font-extrabold uppercase text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
+            className="min-h-ctl-xs min-w-0 truncate rounded-row bg-accent px-3 text-fs-sm font-extrabold uppercase text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-40"
           >
             Charge {money(totals.total)}
           </button>
