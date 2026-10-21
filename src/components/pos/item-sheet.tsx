@@ -93,6 +93,7 @@ export function ItemSheet({
   const [discount, setDiscount] = useState<{ name: string; percent: number } | null>(null);
   const [discountOpen, setDiscountOpen] = useState(false);
   const { dragStyle, handleProps } = useSheetDrag(dismiss);
+  const { listening, start: startVoiceSearch } = useVoiceSearch(setSearch);
   // Never let the popup shrink while one product is open; resets for the next product.
   // A callback ref is used because the sheet mounts in a portal after this component renders.
   const [sheetEl, sheetRef] = useState<HTMLDivElement | null>(null);
