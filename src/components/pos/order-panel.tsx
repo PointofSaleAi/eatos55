@@ -568,7 +568,7 @@ export function OrderPanel({
             <dd className="tabular-nums">{money(totals.tax)}</dd>
           </div>
           {orderDiscountPercent > 0 || totals.discount > 0 ? (
-            <BreakdownRow label="Discount" value={`-${money(totals.discount)}`} negative parts={discountParts(orderDiscountName, totals.discount)} />
+            <BreakdownRow tone="red" label="Discount" value={`-${money(totals.discount)}`} negative parts={discountParts(orderDiscountName, totals.discount)} />
           ) : null}
           {serviceChargePercent > 0 || totals.serviceCharge > 0 ? (
             <BreakdownRow label="Service Charge" value={money(totals.serviceCharge)} parts={serviceChargeParts(serviceChargeName, totals.serviceCharge)} />

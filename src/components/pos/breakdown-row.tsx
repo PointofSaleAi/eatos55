@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
 import { splitPicked } from "@/components/pos/discount-sheet";
 import { discountPresets, money, serviceChargePresets } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
@@ -22,46 +21,56 @@ export function serviceChargeParts(label: string | null | undefined, total: numb
   }));
 }
 
-/** Totals line whose arrow lists each picked discount / charge vertically with its amount. */
+/** Totals line whose count pill lists each picked discount / charge vertically with its amount. */
 export function BreakdownRow({
   label,
   value,
   parts,
   negative,
+  tone = "default",
   className,
 }: {
   label: string;
   value: string;
   parts: { name: string; amount: number }[];
   negative?: boolean;
+  /** "red" prints the listed names and amounts in the destructive red. */
+  tone?: "default" | "red";
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
   return (
     <div className={cn("py-0 font-bold text-muted-foreground", className)}>
       <div className="flex items-center justify-between gap-2">
-        <dt className="flex min-w-0 items-center gap-1">
+        <dt className="flex min-w-0 items-center gap-1.5">
           <span>{label}</span>
           {parts.length ? (
             <button
               type="button"
               aria-expanded={open}
-              aria-label={`${open ? "Hide" : "Show"} ${label} details`}
+              aria-label={`${open ? "Hide" : "Show"} the ${parts.length} applied ${label.toLowerCase()} details`}
+              title={`${parts.length} applied`}
               onClick={() => setOpen((v) => !v)}
-              className="grid size-6 place-items-center rounded-md hover:bg-muted"
+              className={cn(
+                "grid min-w-6 shrink-0 place-items-center rounded-full px-1.5 py-0.5 text-[0.7em] font-bold leading-none tabular-nums hover:bg-muted",
+                tone === "red" ? "bg-destructive/12 text-destructive" : "bg-muted text-muted-foreground",
+              )}
             >
-              <ChevronDown className={cn("size-4 transition-transform", open && "rotate-180")} />
+              {parts.length}
             </button>
           ) : null}
         </dt>
         <dd className="tabular-nums">{value}</dd>
       </div>
       {open ? (
-        <ul className="mb-0.5 ml-3 border-l border-border pl-2 text-[0.8em] font-semibold">
+        <ul className="mb-0.5 ml-3 border-l border-border pl-2 text-[1.05em] font-semibold">
           {parts.map((p) => (
             <li key={p.name} className="flex items-center justify-between gap-2 py-0.5">
-              <span className="min-w-0">{p.name}</span>
-              <span className="shrink-0 tabular-nums">{negative ? "-" : ""}{money(p.amount)}</span>
+              <span className={cn("min-w-0", tone === "red" && "text-destructive")}>{p.name}</span>
+              <span className={cn("shrink-0 tabular-nums", tone === "red" && "text-destructive")}>
+                {negative ? "-" : ""}
+                {money(p.amount)}
+              </span>
             </li>
           ))}
         </ul>

@@ -131,7 +131,7 @@ export function PaymentBill({ room }: { room?: Room | null }) {
           ) : null}
           {totals.discount ? (
             <div className="flex items-start gap-2 text-fs-sm text-accent">
-              <BreakdownRow className="min-w-0 flex-1 font-normal text-accent" label="Discount" value={`-${money(totals.discount)}`} negative parts={discountParts(discountName, totals.discount)} />
+              <BreakdownRow tone="red" className="min-w-0 flex-1 font-normal text-accent" label="Discount" value={`-${money(totals.discount)}`} negative parts={discountParts(discountName, totals.discount)} />
               {editable ? (
                 <button
                   type="button"
