@@ -1,20 +1,9 @@
 import { WifiOff } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useDeviceOnline } from "@/lib/device";
 
 /** Venue Wi-Fi drops constantly on handhelds - say so instead of failing silently. */
 export function OfflineBanner() {
-  const [offline, setOffline] = useState(false);
-
-  useEffect(() => {
-    const update = () => setOffline(!navigator.onLine);
-    update();
-    window.addEventListener("online", update);
-    window.addEventListener("offline", update);
-    return () => {
-      window.removeEventListener("online", update);
-      window.removeEventListener("offline", update);
-    };
-  }, []);
+  const offline = !useDeviceOnline();
 
   if (!offline) return null;
 
