@@ -24,6 +24,8 @@
 
   --text-fs-key: var(--fs-key);
   --text-fs-money: var(--fs-money);
+  /* Modifier / add-on lines under a cart item: smaller than the item name. */
+  --text-fs-mod: var(--fs-mod);
 
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -64,6 +66,10 @@
   --color-action-grey-foreground: var(--action-grey-foreground);
 
   --color-tile-black: var(--tile-black);
+  --color-mod-option: var(--mod-option);
+  --color-mod-extra: var(--mod-extra);
+  --color-mod-remove: var(--mod-remove);
+  --color-mod-alert: var(--mod-alert);
   --color-surface-muted: var(--surface-muted);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -127,6 +133,8 @@
   /* Keypad digits and money readouts: large enough to read across a tablet. */
   --fs-key: clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem);
   --fs-money: clamp(1.875rem, 1.3rem + 2.6vw, 3.75rem);
+  /* Modifier lines under a cart item: a step below --fs-xs so the item name stays dominant. */
+  --fs-mod: clamp(0.625rem, 0.56rem + 0.3vw, 0.75rem);
 
   --tap: 2.75rem; /* 44px minimum touch target */
   --ctl-sm: clamp(2.75rem, 2.6rem + 0.6vw, 3rem);
@@ -173,6 +181,13 @@
   --tile-black: oklch(0.25 0.01 275);
   --action-grey: oklch(0.87 0.008 260);
   --action-grey-foreground: oklch(0.3 0.012 275);
+
+  /* Order-summary modifier lines (reference palette): blue choice, orange extra,
+     red removal, amber allergy. */
+  --mod-option: oklch(0.628 0.1607 259.7);
+  --mod-extra: oklch(0.737 0.1294 54.5);
+  --mod-remove: oklch(0.531 0.1901 25);
+  --mod-alert: oklch(0.787 0.1465 83.6);
 
 
   --surface-muted: oklch(0.965 0.003 260);
@@ -256,6 +271,12 @@
   --tile-black: oklch(0.85 0.01 275);
   --action-grey: oklch(0.36 0.006 260);
   --action-grey-foreground: oklch(0.95 0 0);
+
+  /* Lightened so the same four meanings stay readable on the dark surface. */
+  --mod-option: oklch(0.72 0.15 259.7);
+  --mod-extra: oklch(0.8 0.12 54.5);
+  --mod-remove: oklch(0.68 0.19 25);
+  --mod-alert: oklch(0.84 0.14 83.6);
 
   --card: oklch(0.2 0.005 260);
   --card-foreground: oklch(0.98 0 0);
