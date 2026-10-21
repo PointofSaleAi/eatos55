@@ -35,6 +35,7 @@ import { addOnGroups, money, type CartLine, type ServiceOrderType } from "@/lib/
 import { cn } from "@/lib/utils";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { ServiceChargeSheet } from "@/components/pos/service-charge-sheet";
+import { BreakdownRow, discountParts, serviceChargeParts } from "@/components/pos/breakdown-row";
 import { TransferCheckDialog } from "@/components/pos/transfer-check-dialog";
 import { formatPhone, GuestSheet } from "@/components/pos/guest-sheet";
 import { OrderTypeStrip } from "@/components/pos/order-type-strip";
@@ -567,16 +568,10 @@ export function OrderPanel({
             <dd className="tabular-nums">{money(totals.tax)}</dd>
           </div>
           {orderDiscountPercent > 0 || totals.discount > 0 ? (
-            <div className="flex items-center justify-between py-0 font-bold text-muted-foreground">
-              <dt>Discount{orderDiscountName ? ` · ${orderDiscountName}` : ""}</dt>
-              <dd className="tabular-nums">-{money(totals.discount)}</dd>
-            </div>
+            <BreakdownRow label="Discount" value={`-${money(totals.discount)}`} negative parts={discountParts(orderDiscountName, totals.discount)} />
           ) : null}
           {serviceChargePercent > 0 || totals.serviceCharge > 0 ? (
-            <div className="flex items-center justify-between py-0 font-bold text-muted-foreground">
-              <dt>Service Charge{serviceChargeName ? ` · ${serviceChargeName}` : ""}</dt>
-              <dd className="tabular-nums">{money(totals.serviceCharge)}</dd>
-            </div>
+            <BreakdownRow label="Service Charge" value={money(totals.serviceCharge)} parts={serviceChargeParts(serviceChargeName, totals.serviceCharge)} />
           ) : null}
           <div className="flex items-center justify-between pt-0.5 text-fs-lg font-extrabold text-foreground">
             <dt>Total{comped ? " (comped)" : ""}</dt>
