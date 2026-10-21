@@ -13,18 +13,16 @@ export function useDeviceOnline(): boolean {
   useEffect(() => {
     let cancelled = false;
     const probe = async () => {
-      if (navigator.onLine !== false) {
-        try {
-          await fetch(window.location.href, {
-            method: "HEAD",
-            cache: "no-store",
-            signal: AbortSignal.timeout(8000),
-          });
-          if (!cancelled) setOnline(true);
-          return;
-        } catch {
-          /* unreachable or blocked - fall through to navigator.onLine */
-        }
+      try {
+        await fetch(window.location.href, {
+          method: "HEAD",
+          cache: "no-store",
+          signal: AbortSignal.timeout(8000),
+        });
+        if (!cancelled) setOnline(true);
+        return;
+      } catch {
+        /* unreachable or blocked - fall back to navigator.onLine */
       }
       if (!cancelled) setOnline(navigator.onLine);
     };
