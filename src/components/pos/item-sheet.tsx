@@ -167,24 +167,14 @@ export function ItemSheet({
 
   // Options are paged instead of scrolled so the sheet always fits its height.
   const perPage = 8;
-  const query = search.trim().toLowerCase();
   const baseOptions = useMemo(() => {
-    // On Add-Ons, searching looks across every add-on group at once.
-    const pool =
-      tab === "addons" && query
-        ? addOns.flatMap((g) => g.options.map((o) => ({ ...o, group: g.name })))
-        : (activeGroup?.options ?? []).map((o) => ({ ...o, group: activeGroup?.name ?? "" }));
-    const filtered = query
-      ? pool.filter((o) => o.name.toLowerCase().includes(query))
-      : pool;
-    const sorted = [...filtered].sort((a, b) => {
-      if (sort === "az") return a.name.localeCompare(b.name);
-      if (sort === "za") return b.name.localeCompare(a.name);
-      if (sort === "lohi") return a.price - b.price || a.name.localeCompare(b.name);
-      return b.price - a.price || a.name.localeCompare(b.name);
-    });
-    return sorted;
-  }, [tab, query, addOns, activeGroup, sort]);
+    const pool = (activeGroup?.options ?? []).map((o) => ({
+      ...o,
+      group: activeGroup?.name ?? "",
+    }));
+    // Options keep a stable A-Z order.
+    return [...pool].sort((a, b) => a.name.localeCompare(b.name));
+  }, [activeGroup]);
   const pages = Math.max(1, Math.ceil(baseOptions.length / perPage));
   const pageIndex = Math.min(page, pages - 1);
   const visibleOptions = baseOptions.slice(pageIndex * perPage, pageIndex * perPage + perPage);
