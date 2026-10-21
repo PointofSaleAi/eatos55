@@ -405,7 +405,8 @@ export function ItemSheet({
                         type="button"
                         onClick={() => {
                           setTab(t);
-                          setPage(0);
+                          setSearch("");
+                          setSortOpen(false);
                           setGroup((t === "item" ? itemGroups : addOns)[0]?.name ?? "");
                         }}
                         className={cn(
@@ -423,35 +424,10 @@ export function ItemSheet({
 
                 {activeGroup ? (
                   <>
-                    <div className="flex min-h-10 shrink-0 items-center justify-between gap-2 px-4 pb-1.5 pt-3">
+                    <div className="flex min-h-10 shrink-0 items-center gap-2 px-4 pb-1.5 pt-3">
                       <p className="text-fs-xs font-bold text-muted-foreground">
                         Additional Modifiers
                       </p>
-                      {pages > 1 ? (
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            type="button"
-                            aria-label="Previous options"
-                            onClick={() => setPage((p) => Math.max(0, p - 1))}
-                            disabled={pageIndex === 0}
-                            className="grid size-7 place-items-center rounded-pill border border-border text-foreground disabled:opacity-40"
-                          >
-                            <ChevronLeft className="size-3.5" />
-                          </button>
-                          <span className="text-fs-xs font-bold text-muted-foreground">
-                            {pageIndex + 1} / {pages}
-                          </span>
-                          <button
-                            type="button"
-                            aria-label="More options"
-                            onClick={() => setPage((p) => Math.min(pages - 1, p + 1))}
-                            disabled={pageIndex >= pages - 1}
-                            className="grid size-7 place-items-center rounded-pill border border-border text-foreground disabled:opacity-40"
-                          >
-                            <ChevronRight className="size-3.5" />
-                          </button>
-                        </div>
-                      ) : null}
                     </div>
                     <div className="no-scrollbar flex shrink-0 items-center gap-1.5 overflow-x-auto px-4">
                       {groups.map((g) => (
