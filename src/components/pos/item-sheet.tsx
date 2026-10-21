@@ -217,8 +217,10 @@ export function ItemSheet({
     setSelected({});
     setDiscount(null);
     setTab("item");
-    setPage(0);
     setGroup("");
+    setSearch("");
+    setSort("az");
+    setSortOpen(false);
     setEditingPrice(false);
     setView("order");
   };
