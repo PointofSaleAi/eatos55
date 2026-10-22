@@ -427,9 +427,8 @@ export function ItemSheet({
                   <>
               <div className="flex min-h-0 flex-1 flex-col">
 
+                  {tab === "addons" ? (
                   <div className="flex shrink-0 items-center justify-end gap-2 px-4 pt-1">
-
-                    {tab === "addons" ? (
                     <div className="flex h-ctl-md min-w-0 flex-1 items-center gap-2 rounded-pill border border-border bg-surface px-3">
                       <Search className="size-4 shrink-0 text-muted-foreground" />
                       <input
@@ -453,13 +452,12 @@ export function ItemSheet({
                         <Mic className="size-4" />
                       </button>
                     </div>
-                    ) : null}
                     <div className="relative shrink-0">
                       <Button
                         variant="ghost"
                         type="button"
                         onClick={() => setSortOpen((o) => !o)}
-                        aria-label={`Sort ${tab === "addons" ? "add-ons" : "item options"}, currently ${SORT_LABELS[sort]}`}
+                        aria-label={`Sort add-ons, currently ${SORT_LABELS[sort]}`}
                         aria-expanded={sortOpen}
                         className={cn(
                           // A full circle: width equals the search field's height, so the
@@ -507,6 +505,7 @@ export function ItemSheet({
                       ) : null}
                     </div>
                   </div>
+                  ) : null}
 
                 {activeGroup ? (
                   <>
