@@ -32,6 +32,7 @@ import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
+import { productPricesVisible } from "@/lib/device-settings";
 import { useLiveTime } from "@/lib/use-live-time";
 import { addOnGroups, money, type CartLine, type ServiceOrderType } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
@@ -695,7 +696,10 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
   const course = l.modifiers?.find((m) => m.startsWith("Course · "))?.slice("Course · ".length);
   const otherMods = course ? l.modifiers?.filter((m) => !m.startsWith("Course · ")) : l.modifiers;
   // Course and seat only mean something on a table order (Dine In with a table).
-  const { orderType, activeTable } = usePos();
+  const { orderType, activeTable, settings } = usePos();
+  // Device Settings ▸ Show Product Prices drives the order screen too: with it
+  // off an item row carries its name only, with it on the row shows its price.
+  const showPrice = productPricesVisible(settings.devicePreferences);
   const isTableOrder = orderType === "Dine In" && Boolean(activeTable);
 
   const [x, setX] = useState(0);
@@ -786,10 +790,12 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
             >
               <div className="flex min-h-6 items-center gap-2">
                 <span className="min-w-0 flex-1 text-fs-sm font-bold leading-snug text-foreground">{l.name}</span>
-                <span className="flex shrink-0 items-baseline gap-1.5 text-fs-sm font-bold tabular-nums text-foreground">
-                  {l.discountPercent ? <s className="text-fs-xs text-muted-foreground">{money(l.price * l.qty)}</s> : null}
-                  {money(l.price * l.qty * (1 - (l.discountPercent ?? 0) / 100))}
-                </span>
+                {showPrice ? (
+                  <span className="flex shrink-0 items-baseline gap-1.5 text-fs-sm font-bold tabular-nums text-foreground">
+                    {l.discountPercent ? <s className="text-fs-xs text-muted-foreground">{money(l.price * l.qty)}</s> : null}
+                    {money(l.price * l.qty * (1 - (l.discountPercent ?? 0) / 100))}
+                  </span>
+                ) : null}
               </div>
             </button>
           </div>
