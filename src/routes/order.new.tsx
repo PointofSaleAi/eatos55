@@ -118,7 +118,7 @@ function FitName({
     if (!el) return;
     let raf = 0;
     let disposed = false;
-    let lastWidth = 0;
+    let lastRoom = 0;
     const probe = document.createElement("span");
     probe.textContent = name;
     probe.setAttribute("aria-hidden", "true");
@@ -141,8 +141,13 @@ function FitName({
       // clear the corner stock badge, and measuring that padding in lets a word
       // be judged to fit when it would actually break mid-word.
       const width = parseFloat(getComputedStyle(el).width) || el.getBoundingClientRect().width;
-      if (!(width > 0) || width === lastWidth) return;
+      const room = availableNameHeight(el);
+      // A grid row reaches its final height after the first layout pass, so a name
+      // judged against the pre-stretch box would stay smaller than the tile allows.
+      // Re-measure when the box grows, not only when the name's own width changes.
+      if (!(width > 0) || (width === lastWidth && room === lastRoom)) return;
       lastWidth = width;
+      lastRoom = room;
       const ceil = Math.ceil(width);
       // Words are measured unwrapped: a wrapped block probe reports no overflow
       // for a single long word, so a tile would silently clip the widest one.
@@ -168,7 +173,7 @@ function FitName({
       // The box's spare room is the ceiling, not the smallest step's line count: a
       // name that reads on one tiny line may grow to two larger lines while they
       // still fit the tile, so text-only tiles use the space they already have.
-      const available = availableNameHeight(el);
+      const available = room;
       const fits = (step: string) => {
         const needed = lines(step);
         const lineHeight = parseFloat(getComputedStyle(probe).lineHeight) || 0;
@@ -189,6 +194,10 @@ function FitName({
     document.fonts?.ready.then(() => schedule(true)).catch(() => {});
     const ro = new ResizeObserver(() => schedule());
     ro.observe(el);
+    // The tile, not just the name: row stretch changes the room available without
+    // changing the name's own width, and that is exactly when a bigger step frees up.
+    const tile = el.closest("button");
+    if (tile) ro.observe(tile);
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
