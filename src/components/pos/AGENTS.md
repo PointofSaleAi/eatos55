@@ -47,3 +47,4 @@
 - In a swipe-to-reveal row the opaque row background must sit on the element that translates: a static layer left above the reveal buttons hides them (the cart line's `bg-surface` once stayed put and swallowed Cancel / No Tax).
 - Product-card names step font size with available width via measured steps and never break words mid-word (word-boundary wrapping); only photo tiles ellipsize.
 - ItemSheet reads the chosen options out on the line above the footer divider (one line always reserved so the popup never resizes); the footer below that divider holds only the discount and Add/Update actions, on both the Item and Add-Ons tabs.
+- Ticket order transfers (products to another check, new order or table; whole table moves) go through `src/lib/ticket-transfer.ts` and the store's transferProducts/transferTable, so eligibility (preparing, ordering, payment only), totals and transfer banners stay in one place; the employee owner transfer stays separate.
