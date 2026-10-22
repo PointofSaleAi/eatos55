@@ -360,6 +360,7 @@ export function ItemSheet({
                   {(["item", "addons"] as const).map((t) => (
                     <Button
                       key={t}
+                      variant="ghost"
                       type="button"
                       aria-pressed={view === "order" && tab === t}
                       onClick={() => {
@@ -426,9 +427,9 @@ export function ItemSheet({
                   <>
               <div className="flex min-h-0 flex-1 flex-col">
 
-                {addOns.length && tab === "addons" ? (
-                  <div className="flex shrink-0 items-center gap-2 px-4 pt-2.5">
+                  <div className="flex shrink-0 items-center justify-end gap-2 px-4 pt-1">
 
+                    {tab === "addons" ? (
                     <div className="flex h-ctl-md min-w-0 flex-1 items-center gap-2 rounded-pill border border-border bg-surface px-3">
                       <Search className="size-4 shrink-0 text-muted-foreground" />
                       <input
@@ -452,23 +453,25 @@ export function ItemSheet({
                         <Mic className="size-4" />
                       </button>
                     </div>
+                    ) : null}
                     <div className="relative shrink-0">
-                      <button
+                      <Button
+                        variant="ghost"
                         type="button"
                         onClick={() => setSortOpen((o) => !o)}
-                        aria-label={`Sort add-ons, currently ${SORT_LABELS[sort]}`}
+                        aria-label={`Sort ${tab === "addons" ? "add-ons" : "item options"}, currently ${SORT_LABELS[sort]}`}
                         aria-expanded={sortOpen}
                         className={cn(
                           // A full circle: width equals the search field's height, so the
                           // two share the same vertical bounds and the row reads as one unit.
-                          "grid size-[var(--ctl-md)] place-items-center rounded-full border transition-colors",
+                          "grid size-[var(--ctl-md)] shrink-0 place-items-center rounded-full border p-0 transition-colors",
                           sortOpen || sort !== "az"
                             ? "border-accent bg-accent/10 text-foreground"
                             : "border-border text-muted-foreground hover:text-foreground",
                         )}
                       >
                         <ArrowUpDown className="size-4" />
-                      </button>
+                      </Button>
                       {sortOpen ? (
                         <>
                           <button
@@ -480,7 +483,8 @@ export function ItemSheet({
                           <div className="absolute right-0 top-full z-20 mt-1.5 w-40 overflow-hidden rounded-card border border-border bg-surface shadow-lg">
                             {(Object.keys(SORT_LABELS) as (keyof typeof SORT_LABELS)[]).map(
                               (key) => (
-                                <button
+                                <Button
+                                  variant="ghost"
                                   key={key}
                                   type="button"
                                   onClick={() => {
@@ -488,14 +492,14 @@ export function ItemSheet({
                                     setSortOpen(false);
                                   }}
                                   className={cn(
-                                    "block w-full px-3 py-2 text-left text-fs-sm font-bold transition-colors",
+                                    "h-auto w-full justify-start whitespace-normal rounded-none px-3 py-2 text-left text-fs-sm font-bold transition-colors",
                                     key === sort
                                       ? "bg-accent/10 text-foreground"
                                       : "text-muted-foreground hover:bg-muted hover:text-foreground",
                                   )}
                                 >
                                   {SORT_LABELS[key]}
-                                </button>
+                                </Button>
                               ),
                             )}
                           </div>
@@ -503,7 +507,6 @@ export function ItemSheet({
                       ) : null}
                     </div>
                   </div>
-                ) : null}
 
                 {activeGroup ? (
                   <>
@@ -541,12 +544,7 @@ export function ItemSheet({
                       style={
                         {
                           ...reservedRows,
-                          // The Add-Ons search row is only rendered on that tab, so the
-                          // grid takes the same space back here — the popup never resizes.
-                          "--opt-extra":
-                            addOns.length && tab === "item"
-                              ? "calc(0.625rem + var(--ctl-md))"
-                              : "0rem",
+                          "--opt-extra": "0rem",
                         } as import("react").CSSProperties
                       }
                       className="sheet-product-grid grid min-h-[calc(var(--opt-h2)_+_var(--opt-extra))] flex-1 auto-rows-[minmax(3.5rem,auto)] content-start grid-cols-2 gap-2 overflow-y-auto px-4 pt-2.5 pb-1 sm:min-h-[calc(var(--opt-h3)_+_var(--opt-extra))] sm:grid-cols-3 lg:min-h-[calc(var(--opt-h4)_+_var(--opt-extra))] lg:grid-cols-4"
