@@ -641,9 +641,9 @@ function NewOrder() {
                     ? // Photo tiles keep the compact top-down flow: image,
                       // name, then the price row.
                       "relative flex min-h-tile min-w-0 flex-col justify-start overflow-hidden rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]"
-                    : // Text tiles keep the earlier bottom-anchored layout: the
-                      // name sits above the price row at the bottom, so price
-                      // and + line up across tiles.
+                    : // Text tiles align the name at the top; the name block
+                      // absorbs the slack so the price row still rests at the
+                      // bottom and prices line up across tiles.
                       "relative flex min-h-tile min-w-0 flex-col justify-between overflow-hidden rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
                   item.outOfStock && "opacity-50",
                 )}
@@ -658,10 +658,10 @@ function NewOrder() {
                     "flex min-h-0 flex-col",
                     item.image
                       ? "justify-start"
-                      : // The name block absorbs the slack and text tiles
-                        // reserve two name lines, so every tile in a
+                      : // Text tiles top-align the name: the block absorbs the
+                        // slack and reserves two name lines, so every tile in a
                         // text-only category ends at the same height.
-                        "flex-1 justify-end",
+                        "flex-1 justify-start",
                     !item.image && "min-h-[calc(var(--fs-sm)*2.5)]",
                   )}
                 >
