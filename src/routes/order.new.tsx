@@ -30,6 +30,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+/** Uploaded menu fold/unfold marks (menu-fold-3-fill / menu-unfold-3-fill). */
+function MenuUnfoldIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d="M17 4H3V6H17V4ZM13 11H3V13H13V11ZM17 18H3V20H17V18ZM17 17V7L22 11.9996L17 17Z" />
+    </svg>
+  );
+}
+function MenuFoldIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d="M21 4H7V6H21V4ZM21 11H11V13H21V11ZM21 18H7V20H21V18ZM8 17V7L3 11.9996L8 17Z" />
+    </svg>
+  );
+}
+
 export const Route = createFileRoute("/order/new")({
   head: () => ({
     meta: [
@@ -441,30 +457,53 @@ function NewOrder() {
         ) : null}
 
         {showMenu && !customActive ? (
-          <div
-            className={cn(
-              "mt-2 gap-1.5",
-              categoryLayout === "vertical"
-                ? "flex flex-wrap"
-                : "no-scrollbar flex flex-nowrap overflow-x-auto",
-            )}
-          >
-            {subcategories.map((entry) => (
-              <button
-                key={entry}
-                type="button"
-                onClick={() => setSubcategory(entry)}
-                className={cn(
-                  "flex h-10 shrink-0 items-center justify-center rounded-card px-3 text-center text-[0.75rem] font-extrabold uppercase leading-none tracking-tight transition-colors",
-                  entry === subcategory
-                    ? "bg-accent text-accent-foreground hover:bg-accent/90"
-                    : "bg-muted text-muted-foreground hover:bg-secondary",
-                )}
-              >
-                <span className="whitespace-nowrap">{entry}</span>
-              </button>
-            ))}
-          </div>
+          categoryLayout === "vertical" ? (
+            /* Vertical layout: subcategories always spread across two rows. */
+            <div className="mt-2 flex flex-col gap-1.5">
+              {[
+                subcategories.slice(0, Math.ceil(subcategories.length / 2)),
+                subcategories.slice(Math.ceil(subcategories.length / 2)),
+              ].map((row, rowIndex) =>
+                row.length === 0 ? null : (
+                  <div key={rowIndex} className="flex gap-1.5">
+                    {row.map((entry) => (
+                      <button
+                        key={entry}
+                        type="button"
+                        onClick={() => setSubcategory(entry)}
+                        className={cn(
+                          "flex h-10 min-w-0 flex-1 items-center justify-center rounded-card px-2 text-center text-[0.75rem] font-extrabold uppercase leading-none tracking-tight transition-colors",
+                          entry === subcategory
+                            ? "bg-accent text-accent-foreground hover:bg-accent/90"
+                            : "bg-muted text-muted-foreground hover:bg-secondary",
+                        )}
+                      >
+                        <span className="truncate">{entry}</span>
+                      </button>
+                    ))}
+                  </div>
+                ),
+              )}
+            </div>
+          ) : (
+            <div className="no-scrollbar mt-2 flex flex-nowrap gap-1.5 overflow-x-auto">
+              {subcategories.map((entry) => (
+                <button
+                  key={entry}
+                  type="button"
+                  onClick={() => setSubcategory(entry)}
+                  className={cn(
+                    "flex h-10 shrink-0 items-center justify-center rounded-card px-3 text-center text-[0.75rem] font-extrabold uppercase leading-none tracking-tight transition-colors",
+                    entry === subcategory
+                      ? "bg-accent text-accent-foreground hover:bg-accent/90"
+                      : "bg-muted text-muted-foreground hover:bg-secondary",
+                  )}
+                >
+                  <span className="whitespace-nowrap">{entry}</span>
+                </button>
+              ))}
+            </div>
+          )
         ) : null}
       </div>
       )}
