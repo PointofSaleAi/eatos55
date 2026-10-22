@@ -118,6 +118,7 @@ function FitName({
     if (!el) return;
     let raf = 0;
     let disposed = false;
+    let lastWidth = 0;
     let lastRoom = 0;
     const probe = document.createElement("span");
     probe.textContent = name;
