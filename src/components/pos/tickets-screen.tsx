@@ -60,6 +60,7 @@ import {
 
 
 import { SearchDock } from "@/components/pos/search-dock";
+import { useWideLayout } from "@/components/pos/shell";
 import { cn } from "@/lib/utils";
 
 export type TicketsOverlay = "none" | "sort" | "filter" | "search";
@@ -202,6 +203,7 @@ export function TicketsScreen({
   } = usePos();
   const confirm = useConfirm();
   const announce = useAnnounce();
+  const wide = useWideLayout();
   const [tab, setTab] = useState<Tab>("all");
   const [overlay, setOverlay] = useState<TicketsOverlay>(initialOverlay);
   const [openFacet, setOpenFacet] = useState<string | null>(null);
@@ -434,6 +436,7 @@ export function TicketsScreen({
         {overlay === "search" ? (
           <div className="px-2 pt-1.5">
             <SearchDock
+              inline={wide}
               open
               value={search}
               onChange={setSearch}

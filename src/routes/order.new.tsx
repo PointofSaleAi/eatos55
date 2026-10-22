@@ -553,7 +553,20 @@ function NewOrder() {
       {wide && customActive ? null : (
       <div className="shrink-0 border-b border-border bg-surface px-3 pb-2 pt-2.5">
 
-        <div className={cn("flex items-center", showMenu ? "gap-2" : "gap-1")}>
+        {wide && searching ? (
+          <SearchDock
+            inline
+            open
+            value={query}
+            onChange={setQuery}
+            onClose={() => {
+              setQuery("");
+              setSearching(false);
+            }}
+            placeholder="Search products"
+          />
+        ) : null}
+        <div className={cn("flex items-center", showMenu ? "gap-2" : "gap-1", wide && searching && "hidden")}>
           {/* Phone: the Menu / Order switch owns the top row. */}
           {!wide ? (
             <div className="grid min-w-0 flex-1 grid-cols-2 gap-1.5">
@@ -824,7 +837,7 @@ function NewOrder() {
 
 
       <SearchDock
-        open={searching}
+        open={searching && !wide}
         value={query}
         onChange={setQuery}
         onClose={() => {
