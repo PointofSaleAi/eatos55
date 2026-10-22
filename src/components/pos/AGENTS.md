@@ -46,3 +46,4 @@
 - Typed dollar amounts use `MoneyInput` (src/components/pos/money-input.tsx) so every field fills cash-register style from the last decimal, matching the keypads.
 - In a swipe-to-reveal row the opaque row background must sit on the element that translates: a static layer left above the reveal buttons hides them (the cart line's `bg-surface` once stayed put and swallowed Cancel / No Tax).
 - Product-card names step font size with available width via measured steps and never break words mid-word (word-boundary wrapping); only photo tiles ellipsize.
+- ItemSheet reads the chosen options out on the line above the footer divider (one line always reserved so the popup never resizes); the footer below that divider holds only the discount and Add/Update actions, on both the Item and Add-Ons tabs.
