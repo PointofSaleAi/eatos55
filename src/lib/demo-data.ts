@@ -736,7 +736,7 @@ export const liveMenu: MenuItem[] = [
   { id: "bc2", name: "CAPPUCCINO", price: 6, category: "BRUNCH COFFEE TEAS", description: "Espresso with steamed milk and a dry, velvety foam." },
   { id: "bc3", name: "ESPRESSO DOPPIO", price: 5, category: "BRUNCH COFFEE TEAS", description: "A double shot of our house espresso, pulled short and syrupy." },
   { id: "bka1", name: "BUTTER CROISSANT", price: 6, category: "BRUNCH BAKERY", image: butterCroissantPhoto, description: "Laminated in-house every morning, shatteringly crisp outside and soft within." },
-  { id: "bka2", name: "PAIN AU CHOCOLAT", price: 7, category: "BRUNCH BAKERY", description: "Flaky pastry wrapped around two batons of dark chocolate." },
+  { id: "bka2", name: "PAIN AU CHOCOLAT", price: 7, category: "BRUNCH BAKERY", openPrice: true, description: "Flaky pastry wrapped around two batons of dark chocolate." },
   { id: "bka3", name: "BRIOCHE LOAF", price: 8, category: "BRUNCH BAKERY", stock: 10, description: "Rich, buttery brioche baked daily, sliced to order." },
   { id: "co1", name: "BRUNCH CLASSIC", price: 24, category: "BRUNCH COURSE", description: "Two eggs any style, bacon, home fries, toast and a small green salad." },
   { id: "co2", name: "BRUNCH ROYAL", price: 32, category: "BRUNCH COURSE", description: "Smoked salmon, soft-scrambled eggs, blinis, crème fraîche and a glass of bubbly." },
