@@ -261,8 +261,8 @@ export type AppSettings = {
   workforceEmployees: WorkforceEmployee[];
   devicePreferences: DevicePreferences;
   priceVisibilityV2?: boolean;
-
   peripheralPreferences: PeripheralPreferences;
+
   restaurantName: string;
   restaurantAddress: string;
   restaurantCity: string;
@@ -432,8 +432,8 @@ const defaultSettings: AppSettings = {
   workforceEmployees: referenceEmployees,
   devicePreferences: defaultDevicePreferences,
   priceVisibilityV2: true,
-
   peripheralPreferences: defaultPeripheralPreferences,
+
   restaurantName: `${brand.appName} Kitchen · Downtown`,
   restaurantAddress: brand.venue.address,
   restaurantCity: brand.venue.city,
@@ -1064,8 +1064,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
             },
           },
           priceVisibilityV2: true,
-
           tenders: { ...defaultTenders, ...(saved.tenders ?? {}) },
+
           tenderAutoClose: {
             ...defaultTenderAutoClose,
             ...(saved.tenderAutoClose ?? {}),
