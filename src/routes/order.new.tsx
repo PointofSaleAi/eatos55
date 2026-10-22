@@ -75,7 +75,7 @@ export const Route = createFileRoute("/order/new")({
 
 // Measure browser-rendered words, not just line counts: a single long word
 // must fit horizontally before a larger typography step can be selected.
-const nameSizes = ["text-fs-sm", "text-fs-base", "text-fs-lg"] as const;
+const nameSizes = ["text-fs-xs", "text-fs-sm", "text-fs-base", "text-fs-lg"] as const;
 // Photo tiles keep a lighter, smaller name; it wraps instead of being cut short.
 const photoNameSizes = ["text-fs-xs", "text-fs-sm"] as const;
 function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [string, ...string[]] }) {
@@ -109,15 +109,34 @@ function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [
       const width = el.getBoundingClientRect().width;
       if (!(width > 0) || width === lastWidth) return;
       lastWidth = width;
-      probe.style.width = `${width}px`;
-      probe.className = `${steps[0]} leading-tight`;
-      const lines = () => Math.round(probe.getBoundingClientRect().height / parseFloat(getComputedStyle(probe).lineHeight));
-      const baseline = lines();
+      const ceil = Math.ceil(width);
+      // Words are measured unwrapped: a wrapped block probe reports no overflow
+      // for a single long word, so a tile would silently clip the widest one.
+      const fitsWords = (step: string) => {
+        probe.className = `${step} leading-tight`;
+        probe.style.display = "inline-block";
+        probe.style.whiteSpace = "nowrap";
+        probe.style.width = "auto";
+        for (const word of name.split(/\s+/)) {
+          probe.textContent = word;
+          if (probe.getBoundingClientRect().width > ceil) return false;
+        }
+        return true;
+      };
+      const lines = (step: string) => {
+        probe.className = `${step} leading-tight`;
+        probe.style.display = "block";
+        probe.style.whiteSpace = "normal";
+        probe.style.width = `${width}px`;
+        probe.textContent = name;
+        return Math.round(probe.getBoundingClientRect().height / parseFloat(getComputedStyle(probe).lineHeight));
+      };
+      const baseline = lines(steps[0]);
       let chosen = steps[0];
       for (const step of steps) {
-        probe.className = `${step} leading-tight`;
-        if (probe.scrollWidth <= Math.ceil(width) && lines() <= baseline) chosen = step;
+        if (lines(step) <= baseline && fitsWords(step)) chosen = step;
       }
+      probe.textContent = name;
       setSizeClass(chosen);
     };
     const schedule = (force = false) => {
@@ -141,7 +160,7 @@ function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [
   return (
     <span
       ref={ref}
-      className={cn("block w-full min-w-0 max-w-full leading-tight", sizeClass)}
+      className={cn("block w-full min-w-0 max-w-full leading-tight break-words", sizeClass)}
     >
       {name}
     </span>
