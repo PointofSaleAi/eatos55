@@ -163,13 +163,17 @@ function FitName({
         probe.textContent = name;
         return Math.round(probe.getBoundingClientRect().height / parseFloat(getComputedStyle(probe).lineHeight));
       };
-      // Two lines is the ceiling; a name that needs more keeps the smallest step
-      // rather than pushing the whole tile taller than its price row needs.
-      const baseline = Math.min(lines(steps[0]), maxLines);
+      // The box's spare room is the ceiling, not the smallest step's line count: a
+      // name that reads on one tiny line may grow to two larger lines while they
+      // still fit the tile, so text-only tiles use the space they already have.
+      const available = availableNameHeight(el);
+      const fits = (step: string) => {
+        const needed = lines(step);
+        const lineHeight = parseFloat(getComputedStyle(probe).lineHeight) || 0;
+        return needed <= maxLines && needed * lineHeight <= available && fitsWords(step);
+      };
       let chosen = steps[0];
-      for (const step of steps) {
-        if (lines(step) <= baseline && fitsWords(step)) chosen = step;
-      }
+      for (const step of steps) if (fits(step)) chosen = step;
       probe.textContent = name;
       setSizeClass(chosen);
     };
