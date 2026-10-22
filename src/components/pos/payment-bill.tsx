@@ -76,13 +76,13 @@ export function PaymentBill({ room }: { room?: Room | null }) {
             type="button"
             onClick={() => setTypeOpen((v) => !v)}
             aria-expanded={typeOpen}
-            className="flex shrink-0 items-center gap-1 rounded-pill bg-muted px-2 py-0.5 text-fs-xs font-extrabold uppercase text-foreground transition-colors hover:bg-secondary"
+            className="flex w-fit shrink-0 items-center gap-1 justify-self-end whitespace-nowrap rounded-pill bg-muted px-2 py-0.5 text-fs-xs font-extrabold uppercase text-foreground transition-colors hover:bg-secondary"
           >
             {orderType}
             <ChevronRight className="size-3.5" aria-hidden />
           </button>
         ) : (
-          <p className="shrink-0 text-fs-sm font-extrabold uppercase text-foreground">{orderType}</p>
+          <p className="shrink-0 justify-self-end text-fs-sm font-extrabold uppercase text-foreground">{orderType}</p>
         )}
         {editable ? (
           <button
