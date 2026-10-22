@@ -76,8 +76,6 @@ export const Route = createFileRoute("/order/new")({
 // Measure browser-rendered words, not just line counts: a single long word
 // must fit horizontally before a larger typography step can be selected.
 const nameSizes = ["text-fs-xs", "text-fs-sm", "text-fs-base", "text-fs-lg"] as const;
-// Photo tiles keep a lighter, smaller name; it wraps instead of being cut short.
-const photoNameSizes = ["text-fs-xs", "text-fs-sm"] as const;
 function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [string, ...string[]] }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [sizeClass, setSizeClass] = useState<string>(steps[0]);
@@ -163,6 +161,57 @@ function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [
       className={cn("block w-full min-w-0 max-w-full leading-tight break-words", sizeClass)}
     >
       {name}
+    </span>
+  );
+}
+
+// Photo tiles show the name on one line at the smallest size; when it is too
+// long it slowly runs sideways so the whole name stays readable.
+function RunName({ name }: { name: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [running, setRunning] = useState(false);
+
+  useEffect(() => {
+    const outer = ref.current;
+    if (!outer) return;
+    let raf = 0;
+    let disposed = false;
+    let lastWidth = 0;
+    const measure = () => {
+      if (disposed) return;
+      const width = outer.getBoundingClientRect().width;
+      if (!(width > 0) || width === lastWidth) return;
+      lastWidth = width;
+      const inner = outer.firstElementChild;
+      if (!(inner instanceof HTMLElement)) return;
+      const overflow = Math.ceil(inner.scrollWidth) - Math.ceil(width);
+      inner.style.setProperty("--run-shift", `-${Math.max(0, overflow)}px`);
+      setRunning(overflow > 0);
+    };
+    const schedule = (force = false) => {
+      if (force) lastWidth = 0;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(measure);
+    };
+    schedule();
+    document.fonts?.ready.then(() => schedule(true)).catch(() => {});
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(outer);
+    return () => {
+      disposed = true;
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
+  }, [name]);
+
+  return (
+    <span
+      ref={ref}
+      className="block w-full min-w-0 overflow-hidden text-fs-xs font-light leading-tight whitespace-nowrap"
+    >
+      <span className={cn("inline-block whitespace-nowrap", running && "run-name")}>
+        {name}
+      </span>
     </span>
   );
 }
@@ -566,7 +615,7 @@ function NewOrder() {
                     item.image ? "font-light" : "font-extrabold",
                   )}
                 >
-                  <FitName name={item.name} steps={item.image ? photoNameSizes : nameSizes} />
+                  {item.image ? <RunName name={item.name} /> : <FitName name={item.name} steps={nameSizes} />}
                   <StockBadge stock={item.stock} outOfStock={item.outOfStock} low={low} />
                 </span>
                 <span className="mt-2 flex min-w-0 items-center justify-between gap-2">
