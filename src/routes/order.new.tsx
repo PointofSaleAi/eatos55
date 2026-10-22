@@ -147,10 +147,86 @@ function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [
   );
 }
 
+// Photo tiles keep the name and the quick-add control on one line: a long name
+// is cut with an ellipsis instead of pushing the button off the tile.
+function TileAddButton({
+  name,
+  outOfStock,
+  onAdd,
+}: {
+  name: string;
+  outOfStock: boolean;
+  onAdd: () => void;
+}) {
+  return (
+    <span
+      role="button"
+      tabIndex={outOfStock ? -1 : 0}
+      aria-label={`Quick add ${name} to the order`}
+      onPointerDown={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (!outOfStock) onAdd();
+      }}
+      onKeyDown={(e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (!outOfStock) onAdd();
+      }}
+      className={cn(
+        "grid size-7 shrink-0 place-items-center rounded-pill tap-safe",
+        outOfStock ? "bg-muted text-muted-foreground" : "bg-accent text-accent-foreground",
+      )}
+    >
+      {outOfStock ? <Ban className="size-4" /> : <Plus className="size-4" />}
+    </span>
+  );
+}
+
+// Remaining-stock pill shared by photo and text tiles.
+function StockBadge({
+  stock,
+  outOfStock,
+  low,
+}: {
+  stock?: number;
+  outOfStock: boolean;
+  low: boolean;
+}) {
+  if (typeof stock !== "number" || outOfStock) return null;
+  return (
+    <span
+      title={`${stock} in stock`}
+      className={cn(
+        "inline-block shrink-0 rounded-pill px-1 text-fs-xs font-extrabold leading-4",
+        low ? "bg-destructive/10 text-destructive" : "bg-muted text-muted-foreground",
+      )}
+    >
+      {low ? `- ${stock}` : stock}
+    </span>
+  );
+}
+
 function NewOrder() {
+
   const navigate = useNavigate();
   const { totals, addItem, settings } = usePos();
   const showProductPrices = productPricesVisible(settings.devicePreferences);
+  const quickAdd = (item: MenuItem) => {
+    addItem(item.id, { qty: 1 });
+    haptic("success");
+    toast.success(`${item.name} added`);
+  };
+  const priceLabel = (item: MenuItem) =>
+    item.outOfStock
+      ? "Out of stock"
+      : showProductPrices
+        ? item.openPrice
+          ? "Open price"
+          : money(item.price)
+        : null;
+
   const initialMenu = menus[0];
   const initialCategory = initialMenu?.categories[0];
   const [activeMenu, setActiveMenu] = useState(initialMenu?.id ?? "");
