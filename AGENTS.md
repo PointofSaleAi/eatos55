@@ -19,3 +19,4 @@
 - Voice dictation in any search field goes through `useVoiceSearch` in `src/lib/voice-search.ts`, so every mic shares one listening state, the same notices, and never submits or overwrites text when nothing is heard.
 - Wall-clock labels shown while the app runs come from `useLiveTime` in `src/lib/use-live-time.ts` (mount-gated, minute-aligned), so every screen that displays the current time shares one ticking source rather than its own interval.
 - orderOS owns its own order lifecycle in `src/lib/orderos-store.tsx` and never routes to Tickets; its board, detail and issue flows stay in-page so status changes persist across navigation.
+- The shared Button forces every child icon to 16px (`[&_svg]:size-4`), so any icon that must render larger needs Tailwind's important flag (e.g. `size-8!`) — a plain `size-N` class is silently dropped.

@@ -312,9 +312,9 @@ function NewOrder() {
         aria-label={menuToolsOpen ? "Close menu controls" : "Open menu controls"}
         aria-expanded={menuToolsOpen}
         onClick={() => setMenuToolsOpen((open) => !open)}
-        className="h-9 min-w-tap rounded-card"
+        className="h-10 min-w-tap rounded-card"
       >
-        {menuToolsOpen ? <MenuFoldIcon className="size-6" /> : <MenuUnfoldIcon className="size-6" />}
+        {menuToolsOpen ? <MenuFoldIcon className="size-8!" /> : <MenuUnfoldIcon className="size-8!" />}
       </Button>
       {menuToolsOpen ? (
         <>
@@ -340,9 +340,9 @@ function NewOrder() {
             className="h-9 min-w-tap rounded-card"
           >
             {categoryLayout === "horizontal" ? (
-              <ArrowRangeIcon className="size-6 rotate-90" />
+              <ArrowRangeIcon className="size-6! rotate-90" />
             ) : (
-              <ArrowRangeIcon className="size-6" />
+              <ArrowRangeIcon className="size-6!" />
             )}
           </Button>
 
