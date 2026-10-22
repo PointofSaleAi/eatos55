@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { useWideLayout } from "@/components/pos/shell";
 import { ItemSheet } from "@/components/pos/item-sheet";
+import { OpenPricePad } from "@/components/pos/open-price-pad";
 import { OrderPanel } from "@/components/pos/order-panel";
 import { DragGrip, DropZones, setOrderPanelSide, useOrderPanelSide } from "@/components/pos/drag-grip";
 import { liveMenu, menu as baseMenu, menus, money, type CartLine, type MenuItem } from "@/lib/demo-data";
@@ -303,7 +304,13 @@ function NewOrder() {
   const navigate = useNavigate();
   const { totals, addItem, settings } = usePos();
   const showProductPrices = productPricesVisible(settings.devicePreferences);
+  const [openPriceItem, setOpenPriceItem] = useState<MenuItem | null>(null);
   const quickAdd = (item: MenuItem) => {
+    // Open-price products always ask for a price before joining the order.
+    if (item.openPrice) {
+      setOpenPriceItem(item);
+      return;
+    }
     addItem(item.id, { qty: 1 });
     haptic("success");
     toast.success(`${item.name} added`);
