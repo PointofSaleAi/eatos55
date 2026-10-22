@@ -8,6 +8,7 @@
 - [x] Rework the Guestbook guest list with initials avatars, a New Guest popover, sort and archive/restore with per-row actions; verified on phone, tablet and desktop
 
 # Roadmap
+- [x] Limit wrapped submenus to three rows with a horizontally scrolling last row; Device Settings Show Product Prices hides/restores tile prices with reload persistence and unchanged order amounts, verified on phone, tablet and desktop; two rule tests pass.
 - [x] Reduce Local Host artwork to match toolbar icons, add uploaded Caprice photo and show demo modifier remaining stock; verified photo, options and adding on desktop, tablet and phone
 - [x] Replace the device pill with the uploaded Local Host icon immediately after Maya AI; verified desktop, tablet and phone menu
 - [x] Allow dragging side navigation left/right while preserving phone navigation; verified both sides, cancelled drops, expansion and screen switching

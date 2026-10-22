@@ -20,6 +20,8 @@ import { toast } from "sonner";
 import { SearchDock } from "@/components/pos/search-dock";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { MenuSubcategories } from "@/components/pos/menu-subcategories";
+import { productPricesVisible } from "@/lib/device-settings";
 import { CustomItemWorkspace } from "@/components/pos/custom-item-workspace";
 import {
   DropdownMenu,
@@ -224,6 +226,7 @@ function LineFitName({ name, steps = photoNameSizes }: { name: string; steps?: r
 function NewOrder() {
   const navigate = useNavigate();
   const { totals, addItem, settings } = usePos();
+  const showProductPrices = productPricesVisible(settings.devicePreferences);
   const initialMenu = menus[0];
   const initialCategory = initialMenu?.categories[0];
   const [activeMenu, setActiveMenu] = useState(initialMenu?.id ?? "");
@@ -464,46 +467,7 @@ function NewOrder() {
           </div>
         ) : null}
 
-        {showMenu && !customActive ? (
-          categoryLayout === "vertical" ? (
-            /* Vertical layout: subcategories wrap row by row. */
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {subcategories.map((entry) => (
-                <button
-                  key={entry}
-                  type="button"
-                  onClick={() => setSubcategory(entry)}
-                  className={cn(
-                    "flex h-10 shrink-0 items-center justify-center rounded-card px-3 text-center text-[0.75rem] font-extrabold uppercase leading-none tracking-tight transition-colors",
-                    entry === subcategory
-                      ? "bg-accent text-accent-foreground hover:bg-accent/90"
-                      : "bg-muted text-muted-foreground hover:bg-secondary",
-                  )}
-                >
-                  <span className="whitespace-nowrap">{entry}</span>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <div className="no-scrollbar mt-2 flex flex-nowrap gap-1.5 overflow-x-auto">
-              {subcategories.map((entry) => (
-                <button
-                  key={entry}
-                  type="button"
-                  onClick={() => setSubcategory(entry)}
-                  className={cn(
-                    "flex h-10 shrink-0 items-center justify-center rounded-card px-3 text-center text-[0.75rem] font-extrabold uppercase leading-none tracking-tight transition-colors",
-                    entry === subcategory
-                      ? "bg-accent text-accent-foreground hover:bg-accent/90"
-                      : "bg-muted text-muted-foreground hover:bg-secondary",
-                  )}
-                >
-                  <span className="whitespace-nowrap">{entry}</span>
-                </button>
-              ))}
-            </div>
-          )
-        ) : null}
+        {showMenu && !customActive ? <MenuSubcategories entries={subcategories} selected={subcategory} onSelect={setSubcategory} layout={categoryLayout} /> : null}
       </div>
       )}
 
@@ -596,6 +560,8 @@ function NewOrder() {
                   <span className="text-fs-sm font-bold leading-none text-muted-foreground">
                     {item.outOfStock
                       ? "Out of stock"
+                      : !showProductPrices
+                        ? null
                       : item.openPrice
                         ? "Open price"
                         : money(item.price)}

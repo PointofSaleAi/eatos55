@@ -6,6 +6,7 @@ export const deviceSettingGroups = [
     ["hideBreak", "Hide Break on PIN Screen", false], ["hideFeedback", "Hide Employee Feedback", false],
     ["quickLogin", "Quick Employee Login (No PIN)", false],
   ] },
+  { label: "Menu", rows: [["showProductPrices", "Show Product Prices", true]] },
   { label: "Ordering", rows: [
     ["hideFire", "Hide Fire Button", false], ["mandatoryOrderType", "Mandatory Order Type", false],
     ["requireOrderName", "Require name in order type selection", false], ["saveOrder", "Save Button in Order Placement", true],
@@ -32,3 +33,7 @@ export const defaultDevicePreferences: DevicePreferences = {
   toggles: Object.fromEntries(deviceSettingGroups.flatMap((group) => group.rows.map(([key, , value]) => [key, value]))) as Record<DeviceToggleKey, boolean>,
   autoLockTimer: "Never", menuSort: "Drag & Drop", modifierStyle: "Standard", designTheme: "Classic",
 };
+
+export function productPricesVisible(preferences: DevicePreferences): boolean {
+  return preferences.toggles.showProductPrices !== false;
+}
