@@ -1,8 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import {
-  ArrowLeftRight,
-  ArrowUpDown,
   Ban,
   Check,
   ChevronDown,
@@ -42,6 +40,16 @@ function MenuFoldIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
       <path d="M21 4H7V6H21V4ZM21 11H11V13H21V11ZM21 18H7V20H21V18ZM8 17V7L3 11.9996L8 17Z" />
+    </svg>
+  );
+}
+/** Uploaded "Arrow Range" mark: double-headed arrow for the subcategory layout toggle. */
+function ArrowRangeIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className}>
+      <path d="M3 12h18" />
+      <path d="M7 8l-4 4 4 4" />
+      <path d="M17 8l4 4-4 4" />
     </svg>
   );
 }
@@ -306,7 +314,7 @@ function NewOrder() {
         onClick={() => setMenuToolsOpen((open) => !open)}
         className="h-9 min-w-tap rounded-card"
       >
-        {menuToolsOpen ? <MenuFoldIcon className="size-5" /> : <MenuUnfoldIcon className="size-5" />}
+        {menuToolsOpen ? <MenuFoldIcon className="size-6" /> : <MenuUnfoldIcon className="size-6" />}
       </Button>
       {menuToolsOpen ? (
         <>
