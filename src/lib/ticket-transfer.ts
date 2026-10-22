@@ -43,7 +43,7 @@ export function moveLines(source: Ticket, target: Ticket, lineIds: string[]): { 
     ...source,
     lines: rest,
     total: linesTotal(rest),
-    cancelled: rest.length === 0 ? true : source.cancelled,
+    cancelled: rest.length === 0 || !!source.cancelled,
     transferNotes: [
       { dir: "to", count: moving.length, order: target.number, table: target.table, revenueCenter: target.revenueCenter, lines: movedLines },
       ...(source.transferNotes ?? []),
