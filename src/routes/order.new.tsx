@@ -133,7 +133,10 @@ function FitName({
       wordBreak: "normal",
       fontFamily: getComputedStyle(el).fontFamily,
       fontWeight: getComputedStyle(el).fontWeight,
-      letterSpacing: "0px",
+      // The element's real tracking, not zero: the render sets names slightly tight,
+      // and a probe measured without it judges a word that fits as too wide and drops
+      // the product name a whole size.
+      letterSpacing: getComputedStyle(el).letterSpacing,
     });
     document.body.appendChild(probe);
     const measure = () => {
