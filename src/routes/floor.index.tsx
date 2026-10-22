@@ -637,16 +637,16 @@ function FloorPlan() {
                               {merge.members.join(" · ")}
                             </span>
                           ) : null}
-                          {t.since ? (
-                            <span className="absolute bottom-2 right-3 text-fs-xs font-bold text-muted-foreground">
-                              {t.since}
-                            </span>
-                          ) : null}
-
-                          <span className="absolute bottom-2 left-3 inline-flex items-center gap-1 text-fs-xs text-muted-foreground">
+                        </div>
+                        {/* Count and time get their own row so they never sit on the table shape. */}
+                        <div className="flex min-h-5 items-center justify-between gap-2 whitespace-nowrap px-3 pb-2 text-fs-xs text-muted-foreground">
+                          <span className="inline-flex min-w-0 items-center gap-1">
                             <Users className="size-3.5 shrink-0" aria-hidden />
                             {seated} / {t.seats}
                           </span>
+                          {t.since ? (
+                            <span className="shrink-0 font-bold tabular-nums">{t.since}</span>
+                          ) : null}
                         </div>
                       </button>
 
