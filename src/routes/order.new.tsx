@@ -463,8 +463,60 @@ function NewOrder() {
                   item.outOfStock && "opacity-50",
                 )}
               >
-                {item.image ? <img src={item.image} alt={item.name} className="-mx-3 -mt-3 mb-2 aspect-[16/9] w-bleed-x max-w-none object-cover" /> : null}
-                {item.image ? null : (
+                {item.image ? (
+                  <span className="relative -mx-3 -mt-3 mb-2 block aspect-[16/9] w-bleed-x max-w-none overflow-hidden">
+                    <img src={item.image} alt={item.name} loading="lazy" className="h-full w-full object-cover" />
+                    <span
+                      role="button"
+                      tabIndex={item.outOfStock ? -1 : 0}
+                      aria-label={`Quick add ${item.name} to the order`}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        clearLongPress();
+                        if (item.outOfStock) return;
+                        addItem(item.id, { qty: 1 });
+                        haptic("success");
+                        toast.success(`${item.name} added`);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key !== "Enter" && e.key !== " ") return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (item.outOfStock) return;
+                        addItem(item.id, { qty: 1 });
+                        haptic("success");
+                        toast.success(`${item.name} added`);
+                      }}
+                      className={cn(
+                        "absolute bottom-2 right-2 grid size-7 place-items-center rounded-pill tap-safe",
+                        item.outOfStock
+                          ? "bg-muted text-muted-foreground"
+                          : "bg-accent text-accent-foreground",
+                      )}
+                    >
+                      {item.outOfStock ? <Ban className="size-4" /> : <Plus className="size-4" />}
+                    </span>
+                  </span>
+                ) : null}
+                {item.image ? (
+                  <span className="block w-full min-w-0 text-fs-xs font-extrabold leading-tight text-foreground">
+                    {item.name}
+                    {typeof item.stock === "number" && !item.outOfStock ? (
+                      <span
+                        title={`${item.stock} in stock`}
+                        className={cn(
+                          "ml-1 inline-block rounded-pill px-1 align-middle text-fs-xs font-extrabold leading-4",
+                          low
+                            ? "bg-destructive/10 text-destructive"
+                            : "bg-muted text-muted-foreground",
+                        )}
+                      >
+                        {low ? `- ${item.stock}` : item.stock}
+                      </span>
+                    ) : null}
+                  </span>
+                ) : (
                   <span className="block w-full min-w-0 max-w-full font-extrabold leading-tight text-foreground">
                     <FitName name={item.name} steps={nameSizes} />
                     {typeof item.stock === "number" && !item.outOfStock ? (
@@ -482,65 +534,51 @@ function NewOrder() {
                     ) : null}
                   </span>
                 )}
-                <span className={cn("flex min-w-0 items-center justify-between gap-2", !item.image && "mt-2")}>
-                  {item.image ? (
-                    <span className="min-w-0 flex-1 text-fs-xs font-extrabold leading-tight text-foreground">
-                      {item.name}
-                      {typeof item.stock === "number" && !item.outOfStock ? (
-                        <span
-                          title={`${item.stock} in stock`}
-                          className={cn(
-                            "ml-1 inline-block rounded-pill px-1 align-middle text-fs-xs font-extrabold leading-4",
-                            low
-                              ? "bg-destructive/10 text-destructive"
-                              : "bg-muted text-muted-foreground",
-                          )}
-                        >
-                          {low ? `- ${item.stock}` : item.stock}
-                        </span>
-                      ) : null}
+                <span className={cn("flex min-w-0 items-center justify-between", !item.image && "mt-2")}>
+                  {item.image ? null : (
+                    <span className="text-fs-sm font-bold leading-none text-muted-foreground">
+                      {item.outOfStock
+                        ? "Out of stock"
+                        : !showProductPrices
+                          ? null
+                        : item.openPrice
+                          ? "Open price"
+                          : money(item.price)}
                     </span>
-                  ) : null}
-                  <span className="text-fs-sm font-bold leading-none text-muted-foreground">
-                    {item.outOfStock
-                      ? "Out of stock"
-                      : !showProductPrices
-                        ? null
-                      : item.openPrice
-                        ? "Open price"
-                        : money(item.price)}
-                  </span>
-                  <span
-                    role="button"
-                    tabIndex={item.outOfStock ? -1 : 0}
-                    aria-label={`Quick add ${item.name} to the order`}
-                    onPointerDown={(e) => e.stopPropagation()}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      clearLongPress();
-                      if (item.outOfStock) return;
-                      addItem(item.id, { qty: 1 });
-                      haptic("success");
-                      toast.success(`${item.name} added`);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key !== "Enter" && e.key !== " ") return;
-                      e.preventDefault();
-                      e.stopPropagation();
-                      if (item.outOfStock) return;
-                      addItem(item.id, { qty: 1 });
-                      haptic("success");
-                      toast.success(`${item.name} added`);
-                    }}
-                    className={cn(
-                      "grid size-7 place-items-center rounded-pill tap-safe",
-                      item.outOfStock
-                        ? "bg-muted text-muted-foreground"
-                        : "bg-accent text-accent-foreground",
-                    )}
-                  >
-                    {item.outOfStock ? <Ban className="size-4" /> : <Plus className="size-4" />}
-                  </span>
+                  )}
+                  {item.image ? null : (
+                    <span
+                      role="button"
+                      tabIndex={item.outOfStock ? -1 : 0}
+                      aria-label={`Quick add ${item.name} to the order`}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        clearLongPress();
+                        if (item.outOfStock) return;
+                        addItem(item.id, { qty: 1 });
+                        haptic("success");
+                        toast.success(`${item.name} added`);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key !== "Enter" && e.key !== " ") return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (item.outOfStock) return;
+                        addItem(item.id, { qty: 1 });
+                        haptic("success");
+                        toast.success(`${item.name} added`);
+                      }}
+                      className={cn(
+                        "grid size-7 place-items-center rounded-pill tap-safe",
+                        item.outOfStock
+                          ? "bg-muted text-muted-foreground"
+                          : "bg-accent text-accent-foreground",
+                      )}
+                    >
+                      {item.outOfStock ? <Ban className="size-4" /> : <Plus className="size-4" />}
+                    </span>
+                  )}
                 </span>
               </button>
               );
