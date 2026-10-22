@@ -13,6 +13,7 @@ import { useAnnounce } from "@/components/pos/live-region";
 import { haptic } from "@/lib/haptics";
 import { useVoiceSearch } from "@/lib/voice-search";
 import { usePos } from "@/lib/pos-store";
+import { tableOrderModifierGroups } from "@/lib/table-order";
 import { useBackDismiss } from "@/hooks/use-back-dismiss";
 import { cn } from "@/lib/utils";
 
@@ -152,9 +153,7 @@ export function ItemSheet({
   const itemGroups = useMemo(
     () =>
       item
-        ? itemModifierGroups(item, settings.productModifierRules).filter(
-            (g) => isTableOrder || g.name !== "Course",
-          )
+        ? tableOrderModifierGroups(item, isTableOrder, settings.productModifierRules)
         : [],
     [item, settings.productModifierRules, isTableOrder],
   );

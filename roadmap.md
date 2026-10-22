@@ -8,6 +8,7 @@
 - [x] Rework the Guestbook guest list with initials avatars, a New Guest popover, sort and archive/restore with per-row actions; verified on phone, tablet and desktop
 
 # Roadmap
+- [x] Show Course for every table-order product, move seat details directly after names, hide the unassigned course tag and list unassigned items first; verified signed-in bakery/drink choices, course selection and order readback on phone, tablet and desktop, with seven tests passing and no page errors.
 - [x] Remove Item sorting and verify all 24 reference additional modifiers, pictured prices/stock, retained Add-Ons search/sort, stable popup size and configured order readback across desktop, tablet and phone; six tests pass.
 - [x] Restore full product-detail access for every product, Add-Ons search and sorting on both tabs; verified all five reference groups, search filtering, name/price sorting, preserved selections and $29 configured order readback on desktop, tablet and phone, including detail controls on a product with no add-ons.
 - [x] Restore product prices and keep Item/Add-Ons available throughout product details; verified prices, retained selections, choices and adding across phone, tablet and desktop, with no page errors.

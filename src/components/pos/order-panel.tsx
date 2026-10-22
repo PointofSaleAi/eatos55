@@ -33,6 +33,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { usePos } from "@/lib/pos-store";
 import { productPricesVisible } from "@/lib/device-settings";
+import { lineCourse, tableOrderLines } from "@/lib/table-order";
 import { useLiveTime } from "@/lib/use-live-time";
 import { addOnGroups, money, type CartLine, type ServiceOrderType } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
@@ -544,7 +545,7 @@ export function OrderPanel({
           </div>
         ) : (
           <ul>
-            {cart.map((l) => (
+            {tableOrderLines(cart, Boolean(showTableChip)).map((l) => (
               <SwipeLine
                 key={l.id}
                 line={l}
@@ -693,8 +694,8 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
   const ACTION = 88;
   // The chosen course leaves the modifier list and becomes the coloured chip
   // above the item name instead.
-  const course = l.modifiers?.find((m) => m.startsWith("Course · "))?.slice("Course · ".length);
-  const otherMods = course ? l.modifiers?.filter((m) => !m.startsWith("Course · ")) : l.modifiers;
+  const course = lineCourse(l);
+  const otherMods = l.modifiers?.filter((m) => !m.startsWith("Course · "));
   // Course and seat only mean something on a table order (Dine In with a table).
   const { orderType, activeTable, settings } = usePos();
   // Device Settings ▸ Show Product Prices drives the order screen too: with it
@@ -767,14 +768,14 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
           if (xRef.current !== 0) { e.stopPropagation(); e.preventDefault(); moveTo(0); }
         }}
       >
-        {isTableOrder ? (
+        {isTableOrder && course ? (
           <span
             className={cn(
-              "mb-0 inline-block max-w-full truncate rounded-md px-2 py-0.5 align-bottom text-[0.65rem] font-bold leading-tight text-white",
-              course ? courseChipClass(course) : "bg-tile-slate",
+              "mb-0 inline-block max-w-full truncate rounded-md px-2 py-0.5 align-bottom text-[0.65rem] font-bold leading-tight text-primary-foreground",
+              courseChipClass(course),
             )}
           >
-            {course ?? "No Course"}
+            {course}
           </span>
         ) : null}
         <div className="flex items-start gap-1.5">
@@ -789,7 +790,15 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
               className="w-full min-w-0 rounded-md text-left enabled:hover:bg-muted/60 disabled:cursor-default"
             >
               <div className="flex min-h-6 items-center gap-2">
-                <span className="min-w-0 flex-1 text-fs-sm font-bold leading-snug text-foreground">{l.name}</span>
+                <span className="min-w-0 flex-1 text-fs-sm font-bold leading-snug text-foreground">
+                  {l.name}
+                  {isTableOrder ? (
+                    <span className="ml-1.5 inline-flex items-center gap-1 whitespace-nowrap align-middle text-fs-xs text-muted-foreground" title={l.seat ? `Seat ${l.seat}` : "This order is for all seats"}>
+                      <Armchair className="size-3.5" aria-hidden />
+                      <span className="rounded-sm bg-foreground px-1.5 py-0.5 text-[0.625rem] font-extrabold tabular-nums text-background">{l.seat ?? "All"}</span>
+                    </span>
+                  ) : null}
+                </span>
                 {showPrice ? (
                   <span className="flex shrink-0 items-baseline gap-1.5 text-fs-sm font-bold tabular-nums text-foreground">
                     {l.discountPercent ? <s className="text-fs-xs text-muted-foreground">{money(l.price * l.qty)}</s> : null}
@@ -837,17 +846,6 @@ function SwipeLine({ line: l, onCancel, onToggleTax, onEdit }: { line: CartLine;
             </ul>
           ) : null}
           {l.notes ? <p className="truncate text-fs-xs italic leading-snug text-muted-foreground">{l.notes}</p> : null}
-          {isTableOrder ? (
-            <p className="mt-0.5 flex items-center gap-1 text-fs-xs font-bold leading-snug text-muted-foreground">
-              <Armchair className="size-3.5" aria-hidden />
-              <span
-                title={l.seat ? `Seat ${l.seat}` : "This order is for all seats"}
-                className="rounded-sm bg-foreground px-1.5 py-0.5 text-[0.625rem] font-extrabold tabular-nums text-background"
-              >
-                {l.seat ?? "All"}
-              </span>
-            </p>
-          ) : null}
 
     </li>
   );
