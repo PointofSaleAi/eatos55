@@ -1,30 +1,30 @@
-import { describe, expect, it } from "vitest";
-import { initialTickets, type Ticket } from "@/lib/demo-data";
-import { canTransfer, moveLines } from "@/lib/ticket-transfer";
+import { test } from "node:test";
+import { strict as assert } from "node:assert";
+import { initialTickets, type Ticket } from "./demo-data";
+import { canTransfer, moveLines } from "./ticket-transfer";
 
-const base = initialTickets.find((t) => t.lines.length >= 2)!;
-const mk = (p: Partial<Ticket>): Ticket => ({ ...base, ...p });
+const base = initialTickets[0]!;
+const mk = (p: Partial<Ticket>): Ticket => ({ ...base, ...p }) as Ticket;
 
-describe("ticket transfer", () => {
-  it("allows only preparing, ordering and payment tickets", () => {
-    expect(canTransfer(mk({ status: "preparing" }))).toBe(true);
-    expect(canTransfer(mk({ status: "ordering" }))).toBe(true);
-    expect(canTransfer(mk({ status: "payment" }))).toBe(true);
-    expect(canTransfer(mk({ status: "paid" }))).toBe(false);
-    expect(canTransfer(mk({ status: "ready" }))).toBe(false);
-  });
-  it("moves lines and recalculates both totals", () => {
-    const src = mk({ id: "a", lines: [{ id: "1", name: "A", price: 4.5, qty: 1 }, { id: "2", name: "B", price: 3, qty: 2 }] });
-    const dst = mk({ id: "b", number: 9, lines: [{ id: "3", name: "C", price: 10, qty: 1 }] });
-    const r = moveLines(src, dst, ["2"]);
-    expect(r.source.total).toBe(4.5);
-    expect(r.target.total).toBe(16);
-    expect(r.source.cancelled).toBeFalsy();
-  });
-  it("cancels the source when every product leaves", () => {
-    const src = mk({ id: "a", lines: [{ id: "1", name: "A", price: 4.5, qty: 1 }] });
-    const r = moveLines(src, mk({ id: "b", lines: [] }), ["1"]);
-    expect(r.source.cancelled).toBe(true);
-    expect(r.source.total).toBe(0);
-  });
+test("only preparing, ordering and payment tickets can transfer", () => {
+  assert.equal(canTransfer(mk({ status: "preparing" })), true);
+  assert.equal(canTransfer(mk({ status: "ordering" })), true);
+  assert.equal(canTransfer(mk({ status: "payment" })), true);
+  assert.equal(canTransfer(mk({ status: "paid" })), false);
+  assert.equal(canTransfer(mk({ status: "ready" })), false);
+});
+
+test("moving products recalculates both totals", () => {
+  const src = mk({ id: "a", lines: [{ id: "1", name: "A", price: 4.5, qty: 1 }, { id: "2", name: "B", price: 3, qty: 2 }] });
+  const dst = mk({ id: "b", lines: [{ id: "3", name: "C", price: 10, qty: 1 }] });
+  const r = moveLines(src, dst, ["2"]);
+  assert.equal(r.source.total, 4.5);
+  assert.equal(r.target.total, 16);
+  assert.equal(r.source.cancelled, false);
+});
+
+test("source is cancelled when every product leaves", () => {
+  const r = moveLines(mk({ id: "a", lines: [{ id: "1", name: "A", price: 4.5, qty: 1 }] }), mk({ id: "b", lines: [] }), ["1"]);
+  assert.equal(r.source.cancelled, true);
+  assert.equal(r.source.total, 0);
 });
