@@ -863,7 +863,8 @@ function SeatPicker() {
       aria-pressed={activeSeat === n}
       aria-label={n === null ? "Assign items to all seats" : `Assign items to seat ${n}`}
       className={cn(
-        "grid h-8 min-w-8 shrink-0 place-items-center rounded-row border px-2 text-fs-xs font-extrabold tabular-nums transition-colors",
+        // Seat digits stay small so the bar reads as a compact chip row.
+        "grid h-8 min-w-7 shrink-0 place-items-center rounded-row border px-1.5 text-[0.6875rem] font-extrabold tabular-nums leading-none transition-colors",
         activeSeat === n
           ? "border-foreground bg-foreground text-background"
           : "border-border bg-surface text-foreground hover:bg-muted",

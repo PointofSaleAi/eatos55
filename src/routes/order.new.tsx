@@ -75,8 +75,18 @@ export const Route = createFileRoute("/order/new")({
 
 // Measure browser-rendered words, not just line counts: a single long word
 // must fit horizontally before a larger typography step can be selected.
-const nameSizes = ["text-fs-xs", "text-fs-sm", "text-fs-base", "text-fs-lg"] as const;
-function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [string, ...string[]] }) {
+// Largest size first is not the point: the list is the ladder FitName walks down,
+// and stopping at fs-sm keeps a long name to two short lines so the tile stays low.
+const nameSizes = ["text-fs-xs", "text-fs-sm"] as const;
+function FitName({
+  name,
+  steps = nameSizes,
+  maxLines = 2,
+}: {
+  name: string;
+  steps?: readonly [string, ...string[]];
+  maxLines?: number;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
   const [sizeClass, setSizeClass] = useState<string>(steps[0]);
 
@@ -104,7 +114,10 @@ function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [
     document.body.appendChild(probe);
     const measure = () => {
       if (disposed) return;
-      const width = el.getBoundingClientRect().width;
+      // Content-box width, not the border box: the name carries right padding to
+      // clear the corner stock badge, and measuring that padding in lets a word
+      // be judged to fit when it would actually break mid-word.
+      const width = parseFloat(getComputedStyle(el).width) || el.getBoundingClientRect().width;
       if (!(width > 0) || width === lastWidth) return;
       lastWidth = width;
       const ceil = Math.ceil(width);
@@ -129,7 +142,9 @@ function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [
         probe.textContent = name;
         return Math.round(probe.getBoundingClientRect().height / parseFloat(getComputedStyle(probe).lineHeight));
       };
-      const baseline = lines(steps[0]);
+      // Two lines is the ceiling; a name that needs more keeps the smallest step
+      // rather than pushing the whole tile taller than its price row needs.
+      const baseline = Math.min(lines(steps[0]), maxLines);
       let chosen = steps[0];
       for (const step of steps) {
         if (lines(step) <= baseline && fitsWords(step)) chosen = step;
@@ -272,7 +287,9 @@ function StockBadge({
     <span
       title={`${stock} in stock`}
       className={cn(
-        "inline-block shrink-0 rounded-pill px-1 text-fs-xs font-extrabold leading-4",
+        // Pinned to the tile's top-right corner so a short stock badge never
+        // steals a line from the name and forces the whole row taller.
+        "absolute right-2 top-2 z-10 shrink-0 rounded-pill px-1 text-fs-xs font-extrabold leading-4 ring-1 ring-surface",
         low ? "bg-destructive/10 text-destructive" : "bg-muted text-muted-foreground",
       )}
     >
@@ -600,25 +617,40 @@ function NewOrder() {
                   setSheetItem(item);
                 }}
                 className={cn(
+                  // Price stays on the bottom baseline of the row so the + control
+                  // lines up across tiles; the fitted name size is capped so the
+                  // tile never grows far past its own content.
                   "relative flex min-h-tile min-w-0 flex-col justify-between overflow-hidden rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
                   item.outOfStock && "opacity-50",
                 )}
               >
                 {item.image ? (
-                  <span className="relative -mx-3 -mt-3 mb-2 block aspect-[16/9] w-bleed-x max-w-none overflow-hidden">
+                  <span className="relative -mx-3 -mt-3 mb-1.5 block aspect-[5/2] w-bleed-x max-w-none overflow-hidden">
                     <img src={item.image} alt={item.name} loading="lazy" className="h-full w-full object-cover" />
                   </span>
                 ) : null}
+                {/* The name block absorbs the slack: its text sits directly above
+                    the price, so any extra tile height reads as breathing room at
+                    the top of the card instead of a gap between name and price. */}
                 <span
                   className={cn(
-                    "block w-full min-w-0 max-w-full leading-tight text-foreground",
-                    item.image ? "font-light" : "font-extrabold",
+                    "flex min-h-0 flex-1 flex-col justify-end",
+                    // Text tiles always reserve two name lines, so every tile in a
+                    // text-only category ends at the same height.
+                    !item.image && "min-h-[calc(var(--fs-sm)*2.5)]",
                   )}
                 >
-                  {item.image ? <RunName name={item.name} /> : <FitName name={item.name} steps={nameSizes} />}
-                  <StockBadge stock={item.stock} outOfStock={item.outOfStock} low={low} />
+                  <span
+                    className={cn(
+                      "block w-full min-w-0 max-w-full leading-tight text-foreground",
+                      item.image ? "font-light" : "font-extrabold",
+                    )}
+                  >
+                    {item.image ? <RunName name={item.name} /> : <FitName name={item.name} steps={nameSizes} />}
+                    <StockBadge stock={item.stock} outOfStock={item.outOfStock} low={low} />
+                  </span>
                 </span>
-                <span className="mt-2 flex min-w-0 items-center justify-between gap-2">
+                <span className="mt-1 flex min-w-0 items-center justify-between gap-2">
                   <span className="text-fs-sm font-bold leading-none text-muted-foreground">
                     {priceLabel(item)}
                   </span>
