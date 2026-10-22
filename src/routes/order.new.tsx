@@ -6,10 +6,8 @@ import {
   Ban,
   Check,
   ChevronDown,
-  PanelLeftOpen,
   Plus,
   Search,
-  X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLandscapeWide } from "@/hooks/use-layout-mode";
@@ -292,7 +290,7 @@ function NewOrder() {
         onClick={() => setMenuToolsOpen((open) => !open)}
         className="h-9 min-w-tap rounded-card"
       >
-        {menuToolsOpen ? <X className="size-5" /> : <PanelLeftOpen className="size-5" />}
+        {menuToolsOpen ? <MenuFoldIcon className="size-5" /> : <MenuUnfoldIcon className="size-5" />}
       </Button>
       {menuToolsOpen ? (
         <>
