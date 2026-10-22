@@ -597,20 +597,22 @@ export function ItemSheet({
 
               </div>
 
-              <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1rem+var(--kb-inset,0px))]">
-                {/* Always keeps one line of space so picking options never resizes the popup. */}
-                <p
-                  className="truncate pb-1.5 text-fs-xs font-bold leading-5 text-muted-foreground"
-                  title={selectedList.join(" · ") || undefined}
-                >
-                  {openPriceMissing
-                    ? "Enter a price for this open-price item"
-                    : requiredMissing.length
-                      ? `Select ${requiredMissing.join(", ")}`
-                      : selectedList.length
-                        ? selectedList.join(" · ")
-                        : "\u00a0"}
-                </p>
+              {/* The chosen options read out above the divider; only the
+                  actions sit below it. One line is always kept so picking
+                  options never resizes the popup. */}
+              <p
+                className="shrink-0 truncate px-4 pb-1 pt-1.5 text-fs-xs font-bold leading-5 text-muted-foreground"
+                title={selectedList.join(" · ") || undefined}
+              >
+                {openPriceMissing
+                  ? "Enter a price for this open-price item"
+                  : requiredMissing.length
+                    ? `Select ${requiredMissing.join(", ")}`
+                    : selectedList.length
+                      ? selectedList.join(" · ")
+                      : "\u00a0"}
+              </p>
+              <div className="shrink-0 border-t border-border bg-surface px-4 pb-[calc(1rem+var(--kb-inset,0px))] pt-2">
                 <div className="flex items-center gap-2">
                 <button
                   type="button"
