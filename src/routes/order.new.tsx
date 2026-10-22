@@ -600,7 +600,10 @@ function NewOrder() {
                   setSheetItem(item);
                 }}
                 className={cn(
-                  "relative flex min-h-tile min-w-0 flex-col justify-between overflow-hidden rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
+                  // Name and price sit together at the top of the tile: with the
+                  // photo tiles setting the row height, a bottom-pinned price left
+                  // a void in the middle of every text-only tile.
+                  "relative flex min-h-tile min-w-0 flex-col justify-start overflow-hidden rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
                   item.outOfStock && "opacity-50",
                 )}
               >
