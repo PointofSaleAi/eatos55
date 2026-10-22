@@ -605,7 +605,7 @@ function NewOrder() {
                 )}
               >
                 {item.image ? (
-                  <span className="relative -mx-3 -mt-3 mb-2 block aspect-[16/9] w-bleed-x max-w-none overflow-hidden">
+                  <span className="relative -mx-3 -mt-3 mb-1.5 block aspect-[5/2] w-bleed-x max-w-none overflow-hidden">
                     <img src={item.image} alt={item.name} loading="lazy" className="h-full w-full object-cover" />
                   </span>
                 ) : null}
@@ -618,7 +618,7 @@ function NewOrder() {
                   {item.image ? <RunName name={item.name} /> : <FitName name={item.name} steps={nameSizes} />}
                   <StockBadge stock={item.stock} outOfStock={item.outOfStock} low={low} />
                 </span>
-                <span className="mt-2 flex min-w-0 items-center justify-between gap-2">
+                <span className="mt-1 flex min-w-0 items-center justify-between gap-2">
                   <span className="text-fs-sm font-bold leading-none text-muted-foreground">
                     {priceLabel(item)}
                   </span>
