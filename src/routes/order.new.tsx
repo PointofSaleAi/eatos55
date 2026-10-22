@@ -114,7 +114,10 @@ function FitName({
     document.body.appendChild(probe);
     const measure = () => {
       if (disposed) return;
-      const width = el.getBoundingClientRect().width;
+      // Content-box width, not the border box: the name carries right padding to
+      // clear the corner stock badge, and measuring that padding in lets a word
+      // be judged to fit when it would actually break mid-word.
+      const width = parseFloat(getComputedStyle(el).width) || el.getBoundingClientRect().width;
       if (!(width > 0) || width === lastWidth) return;
       lastWidth = width;
       const ceil = Math.ceil(width);
@@ -642,7 +645,7 @@ function NewOrder() {
                       "block w-full min-w-0 max-w-full leading-tight text-foreground",
                       item.image ? "font-light" : "font-extrabold",
                       // Keep the name clear of the corner stock badge it sits under.
-                      typeof item.stock === "number" && !item.outOfStock && "pr-7",
+                      typeof item.stock === "number" && !item.outOfStock && "pr-8",
                     )}
                   >
                     {item.image ? <RunName name={item.name} /> : <FitName name={item.name} steps={nameSizes} />}
