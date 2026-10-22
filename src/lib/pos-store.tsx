@@ -260,6 +260,8 @@ export type AppSettings = {
   serverConnection: ServerConnectionPreferences;
   workforceEmployees: WorkforceEmployee[];
   devicePreferences: DevicePreferences;
+  priceVisibilityV2?: boolean;
+
   peripheralPreferences: PeripheralPreferences;
   restaurantName: string;
   restaurantAddress: string;
@@ -429,6 +431,8 @@ const defaultSettings: AppSettings = {
   serverConnection: defaultServerConnection,
   workforceEmployees: referenceEmployees,
   devicePreferences: defaultDevicePreferences,
+  priceVisibilityV2: true,
+
   peripheralPreferences: defaultPeripheralPreferences,
   restaurantName: `${brand.appName} Kitchen · Downtown`,
   restaurantAddress: brand.venue.address,
@@ -1049,8 +1053,18 @@ export function PosProvider({ children }: { children: ReactNode }) {
           devicePreferences: {
             ...defaultDevicePreferences,
             ...saved.devicePreferences,
-            toggles: { ...defaultDevicePreferences.toggles, ...saved.devicePreferences?.toggles },
+            // Product prices are hidden unless a manager turns them on, so a
+            // preference saved before that change must not keep showing them.
+            toggles: {
+              ...defaultDevicePreferences.toggles,
+              ...saved.devicePreferences?.toggles,
+              ...(saved.priceVisibilityV2 === true
+                ? {}
+                : { showProductPrices: defaultDevicePreferences.toggles.showProductPrices }),
+            },
           },
+          priceVisibilityV2: true,
+
           tenders: { ...defaultTenders, ...(saved.tenders ?? {}) },
           tenderAutoClose: {
             ...defaultTenderAutoClose,
