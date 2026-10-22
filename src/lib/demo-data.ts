@@ -1,5 +1,7 @@
 import { formatMoney } from "@/lib/brand";
 import capricePhoto from "@/assets/caprice-sandwich.png.asset.json";
+import chickenClubPhoto from "@/assets/grilled-chicken-club.png";
+import salmonToastPhoto from "@/assets/smoked-salmon-toast.png";
 
 export type TicketStatus = "ordering" | "preparing" | "payment" | "paid" | "ready";
 
@@ -784,6 +786,15 @@ export const liveMenu: MenuItem[] = [
   { id: "sd1", name: "POMMES PUREE", price: 12, category: "SIDES", description: "Potatoes whipped with cream and butter, finished with chives." },
   { id: "sd2", name: "HARICOTS VERTS", price: 11, category: "SIDES", description: "Green beans with butter, garlic and toasted almonds." },
   { id: "ds1", name: "CREME BRULEE", price: 13, category: "DESSERTS", description: "Vanilla custard under a burnt-sugar crust, cracked at the table." },
+  { id: "bs10", name: "GRILLED CHICKEN CLUB", price: 21, category: "BRUNCH SANDWICHES", image: chickenClubPhoto, stock: 10, description: "Grilled chicken, bacon, lettuce and tomato on toasted sourdough with herb mayo and fries." },
+  { id: "bs11", name: "SMOKED SALMON TOAST", price: 18, category: "BRUNCH SANDWICHES", image: salmonToastPhoto, description: "Smoked salmon and soft egg on brioche toast with herb cream cheese, dill and capers." },
+  { id: "bka4", name: "HAM & CHEESE CROISSANT", price: 8, category: "BRUNCH BAKERY", description: "Baked croissant filled with Paris ham and melted emmental." },
+  { id: "bka5", name: "ALMOND CROISSANT", price: 7, category: "BRUNCH BAKERY", stock: 8, description: "Twice-baked croissant with frangipane and toasted almond flakes." },
+  { id: "sa3", name: "NICOISE SALAD", price: 17, category: "BRUNCH SALADS", description: "Tuna, egg, green beans, olives and potato over crisp leaves." },
+  { id: "oe4", name: "OMELETTE DU JOUR", price: 15, category: "BRUNCH EGGS (LE OEUFS)", description: "Three-egg omelette with the day's filling, herbs and a side salad." },
+  { id: "si3", name: "SEASONAL FRUIT SALAD", price: 7, category: "BRUNCH SIDES", stock: 12, description: "Fresh-cut seasonal fruit with mint and a squeeze of lime." },
+  { id: "bd4", name: "BERRY SMOOTHIE", price: 10, category: "BRUNCHY DRINKS", description: "Blended berries, banana and yogurt with a honey drizzle." },
+  { id: "bc4", name: "HERBAL TEA", price: 4, category: "BRUNCH COFFEE TEAS", description: "Loose-leaf herbal infusion served in a glass pot." },
   { id: "ds2", name: "PROFITEROLES", price: 14, category: "DESSERTS", description: "Choux puffs filled with vanilla ice cream, topped with warm chocolate." },
 ];
 
