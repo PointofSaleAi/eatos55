@@ -1,5 +1,7 @@
 import { formatMoney } from "@/lib/brand";
 import capricePhoto from "@/assets/caprice-sandwich.png.asset.json";
+import chickenClubPhoto from "@/assets/grilled-chicken-club.png";
+import salmonToastPhoto from "@/assets/smoked-salmon-toast.png";
 
 export type TicketStatus = "ordering" | "preparing" | "payment" | "paid" | "ready";
 
