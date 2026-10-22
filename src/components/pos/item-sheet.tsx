@@ -176,9 +176,9 @@ export function ItemSheet({
         : (activeGroup?.options ?? []).map((o) => ({ ...o, group: activeGroup?.name ?? "" }));
     const filtered = query ? pool.filter((o) => o.name.toLowerCase().includes(query)) : pool;
     const sorted = [...filtered].sort((a, b) => {
-      if (sort === "za") return b.name.localeCompare(a.name);
-      if (sort === "lohi") return a.price - b.price || a.name.localeCompare(b.name);
-      if (sort === "hilo") return b.price - a.price || a.name.localeCompare(b.name);
+      if (tab === "addons" && sort === "za") return b.name.localeCompare(a.name);
+      if (tab === "addons" && sort === "lohi") return a.price - b.price || a.name.localeCompare(b.name);
+      if (tab === "addons" && sort === "hilo") return b.price - a.price || a.name.localeCompare(b.name);
       return a.name.localeCompare(b.name);
     });
     return sorted;
@@ -255,7 +255,7 @@ export function ItemSheet({
           side="bottom"
           ref={sheetRef}
           style={{ ...dragStyle, minHeight: lockedHeight || undefined }}
-          className="sheet-product mx-auto flex max-h-[min(78dvh,42rem)] w-full max-w-sheet flex-col rounded-t-sheet border-0 bg-surface p-0"
+          className="sheet-product mx-auto flex h-[min(78dvh,42rem)] max-h-[min(78dvh,42rem)] w-full max-w-sheet flex-col rounded-t-sheet border-0 bg-surface p-0"
         >
           {item ? (
             <>
@@ -427,9 +427,8 @@ export function ItemSheet({
                   <>
               <div className="flex min-h-0 flex-1 flex-col">
 
+                  {tab === "addons" ? (
                   <div className="flex shrink-0 items-center justify-end gap-2 px-4 pt-1">
-
-                    {tab === "addons" ? (
                     <div className="flex h-ctl-md min-w-0 flex-1 items-center gap-2 rounded-pill border border-border bg-surface px-3">
                       <Search className="size-4 shrink-0 text-muted-foreground" />
                       <input
@@ -453,13 +452,12 @@ export function ItemSheet({
                         <Mic className="size-4" />
                       </button>
                     </div>
-                    ) : null}
                     <div className="relative shrink-0">
                       <Button
                         variant="ghost"
                         type="button"
                         onClick={() => setSortOpen((o) => !o)}
-                        aria-label={`Sort ${tab === "addons" ? "add-ons" : "item options"}, currently ${SORT_LABELS[sort]}`}
+                        aria-label={`Sort add-ons, currently ${SORT_LABELS[sort]}`}
                         aria-expanded={sortOpen}
                         className={cn(
                           // A full circle: width equals the search field's height, so the
@@ -507,6 +505,7 @@ export function ItemSheet({
                       ) : null}
                     </div>
                   </div>
+                  ) : null}
 
                 {activeGroup ? (
                   <>
