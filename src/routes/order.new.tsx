@@ -75,8 +75,9 @@ export const Route = createFileRoute("/order/new")({
 
 // Measure browser-rendered words, not just line counts: a single long word
 // must fit horizontally before a larger typography step can be selected.
-const nameSizes = ["text-fs-sm", "text-fs-base", "text-fs-lg"] as const;
-// Photo tiles render a small single-line truncated name instead.
+const nameSizes = ["text-fs-xs", "text-fs-sm", "text-fs-base", "text-fs-lg"] as const;
+// Photo tiles keep a lighter, smaller name; it wraps instead of being cut short.
+const photoNameSizes = ["text-fs-xs", "text-fs-sm"] as const;
 function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [string, ...string[]] }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [sizeClass, setSizeClass] = useState<string>(steps[0]);
@@ -108,15 +109,34 @@ function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [
       const width = el.getBoundingClientRect().width;
       if (!(width > 0) || width === lastWidth) return;
       lastWidth = width;
-      probe.style.width = `${width}px`;
-      probe.className = `${steps[0]} leading-tight`;
-      const lines = () => Math.round(probe.getBoundingClientRect().height / parseFloat(getComputedStyle(probe).lineHeight));
-      const baseline = lines();
+      const ceil = Math.ceil(width);
+      // Words are measured unwrapped: a wrapped block probe reports no overflow
+      // for a single long word, so a tile would silently clip the widest one.
+      const fitsWords = (step: string) => {
+        probe.className = `${step} leading-tight`;
+        probe.style.display = "inline-block";
+        probe.style.whiteSpace = "nowrap";
+        probe.style.width = "auto";
+        for (const word of name.split(/\s+/)) {
+          probe.textContent = word;
+          if (probe.getBoundingClientRect().width > ceil) return false;
+        }
+        return true;
+      };
+      const lines = (step: string) => {
+        probe.className = `${step} leading-tight`;
+        probe.style.display = "block";
+        probe.style.whiteSpace = "normal";
+        probe.style.width = `${width}px`;
+        probe.textContent = name;
+        return Math.round(probe.getBoundingClientRect().height / parseFloat(getComputedStyle(probe).lineHeight));
+      };
+      const baseline = lines(steps[0]);
       let chosen = steps[0];
       for (const step of steps) {
-        probe.className = `${step} leading-tight`;
-        if (probe.scrollWidth <= Math.ceil(width) && lines() <= baseline) chosen = step;
+        if (lines(step) <= baseline && fitsWords(step)) chosen = step;
       }
+      probe.textContent = name;
       setSizeClass(chosen);
     };
     const schedule = (force = false) => {
@@ -140,15 +160,15 @@ function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [
   return (
     <span
       ref={ref}
-      className={cn("block w-full min-w-0 max-w-full leading-tight", sizeClass)}
+      className={cn("block w-full min-w-0 max-w-full leading-tight break-words", sizeClass)}
     >
       {name}
     </span>
   );
 }
 
-// Photo tiles keep the name and the quick-add control on one line: a long name
-// is cut with an ellipsis instead of pushing the button off the tile.
+// Quick-add control shared by photo and text tiles: it sits on the price line so
+// the product name can use the full tile width and show in full.
 function TileAddButton({
   name,
   outOfStock,
@@ -548,41 +568,25 @@ function NewOrder() {
                     <img src={item.image} alt={item.name} loading="lazy" className="h-full w-full object-cover" />
                   </span>
                 ) : null}
-                {item.image ? (
-                  <span className="flex min-w-0 items-center gap-1.5">
-                    <span className="min-w-0 flex-1 truncate text-fs-xs font-light leading-tight text-foreground">
-                      {item.name}
-                    </span>
-                    <StockBadge stock={item.stock} outOfStock={item.outOfStock} low={low} />
-                    <TileAddButton
-                      name={item.name}
-                      outOfStock={item.outOfStock}
-                      onAdd={() => quickAdd(item)}
-                    />
-                  </span>
-                ) : (
-                  <>
-                    <span className="block w-full min-w-0 max-w-full font-extrabold leading-tight text-foreground">
-                      <FitName name={item.name} steps={nameSizes} />
-                      <StockBadge stock={item.stock} outOfStock={item.outOfStock} low={low} />
-                    </span>
-                    <span className="mt-2 flex min-w-0 items-center justify-between gap-2">
-                      <span className="text-fs-sm font-bold leading-none text-muted-foreground">
-                        {priceLabel(item)}
-                      </span>
-                      <TileAddButton
-                        name={item.name}
-                        outOfStock={item.outOfStock}
-                        onAdd={() => quickAdd(item)}
-                      />
-                    </span>
-                  </>
-                )}
-                {item.image && (item.outOfStock || showProductPrices) ? (
-                  <span className="mt-1 block text-fs-sm font-bold leading-none text-muted-foreground">
+                <span
+                  className={cn(
+                    "block w-full min-w-0 max-w-full leading-tight text-foreground",
+                    item.image ? "font-light" : "font-extrabold",
+                  )}
+                >
+                  <FitName name={item.name} steps={item.image ? photoNameSizes : nameSizes} />
+                  <StockBadge stock={item.stock} outOfStock={item.outOfStock} low={low} />
+                </span>
+                <span className="mt-2 flex min-w-0 items-center justify-between gap-2">
+                  <span className="text-fs-sm font-bold leading-none text-muted-foreground">
                     {priceLabel(item)}
                   </span>
-                ) : null}
+                  <TileAddButton
+                    name={item.name}
+                    outOfStock={item.outOfStock}
+                    onAdd={() => quickAdd(item)}
+                  />
+                </span>
 
               </button>
               );
