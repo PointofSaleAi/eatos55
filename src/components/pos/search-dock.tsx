@@ -19,6 +19,7 @@ export function SearchDock({
   below,
   voice,
   compact = false,
+  inline = false,
 }: {
   open: boolean;
   value: string;
@@ -34,6 +35,8 @@ export function SearchDock({
   voice?: { listening: boolean; onStart: () => void };
   /** Shorter field for sections that use the medium control step (Settings). */
   compact?: boolean;
+  /** Render in place (landscape headers) instead of docking at the bottom. */
+  inline?: boolean;
 }) {
 
   const [host, setHost] = useState<HTMLElement | null>(null);
@@ -49,25 +52,28 @@ export function SearchDock({
     return () => window.clearTimeout(t);
   }, [open]);
 
-  if (!open || !host) return null;
+  if (!open || (!inline && !host)) return null;
 
-  return createPortal(
+  const body = (
     <div
       className={cn(
-        "pointer-events-auto absolute inset-x-0 z-40 border-t border-border bg-surface/95 px-3 pb-2 pt-2 backdrop-blur",
-        "shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.25)]",
+        inline
+          ? "w-full min-w-0"
+          : "pointer-events-auto absolute inset-x-0 z-40 border-t border-border bg-surface/95 px-3 pb-2 pt-2 backdrop-blur shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.25)]",
       )}
-      style={{
-        bottom: "max(var(--kb-inset, 0px), calc(var(--tabs-h, 0px) + var(--sab, 0px)))",
-      }}
+      style={
+        inline
+          ? undefined
+          : { bottom: "max(var(--kb-inset, 0px), calc(var(--tabs-h, 0px) + var(--sab, 0px)))" }
+      }
     >
-      {above ? <div className="mx-auto w-full max-w-sheet pb-2">{above}</div> : null}
-      <div className="mx-auto flex w-full max-w-sheet items-center gap-2">
+      {above ? <div className={cn("mx-auto w-full pb-2", inline ? "max-w-none" : "max-w-sheet")}>{above}</div> : null}
+      <div className={cn("mx-auto flex w-full items-center gap-2", inline ? "max-w-none" : "max-w-sheet")}>
 
         <label
           className={cn(
             "flex min-w-0 flex-1 items-center gap-2 rounded-pill border border-border bg-muted px-4",
-            compact ? "min-h-ctl-md" : "min-h-ctl-lg",
+            inline || compact ? "min-h-ctl-md" : "min-h-ctl-lg",
           )}
         >
           <Search className="size-5 shrink-0 text-muted-foreground" />
@@ -119,14 +125,14 @@ export function SearchDock({
           onClick={onClose}
           className={cn(
             "shrink-0 rounded-pill px-2 text-fs-sm font-bold text-accent",
-            compact ? "min-h-ctl-md" : "min-h-ctl-lg",
+            inline || compact ? "min-h-ctl-md" : "min-h-ctl-lg",
           )}
         >
           Cancel
         </button>
       </div>
-      {below ? <div className="mx-auto w-full max-w-sheet pt-1.5">{below}</div> : null}
-    </div>,
-    host,
+      {below ? <div className={cn("mx-auto w-full pt-1.5", inline ? "max-w-none" : "max-w-sheet")}>{below}</div> : null}
+    </div>
   );
+  return inline ? body : createPortal(body, host!);
 }
