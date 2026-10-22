@@ -179,6 +179,7 @@ export function TicketsScreen({
   /** Rendered as the list pane of a landscape split layout. */
   pane?: boolean;
 }) {
+  const [transferFor, setTransferFor] = useState<string | null>(null);
   const navigate = useNavigate();
   const landscape = useLandscapeWide();
   const selectedTicketId = useRouterState({ select: (state) => state.location.pathname.match(/^\/tickets\/([^/]+)$/)?.[1] });
