@@ -351,6 +351,11 @@ export function ItemSheet({
                 )}
               </SheetHeader>
 
+                {view === "order" ? (
+                  <div className="relative z-10 shrink-0 px-4 pb-2">
+                    <ItemNotesField notes={notes} onChange={setNotes} />
+                  </div>
+                ) : null}
                 <div className="grid shrink-0 grid-cols-2 gap-2 px-4 pb-2">
                   {(["item", "addons"] as const).map((t) => (
                     <Button
@@ -420,10 +425,6 @@ export function ItemSheet({
                 ) : (
                   <>
               <div className="flex min-h-0 flex-1 flex-col">
-
-                <div className="relative z-10 px-4 pb-2">
-                  <ItemNotesField notes={notes} onChange={setNotes} />
-                </div>
 
                 {addOns.length && tab === "addons" ? (
                   <div className="flex shrink-0 items-center gap-2 px-4 pt-2.5">
