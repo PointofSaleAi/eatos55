@@ -1,9 +1,11 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
-import { ArrowLeftRight, BadgePercent, ChevronDown, Percent, Plus, Printer, ReceiptText, Trash2 } from "lucide-react";
+import { ArrowLeftRight, BadgePercent, Forward, UserRound, ChevronDown, Percent, Plus, Printer, ReceiptText, Trash2 } from "lucide-react";
 import { HeaderAction } from "@/components/pos/order-panel";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { BreakdownRow, discountParts } from "@/components/pos/breakdown-row";
 import { TransferCheckDialog } from "@/components/pos/transfer-check-dialog";
+import { TransferOrderDialog } from "@/components/pos/transfer-order-dialog";
+import { canTransfer, noteText } from "@/lib/ticket-transfer";
 import { Fragment, useState } from "react";
 import { brand } from "@/lib/brand";
 import { toast } from "sonner";
@@ -46,6 +48,7 @@ function TicketDetail() {
   const [refundOpen, setRefundOpen] = useState(false);
   const [discountOpen, setDiscountOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
+  const [orderTransferOpen, setOrderTransferOpen] = useState(false);
   const landscape = useLandscapeWide();
   const Footer = landscape ? Fragment : ScreenFooter;
 
@@ -108,7 +111,22 @@ function TicketDetail() {
   };
 
   // Ordering tickets get the full set; paid tickets only transfer, receipt and tax exemption.
-  const ticketActions = closed ? null : (
+  const transferHistory = ticket.transferNotes?.length ? (
+    <div className="space-y-1 pb-1">
+      {ticket.transferNotes.map((n, i) => (
+        <div key={i} className="text-fs-xs">
+          <p className="font-bold text-muted-foreground">{noteText(n)}</p>
+          {n.dir === "to" ? n.lines?.map((l, j) => (
+            <p key={j} className="flex justify-between text-muted-foreground line-through">
+              <span>{l.qty} {l.name}</span><span className="tabular-nums">{money(l.price * l.qty)}</span>
+            </p>
+          )) : null}
+        </div>
+      ))}
+    </div>
+  ) : null;
+
+  const ticketActions = closed || ticket.cancelled ? null : (
     <div className="no-scrollbar flex min-w-0 items-center gap-1 overflow-x-auto" aria-label="Ticket options">
       {!isPaid ? (
         <HeaderAction label="Discount" icon={BadgePercent} active={discount > 0} onPress={() => setDiscountOpen(true)} />
@@ -116,7 +134,8 @@ function TicketDetail() {
       {!isPaid ? (
         <HeaderAction label="Add Item" icon={Plus} onPress={() => { openTicket(ticket.id); navigate({ to: "/order/new" }); }} />
       ) : null}
-      <HeaderAction label="Transfer Check" icon={ArrowLeftRight} onPress={() => setTransferOpen(true)} />
+      {canTransfer(ticket) ? <HeaderAction label="Transfer Order" icon={Forward} onPress={() => setOrderTransferOpen(true)} /> : null}
+      <HeaderAction label="Transfer Owner" icon={UserRound} onPress={() => setTransferOpen(true)} />
       <HeaderAction label="Customer Receipt" icon={ReceiptText} onPress={() => toast.success("Customer receipt sent to the printer")} />
       {!isPaid ? <HeaderAction label="Cancel" icon={Trash2} destructive onPress={cancelThisTicket} /> : null}
       <HeaderAction label={ticket.noTax ? "No Service Tax · On" : "No Service Tax"} icon={Percent} active={!!ticket.noTax} onPress={toggleNoTax} />
@@ -166,6 +185,7 @@ function TicketDetail() {
             {ticket.notes ? <p className="mt-2 whitespace-pre-wrap text-fs-xs italic text-muted-foreground">{ticket.notes}</p> : null}
           </div>
           <div data-ticket-cart-items className="no-scrollbar min-h-0 flex-1 overflow-y-auto px-3 pb-2 pt-1.5">
+            {transferHistory}
             <ul className="divide-y divide-border/60">
               {ticket.lines.map((l) => <li key={l.id} className="py-1">
                 <div className="flex items-start gap-1.5 pr-0.5">
@@ -233,6 +253,7 @@ function TicketDetail() {
           ) : null}
         </Card>
 
+        {transferHistory ? <Card className="mt-3 px-4 py-2">{transferHistory}</Card> : null}
         <Card className="mt-3 overflow-hidden">
           {ticket.lines.map((l) => (
             <div key={l.id} className="border-b border-border px-4 py-3 last:border-b-0">
@@ -355,6 +376,7 @@ function TicketDetail() {
           patchTicket(ticket.id, { discountName: d.name, discountPercent: d.percent });
         }}
       />
+      {orderTransferOpen ? <TransferOrderDialog ticket={ticket} onClose={() => setOrderTransferOpen(false)} onDone={(id) => navigate({ to: "/tickets/$ticketId", params: { ticketId: id } })} /> : null}
       {transferOpen ? <TransferCheckDialog currentOwner={ticket.server} onClose={() => setTransferOpen(false)} onTransfer={(owner) => {
         transferTickets([ticket.id], owner);
         setTransferOpen(false);
