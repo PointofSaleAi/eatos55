@@ -75,7 +75,9 @@ export const Route = createFileRoute("/order/new")({
 
 // Measure browser-rendered words, not just line counts: a single long word
 // must fit horizontally before a larger typography step can be selected.
-const nameSizes = ["text-fs-xs", "text-fs-sm", "text-fs-base", "text-fs-lg"] as const;
+// Largest size first is not the point: the list is the ladder FitName walks down,
+// and stopping at fs-sm keeps a long name to two short lines so the tile stays low.
+const nameSizes = ["text-fs-xs", "text-fs-sm"] as const;
 function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [string, ...string[]] }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [sizeClass, setSizeClass] = useState<string>(steps[0]);
@@ -600,10 +602,10 @@ function NewOrder() {
                   setSheetItem(item);
                 }}
                 className={cn(
-                  // Name and price sit together at the top of the tile: with the
-                  // photo tiles setting the row height, a bottom-pinned price left
-                  // a void in the middle of every text-only tile.
-                  "relative flex min-h-tile min-w-0 flex-col justify-start overflow-hidden rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
+                  // Price stays on the bottom baseline of the row so the + control
+                  // lines up across tiles; the fitted name size is capped so the
+                  // tile never grows far past its own content.
+                  "relative flex min-h-tile min-w-0 flex-col justify-between overflow-hidden rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
                   item.outOfStock && "opacity-50",
                 )}
               >
