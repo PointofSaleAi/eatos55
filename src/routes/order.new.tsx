@@ -641,6 +641,8 @@ function NewOrder() {
                     className={cn(
                       "block w-full min-w-0 max-w-full leading-tight text-foreground",
                       item.image ? "font-light" : "font-extrabold",
+                      // Keep the name clear of the corner stock badge it sits under.
+                      typeof item.stock === "number" && !item.outOfStock && "pr-7",
                     )}
                   >
                     {item.image ? <RunName name={item.name} /> : <FitName name={item.name} steps={nameSizes} />}
