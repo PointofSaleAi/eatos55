@@ -6,7 +6,7 @@ export const deviceSettingGroups = [
     ["hideBreak", "Hide Break on PIN Screen", false], ["hideFeedback", "Hide Employee Feedback", false],
     ["quickLogin", "Quick Employee Login (No PIN)", false],
   ] },
-  { label: "Menu", rows: [["showProductPrices", "Show Product Prices", false]] },
+  { label: "Menu", rows: [["showProductPrices", "Show Product Prices", true]] },
   { label: "Ordering", rows: [
     ["hideFire", "Hide Fire Button", false], ["mandatoryOrderType", "Mandatory Order Type", false],
     ["requireOrderName", "Require name in order type selection", false], ["saveOrder", "Save Button in Order Placement", true],
