@@ -7,6 +7,7 @@ import { ItemNotesField } from "@/components/pos/item-notes-field";
 import { PriceOverrideFlow } from "@/components/pos/price-override";
 import { SheetGrabber, useSheetDrag } from "@/components/pos/drag-close";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 import { itemAddOnGroups, itemModifierGroups, money, type CartLine, type MenuItem } from "@/lib/demo-data";
 import { useAnnounce } from "@/components/pos/live-region";
 import { haptic } from "@/lib/haptics";
@@ -350,6 +351,31 @@ export function ItemSheet({
                 )}
               </SheetHeader>
 
+                <div className="grid shrink-0 grid-cols-2 gap-2 px-4 pb-2">
+                  {(["item", "addons"] as const).map((t) => (
+                    <Button
+                      key={t}
+                      type="button"
+                      aria-pressed={view === "order" && tab === t}
+                      onClick={() => {
+                        setView("order");
+                        setTab(t);
+                        setSearch("");
+                        setSortOpen(false);
+                        setGroup((t === "item" ? itemGroups : addOns)[0]?.name ?? "");
+                      }}
+                      className={cn(
+                        "sheet-product-tab h-ctl-sm rounded-pill text-fs-xs font-extrabold uppercase transition-colors",
+                        view === "order" && t === tab
+                          ? "bg-primary text-primary-foreground hover:bg-primary"
+                          : "bg-muted text-muted-foreground hover:bg-secondary",
+                      )}
+                    >
+                      {t === "item" ? "Item" : "Add-Ons"}
+                    </Button>
+                  ))}
+                </div>
+
                 {view === "info" ? (
                   <>
                     <div className="sheet-product-info min-h-0 flex-1 overflow-y-auto px-4 pb-3">
@@ -398,31 +424,6 @@ export function ItemSheet({
                 <div className="relative z-10 px-4 pb-2">
                   <ItemNotesField notes={notes} onChange={setNotes} />
                 </div>
-
-                {itemGroups.length && addOns.length ? (
-                  <div className="grid shrink-0 grid-cols-2 gap-2 px-4">
-                    {(["item", "addons"] as const).map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => {
-                          setTab(t);
-                          setSearch("");
-                          setSortOpen(false);
-                          setGroup((t === "item" ? itemGroups : addOns)[0]?.name ?? "");
-                        }}
-                        className={cn(
-                          "sheet-product-tab h-ctl-sm rounded-pill text-fs-xs font-extrabold uppercase transition-colors",
-                          t === tab
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted text-muted-foreground hover:bg-secondary",
-                        )}
-                      >
-                        {t === "item" ? "Item" : "Add-Ons"}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
 
                 {addOns.length && tab === "addons" ? (
                   <div className="flex shrink-0 items-center gap-2 px-4 pt-2.5">
@@ -595,7 +596,7 @@ export function ItemSheet({
                       ) : null}
                     </div>
                   </>
-                ) : null}
+                ) : <p className="px-4 py-6 text-fs-sm text-muted-foreground">No options available</p>}
 
               </div>
 
