@@ -284,7 +284,9 @@ function StockBadge({
     <span
       title={`${stock} in stock`}
       className={cn(
-        "inline-block shrink-0 rounded-pill px-1 text-fs-xs font-extrabold leading-4",
+        // Pinned to the tile's top-right corner so a short stock badge never
+        // steals a line from the name and forces the whole row taller.
+        "absolute right-2 top-2 z-10 shrink-0 rounded-pill px-1 text-fs-xs font-extrabold leading-4 ring-1 ring-surface",
         low ? "bg-destructive/10 text-destructive" : "bg-muted text-muted-foreground",
       )}
     >
@@ -627,7 +629,14 @@ function NewOrder() {
                 {/* The name block absorbs the slack: its text sits directly above
                     the price, so any extra tile height reads as breathing room at
                     the top of the card instead of a gap between name and price. */}
-                <span className="flex min-h-0 flex-1 flex-col justify-end">
+                <span
+                  className={cn(
+                    "flex min-h-0 flex-1 flex-col justify-end",
+                    // Text tiles always reserve two name lines, so every tile in a
+                    // text-only category ends at the same height.
+                    !item.image && "min-h-[calc(var(--fs-sm)*2.5)]",
+                  )}
+                >
                   <span
                     className={cn(
                       "block w-full min-w-0 max-w-full leading-tight text-foreground",
