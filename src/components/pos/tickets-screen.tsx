@@ -180,6 +180,7 @@ export function TicketsScreen({
   pane?: boolean;
 }) {
   const [transferFor, setTransferFor] = useState<string | null>(null);
+  const transferTicket = usePos().tickets.find((x) => x.id === transferFor);
   const navigate = useNavigate();
   const landscape = useLandscapeWide();
   const selectedTicketId = useRouterState({ select: (state) => state.location.pathname.match(/^\/tickets\/([^/]+)$/)?.[1] });
@@ -915,6 +916,13 @@ export function TicketsScreen({
           </div>
         </SheetContent>
       </Sheet>
+      {transferTicket ? (
+        <TransferOrderDialog
+          ticket={transferTicket}
+          onClose={() => setTransferFor(null)}
+          onDone={(id) => navigate({ to: "/tickets/$ticketId", params: { ticketId: id }, search: tableParam ? { table: tableParam } : {} })}
+        />
+      ) : null}
     </div>
 
   );

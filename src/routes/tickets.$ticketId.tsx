@@ -1,9 +1,11 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
-import { ArrowLeftRight, BadgePercent, ChevronDown, Percent, Plus, Printer, ReceiptText, Trash2 } from "lucide-react";
+import { ArrowLeftRight, BadgePercent, Forward, UserRound, ChevronDown, Percent, Plus, Printer, ReceiptText, Trash2 } from "lucide-react";
 import { HeaderAction } from "@/components/pos/order-panel";
 import { DiscountSheet } from "@/components/pos/discount-sheet";
 import { BreakdownRow, discountParts } from "@/components/pos/breakdown-row";
 import { TransferCheckDialog } from "@/components/pos/transfer-check-dialog";
+import { TransferOrderDialog } from "@/components/pos/transfer-order-dialog";
+import { canTransfer, noteText } from "@/lib/ticket-transfer";
 import { Fragment, useState } from "react";
 import { brand } from "@/lib/brand";
 import { toast } from "sonner";
@@ -46,6 +48,7 @@ function TicketDetail() {
   const [refundOpen, setRefundOpen] = useState(false);
   const [discountOpen, setDiscountOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
+  const [orderTransferOpen, setOrderTransferOpen] = useState(false);
   const landscape = useLandscapeWide();
   const Footer = landscape ? Fragment : ScreenFooter;
 
@@ -108,7 +111,7 @@ function TicketDetail() {
   };
 
   // Ordering tickets get the full set; paid tickets only transfer, receipt and tax exemption.
-  const ticketActions = closed ? null : (
+  const ticketActions = closed || ticket.cancelled ? null : (
     <div className="no-scrollbar flex min-w-0 items-center gap-1 overflow-x-auto" aria-label="Ticket options">
       {!isPaid ? (
         <HeaderAction label="Discount" icon={BadgePercent} active={discount > 0} onPress={() => setDiscountOpen(true)} />
@@ -116,7 +119,8 @@ function TicketDetail() {
       {!isPaid ? (
         <HeaderAction label="Add Item" icon={Plus} onPress={() => { openTicket(ticket.id); navigate({ to: "/order/new" }); }} />
       ) : null}
-      <HeaderAction label="Transfer Check" icon={ArrowLeftRight} onPress={() => setTransferOpen(true)} />
+      {canTransfer(ticket) ? <HeaderAction label="Transfer Order" icon={Forward} onPress={() => setOrderTransferOpen(true)} /> : null}
+      <HeaderAction label="Transfer Owner" icon={UserRound} onPress={() => setTransferOpen(true)} />
       <HeaderAction label="Customer Receipt" icon={ReceiptText} onPress={() => toast.success("Customer receipt sent to the printer")} />
       {!isPaid ? <HeaderAction label="Cancel" icon={Trash2} destructive onPress={cancelThisTicket} /> : null}
       <HeaderAction label={ticket.noTax ? "No Service Tax · On" : "No Service Tax"} icon={Percent} active={!!ticket.noTax} onPress={toggleNoTax} />
