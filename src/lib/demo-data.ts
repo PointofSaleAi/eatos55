@@ -643,28 +643,54 @@ export const cashDenominations = [1, 5, 10, 20, 50, 100];
 /* ------------------------------------------------------------------ */
 
 export type MenuCategory = {
-  id: "bar" | "brunch" | "dinner";
+  id: string;
   name: string;
   subcategories: string[];
 };
 
 export type MenuDef = { id: string; name: string; categories: MenuCategory[] };
 
-const barCategory: MenuCategory = {
-  id: "bar",
-  name: "BAR MENU",
-  subcategories: ["BAR BITES", "COCKTAILS", "BEER", "WINE"],
-};
-
 const brunchCategory: MenuCategory = {
   id: "brunch",
   name: "BRUNCH",
   subcategories: [
-    "BRUNCH SANDWICHES",
+    "BRUNCH BAKERY",
     "BRUNCH BEVERAGES",
+    "BRUNCH COFFEE TEAS",
+    "BRUNCH COURSE",
+    "BRUNCH CREPES",
+    "BRUNCH DESSERTS",
+    "BRUNCH EGGS (LE OEUFS)",
+    "BRUNCH ENTREES",
+    "BRUNCH FLAT BREAD",
+    "BRUNCH KIDS",
+    "BRUNCH LE SUCRE",
+    "BRUNCH MEAT AND FISH",
+    "BRUNCH QUICHE",
+    "BRUNCH SALADS",
+    "BRUNCH SANDWICHES",
+    "BRUNCH SIDES",
+    "BRUNCH SPECIALTIES",
     "BRUNCHY DRINKS",
-    "BRUNCH COFFEE",
   ],
+};
+
+const barCategory: MenuCategory = {
+  id: "bar",
+  name: "BAR",
+  subcategories: ["BAR BITES", "COCKTAILS", "BEER", "WINE"],
+};
+
+const bakeryBaristaCategory: MenuCategory = {
+  id: "bakery-barista",
+  name: "BAKERY / BARISTA",
+  subcategories: ["BAKERY", "BARISTA"],
+};
+
+const dessertsCategory: MenuCategory = {
+  id: "desserts",
+  name: "DESSERTS",
+  subcategories: ["DESSERTS"],
 };
 
 const dinnerCategory: MenuCategory = {
@@ -682,7 +708,7 @@ export const menus: MenuDef[] = [
   {
     id: "configured-menu",
     name: "MENU",
-    categories: [barCategory, brunchCategory, dinnerCategory],
+    categories: [brunchCategory, barCategory, bakeryBaristaCategory, dessertsCategory, dinnerCategory],
   },
 ];
 
@@ -703,9 +729,43 @@ export const liveMenu: MenuItem[] = [
   { id: "bd1", name: "MIMOSA", price: 14, category: "BRUNCHY DRINKS", description: "Champagne with freshly squeezed orange juice, dressed with a berry." },
   { id: "bd2", name: "BLOODY MARY", price: 15, category: "BRUNCHY DRINKS", stock: 3, lowStockAt: 4, description: "Vodka, house tomato brine, horseradish and Worcestershire, with celery on the side." },
   { id: "bd3", name: "APEROL SPRITZ", price: 16, category: "BRUNCHY DRINKS", description: "Aperol, prosecco and soda over ice with an orange half-moon." },
-  { id: "bc1", name: "CAFE AU LAIT", price: 7, category: "BRUNCH COFFEE", description: "Equal parts brewed coffee and steamed milk." },
-  { id: "bc2", name: "CAPPUCCINO", price: 6, category: "BRUNCH COFFEE", description: "Espresso with steamed milk and a dry, velvety foam." },
-  { id: "bc3", name: "ESPRESSO DOPPIO", price: 5, category: "BRUNCH COFFEE", description: "A double shot of our house espresso, pulled short and syrupy." },
+  { id: "bc1", name: "CAFE AU LAIT", price: 7, category: "BRUNCH COFFEE TEAS", description: "Equal parts brewed coffee and steamed milk." },
+  { id: "bc2", name: "CAPPUCCINO", price: 6, category: "BRUNCH COFFEE TEAS", description: "Espresso with steamed milk and a dry, velvety foam." },
+  { id: "bc3", name: "ESPRESSO DOPPIO", price: 5, category: "BRUNCH COFFEE TEAS", description: "A double shot of our house espresso, pulled short and syrupy." },
+  { id: "bka1", name: "BUTTER CROISSANT", price: 6, category: "BRUNCH BAKERY", description: "Laminated in-house every morning, shatteringly crisp outside and soft within." },
+  { id: "bka2", name: "PAIN AU CHOCOLAT", price: 7, category: "BRUNCH BAKERY", description: "Flaky pastry wrapped around two batons of dark chocolate." },
+  { id: "bka3", name: "BRIOCHE LOAF", price: 8, category: "BRUNCH BAKERY", stock: 10, description: "Rich, buttery brioche baked daily, sliced to order." },
+  { id: "co1", name: "BRUNCH CLASSIC", price: 24, category: "BRUNCH COURSE", description: "Two eggs any style, bacon, home fries, toast and a small green salad." },
+  { id: "co2", name: "BRUNCH ROYAL", price: 32, category: "BRUNCH COURSE", description: "Smoked salmon, soft-scrambled eggs, blinis, crème fraîche and a glass of bubbly." },
+  { id: "cr1", name: "CREPE SUZETTE", price: 14, category: "BRUNCH CREPES", description: "Thin crepes flambéed in orange-butter sauce, finished tableside." },
+  { id: "cr2", name: "HAM & CHEESE CREPE", price: 16, category: "BRUNCH CREPES", stock: 9, description: "Buckwheat crepe with Paris ham and melted gruyère." },
+  { id: "bds1", name: "TARTE TATIN", price: 12, category: "BRUNCH DESSERTS", description: "Caramelised apple tart served warm with crème fraîche." },
+  { id: "bds2", name: "RICE PUDDING", price: 9, category: "BRUNCH DESSERTS", description: "Vanilla-bean rice pudding with a whisper of cinnamon." },
+  { id: "oe1", name: "OEUF COCOTTE", price: 13, category: "BRUNCH EGGS (LE OEUFS)", description: "Egg baked in cream with herbs, served with toasted soldiers." },
+  { id: "oe2", name: "SCRAMBLED EGGS & SMOKED SALMON", price: 18, category: "BRUNCH EGGS (LE OEUFS)", description: "Soft-scrambled eggs with smoked salmon and chives on sourdough." },
+  { id: "oe3", name: "EGGS BENEDICT", price: 17, category: "BRUNCH EGGS (LE OEUFS)", description: "Poached eggs and Paris ham on an English muffin under hollandaise." },
+  { id: "en1", name: "AVOCADO TOAST", price: 15, category: "BRUNCH ENTREES", description: "Smashed avocado, lemon and chili flakes on grilled sourdough." },
+  { id: "en2", name: "GRANOLA BOWL", price: 12, category: "BRUNCH ENTREES", stock: 14, description: "House granola with Greek yogurt, honey and seasonal fruit." },
+  { id: "fb1", name: "FLATBREAD CHEVRE & HONEY", price: 16, category: "BRUNCH FLAT BREAD", description: "Goat cheese, honey and thyme on a blistered flatbread." },
+  { id: "fb2", name: "FLATBREAD TOMATO & MOZZARELLA", price: 15, category: "BRUNCH FLAT BREAD", description: "Slow-roasted tomato, mozzarella and basil on a crisp flatbread." },
+  { id: "kd1", name: "KIDS PANCAKES", price: 8, category: "BRUNCH KIDS", description: "Two small pancakes with maple syrup and berries." },
+  { id: "kd2", name: "KIDS GRILLED CHEESE", price: 9, category: "BRUNCH KIDS", description: "Grilled cheese on white bread with a side of fries." },
+  { id: "ls1", name: "FRENCH TOAST", price: 14, category: "BRUNCH LE SUCRE", description: "Brioche French toast with vanilla custard and maple syrup." },
+  { id: "ls2", name: "WAFFLE & BERRIES", price: 13, category: "BRUNCH LE SUCRE", description: "Buttermilk waffle with macerated berries and chantilly cream." },
+  { id: "mf1", name: "GRILLED SALMON", price: 26, category: "BRUNCH MEAT AND FISH", stock: 7, description: "Grilled salmon fillet with lemon butter and greens." },
+  { id: "mf2", name: "STEAK & EGGS", price: 24, category: "BRUNCH MEAT AND FISH", description: "Six-ounce hanger steak with two eggs any style and home fries." },
+  { id: "qu1", name: "QUICHE LORRAINE", price: 13, category: "BRUNCH QUICHE", description: "Classic bacon and gruyère quiche with a small green salad." },
+  { id: "qu2", name: "QUICHE LEGUMES", price: 12, category: "BRUNCH QUICHE", description: "Seasonal vegetable quiche with a small green salad." },
+  { id: "sa1", name: "SALADE FIGARO", price: 16, category: "BRUNCH SALADS", description: "Mixed leaves, goat cheese, walnuts and honey vinaigrette." },
+  { id: "sa2", name: "CAESAR SALAD", price: 15, category: "BRUNCH SALADS", description: "Romaine, parmesan, croutons and house caesar dressing." },
+  { id: "si1", name: "HOME FRIES", price: 6, category: "BRUNCH SIDES", description: "Crispy skillet potatoes with onions and herbs." },
+  { id: "si2", name: "SAUTEED SPINACH", price: 7, category: "BRUNCH SIDES", description: "Baby spinach sautéed with garlic and olive oil." },
+  { id: "sp1", name: "LOBSTER BENEDICT", price: 28, category: "BRUNCH SPECIALTIES", description: "Butter-poached lobster on a toasted muffin under hollandaise." },
+  { id: "sp2", name: "TRUFFLE SCRAMBLE", price: 22, category: "BRUNCH SPECIALTIES", stock: 5, lowStockAt: 5, description: "Soft-scrambled eggs folded with black truffle and parmesan." },
+  { id: "by1", name: "SOURDOUGH LOAF", price: 9, category: "BAKERY", description: "Naturally leavened country loaf, baked every morning." },
+  { id: "by2", name: "BAGUETTE", price: 4, category: "BAKERY", stock: 30, description: "Classic Parisian baguette with a crisp crust." },
+  { id: "bt1", name: "LATTE", price: 6, category: "BARISTA", description: "Double espresso under silky steamed milk." },
+  { id: "bt2", name: "MATCHA LATTE", price: 7, category: "BARISTA", description: "Ceremonial-grade matcha whisked with steamed milk." },
   { id: "ba1", name: "AGENT4450-1785428867507", price: 1, category: "BAR BITES" },
   { id: "ba2", name: "AGENT4450-FS-1785429750548", price: 1, category: "BAR BITES" },
   { id: "ba3", name: "AGENT4450-PRE-1785428033881", price: 1, category: "BAR BITES" },
@@ -868,6 +928,21 @@ export const serviceChargePresets: {
 /** Categories that come with food modifier groups. Drinks have none. */
 const foodModifiersByCategory: Record<string, string[]> = {
   "BRUNCH SANDWICHES": ["Bread", "Course", "Temperature", "Preparation", "Allergy", "Sandwiches Sides"],
+  "BRUNCH BAKERY": ["Preparation", "Allergy"],
+  "BRUNCH COURSE": ["Course", "Preparation", "Allergy"],
+  "BRUNCH CREPES": ["Preparation", "Allergy"],
+  "BRUNCH DESSERTS": ["Course", "Allergy"],
+  "BRUNCH EGGS (LE OEUFS)": ["Course", "Preparation", "Allergy"],
+  "BRUNCH ENTREES": ["Course", "Preparation", "Allergy"],
+  "BRUNCH FLAT BREAD": ["Preparation", "Allergy"],
+  "BRUNCH KIDS": ["Preparation", "Allergy"],
+  "BRUNCH LE SUCRE": ["Allergy"],
+  "BRUNCH MEAT AND FISH": ["Course", "Temperature", "Preparation", "Allergy"],
+  "BRUNCH QUICHE": ["Course", "Preparation", "Allergy"],
+  "BRUNCH SALADS": ["Course", "Preparation", "Allergy"],
+  "BRUNCH SIDES": ["Preparation", "Allergy"],
+  "BRUNCH SPECIALTIES": ["Course", "Preparation", "Allergy"],
+  BAKERY: ["Allergy"],
   "BAR BITES": ["Preparation", "Allergy", "Sides"],
   STARTERS: ["Course", "Preparation", "Allergy"],
   MAINS: ["Course", "Temperature", "Preparation", "Allergy", "Sides"],
@@ -877,6 +952,9 @@ const foodModifiersByCategory: Record<string, string[]> = {
 
 const addOnsByCategory: Record<string, string[]> = {
   "BRUNCH SANDWICHES": ["Add-Ons", "Beverage"],
+  "BRUNCH EGGS (LE OEUFS)": ["Add-Ons"],
+  "BRUNCH ENTREES": ["Add-Ons"],
+  "BRUNCH SPECIALTIES": ["Add-Ons"],
   MAINS: ["Add-Ons"],
   STARTERS: ["Add-Ons"],
 };
