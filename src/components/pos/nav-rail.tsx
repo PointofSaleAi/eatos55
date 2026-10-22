@@ -197,7 +197,7 @@ export function NavRail({ side, onMove, onDragPosition }: {
           {expanded ? (
             <Wordmark invert className="h-auto w-28" />
           ) : (
-            <EMark className="size-5 text-shell-foreground" />
+            <EMark className="size-8 text-shell-foreground" />
           )}
           <span className="text-center text-[0.5625rem] font-bold leading-tight text-shell-foreground/60">
             {formatVersionLabel(settings.appVersion)}
