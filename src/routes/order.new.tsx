@@ -102,7 +102,9 @@ function availableNameHeight(el: HTMLElement) {
 function FitName({
   name,
   steps = nameSizes,
-  maxLines = 2,
+  // Three lines is the ceiling, and the height check below still has to agree: a
+  // name only takes the extra line when the tile has room for it at that size.
+  maxLines = 3,
 }: {
   name: string;
   steps?: readonly [string, ...string[]];
