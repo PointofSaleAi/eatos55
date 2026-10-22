@@ -147,82 +147,6 @@ function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [
   );
 }
 
-// Photo tiles: one line only, ellipsis when it cannot fit, and the font size
-// steps down with the available width so words are never broken mid-word.
-const photoNameSizes = ["text-fs-base", "text-fs-sm", "text-fs-xs"] as const;
-function LineFitName({ name, steps = photoNameSizes }: { name: string; steps?: readonly [string, ...string[]] }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [cls, setCls] = useState<string>(steps[0]);
-  const [fits, setFits] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    let raf = 0;
-    let disposed = false;
-    let lastWidth = 0;
-    const probe = document.createElement("span");
-    probe.textContent = name;
-    probe.setAttribute("aria-hidden", "true");
-    Object.assign(probe.style, {
-      position: "fixed",
-      visibility: "hidden",
-      pointerEvents: "none",
-      display: "block",
-      whiteSpace: "nowrap",
-      fontFamily: getComputedStyle(el).fontFamily,
-      fontWeight: getComputedStyle(el).fontWeight,
-      letterSpacing: "0px",
-    });
-    document.body.appendChild(probe);
-    const measure = () => {
-      if (disposed) return;
-      const width = el.getBoundingClientRect().width;
-      if (!(width > 0) || width === lastWidth) return;
-      lastWidth = width;
-      probe.style.width = "auto";
-      let chosen: string = steps[steps.length - 1] ?? steps[0];
-      let chosenFits = false;
-      for (const step of steps) {
-        probe.className = step;
-        if (probe.scrollWidth <= Math.ceil(width)) {
-          chosen = step;
-          chosenFits = true;
-          break;
-        }
-      }
-      setCls(chosen);
-      setFits(chosenFits);
-    };
-    const schedule = (force = false) => {
-      if (disposed) return;
-      if (force) lastWidth = 0;
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(measure);
-    };
-    schedule();
-    document.fonts?.ready.then(() => schedule(true)).catch(() => {});
-    const ro = new ResizeObserver(() => schedule());
-    ro.observe(el);
-    return () => {
-      disposed = true;
-      cancelAnimationFrame(raf);
-      ro.disconnect();
-      probe.remove();
-    };
-  }, [name, steps]);
-
-  return (
-    <span
-      ref={ref}
-      title={name}
-      className={cn("block w-full min-w-0 max-w-full leading-tight", cls, !fits && "truncate")}
-    >
-      {name}
-    </span>
-  );
-}
-
 function NewOrder() {
   const navigate = useNavigate();
   const { totals, addItem, settings } = usePos();
@@ -539,24 +463,78 @@ function NewOrder() {
                   item.outOfStock && "opacity-50",
                 )}
               >
-                {item.image ? <img src={item.image} alt={item.name} className="-mx-3 -mt-3 mb-2 aspect-[16/9] w-bleed-x max-w-none object-cover" /> : null}
-                <span className="block w-full min-w-0 max-w-full font-extrabold leading-tight text-foreground">
-                  {item.image ? <LineFitName name={item.name} /> : <FitName name={item.name} steps={nameSizes} />}
-                  {typeof item.stock === "number" && !item.outOfStock ? (
+                {item.image ? (
+                  <span className="relative -mx-3 -mt-3 mb-2 block aspect-[16/9] w-bleed-x max-w-none overflow-hidden">
+                    <img src={item.image} alt={item.name} loading="lazy" className="h-full w-full object-cover" />
                     <span
-                      title={`${item.stock} in stock`}
+                      role="button"
+                      tabIndex={item.outOfStock ? -1 : 0}
+                      aria-label={`Quick add ${item.name} to the order`}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        clearLongPress();
+                        if (item.outOfStock) return;
+                        addItem(item.id, { qty: 1 });
+                        haptic("success");
+                        toast.success(`${item.name} added`);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key !== "Enter" && e.key !== " ") return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (item.outOfStock) return;
+                        addItem(item.id, { qty: 1 });
+                        haptic("success");
+                        toast.success(`${item.name} added`);
+                      }}
                       className={cn(
-                        "ml-1 inline-block rounded-pill px-1 align-middle text-fs-xs font-extrabold leading-4",
-                        low
-                          ? "bg-destructive/10 text-destructive"
-                          : "bg-muted text-muted-foreground",
+                        "absolute bottom-2 right-2 grid size-7 place-items-center rounded-pill tap-safe",
+                        item.outOfStock
+                          ? "bg-muted text-muted-foreground"
+                          : "bg-accent text-accent-foreground",
                       )}
                     >
-                      {low ? `- ${item.stock}` : item.stock}
+                      {item.outOfStock ? <Ban className="size-4" /> : <Plus className="size-4" />}
                     </span>
-                  ) : null}
-                </span>
-                <span className="mt-2 flex items-center justify-between">
+                  </span>
+                ) : null}
+                {item.image ? (
+                  <span className="block w-full min-w-0 text-fs-xs font-extrabold leading-tight text-foreground">
+                    {item.name}
+                    {typeof item.stock === "number" && !item.outOfStock ? (
+                      <span
+                        title={`${item.stock} in stock`}
+                        className={cn(
+                          "ml-1 inline-block rounded-pill px-1 align-middle text-fs-xs font-extrabold leading-4",
+                          low
+                            ? "bg-destructive/10 text-destructive"
+                            : "bg-muted text-muted-foreground",
+                        )}
+                      >
+                        {low ? `- ${item.stock}` : item.stock}
+                      </span>
+                    ) : null}
+                  </span>
+                ) : (
+                  <span className="block w-full min-w-0 max-w-full font-extrabold leading-tight text-foreground">
+                    <FitName name={item.name} steps={nameSizes} />
+                    {typeof item.stock === "number" && !item.outOfStock ? (
+                      <span
+                        title={`${item.stock} in stock`}
+                        className={cn(
+                          "ml-1 inline-block rounded-pill px-1 align-middle text-fs-xs font-extrabold leading-4",
+                          low
+                            ? "bg-destructive/10 text-destructive"
+                            : "bg-muted text-muted-foreground",
+                        )}
+                      >
+                        {low ? `- ${item.stock}` : item.stock}
+                      </span>
+                    ) : null}
+                  </span>
+                )}
+                <span className={cn("flex min-w-0 items-center justify-between", !item.image && "mt-2")}>
                   <span className="text-fs-sm font-bold leading-none text-muted-foreground">
                     {item.outOfStock
                       ? "Out of stock"
@@ -566,37 +544,39 @@ function NewOrder() {
                         ? "Open price"
                         : money(item.price)}
                   </span>
-                  <span
-                    role="button"
-                    tabIndex={item.outOfStock ? -1 : 0}
-                    aria-label={`Quick add ${item.name} to the order`}
-                    onPointerDown={(e) => e.stopPropagation()}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      clearLongPress();
-                      if (item.outOfStock) return;
-                      addItem(item.id, { qty: 1 });
-                      haptic("success");
-                      toast.success(`${item.name} added`);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key !== "Enter" && e.key !== " ") return;
-                      e.preventDefault();
-                      e.stopPropagation();
-                      if (item.outOfStock) return;
-                      addItem(item.id, { qty: 1 });
-                      haptic("success");
-                      toast.success(`${item.name} added`);
-                    }}
-                    className={cn(
-                      "grid size-7 place-items-center rounded-pill tap-safe",
-                      item.outOfStock
-                        ? "bg-muted text-muted-foreground"
-                        : "bg-accent text-accent-foreground",
-                    )}
-                  >
-                    {item.outOfStock ? <Ban className="size-4" /> : <Plus className="size-4" />}
-                  </span>
+                  {item.image ? null : (
+                    <span
+                      role="button"
+                      tabIndex={item.outOfStock ? -1 : 0}
+                      aria-label={`Quick add ${item.name} to the order`}
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        clearLongPress();
+                        if (item.outOfStock) return;
+                        addItem(item.id, { qty: 1 });
+                        haptic("success");
+                        toast.success(`${item.name} added`);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key !== "Enter" && e.key !== " ") return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (item.outOfStock) return;
+                        addItem(item.id, { qty: 1 });
+                        haptic("success");
+                        toast.success(`${item.name} added`);
+                      }}
+                      className={cn(
+                        "grid size-7 place-items-center rounded-pill tap-safe",
+                        item.outOfStock
+                          ? "bg-muted text-muted-foreground"
+                          : "bg-accent text-accent-foreground",
+                      )}
+                    >
+                      {item.outOfStock ? <Ban className="size-4" /> : <Plus className="size-4" />}
+                    </span>
+                  )}
                 </span>
               </button>
               );
