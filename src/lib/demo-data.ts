@@ -643,28 +643,54 @@ export const cashDenominations = [1, 5, 10, 20, 50, 100];
 /* ------------------------------------------------------------------ */
 
 export type MenuCategory = {
-  id: "bar" | "brunch" | "dinner";
+  id: string;
   name: string;
   subcategories: string[];
 };
 
 export type MenuDef = { id: string; name: string; categories: MenuCategory[] };
 
-const barCategory: MenuCategory = {
-  id: "bar",
-  name: "BAR MENU",
-  subcategories: ["BAR BITES", "COCKTAILS", "BEER", "WINE"],
-};
-
 const brunchCategory: MenuCategory = {
   id: "brunch",
   name: "BRUNCH",
   subcategories: [
-    "BRUNCH SANDWICHES",
+    "BRUNCH BAKERY",
     "BRUNCH BEVERAGES",
+    "BRUNCH COFFEE TEAS",
+    "BRUNCH COURSE",
+    "BRUNCH CREPES",
+    "BRUNCH DESSERTS",
+    "BRUNCH EGGS (LE OEUFS)",
+    "BRUNCH ENTREES",
+    "BRUNCH FLAT BREAD",
+    "BRUNCH KIDS",
+    "BRUNCH LE SUCRE",
+    "BRUNCH MEAT AND FISH",
+    "BRUNCH QUICHE",
+    "BRUNCH SALADS",
+    "BRUNCH SANDWICHES",
+    "BRUNCH SIDES",
+    "BRUNCH SPECIALTIES",
     "BRUNCHY DRINKS",
-    "BRUNCH COFFEE",
   ],
+};
+
+const barCategory: MenuCategory = {
+  id: "bar",
+  name: "BAR",
+  subcategories: ["BAR BITES", "COCKTAILS", "BEER", "WINE"],
+};
+
+const bakeryBaristaCategory: MenuCategory = {
+  id: "bakery-barista",
+  name: "BAKERY / BARISTA",
+  subcategories: ["BAKERY", "BARISTA"],
+};
+
+const dessertsCategory: MenuCategory = {
+  id: "desserts",
+  name: "DESSERTS",
+  subcategories: ["DESSERTS"],
 };
 
 const dinnerCategory: MenuCategory = {
@@ -682,7 +708,7 @@ export const menus: MenuDef[] = [
   {
     id: "configured-menu",
     name: "MENU",
-    categories: [barCategory, brunchCategory, dinnerCategory],
+    categories: [brunchCategory, barCategory, bakeryBaristaCategory, dessertsCategory, dinnerCategory],
   },
 ];
 
