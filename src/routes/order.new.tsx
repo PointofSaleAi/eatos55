@@ -78,7 +78,9 @@ export const Route = createFileRoute("/order/new")({
 // must fit horizontally before a larger typography step can be selected.
 // Largest size first is not the point: the list is the ladder FitName walks down,
 // and stopping at fs-sm keeps a long name to two short lines so the tile stays low.
-const nameSizes = ["text-fs-xs", "text-fs-sm"] as const;
+// fs-mod is the last resort so a long word beside the corner stock badge still
+// fits whole instead of breaking mid-word.
+const nameSizes = ["text-fs-mod", "text-fs-xs", "text-fs-sm"] as const;
 function FitName({
   name,
   steps = nameSizes,
