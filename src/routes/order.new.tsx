@@ -13,7 +13,7 @@ import { useWideLayout } from "@/components/pos/shell";
 import { ItemSheet } from "@/components/pos/item-sheet";
 import { OrderPanel } from "@/components/pos/order-panel";
 import { DragGrip, DropZones, setOrderPanelSide, useOrderPanelSide } from "@/components/pos/drag-grip";
-import { itemNeedsSheet, liveMenu, menu as baseMenu, menus, money, type CartLine, type MenuItem } from "@/lib/demo-data";
+import { liveMenu, menu as baseMenu, menus, money, type CartLine, type MenuItem } from "@/lib/demo-data";
 import { haptic } from "@/lib/haptics";
 import { usePos } from "@/lib/pos-store";
 import { toast } from "sonner";
@@ -524,9 +524,7 @@ function NewOrder() {
                 aria-label={
                   item.outOfStock
                     ? `${item.name}, out of stock`
-                    : itemNeedsSheet(item, settings.productModifierRules)
-                      ? `${item.name}, choose options`
-                      : `Add ${item.name} to the order`
+                    : `${item.name}, choose options`
                 }
                 onPointerDown={() => {
                   longFired.current = false;
@@ -550,13 +548,7 @@ function NewOrder() {
                     });
                     return;
                   }
-                  if (itemNeedsSheet(item, settings.productModifierRules)) {
-                    setSheetItem(item);
-                    return;
-                  }
-                  addItem(item.id, { qty: 1 });
-                  haptic("success");
-                  toast.success(`${item.name} added`);
+                  setSheetItem(item);
                 }}
                 className={cn(
                   "relative flex min-h-tile min-w-0 flex-col justify-between overflow-hidden rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
