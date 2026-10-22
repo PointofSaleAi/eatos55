@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLandscapeWide } from "@/hooks/use-layout-mode";
 import { useWideLayout } from "@/components/pos/shell";
 import { ItemSheet } from "@/components/pos/item-sheet";
+import { OpenPricePad } from "@/components/pos/open-price-pad";
 import { OrderPanel } from "@/components/pos/order-panel";
 import { DragGrip, DropZones, setOrderPanelSide, useOrderPanelSide } from "@/components/pos/drag-grip";
 import { liveMenu, menu as baseMenu, menus, money, type CartLine, type MenuItem } from "@/lib/demo-data";
@@ -77,7 +78,9 @@ export const Route = createFileRoute("/order/new")({
 // must fit horizontally before a larger typography step can be selected.
 // Largest size first is not the point: the list is the ladder FitName walks down,
 // and stopping at fs-sm keeps a long name to two short lines so the tile stays low.
-const nameSizes = ["text-fs-xs", "text-fs-sm"] as const;
+// fs-mod is the last resort so a long word beside the corner stock badge still
+// fits whole instead of breaking mid-word.
+const nameSizes = ["text-fs-mod", "text-fs-xs", "text-fs-sm"] as const;
 function FitName({
   name,
   steps = nameSizes,
@@ -303,7 +306,13 @@ function NewOrder() {
   const navigate = useNavigate();
   const { totals, addItem, settings } = usePos();
   const showProductPrices = productPricesVisible(settings.devicePreferences);
+  const [openPriceItem, setOpenPriceItem] = useState<MenuItem | null>(null);
   const quickAdd = (item: MenuItem) => {
+    // Open-price products always ask for a price before joining the order.
+    if (item.openPrice) {
+      setOpenPriceItem(item);
+      return;
+    }
     addItem(item.id, { qty: 1 });
     haptic("success");
     toast.success(`${item.name} added`);
@@ -614,36 +623,35 @@ function NewOrder() {
                     });
                     return;
                   }
+                  // Open-price products ask for a price first; everything else
+                  // opens the item sheet with its options.
+                  if (item.openPrice) {
+                    setOpenPriceItem(item);
+                    return;
+                  }
                   setSheetItem(item);
                 }}
                 className={cn(
-                  // Price stays on the bottom baseline of the row so the + control
-                  // lines up across tiles; the fitted name size is capped so the
-                  // tile never grows far past its own content.
-                  "relative flex min-h-tile min-w-0 flex-col justify-between overflow-hidden rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
+                  // Name sits at the top of the tile with the price directly
+                  // below it; the fitted name size is capped so the tile never
+                  // grows far past its own content.
+                  "relative flex min-h-tile min-w-0 flex-col justify-start overflow-hidden rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
                   item.outOfStock && "opacity-50",
                 )}
               >
                 {item.image ? (
-                  <span className="relative -mx-3 -mt-3 mb-1.5 block aspect-[5/2] w-bleed-x max-w-none overflow-hidden">
+                  <span className="relative -mx-3 -mt-3 mb-1.5 block aspect-[2/1] w-bleed-x max-w-none overflow-hidden">
                     <img src={item.image} alt={item.name} loading="lazy" className="h-full w-full object-cover" />
                   </span>
                 ) : null}
-                {/* The name block absorbs the slack: its text sits directly above
-                    the price, so any extra tile height reads as breathing room at
-                    the top of the card instead of a gap between name and price. */}
-                <span
-                  className={cn(
-                    "flex min-h-0 flex-1 flex-col justify-end",
-                    // Text tiles always reserve two name lines, so every tile in a
-                    // text-only category ends at the same height.
-                    !item.image && "min-h-[calc(var(--fs-sm)*2.5)]",
-                  )}
-                >
+                <span className="flex min-h-0 flex-col justify-start">
                   <span
                     className={cn(
                       "block w-full min-w-0 max-w-full leading-tight text-foreground",
                       item.image ? "font-light" : "font-extrabold",
+                      // The corner stock badge sits over the top line now that
+                      // names start at the top, so reserve room for it.
+                      typeof item.stock === "number" && !item.outOfStock && "pr-6",
                     )}
                   >
                     {item.image ? <RunName name={item.name} /> : <FitName name={item.name} steps={nameSizes} />}
@@ -651,9 +659,15 @@ function NewOrder() {
                   </span>
                 </span>
                 <span className="mt-1 flex min-w-0 items-center justify-between gap-2">
-                  <span className="text-fs-sm font-bold leading-none text-muted-foreground">
-                    {priceLabel(item)}
-                  </span>
+                  {item.openPrice && !item.outOfStock && showProductPrices ? (
+                    <span className="rounded-pill bg-muted px-2 py-0.5 text-fs-xs font-extrabold leading-4 text-foreground">
+                      Open price
+                    </span>
+                  ) : (
+                    <span className="text-fs-sm font-bold leading-none text-muted-foreground">
+                      {priceLabel(item)}
+                    </span>
+                  )}
                   <TileAddButton
                     name={item.name}
                     outOfStock={item.outOfStock}
@@ -769,6 +783,15 @@ function NewOrder() {
         onClose={() => {
           setSheetItem(null);
           setEditingLine(null);
+        }}
+      />
+      <OpenPricePad
+        item={openPriceItem}
+        onClose={() => setOpenPriceItem(null)}
+        onSave={(item, price) => {
+          addItem(item.id, { qty: 1, price });
+          haptic("success");
+          toast.success(`${item.name} added at ${money(price)}`);
         }}
       />
     </div>
