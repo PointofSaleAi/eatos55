@@ -149,7 +149,7 @@ function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [
 
 // Photo tiles: one line only, ellipsis when it cannot fit, and the font size
 // steps down with the available width so words are never broken mid-word.
-const photoNameSizes = ["text-fs-base", "text-fs-sm", "text-fs-xs"] as const;
+const photoNameSizes = ["text-fs-sm", "text-fs-xs"] as const;
 function LineFitName({ name, steps = photoNameSizes }: { name: string; steps?: readonly [string, ...string[]] }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [cls, setCls] = useState<string>(steps[0]);
@@ -540,23 +540,43 @@ function NewOrder() {
                 )}
               >
                 {item.image ? <img src={item.image} alt={item.name} className="-mx-3 -mt-3 mb-2 aspect-[16/9] w-bleed-x max-w-none object-cover" /> : null}
-                <span className="block w-full min-w-0 max-w-full font-extrabold leading-tight text-foreground">
-                  {item.image ? <LineFitName name={item.name} /> : <FitName name={item.name} steps={nameSizes} />}
-                  {typeof item.stock === "number" && !item.outOfStock ? (
-                    <span
-                      title={`${item.stock} in stock`}
-                      className={cn(
-                        "ml-1 inline-block rounded-pill px-1 align-middle text-fs-xs font-extrabold leading-4",
-                        low
-                          ? "bg-destructive/10 text-destructive"
-                          : "bg-muted text-muted-foreground",
-                      )}
-                    >
-                      {low ? `- ${item.stock}` : item.stock}
+                {item.image ? null : (
+                  <span className="block w-full min-w-0 max-w-full font-extrabold leading-tight text-foreground">
+                    <FitName name={item.name} steps={nameSizes} />
+                    {typeof item.stock === "number" && !item.outOfStock ? (
+                      <span
+                        title={`${item.stock} in stock`}
+                        className={cn(
+                          "ml-1 inline-block rounded-pill px-1 align-middle text-fs-xs font-extrabold leading-4",
+                          low
+                            ? "bg-destructive/10 text-destructive"
+                            : "bg-muted text-muted-foreground",
+                        )}
+                      >
+                        {low ? `- ${item.stock}` : item.stock}
+                      </span>
+                    ) : null}
+                  </span>
+                )}
+                <span className={cn("flex min-w-0 items-center justify-between gap-2", !item.image && "mt-2")}>
+                  {item.image ? (
+                    <span className="min-w-0 flex-1 font-extrabold leading-tight text-foreground">
+                      <LineFitName name={item.name} />
+                      {typeof item.stock === "number" && !item.outOfStock ? (
+                        <span
+                          title={`${item.stock} in stock`}
+                          className={cn(
+                            "ml-1 inline-block rounded-pill px-1 align-middle text-fs-xs font-extrabold leading-4",
+                            low
+                              ? "bg-destructive/10 text-destructive"
+                              : "bg-muted text-muted-foreground",
+                          )}
+                        >
+                          {low ? `- ${item.stock}` : item.stock}
+                        </span>
+                      ) : null}
                     </span>
                   ) : null}
-                </span>
-                <span className="mt-2 flex items-center justify-between">
                   <span className="text-fs-sm font-bold leading-none text-muted-foreground">
                     {item.outOfStock
                       ? "Out of stock"
