@@ -78,7 +78,15 @@ export const Route = createFileRoute("/order/new")({
 // Largest size first is not the point: the list is the ladder FitName walks down,
 // and stopping at fs-sm keeps a long name to two short lines so the tile stays low.
 const nameSizes = ["text-fs-xs", "text-fs-sm"] as const;
-function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [string, ...string[]] }) {
+function FitName({
+  name,
+  steps = nameSizes,
+  maxLines = 2,
+}: {
+  name: string;
+  steps?: readonly [string, ...string[]];
+  maxLines?: number;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
   const [sizeClass, setSizeClass] = useState<string>(steps[0]);
 
@@ -131,7 +139,9 @@ function FitName({ name, steps = nameSizes }: { name: string; steps?: readonly [
         probe.textContent = name;
         return Math.round(probe.getBoundingClientRect().height / parseFloat(getComputedStyle(probe).lineHeight));
       };
-      const baseline = lines(steps[0]);
+      // Two lines is the ceiling; a name that needs more keeps the smallest step
+      // rather than pushing the whole tile taller than its price row needs.
+      const baseline = Math.min(lines(steps[0]), maxLines);
       let chosen = steps[0];
       for (const step of steps) {
         if (lines(step) <= baseline && fitsWords(step)) chosen = step;
@@ -614,14 +624,19 @@ function NewOrder() {
                     <img src={item.image} alt={item.name} loading="lazy" className="h-full w-full object-cover" />
                   </span>
                 ) : null}
-                <span
-                  className={cn(
-                    "block w-full min-w-0 max-w-full leading-tight text-foreground",
-                    item.image ? "font-light" : "font-extrabold",
-                  )}
-                >
-                  {item.image ? <RunName name={item.name} /> : <FitName name={item.name} steps={nameSizes} />}
-                  <StockBadge stock={item.stock} outOfStock={item.outOfStock} low={low} />
+                {/* The name block absorbs the slack: its text sits directly above
+                    the price, so any extra tile height reads as breathing room at
+                    the top of the card instead of a gap between name and price. */}
+                <span className="flex min-h-0 flex-1 flex-col justify-end">
+                  <span
+                    className={cn(
+                      "block w-full min-w-0 max-w-full leading-tight text-foreground",
+                      item.image ? "font-light" : "font-extrabold",
+                    )}
+                  >
+                    {item.image ? <RunName name={item.name} /> : <FitName name={item.name} steps={nameSizes} />}
+                    <StockBadge stock={item.stock} outOfStock={item.outOfStock} low={low} />
+                  </span>
                 </span>
                 <span className="mt-1 flex min-w-0 items-center justify-between gap-2">
                   <span className="text-fs-sm font-bold leading-none text-muted-foreground">
