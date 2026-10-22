@@ -32,6 +32,9 @@ import { useEffect, useState } from "react";
 
 
 import { EmptyState, TicketCard } from "@/components/pos/primitives";
+import { TransferOrderDialog } from "@/components/pos/transfer-order-dialog";
+import { canTransfer, noteText } from "@/lib/ticket-transfer";
+import { Forward } from "lucide-react";
 import { SwipeRow } from "@/components/pos/swipe-row";
 import { useConfirm } from "@/components/pos/confirm-sheet";
 import { useAnnounce } from "@/components/pos/live-region";
@@ -617,19 +620,34 @@ export function TicketsScreen({
                       }
                 }
               >
-                <TicketCard
-                  ticket={t}
-                  landscape={pane && landscape}
-                  selected={selectedTicketId === t.id}
-                  onClick={() => {
-                    openTicket(t.id);
-                    navigate({
-                      to: "/tickets/$ticketId",
-                      params: { ticketId: t.id },
-                      search: tableParam ? { table: tableParam } : {},
-                    });
-                  }}
-                />
+                <div className="overflow-hidden rounded-card">
+                  {t.transferNotes?.[0] ? (
+                    <p className="truncate bg-foreground px-3 py-1 text-fs-xs font-bold text-background">{noteText(t.transferNotes[0])}</p>
+                  ) : null}
+                  <div className="flex items-stretch gap-1">
+                    <div className="min-w-0 flex-1">
+                      <TicketCard
+                        ticket={t}
+                        landscape={pane && landscape}
+                        selected={selectedTicketId === t.id}
+                        onClick={() => {
+                          openTicket(t.id);
+                          navigate({
+                            to: "/tickets/$ticketId",
+                            params: { ticketId: t.id },
+                            search: tableParam ? { table: tableParam } : {},
+                          });
+                        }}
+                      />
+                    </div>
+                    {canTransfer(t) ? (
+                      <button type="button" aria-label={`Transfer order ${t.number}`} onClick={() => setTransferFor(t.id)}
+                        className="grid w-9 shrink-0 place-items-center rounded-card bg-muted text-foreground hover:bg-secondary">
+                        <Forward className="size-4" aria-hidden />
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
               </SwipeRow>
             ))}
           </div>
