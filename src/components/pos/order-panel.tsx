@@ -117,8 +117,8 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, moreHost, doc
     return actions.map(({ label, icon: Icon, active, run }) => (
       <Button key={label} type="button" variant="ghost" aria-label={label} title={label}
         onClick={() => { onMoreOpenChange(false); run(); }}
-        className={cn(rail ? "h-auto min-h-16 w-full shrink-0 flex-col gap-1 rounded-row px-1 py-2 text-fs-xs font-bold" : "min-h-12 w-full shrink-0 justify-start gap-3 rounded-row px-3 text-fs-sm font-bold", active && "bg-accent/10 text-accent hover:bg-accent/20")}>
-        <Icon className="size-5 shrink-0" />
+        className={cn(rail ? "h-auto min-h-16 w-full shrink-0 flex-col gap-1.5 rounded-row px-1 py-2.5 mod-line font-bold" : "min-h-12 w-full shrink-0 justify-start gap-3 rounded-row px-3 text-fs-sm font-bold", active && "bg-accent/10 text-accent hover:bg-accent/20")}>
+        <Icon className={rail ? "size-7! shrink-0" : "size-5 shrink-0"} />
         <span className="text-center leading-snug">{rail ? label.split(" ").map((word, index) => <span key={index} className="block">{word}</span>) : label}</span>
       </Button>
     ));
@@ -196,7 +196,7 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, moreHost, doc
       </div>
 
       {docked && moreOpen && railHost ? createPortal(
-        <div className="no-scrollbar flex h-full flex-col items-center gap-1 overflow-y-auto py-2" aria-label="More order options panel">
+        <div className="no-scrollbar flex h-full flex-col items-center gap-2.5 overflow-y-auto py-3" aria-label="More order options panel">
           <Button variant="ghost" size="icon" aria-label="Close order options" title="Close order options" onClick={() => onMoreOpenChange(false)} className="size-8 shrink-0"><X className="size-4" /></Button>
           {secondaryActions(true)}
         </div>, railHost,
