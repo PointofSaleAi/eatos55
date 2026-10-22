@@ -484,8 +484,8 @@ function NewOrder() {
                 )}
                 <span className={cn("flex min-w-0 items-center justify-between gap-2", !item.image && "mt-2")}>
                   {item.image ? (
-                    <span className="min-w-0 flex-1 font-extrabold leading-tight text-foreground">
-                      <LineFitName name={item.name} />
+                    <span className="min-w-0 flex-1 text-fs-xs font-extrabold leading-tight text-foreground">
+                      {item.name}
                       {typeof item.stock === "number" && !item.outOfStock ? (
                         <span
                           title={`${item.stock} in stock`}
