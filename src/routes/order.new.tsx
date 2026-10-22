@@ -314,7 +314,7 @@ function NewOrder() {
         onClick={() => setMenuToolsOpen((open) => !open)}
         className="h-10 min-w-tap rounded-card"
       >
-        {menuToolsOpen ? <MenuFoldIcon className="size-8" /> : <MenuUnfoldIcon className="size-8" />}
+        {menuToolsOpen ? <MenuFoldIcon className="size-8!" /> : <MenuUnfoldIcon className="size-8!" />}
       </Button>
       {menuToolsOpen ? (
         <>
