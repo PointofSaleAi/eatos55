@@ -155,8 +155,9 @@ function TileAddButton({
   onAdd,
 }: {
   name: string;
-  outOfStock?: boolean;
+  outOfStock: boolean | undefined;
   onAdd: () => void;
+
 
 }) {
   return (
@@ -191,9 +192,10 @@ function StockBadge({
   outOfStock,
   low,
 }: {
-  stock?: number;
-  outOfStock?: boolean;
+  stock: number | undefined;
+  outOfStock: boolean | undefined;
   low: boolean;
+
 
 }) {
   if (typeof stock !== "number" || outOfStock) return null;
