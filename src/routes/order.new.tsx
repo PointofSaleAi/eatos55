@@ -278,10 +278,12 @@ function StockBadge({
   stock,
   outOfStock,
   low,
+  corner,
 }: {
   stock: number | undefined;
   outOfStock: boolean | undefined;
   low: boolean;
+  corner?: boolean;
 
 
 }) {
@@ -290,9 +292,12 @@ function StockBadge({
     <span
       title={`${stock} in stock`}
       className={cn(
-        // Pinned to the tile's top-right corner so a short stock badge never
-        // steals a line from the name and forces the whole row taller.
-        "absolute right-2 top-2 z-10 shrink-0 rounded-pill px-1 text-fs-xs font-extrabold leading-4 ring-1 ring-surface",
+        // Photo tiles pin the badge to the top-right corner so it never
+        // steals a line from the marquee name; text tiles show it inline
+        // after the name, as before.
+        corner
+          ? "absolute right-2 top-2 z-10 rounded-pill px-1 text-fs-xs font-extrabold leading-4 ring-1 ring-surface"
+          : "inline-block shrink-0 rounded-pill px-1 text-fs-xs font-extrabold leading-4",
         low ? "bg-destructive/10 text-destructive" : "bg-muted text-muted-foreground",
       )}
     >
@@ -632,10 +637,14 @@ function NewOrder() {
                   setSheetItem(item);
                 }}
                 className={cn(
-                  // Name sits at the top of the tile with the price directly
-                  // below it; the fitted name size is capped so the tile never
-                  // grows far past its own content.
-                  "relative flex min-h-tile min-w-0 flex-col justify-start overflow-hidden rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
+                  item.image
+                    ? // Photo tiles keep the compact top-down flow: image,
+                      // name, then the price row.
+                      "relative flex min-h-tile min-w-0 flex-col justify-start overflow-hidden rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]"
+                    : // Text tiles keep the earlier bottom-anchored layout: the
+                      // name sits above the price row at the bottom, so price
+                      // and + line up across tiles.
+                      "relative flex min-h-tile min-w-0 flex-col justify-between overflow-hidden rounded-card border border-border bg-surface p-3 text-left transition-transform active:scale-[0.98]",
                   item.outOfStock && "opacity-50",
                 )}
               >
@@ -644,23 +653,34 @@ function NewOrder() {
                     <img src={item.image} alt={item.name} loading="lazy" className="h-full w-full object-cover" />
                   </span>
                 ) : null}
-                <span className="flex min-h-0 flex-col justify-start">
+                <span
+                  className={cn(
+                    "flex min-h-0 flex-col",
+                    item.image
+                      ? "justify-start"
+                      : // The name block absorbs the slack and text tiles
+                        // reserve two name lines, so every tile in a
+                        // text-only category ends at the same height.
+                        "flex-1 justify-end",
+                    !item.image && "min-h-[calc(var(--fs-sm)*2.5)]",
+                  )}
+                >
                   <span
                     className={cn(
                       "block w-full min-w-0 max-w-full leading-tight text-foreground",
                       item.image ? "font-light" : "font-extrabold",
-                      // The corner stock badge sits over the top line now that
-                      // names start at the top, so reserve room for it.
-                      typeof item.stock === "number" && !item.outOfStock && "pr-6",
+                      // The corner stock badge sits over the photo tile's top
+                      // line, so reserve room for it there.
+                      item.image && typeof item.stock === "number" && !item.outOfStock && "pr-6",
                     )}
                   >
                     {item.image ? <RunName name={item.name} /> : <FitName name={item.name} steps={nameSizes} />}
-                    <StockBadge stock={item.stock} outOfStock={item.outOfStock} low={low} />
+                    <StockBadge stock={item.stock} outOfStock={item.outOfStock} low={low} corner={!!item.image} />
                   </span>
                 </span>
                 <span className="mt-1 flex min-w-0 items-center justify-between gap-2">
                   {item.openPrice && !item.outOfStock && showProductPrices ? (
-                    <span className="rounded-pill bg-muted px-2 py-0.5 text-fs-xs font-extrabold leading-4 text-foreground">
+                    <span className="rounded-pill bg-muted px-1.5 py-0.5 text-[0.6875rem] font-bold leading-4 whitespace-nowrap text-foreground">
                       Open price
                     </span>
                   ) : (
