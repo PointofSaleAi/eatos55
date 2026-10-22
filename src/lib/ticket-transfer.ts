@@ -7,8 +7,8 @@ export type TransferNote = {
   dir: "from" | "to";
   count: number;
   order: number;
-  table?: string;
-  revenueCenter?: string;
+  table?: string | undefined;
+  revenueCenter?: string | undefined;
   lines?: { name: string; price: number; qty: number }[];
 };
 

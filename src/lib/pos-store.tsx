@@ -1422,8 +1422,9 @@ export function PosProvider({ children }: { children: ReactNode }) {
         let created = false;
         if (!dest) {
           const number = tickets.reduce((m, t) => Math.max(m, t.number ?? 0), 0) + 1;
-          dest = {
-            ...source,
+          const { checkNumber: _c, table: _t, ...rest } = source;
+          const fresh: Ticket = {
+            ...rest,
             id: `t-x${Date.now()}`,
             number,
             lines: [],
@@ -1433,10 +1434,10 @@ export function PosProvider({ children }: { children: ReactNode }) {
             payments: [],
             transferNotes: [],
             cancelled: false,
-            checkNumber: undefined,
-            table: "table" in target ? target.table : undefined,
+            ...("table" in target ? { table: target.table } : {}),
             label: "table" in target ? `Table ${target.table}` : "Guest",
           };
+          dest = fresh;
           created = true;
         }
         const moved = moveLines(source, dest, lineIds);

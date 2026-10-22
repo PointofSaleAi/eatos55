@@ -164,11 +164,11 @@ export function TransferOrderDialog({ ticket, onClose, onDone }: { ticket: Ticke
             )}
             <Footer>
               <button type="button" className={outline} onClick={() => {
-                if (!picked.length) return toast.error("Please select at least one product to transfer");
+                if (!picked.length) { toast.error("Please select at least one product to transfer"); return; }
                 setTarget(null); setStep("target");
               }}>Transfer to order</button>
               <button type="button" className={solid} onClick={() => {
-                if (!picked.length) return toast.error("Please select at least one product to transfer");
+                if (!picked.length) { toast.error("Please select at least one product to transfer"); return; }
                 setTable(null); setStep("table");
               }}>Transfer to table</button>
             </Footer>
