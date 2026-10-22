@@ -397,6 +397,25 @@
   }
 }
 
+/* Photo-tile product names run sideways on one line when they overflow;
+   --run-shift is set from JS to the pixel overflow of the name. */
+@utility run-name {
+  animation: run-name-slide 7s ease-in-out infinite alternate;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+@keyframes run-name-slide {
+  0%,
+  12% {
+    transform: translateX(0);
+  }
+  88%,
+  100% {
+    transform: translateX(var(--run-shift, 0px));
+  }
+}
+
 /* ---- Form-factor density tiers ----
    The :root clamps above cover phones (320-767). Beyond that the clamps are
    already at their maximum, so each tier re-declares the same token names with

@@ -119,7 +119,7 @@ function CartHeaderActions({ moreOpen, onMoreOpenChange, railHost, moreHost, doc
     return actions.map(({ label, icon: Icon, active, run }) => (
       <Button key={label} type="button" variant="ghost" aria-label={label} title={label}
         onClick={() => { onMoreOpenChange(false); run(); }}
-        className={cn(rail ? "h-auto min-h-0 w-full flex-1 flex-col justify-center gap-1.5 rounded-row px-1 py-1.5 mod-line font-bold" : "min-h-12 w-full shrink-0 justify-start gap-3 rounded-row px-3 text-fs-sm font-bold", active && "bg-accent/10 text-accent hover:bg-accent/20")}>
+        className={cn(rail ? "h-auto min-h-0 w-full flex-1 flex-col justify-center gap-1.5 rounded-row px-1 py-1.5 mod-line font-medium" : "min-h-12 w-full shrink-0 justify-start gap-3 rounded-row px-3 text-fs-sm font-medium", active && "bg-accent/10 text-accent hover:bg-accent/20")}>
         <Icon className={rail ? "size-7! shrink-0" : "size-5 shrink-0"} />
         <span className="text-center leading-snug">{rail ? label.split(" ").map((word, index) => <span key={index} className="block">{word}</span>) : label}</span>
       </Button>
