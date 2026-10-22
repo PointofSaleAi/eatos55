@@ -928,6 +928,21 @@ export const serviceChargePresets: {
 /** Categories that come with food modifier groups. Drinks have none. */
 const foodModifiersByCategory: Record<string, string[]> = {
   "BRUNCH SANDWICHES": ["Bread", "Course", "Temperature", "Preparation", "Allergy", "Sandwiches Sides"],
+  "BRUNCH BAKERY": ["Preparation", "Allergy"],
+  "BRUNCH COURSE": ["Course", "Preparation", "Allergy"],
+  "BRUNCH CREPES": ["Preparation", "Allergy"],
+  "BRUNCH DESSERTS": ["Course", "Allergy"],
+  "BRUNCH EGGS (LE OEUFS)": ["Course", "Preparation", "Allergy"],
+  "BRUNCH ENTREES": ["Course", "Preparation", "Allergy"],
+  "BRUNCH FLAT BREAD": ["Preparation", "Allergy"],
+  "BRUNCH KIDS": ["Preparation", "Allergy"],
+  "BRUNCH LE SUCRE": ["Allergy"],
+  "BRUNCH MEAT AND FISH": ["Course", "Temperature", "Preparation", "Allergy"],
+  "BRUNCH QUICHE": ["Course", "Preparation", "Allergy"],
+  "BRUNCH SALADS": ["Course", "Preparation", "Allergy"],
+  "BRUNCH SIDES": ["Preparation", "Allergy"],
+  "BRUNCH SPECIALTIES": ["Course", "Preparation", "Allergy"],
+  BAKERY: ["Allergy"],
   "BAR BITES": ["Preparation", "Allergy", "Sides"],
   STARTERS: ["Course", "Preparation", "Allergy"],
   MAINS: ["Course", "Temperature", "Preparation", "Allergy", "Sides"],
@@ -937,6 +952,9 @@ const foodModifiersByCategory: Record<string, string[]> = {
 
 const addOnsByCategory: Record<string, string[]> = {
   "BRUNCH SANDWICHES": ["Add-Ons", "Beverage"],
+  "BRUNCH EGGS (LE OEUFS)": ["Add-Ons"],
+  "BRUNCH ENTREES": ["Add-Ons"],
+  "BRUNCH SPECIALTIES": ["Add-Ons"],
   MAINS: ["Add-Ons"],
   STARTERS: ["Add-Ons"],
 };

@@ -225,7 +225,7 @@ function NewOrder() {
   const navigate = useNavigate();
   const { totals, addItem, settings } = usePos();
   const initialMenu = menus[0];
-  const initialCategory = initialMenu?.categories[1] ?? initialMenu?.categories[0];
+  const initialCategory = initialMenu?.categories[0];
   const [activeMenu, setActiveMenu] = useState(initialMenu?.id ?? "");
   const [activeCategory, setActiveCategory] = useState(initialCategory?.id ?? "");
   const [subcategory, setSubcategory] = useState(initialCategory?.subcategories[0] ?? "");
