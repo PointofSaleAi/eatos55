@@ -1,8 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import {
-  ArrowLeftRight,
-  ArrowUpDown,
   Ban,
   Check,
   ChevronDown,
@@ -42,6 +40,16 @@ function MenuFoldIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
       <path d="M21 4H7V6H21V4ZM21 11H11V13H21V11ZM21 18H7V20H21V18ZM8 17V7L3 11.9996L8 17Z" />
+    </svg>
+  );
+}
+/** Uploaded "Arrow Range" mark: double-headed arrow for the subcategory layout toggle. */
+function ArrowRangeIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className}>
+      <path d="M3 12h18" />
+      <path d="M7 8l-4 4 4 4" />
+      <path d="M17 8l4 4-4 4" />
     </svg>
   );
 }
@@ -306,7 +314,7 @@ function NewOrder() {
         onClick={() => setMenuToolsOpen((open) => !open)}
         className="h-9 min-w-tap rounded-card"
       >
-        {menuToolsOpen ? <MenuFoldIcon className="size-5" /> : <MenuUnfoldIcon className="size-5" />}
+        {menuToolsOpen ? <MenuFoldIcon className="size-6" /> : <MenuUnfoldIcon className="size-6" />}
       </Button>
       {menuToolsOpen ? (
         <>
@@ -332,9 +340,9 @@ function NewOrder() {
             className="h-9 min-w-tap rounded-card"
           >
             {categoryLayout === "horizontal" ? (
-              <ArrowUpDown className="size-5" />
+              <ArrowRangeIcon className="size-6 rotate-90" />
             ) : (
-              <ArrowLeftRight className="size-5" />
+              <ArrowRangeIcon className="size-6" />
             )}
           </Button>
 
@@ -343,7 +351,7 @@ function NewOrder() {
               <Button
                 type="button"
                 variant="outline"
-                className="h-9 max-w-[11rem] gap-1 rounded-card px-3 text-fs-xs font-extrabold"
+                className="h-9 max-w-[12rem] gap-1 rounded-card px-3 text-fs-sm font-extrabold"
               >
                 <span className="truncate">{currentMenu.name}</span>
                 <ChevronDown className="size-4 shrink-0" />
@@ -458,32 +466,23 @@ function NewOrder() {
 
         {showMenu && !customActive ? (
           categoryLayout === "vertical" ? (
-            /* Vertical layout: subcategories always spread across two rows. */
-            <div className="mt-2 flex flex-col gap-1.5">
-              {[
-                subcategories.slice(0, Math.ceil(subcategories.length / 2)),
-                subcategories.slice(Math.ceil(subcategories.length / 2)),
-              ].map((row, rowIndex) =>
-                row.length === 0 ? null : (
-                  <div key={rowIndex} className="flex gap-1.5">
-                    {row.map((entry) => (
-                      <button
-                        key={entry}
-                        type="button"
-                        onClick={() => setSubcategory(entry)}
-                        className={cn(
-                          "flex h-10 min-w-0 flex-1 items-center justify-center rounded-card px-2 text-center text-[0.75rem] font-extrabold uppercase leading-none tracking-tight transition-colors",
-                          entry === subcategory
-                            ? "bg-accent text-accent-foreground hover:bg-accent/90"
-                            : "bg-muted text-muted-foreground hover:bg-secondary",
-                        )}
-                      >
-                        <span className="truncate">{entry}</span>
-                      </button>
-                    ))}
-                  </div>
-                ),
-              )}
+            /* Vertical layout: subcategories wrap row by row. */
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {subcategories.map((entry) => (
+                <button
+                  key={entry}
+                  type="button"
+                  onClick={() => setSubcategory(entry)}
+                  className={cn(
+                    "flex h-10 shrink-0 items-center justify-center rounded-card px-3 text-center text-[0.75rem] font-extrabold uppercase leading-none tracking-tight transition-colors",
+                    entry === subcategory
+                      ? "bg-accent text-accent-foreground hover:bg-accent/90"
+                      : "bg-muted text-muted-foreground hover:bg-secondary",
+                  )}
+                >
+                  <span className="whitespace-nowrap">{entry}</span>
+                </button>
+              ))}
             </div>
           ) : (
             <div className="no-scrollbar mt-2 flex flex-nowrap gap-1.5 overflow-x-auto">
