@@ -340,9 +340,9 @@ function NewOrder() {
             className="h-9 min-w-tap rounded-card"
           >
             {categoryLayout === "horizontal" ? (
-              <ArrowRangeIcon className="size-6 rotate-90" />
+              <ArrowRangeIcon className="size-6! rotate-90" />
             ) : (
-              <ArrowRangeIcon className="size-6" />
+              <ArrowRangeIcon className="size-6!" />
             )}
           </Button>
 
