@@ -90,6 +90,10 @@ export type Ticket = {
   transferOrigin?: string;
   /** Paid check closed out by its server. */
   closed?: boolean;
+  /** Every product was transferred away from this check. */
+  cancelled?: boolean;
+  /** Product / table transfer history shown as banners on the ticket. */
+  transferNotes?: import("@/lib/ticket-transfer").TransferNote[];
   /** Demo refund recorded after the check was closed (no money moves). */
   refund?: { reason: string; at: string; amount: number };
   /** Check number printed on the guest copy. */
@@ -462,6 +466,7 @@ export const statusMeta: Record<TicketStatus, { label: string; tone: string }> =
 
 /** Status label that also reflects closed (Completed) and refunded checks. */
 export function ticketStatusMeta(t: Ticket): { label: string; tone: string } {
+  if (t.cancelled) return { label: "Cancelled", tone: "text-destructive" };
   if (t.refund) return { label: "Refunded", tone: "text-destructive" };
   if (t.closed && t.status === "paid") return { label: "Completed", tone: "text-success" };
   return statusMeta[t.status];

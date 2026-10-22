@@ -1,3 +1,4 @@
+import { canTransfer, moveLines } from "@/lib/ticket-transfer";
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { brand, formatTime } from "@/lib/brand";
 import loginSlide1 from "@/assets/login-1.jpg.asset.json";
@@ -708,6 +709,10 @@ type Store = {
   patchTicket: (id: string, patch: Partial<Pick<Ticket, "discountName" | "discountPercent" | "noTax">>) => void;
   addTip: (id: string, amount: number) => void;
   transferTickets: (ids: string[], server: string) => void;
+  /** Move products to another check, a new order, or a table (new check when the table is free). Returns the target ticket id. */
+  transferProducts: (sourceId: string, lineIds: string[], target: { ticketId: string } | { newOrder: true } | { table: string }) => string | null;
+  /** Move a whole check to another table. */
+  transferTable: (ticketId: string, table: string) => void;
   closeTickets: (ids: string[]) => void;
   /** Close a paid check: it stays in the list as Completed. */
   closeTicket: (id: string) => void;
@@ -1406,6 +1411,43 @@ export function PosProvider({ children }: { children: ReactNode }) {
         setTickets((list) => list.map((t) => (t.id === id ? { ...t, status } : t))),
       patchTicket: (id, patch) =>
         setTickets((list) => list.map((t) => (t.id === id ? { ...t, ...patch } : t))),
+      transferProducts: (sourceId, lineIds, target) => {
+        const source = tickets.find((t) => t.id === sourceId);
+        if (!source || lineIds.length === 0) return null;
+        let dest = "ticketId" in target
+          ? tickets.find((t) => t.id === target.ticketId)
+          : "table" in target
+            ? tickets.find((t) => t.table === target.table && t.id !== sourceId && canTransfer(t))
+            : undefined;
+        let created = false;
+        if (!dest) {
+          const number = tickets.reduce((m, t) => Math.max(m, t.number ?? 0), 0) + 1;
+          dest = {
+            ...source,
+            id: `t-x${Date.now()}`,
+            number,
+            lines: [],
+            total: 0,
+            status: "preparing",
+            arrivedMinutesAgo: 0,
+            payments: [],
+            transferNotes: [],
+            cancelled: false,
+            checkNumber: undefined,
+            table: "table" in target ? target.table : undefined,
+            label: "table" in target ? `Table ${target.table}` : "Guest",
+          };
+          created = true;
+        }
+        const moved = moveLines(source, dest, lineIds);
+        setTickets((list) => {
+          const next = list.map((t) => (t.id === sourceId ? moved.source : t.id === moved.target.id ? moved.target : t));
+          return created ? [moved.target, ...next] : next;
+        });
+        return moved.target.id;
+      },
+      transferTable: (ticketId, table) =>
+        setTickets((list) => list.map((t) => (t.id === ticketId ? { ...t, table, label: `Table ${table}` } : t))),
       transferTickets: (ids, server) =>
         setTickets((list) =>
           list.map((t) =>
