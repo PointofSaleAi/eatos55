@@ -12,6 +12,7 @@
 
 @theme inline {
   /* Fluid type scale: compact at 320px, roomier on large phones. */
+  --text-fs-mod: var(--fs-mod);
   --text-fs-xs: var(--fs-xs);
   --text-fs-sm: var(--fs-sm);
   --text-fs-base: var(--fs-base);
