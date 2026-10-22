@@ -176,9 +176,9 @@ export function ItemSheet({
         : (activeGroup?.options ?? []).map((o) => ({ ...o, group: activeGroup?.name ?? "" }));
     const filtered = query ? pool.filter((o) => o.name.toLowerCase().includes(query)) : pool;
     const sorted = [...filtered].sort((a, b) => {
-      if (sort === "za") return b.name.localeCompare(a.name);
-      if (sort === "lohi") return a.price - b.price || a.name.localeCompare(b.name);
-      if (sort === "hilo") return b.price - a.price || a.name.localeCompare(b.name);
+      if (tab === "addons" && sort === "za") return b.name.localeCompare(a.name);
+      if (tab === "addons" && sort === "lohi") return a.price - b.price || a.name.localeCompare(b.name);
+      if (tab === "addons" && sort === "hilo") return b.price - a.price || a.name.localeCompare(b.name);
       return a.name.localeCompare(b.name);
     });
     return sorted;
