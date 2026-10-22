@@ -255,7 +255,7 @@ export function ItemSheet({
           side="bottom"
           ref={sheetRef}
           style={{ ...dragStyle, minHeight: lockedHeight || undefined }}
-          className="sheet-product mx-auto flex max-h-[min(78dvh,42rem)] w-full max-w-sheet flex-col rounded-t-sheet border-0 bg-surface p-0"
+          className="sheet-product mx-auto flex h-[min(78dvh,42rem)] max-h-[min(78dvh,42rem)] w-full max-w-sheet flex-col rounded-t-sheet border-0 bg-surface p-0"
         >
           {item ? (
             <>
