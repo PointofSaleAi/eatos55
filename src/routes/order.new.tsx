@@ -76,15 +76,35 @@ export const Route = createFileRoute("/order/new")({
 
 // Measure browser-rendered words, not just line counts: a single long word
 // must fit horizontally before a larger typography step can be selected.
-// Largest size first is not the point: the list is the ladder FitName walks down,
-// and stopping at fs-sm keeps a long name to two short lines so the tile stays low.
-// fs-mod is the last resort so a long word beside the corner stock badge still
-// fits whole instead of breaking mid-word.
-const nameSizes = ["text-fs-mod", "text-fs-xs", "text-fs-sm"] as const;
+// The ladder FitName walks up a text-only tile's name: fs-mod is the floor, so a
+// long word still fits whole instead of breaking mid-word, and fs-lg is the
+// ceiling — the largest step whose lines actually fit the box (see
+// availableNameHeight), so a short name fills the tile instead of staying tiny.
+const nameSizes = ["text-fs-mod", "text-fs-xs", "text-fs-sm", "text-fs-base", "text-fs-lg"] as const;
+
+// Room the tile has for the name: its rendered height minus padding and the price
+// row. Read from the box, never from the name itself, so choosing a bigger step can
+// never feed back into its own measurement and grow the tile.
+function availableNameHeight(el: HTMLElement) {
+  const tile = el.closest("button");
+  if (!tile) return Number.POSITIVE_INFINITY;
+  const ts = getComputedStyle(tile);
+  const pad = (parseFloat(ts.paddingTop) || 0) + (parseFloat(ts.paddingBottom) || 0);
+  const box = Math.max(tile.getBoundingClientRect().height, parseFloat(ts.minHeight) || 0);
+  if (!(box > 0)) return Number.POSITIVE_INFINITY;
+  const price = tile.lastElementChild as HTMLElement | null;
+  const priceH = price
+    ? price.getBoundingClientRect().height + (parseFloat(getComputedStyle(price).marginTop) || 0)
+    : 0;
+  return Math.max(0, box - pad - priceH);
+}
+
 function FitName({
   name,
   steps = nameSizes,
-  maxLines = 2,
+  // Three lines is the ceiling, and the height check below still has to agree: a
+  // name only takes the extra line when the tile has room for it at that size.
+  maxLines = 3,
 }: {
   name: string;
   steps?: readonly [string, ...string[]];
@@ -99,6 +119,7 @@ function FitName({
     let raf = 0;
     let disposed = false;
     let lastWidth = 0;
+    let lastRoom = 0;
     const probe = document.createElement("span");
     probe.textContent = name;
     probe.setAttribute("aria-hidden", "true");
@@ -112,7 +133,10 @@ function FitName({
       wordBreak: "normal",
       fontFamily: getComputedStyle(el).fontFamily,
       fontWeight: getComputedStyle(el).fontWeight,
-      letterSpacing: "0px",
+      // The element's real tracking, not zero: the render sets names slightly tight,
+      // and a probe measured without it judges a word that fits as too wide and drops
+      // the product name a whole size.
+      letterSpacing: getComputedStyle(el).letterSpacing,
     });
     document.body.appendChild(probe);
     const measure = () => {
@@ -121,8 +145,13 @@ function FitName({
       // clear the corner stock badge, and measuring that padding in lets a word
       // be judged to fit when it would actually break mid-word.
       const width = parseFloat(getComputedStyle(el).width) || el.getBoundingClientRect().width;
-      if (!(width > 0) || width === lastWidth) return;
+      const room = availableNameHeight(el);
+      // A grid row reaches its final height after the first layout pass, so a name
+      // judged against the pre-stretch box would stay smaller than the tile allows.
+      // Re-measure when the box grows, not only when the name's own width changes.
+      if (!(width > 0) || (width === lastWidth && room === lastRoom)) return;
       lastWidth = width;
+      lastRoom = room;
       const ceil = Math.ceil(width);
       // Words are measured unwrapped: a wrapped block probe reports no overflow
       // for a single long word, so a tile would silently clip the widest one.
@@ -145,13 +174,17 @@ function FitName({
         probe.textContent = name;
         return Math.round(probe.getBoundingClientRect().height / parseFloat(getComputedStyle(probe).lineHeight));
       };
-      // Two lines is the ceiling; a name that needs more keeps the smallest step
-      // rather than pushing the whole tile taller than its price row needs.
-      const baseline = Math.min(lines(steps[0]), maxLines);
+      // The box's spare room is the ceiling, not the smallest step's line count: a
+      // name that reads on one tiny line may grow to two larger lines while they
+      // still fit the tile, so text-only tiles use the space they already have.
+      const available = room;
+      const fits = (step: string) => {
+        const needed = lines(step);
+        const lineHeight = parseFloat(getComputedStyle(probe).lineHeight) || 0;
+        return needed <= maxLines && needed * lineHeight <= available && fitsWords(step);
+      };
       let chosen = steps[0];
-      for (const step of steps) {
-        if (lines(step) <= baseline && fitsWords(step)) chosen = step;
-      }
+      for (const step of steps) if (fits(step)) chosen = step;
       probe.textContent = name;
       setSizeClass(chosen);
     };
@@ -165,6 +198,10 @@ function FitName({
     document.fonts?.ready.then(() => schedule(true)).catch(() => {});
     const ro = new ResizeObserver(() => schedule());
     ro.observe(el);
+    // The tile, not just the name: row stretch changes the room available without
+    // changing the name's own width, and that is exactly when a bigger step frees up.
+    const tile = el.closest("button");
+    if (tile) ro.observe(tile);
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
