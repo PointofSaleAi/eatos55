@@ -76,11 +76,29 @@ export const Route = createFileRoute("/order/new")({
 
 // Measure browser-rendered words, not just line counts: a single long word
 // must fit horizontally before a larger typography step can be selected.
-// Largest size first is not the point: the list is the ladder FitName walks down,
-// and stopping at fs-sm keeps a long name to two short lines so the tile stays low.
-// fs-mod is the last resort so a long word beside the corner stock badge still
-// fits whole instead of breaking mid-word.
-const nameSizes = ["text-fs-mod", "text-fs-xs", "text-fs-sm"] as const;
+// The ladder FitName walks up a text-only tile's name: fs-mod is the floor, so a
+// long word still fits whole instead of breaking mid-word, and fs-lg is the
+// ceiling — the largest step whose lines actually fit the box (see
+// availableNameHeight), so a short name fills the tile instead of staying tiny.
+const nameSizes = ["text-fs-mod", "text-fs-xs", "text-fs-sm", "text-fs-base", "text-fs-lg"] as const;
+
+// Room the tile has for the name: its rendered height minus padding and the price
+// row. Read from the box, never from the name itself, so choosing a bigger step can
+// never feed back into its own measurement and grow the tile.
+function availableNameHeight(el: HTMLElement) {
+  const tile = el.closest("button");
+  if (!tile) return Number.POSITIVE_INFINITY;
+  const ts = getComputedStyle(tile);
+  const pad = (parseFloat(ts.paddingTop) || 0) + (parseFloat(ts.paddingBottom) || 0);
+  const box = Math.max(tile.getBoundingClientRect().height, parseFloat(ts.minHeight) || 0);
+  if (!(box > 0)) return Number.POSITIVE_INFINITY;
+  const price = tile.lastElementChild as HTMLElement | null;
+  const priceH = price
+    ? price.getBoundingClientRect().height + (parseFloat(getComputedStyle(price).marginTop) || 0)
+    : 0;
+  return Math.max(0, box - pad - priceH);
+}
+
 function FitName({
   name,
   steps = nameSizes,
