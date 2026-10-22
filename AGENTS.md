@@ -20,3 +20,4 @@
 - Wall-clock labels shown while the app runs come from `useLiveTime` in `src/lib/use-live-time.ts` (mount-gated, minute-aligned), so every screen that displays the current time shares one ticking source rather than its own interval.
 - orderOS owns its own order lifecycle in `src/lib/orderos-store.tsx` and never routes to Tickets; its board, detail and issue flows stay in-page so status changes persist across navigation.
 - The shared Button forces every child icon to 16px (`[&_svg]:size-4`), so any icon that must render larger needs Tailwind's important flag (e.g. `size-8!`) — a plain `size-N` class is silently dropped.
+- MenuSubcategories packs measured chip widths into fitted rows with overflow retained in the final scrolling row; device product-price visibility is presentation-only and never changes cart or checkout calculations.

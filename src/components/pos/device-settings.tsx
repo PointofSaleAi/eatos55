@@ -38,9 +38,8 @@ export function DeviceSettings() {
     <ScreenBody className="py-4">
       <GroupCard>{choiceRow("autoLockTimer")}</GroupCard>
       {deviceSettingGroups.map((group) => <div key={group.label}>
-        {group.label === "Ordering" && <><GroupLabel>Menu</GroupLabel><GroupCard>{choiceRow("menuSort")}{choiceRow("modifierStyle")}</GroupCard></>}
         <GroupLabel><span className="inline-flex items-center gap-2">{group.label}{group.label === "Kitchen Display System" && <Info className="size-4" aria-label="Kitchen Display System" />}</span></GroupLabel>
-        <GroupCard>{group.rows.map(([key, label]) => <div key={key} className={settingsRowClass}>
+        <GroupCard>{group.label === "Menu" && <>{choiceRow("menuSort")}{choiceRow("modifierStyle")}</>}{group.rows.map(([key, label]) => <div key={key} className={settingsRowClass}>
           <span className="min-w-0 flex-1 t-row">{label}</span>
           <Switch className="shrink-0" checked={preferences.toggles[key]} disabled={!canManageSettings} aria-label={label}
             onCheckedChange={(checked) => save({ toggles: { ...preferences.toggles, [key]: checked } })} />
