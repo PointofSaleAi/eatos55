@@ -1422,7 +1422,8 @@ export function PosProvider({ children }: { children: ReactNode }) {
         let created = false;
         if (!dest) {
           const number = tickets.reduce((m, t) => Math.max(m, t.number ?? 0), 0) + 1;
-          const { checkNumber: _c, table: _t, ...rest } = source;
+          const { checkNumber: _c, table: _t, orderNo: _o, ...rest } = source;
+          const maxNo = tickets.reduce((m, t) => Math.max(m, t.orderNo ?? 0), 0);
           const fresh: Ticket = {
             ...rest,
             id: `t-x${Date.now()}`,
@@ -1435,6 +1436,7 @@ export function PosProvider({ children }: { children: ReactNode }) {
             transferNotes: [],
             cancelled: false,
             ...("table" in target ? { table: target.table } : {}),
+            ...(maxNo ? { orderNo: maxNo + 1 } : {}),
             label: "table" in target ? `Table ${target.table}` : "Guest",
           };
           dest = fresh;

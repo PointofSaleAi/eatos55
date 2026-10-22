@@ -45,7 +45,7 @@ export function moveLines(source: Ticket, target: Ticket, lineIds: string[]): { 
     total: linesTotal(rest),
     cancelled: rest.length === 0 || !!source.cancelled,
     transferNotes: [
-      { dir: "to", count: moving.length, order: target.number, table: target.table, revenueCenter: target.revenueCenter, lines: movedLines },
+      { dir: "to", count: moving.length, order: target.orderNo ?? target.number, table: target.table, revenueCenter: target.revenueCenter, lines: movedLines },
       ...(source.transferNotes ?? []),
     ],
   };
@@ -55,7 +55,7 @@ export function moveLines(source: Ticket, target: Ticket, lineIds: string[]): { 
     lines: merged,
     total: linesTotal(merged),
     transferNotes: [
-      { dir: "from", count: moving.length, order: source.number, table: source.table, revenueCenter: source.revenueCenter },
+      { dir: "from", count: moving.length, order: source.orderNo ?? source.number, table: source.table, revenueCenter: source.revenueCenter },
       ...(target.transferNotes ?? []),
     ],
   };

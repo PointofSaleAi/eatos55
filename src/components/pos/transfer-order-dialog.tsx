@@ -23,14 +23,14 @@ function MiniTicket({ t, selected, onClick }: { t: Ticket; selected?: boolean; o
         onClick && "hover:bg-muted",
       )}
     >
-      <span className="grid size-9 shrink-0 place-items-center rounded-row bg-muted text-fs-sm font-extrabold">{t.number}</span>
+      <span className="grid size-9 shrink-0 place-items-center rounded-row bg-muted text-fs-sm font-extrabold">{t.orderNo ?? t.number}</span>
       <span className="min-w-0 flex-1">
         <span className="flex justify-between gap-2">
           <span className={cn("text-fs-xs font-bold", meta.tone)}>{meta.label}</span>
           <span className="truncate text-fs-xs font-bold text-foreground">{t.table ? `Table ${t.table}` : "Guest"}</span>
         </span>
         <span className="flex justify-between gap-2 text-fs-xs text-muted-foreground">
-          <span className="truncate">Order No {t.number} · {t.server}</span>
+          <span className="truncate">Order No {t.orderNo ?? t.number} · {t.server}</span>
           <span className="font-bold tabular-nums text-foreground">{money(t.total)}</span>
         </span>
       </span>
@@ -214,8 +214,8 @@ export function TransferOrderDialog({ ticket, onClose, onDone }: { ticket: Ticke
               <button type="button" className={outline} onClick={() => setStep("target")}>Cancel</button>
               <button type="button" className={solid} onClick={() => {
                 const id = transferProducts(ticket.id, picked, target === "new" ? { newOrder: true } : { ticketId: target! });
-                const to = targetTicket ? `Order #${targetTicket.number}${targetTicket.table ? ` on Table ${targetTicket.table}` : ""}` : "a new order";
-                finish(id, { title: "Products Transferred", body: `From Order #${ticket.number} to ${to}`, lines: pickedLines.map((l) => `${l.qty}x ${l.name}`) });
+                const to = targetTicket ? `Order #${targetTicket.orderNo ?? targetTicket.number}${targetTicket.table ? ` on Table ${targetTicket.table}` : ""}` : "a new order";
+                finish(id, { title: "Products Transferred", body: `From Order #${ticket.orderNo ?? ticket.number} to ${to}`, lines: pickedLines.map((l) => `${l.qty}x ${l.name}`) });
               }}>Confirm Transfer</button>
             </Footer>
           </div>
