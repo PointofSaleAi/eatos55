@@ -535,17 +535,15 @@ function NewOrder() {
                   </span>
                 )}
                 <span className={cn("flex min-w-0 items-center justify-between", !item.image && "mt-2")}>
-                  {item.image ? null : (
-                    <span className="text-fs-sm font-bold leading-none text-muted-foreground">
-                      {item.outOfStock
-                        ? "Out of stock"
-                        : !showProductPrices
-                          ? null
-                        : item.openPrice
-                          ? "Open price"
-                          : money(item.price)}
-                    </span>
-                  )}
+                  <span className="text-fs-sm font-bold leading-none text-muted-foreground">
+                    {item.outOfStock
+                      ? "Out of stock"
+                      : !showProductPrices
+                        ? null
+                      : item.openPrice
+                        ? "Open price"
+                        : money(item.price)}
+                  </span>
                   {item.image ? null : (
                     <span
                       role="button"
