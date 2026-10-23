@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, ChevronRight, Clock, Info } from "lucide-react";
+import { Check, ChevronRight, Clock, Info, X } from "lucide-react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, GroupLabel, settingsRowClass } from "@/components/pos/settings-rows";
 import { Button } from "@/components/ui/button";
@@ -10,12 +10,12 @@ import { useAppearance, type Appearance } from "@/hooks/use-appearance";
 import { deviceSettingGroups, type DevicePreferences } from "@/lib/device-settings";
 
 type ChoiceKey = Exclude<keyof DevicePreferences, "toggles"> | "appTheme";
-const choices: Record<ChoiceKey, { label: string; options: readonly string[] }> = {
-  autoLockTimer: { label: "Auto Lock Timer", options: ["Never", "30 seconds", "1 minute", "2 minutes", "5 minutes", "10 minutes", "15 minutes"] },
-  menuSort: { label: "Menu Sort", options: ["Drag & Drop", "Alphabetical"] },
-  modifierStyle: { label: "Modifier Style", options: ["Standard", "Compact"] },
-  designTheme: { label: "Design theme", options: ["Classic"] },
-  appTheme: { label: "App Theme", options: ["Light", "Dark", "System"] },
+const choices: Record<ChoiceKey, { label: string; description: string; options: readonly string[] }> = {
+  autoLockTimer: { label: "Auto Lock Timer", description: "Lock the terminal after this much inactivity.", options: ["Never", "30 seconds", "1 minute", "2 minutes", "5 minutes", "10 minutes", "15 minutes"] },
+  menuSort: { label: "Menu Sort", description: "Choose how menu items are ordered.", options: ["Drag & Drop", "Alphabetical"] },
+  modifierStyle: { label: "Modifier Style", description: "Choose how modifiers are displayed.", options: ["Standard", "Compact"] },
+  designTheme: { label: "Design theme", description: "Choose the design theme.", options: ["Classic"] },
+  appTheme: { label: "App Theme", description: "Choose the app appearance.", options: ["Light", "Dark", "System"] },
 };
 export function DeviceSettings() {
   const { settings, updateSettings, canManageSettings } = usePos();
@@ -51,15 +51,24 @@ export function DeviceSettings() {
     </ScreenBody>
     <Dialog open={picker !== null} onOpenChange={(open) => { if (!open) setPicker(null); }}>
       <DialogContent className="max-h-[85dvh] overflow-y-auto rounded-lg">
-        <DialogTitle>{picker ? choices[picker].label : "Device Settings"}</DialogTitle>
-        <DialogDescription>Select an option.</DialogDescription>
-        {picker && choices[picker].options.map((option) => <Button key={option} variant="ghost" className="min-h-11 justify-between whitespace-normal" onClick={() => {
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <DialogTitle>{picker ? choices[picker].label : "Device Settings"}</DialogTitle>
+            <DialogDescription>{picker ? choices[picker].description : "Select an option."}</DialogDescription>
+          </div>
+          <Button variant="outline" size="icon" aria-label="Close" className="shrink-0 rounded-full" onClick={() => setPicker(null)}>
+            <X className="size-4" />
+          </Button>
+        </div>
+        {picker && choices[picker].options.map((option) => <Button key={option} variant="ghost" className="min-h-11 w-full justify-between whitespace-normal" onClick={() => {
           if (!canManageSettings) return;
           if (picker === "appTheme") setAppearance(option.toLowerCase() as Appearance);
           else save({ [picker]: option });
           setPicker(null);
         }}>{option}{value(picker) === option && <Check className="size-4 shrink-0" />}</Button>)}
-        <Button variant="outline" onClick={() => setPicker(null)}>Cancel</Button>
+        <div className="flex justify-end">
+          <Button variant="outline" onClick={() => setPicker(null)}>Cancel</Button>
+        </div>
       </DialogContent>
     </Dialog>
   </>;
