@@ -51,15 +51,24 @@ export function DeviceSettings() {
     </ScreenBody>
     <Dialog open={picker !== null} onOpenChange={(open) => { if (!open) setPicker(null); }}>
       <DialogContent className="max-h-[85dvh] overflow-y-auto rounded-lg">
-        <DialogTitle>{picker ? choices[picker].label : "Device Settings"}</DialogTitle>
-        <DialogDescription>Select an option.</DialogDescription>
-        {picker && choices[picker].options.map((option) => <Button key={option} variant="ghost" className="min-h-11 justify-between whitespace-normal" onClick={() => {
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <DialogTitle>{picker ? choices[picker].label : "Device Settings"}</DialogTitle>
+            <DialogDescription>{picker ? choices[picker].description : "Select an option."}</DialogDescription>
+          </div>
+          <Button variant="outline" size="icon" aria-label="Close" className="shrink-0 rounded-full" onClick={() => setPicker(null)}>
+            <X className="size-4" />
+          </Button>
+        </div>
+        {picker && choices[picker].options.map((option) => <Button key={option} variant="ghost" className="min-h-11 w-full justify-between whitespace-normal" onClick={() => {
           if (!canManageSettings) return;
           if (picker === "appTheme") setAppearance(option.toLowerCase() as Appearance);
           else save({ [picker]: option });
           setPicker(null);
         }}>{option}{value(picker) === option && <Check className="size-4 shrink-0" />}</Button>)}
-        <Button variant="outline" onClick={() => setPicker(null)}>Cancel</Button>
+        <div className="flex justify-end">
+          <Button variant="outline" onClick={() => setPicker(null)}>Cancel</Button>
+        </div>
       </DialogContent>
     </Dialog>
   </>;
