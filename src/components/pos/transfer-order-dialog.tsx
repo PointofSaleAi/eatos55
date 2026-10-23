@@ -23,7 +23,7 @@ function MiniTicket({ t, selected, onClick }: { t: Ticket; selected?: boolean; o
         onClick && "hover:bg-muted",
       )}
     >
-      <span className="grid size-9 shrink-0 place-items-center rounded-row bg-muted text-fs-sm font-extrabold">{t.orderNo ?? t.number}</span>
+      <span className="grid h-9 min-w-14 shrink-0 place-items-center whitespace-nowrap rounded-row bg-muted px-2 text-fs-sm font-extrabold tabular-nums">{t.orderNo ?? t.number}</span>
       <span className="min-w-0 flex-1">
         <span className="flex justify-between gap-2">
           <span className={cn("text-fs-xs font-bold", meta.tone)}>{meta.label}</span>
