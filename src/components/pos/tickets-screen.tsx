@@ -647,9 +647,10 @@ export function TicketsScreen({
                     </div>
                     {canTransfer(t) ? (
                       <button type="button" aria-label={`Transfer order ${t.number}`} onClick={() => setTransferFor(t.id)}
-                        className="grid w-9 shrink-0 place-items-center border-l border-border bg-muted text-foreground hover:bg-secondary">
+                        className="grid w-9 shrink-0 place-items-center border border-l-0 border-border bg-muted text-foreground hover:bg-secondary">
                         <Forward className="size-4" aria-hidden />
                       </button>
+
 
                     ) : null}
                   </div>
