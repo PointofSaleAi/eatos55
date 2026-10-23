@@ -632,6 +632,7 @@ export function TicketsScreen({
                         ticket={t}
                         landscape={pane && landscape}
                         selected={selectedTicketId === t.id}
+                        squareTop={!!t.transferNotes?.[0]}
                         onClick={() => {
                           openTicket(t.id);
                           navigate({
