@@ -237,7 +237,7 @@ function orderTypeIcon(label: string) {
   return Utensils;
 }
 
-export function TicketCard({ ticket, onClick, landscape = false, selected = false, squareTop = false }: { ticket: Ticket; onClick: () => void; landscape?: boolean; selected?: boolean; squareTop?: boolean }) {
+export function TicketCard({ ticket, onClick, landscape = false, selected = false, squareTop = false, squareRight = false }: { ticket: Ticket; onClick: () => void; landscape?: boolean; selected?: boolean; squareTop?: boolean; squareRight?: boolean }) {
   const { tableGroupLabel } = usePos();
   const meta = roomChargeLabel(ticket) ?? ticketStatusMeta(ticket);
   const liveTimer = useTicketTimer(ticket.arrivedMinutesAgo);
@@ -257,7 +257,7 @@ export function TicketCard({ ticket, onClick, landscape = false, selected = fals
 
 
   return (
-    <div data-ticket-selected={landscape && selected ? "true" : undefined} className={cn("@container w-full overflow-hidden rounded-card border", squareTop && "rounded-t-none", landscape && selected ? "border-foreground/40 bg-muted" : "border-border bg-surface")}>
+    <div data-ticket-selected={landscape && selected ? "true" : undefined} className={cn("@container w-full overflow-hidden rounded-card border", (squareTop || squareRight) && (squareTop ? "rounded-t-none rounded-r-none" : "rounded-r-none"), landscape && selected ? "border-foreground/40 bg-muted" : "border-border bg-surface")}>
       {landscape ? (
         <div data-ticket-landscape className="grid grid-cols-[auto_minmax(0,1fr)] items-stretch gap-2 px-2 py-2">
           <Button
