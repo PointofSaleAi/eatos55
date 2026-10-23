@@ -626,7 +626,7 @@ export function TicketsScreen({
                   {t.transferNotes?.[0] ? (
                     <p className="truncate bg-foreground px-3 py-1 text-fs-xs font-bold text-background">{noteText(t.transferNotes[0])}</p>
                   ) : null}
-                  <div className="flex items-stretch gap-1">
+                  <div className="flex items-stretch">
                     <div className="min-w-0 flex-1">
                       <TicketCard
                         ticket={t}
@@ -645,9 +645,10 @@ export function TicketsScreen({
                     </div>
                     {canTransfer(t) ? (
                       <button type="button" aria-label={`Transfer order ${t.number}`} onClick={() => setTransferFor(t.id)}
-                        className="grid w-9 shrink-0 place-items-center rounded-card bg-muted text-foreground hover:bg-secondary">
+                        className="grid w-9 shrink-0 place-items-center border-l border-border bg-muted text-foreground hover:bg-secondary">
                         <Forward className="size-4" aria-hidden />
                       </button>
+
                     ) : null}
                   </div>
                 </div>
