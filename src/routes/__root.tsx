@@ -17,6 +17,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { DeviceFrame } from "@/components/pos/shell";
 import { PosProvider } from "@/lib/pos-store";
 import { OrderOSProvider } from "@/lib/orderos-store";
+import { BugReporter } from "@/components/pos/bug-reporter";
 
 function NotFoundComponent() {
   return (
@@ -155,6 +156,7 @@ function RootComponent() {
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
         </DeviceFrame>
+        <BugReporter />
         <Toaster position="top-center" />
         </OrderOSProvider>
       </PosProvider>

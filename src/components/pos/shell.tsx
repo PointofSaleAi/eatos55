@@ -173,6 +173,7 @@ export function DeviceFrame({ children }: { children: ReactNode }) {
 
   return (
     <div
+      data-pos-screen
       className={cn(
         "h-[100dvh] overflow-hidden bg-shell",
         fullBleed
