@@ -8,7 +8,7 @@
 - [x] Rework the Guestbook guest list with initials avatars, a New Guest popover, sort and archive/restore with per-row actions; verified on phone, tablet and desktop
 
 # Roadmap
-- [ ] Add Sentry-gated floating bug icon, reference report form, validation and screenshot capture; verify phone, tablet and desktop. Report delivery is not connected; use a truthful local download.
+- [x] Add Sentry-gated floating bug icon and reference report form; signed-in visibility on/off, required fields, screenshot capture, local report download and cancellation verified on phone, tablet and desktop; three tests pass, no browser errors. Live report delivery remains unconnected.
 - [x] Slim the order options rail labels to a lighter weight and give photo product tiles one-line names that run sideways with a smaller font; verified marquee motion, tile rendering and rail labels on desktop, with build OK and no page errors.
 - [x] Show Course for every table-order product, move seat details directly after names, hide the unassigned course tag and list unassigned items first; verified signed-in bakery/drink choices, course selection and order readback on phone, tablet and desktop, with seven tests passing and no page errors.
 - [x] Remove Item sorting and verify all 24 reference additional modifiers, pictured prices/stock, retained Add-Ons search/sort, stable popup size and configured order readback across desktop, tablet and phone; six tests pass.
