@@ -112,6 +112,7 @@ export function TransferOrderDialog({ ticket, onClose, onDone }: { ticket: Ticke
   return (
     <Dialog open onOpenChange={(o) => { if (!o) onClose(); }}>
       <DialogContent className={cn("flex max-h-[92dvh] flex-col gap-3 rounded-sheet border-border bg-surface p-4",
+        step === "choice" && "pb-0",
         wide ? "h-[92dvh] w-[min(64rem,96vw)] max-w-none" : step === "choice" || step === "done" ? "w-[min(24rem,92vw)]" : "w-[min(40rem,94vw)] max-w-none")}>
         <div className="text-center">
           <DialogTitle className="text-fs-lg font-extrabold text-foreground">{title[step]}</DialogTitle>
@@ -124,7 +125,7 @@ export function TransferOrderDialog({ ticket, onClose, onDone }: { ticket: Ticke
         </div>
 
         {step === "choice" ? (
-          <div className="grid grid-cols-2 divide-x divide-border border-t border-border">
+          <div className="grid grid-cols-2 divide-x divide-border rounded-b-[inherit] border-t border-border">
             <button type="button" onClick={() => { setTable(null); setStep("move-table"); }} className="py-3 hover:bg-muted">
               <span className="block text-fs-sm font-bold">Table</span>
               <span className="block text-[0.625rem] text-muted-foreground">(All Products)</span>
