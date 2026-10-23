@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, ChevronRight, Clock, Info } from "lucide-react";
+import { Check, ChevronRight, Clock, Info, X } from "lucide-react";
 import { ScreenBody, SubHeader } from "@/components/pos/shell";
 import { Caption, GroupCard, GroupLabel, settingsRowClass } from "@/components/pos/settings-rows";
 import { Button } from "@/components/ui/button";
@@ -10,12 +10,12 @@ import { useAppearance, type Appearance } from "@/hooks/use-appearance";
 import { deviceSettingGroups, type DevicePreferences } from "@/lib/device-settings";
 
 type ChoiceKey = Exclude<keyof DevicePreferences, "toggles"> | "appTheme";
-const choices: Record<ChoiceKey, { label: string; options: readonly string[] }> = {
-  autoLockTimer: { label: "Auto Lock Timer", options: ["Never", "30 seconds", "1 minute", "2 minutes", "5 minutes", "10 minutes", "15 minutes"] },
-  menuSort: { label: "Menu Sort", options: ["Drag & Drop", "Alphabetical"] },
-  modifierStyle: { label: "Modifier Style", options: ["Standard", "Compact"] },
-  designTheme: { label: "Design theme", options: ["Classic"] },
-  appTheme: { label: "App Theme", options: ["Light", "Dark", "System"] },
+const choices: Record<ChoiceKey, { label: string; description: string; options: readonly string[] }> = {
+  autoLockTimer: { label: "Auto Lock Timer", description: "Lock the terminal after this much inactivity.", options: ["Never", "30 seconds", "1 minute", "2 minutes", "5 minutes", "10 minutes", "15 minutes"] },
+  menuSort: { label: "Menu Sort", description: "Choose how menu items are ordered.", options: ["Drag & Drop", "Alphabetical"] },
+  modifierStyle: { label: "Modifier Style", description: "Choose how modifiers are displayed.", options: ["Standard", "Compact"] },
+  designTheme: { label: "Design theme", description: "Choose the design theme.", options: ["Classic"] },
+  appTheme: { label: "App Theme", description: "Choose the app appearance.", options: ["Light", "Dark", "System"] },
 };
 export function DeviceSettings() {
   const { settings, updateSettings, canManageSettings } = usePos();
