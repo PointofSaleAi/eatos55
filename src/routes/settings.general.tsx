@@ -53,7 +53,7 @@ function GeneralSettings() {
       <ScreenBody className="py-2">
         <GroupLabel>Device Service</GroupLabel>
         <GroupCard>
-          <IconValueRow title="Device Name" value={settings.deviceName} topic="device-name" />
+          <IconValueRow title="Device Name" value={settings.deviceName} />
           <SegmentRow
             title="Device Service"
             options={["Table Service", "Quick Service"]}
